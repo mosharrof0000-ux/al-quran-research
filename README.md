@@ -1,11 +1,14 @@
-# আল-কুরআন: ভাষাতাত্ত্বিক বিশেষ অনুবাদ
+# আল-কুরআন ভাষাভিত্তিক গবেষণা — Pilot v0.1
 
-এটি প্রকল্পের প্রাথমিক স্ট্যাটিক ওয়েবসাইট।
+লক্ষ্য: প্রমাণ-নির্ভর, version-controlled এবং পুনরুৎপাদনযোগ্য কুরআন গবেষণা অবকাঠামো।
 
-## প্রকাশ করার সহজ উপায়
-1. পুরো ফোল্ডার/ফাইল GitHub-এর একটি public repository-তে আপলোড করুন।
-2. Repository → Settings → Pages-এ যান।
-3. Deploy from branch নির্বাচন করুন এবং main branch/root বেছে নিন।
-4. প্রকাশের পর GitHub Pages একটি ওয়েব ঠিকানা দেবে।
+মূল নীতি:
+- Raw data overwrite নয়; correction = নতুন version/proposal।
+- AI-generated তথ্য স্বয়ংক্রিয়ভাবে verified নয়।
+- Published claim-এর traceable evidence থাকতে হবে।
+- Metric-এর definition, formula, dataset/version ও calculation run থাকতে হবে।
+- মতভেদ মুছে না দিয়ে আলাদা analysis হিসেবে সংরক্ষণ করা হবে।
+- Website হলো interface; database ও research records হলো মূল সম্পদ।
 
-প্রতিটি গবেষণার জন্য আলাদা HTML পৃষ্ঠা তৈরি করা যাবে।
+বর্তমান Pilot: সূরা আল-ফাতিহা; প্রথম পরীক্ষা Q001001।
+Schema version: 0.1
