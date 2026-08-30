@@ -1,1 +1,369 @@
 
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>সূরা আল-ফাতিহা | আল-কুরআন গবেষণা</title>
+
+<style>
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  font-family:Arial,"Noto Sans Bengali",sans-serif;
+  background:#eef4f0;
+  color:#1d2b22;
+}
+
+.app{
+  max-width:700px;
+  min-height:100vh;
+  margin:auto;
+  background:#f7faf8;
+}
+
+/* Header */
+
+.header{
+  background:linear-gradient(135deg,#0d5738,#197a50);
+  color:white;
+  padding:20px;
+  border-radius:0 0 30px 30px;
+}
+
+.header-top{
+  display:flex;
+  align-items:center;
+  gap:15px;
+}
+
+.back{
+  width:42px;
+  height:42px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(255,255,255,.15);
+  border-radius:50%;
+  color:white;
+  text-decoration:none;
+  font-size:24px;
+}
+
+.header h1{
+  margin:0;
+  font-size:24px;
+}
+
+.header p{
+  margin:5px 0 0;
+  opacity:.85;
+}
+
+/* Content */
+
+.content{
+  padding:16px;
+}
+
+.card{
+  background:white;
+  border-radius:22px;
+  padding:20px;
+  margin-bottom:16px;
+  box-shadow:0 4px 15px rgba(0,0,0,.08);
+}
+
+.ayah-number{
+  width:42px;
+  height:42px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  border-radius:50%;
+  background:#e3f0e8;
+  color:#0d5738;
+  font-weight:bold;
+  margin-bottom:18px;
+}
+
+.arabic{
+  font-size:32px;
+  line-height:2;
+  direction:rtl;
+  text-align:center;
+  margin:15px 0;
+}
+
+.pronunciation{
+  background:#eaf5ee;
+  color:#0d5738;
+  padding:14px;
+  text-align:center;
+  border-radius:14px;
+  font-weight:bold;
+  margin-top:15px;
+}
+
+.translation{
+  margin-top:18px;
+  line-height:1.8;
+}
+
+.translation h3{
+  color:#0d5738;
+}
+
+.buttons{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:20px;
+}
+
+.button{
+  display:block;
+  text-align:center;
+  padding:14px 8px;
+  background:#eaf5ee;
+  color:#0d5738;
+  border-radius:14px;
+  text-decoration:none;
+  font-weight:bold;
+}
+
+/* Research */
+
+.section-title{
+  color:#0d5738;
+  margin-top:0;
+}
+
+.research{
+  padding:14px;
+  margin-top:10px;
+  border-radius:15px;
+  background:#f0f6f2;
+}
+
+.research strong{
+  display:block;
+  color:#0d5738;
+  margin-bottom:5px;
+}
+
+.research p{
+  margin:0;
+  color:#59665d;
+  line-height:1.6;
+}
+
+/* AI Button */
+
+.ai-button{
+  position:fixed;
+  right:20px;
+  bottom:25px;
+  width:62px;
+  height:62px;
+  border:none;
+  border-radius:50%;
+  background:#0d5738;
+  color:white;
+  font-size:28px;
+  box-shadow:0 5px 20px rgba(0,0,0,.25);
+}
+
+/* Footer */
+
+.footer{
+  text-align:center;
+  padding:25px;
+  color:#68746c;
+}
+
+@media(max-width:500px){
+
+  .arabic{
+    font-size:27px;
+  }
+
+  .buttons{
+    grid-template-columns:1fr;
+  }
+
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="app">
+
+<!-- Header -->
+
+<div class="header">
+
+  <div class="header-top">
+
+    <a href="index.html" class="back">←</a>
+
+    <div>
+      <h1>সূরা আল-ফাতিহা</h1>
+      <p>সূরা ১ • ৭ আয়াত</p>
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- Main Content -->
+
+<div class="content">
+
+  <!-- Ayah -->
+
+  <div class="card">
+
+    <div class="ayah-number">১</div>
+
+    <div class="arabic">
+      بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
+    </div>
+
+    <div class="pronunciation">
+      বিসমিল্লাহির রাহমানির রাহীম
+    </div>
+
+    <div class="translation">
+
+      <h3>বাংলা অর্থ</h3>
+
+      <p>
+        পরম করুণাময়, অতি দয়ালু আল্লাহর নামে।
+      </p>
+
+    </div>
+
+    <div class="buttons">
+
+      <a href="#research" class="button">
+        🔎 শব্দ বিশ্লেষণ
+      </a>
+
+      <a href="#research" class="button">
+        🔬 গবেষণা
+      </a>
+
+      <a href="#related" class="button">
+        🔗 সম্পর্কিত আয়াত
+      </a>
+
+      <a href="index.html" class="button">
+        🏠 হোমে যান
+      </a>
+
+    </div>
+
+  </div>
+
+
+  <!-- Research -->
+
+  <div class="card" id="research">
+
+    <h2 class="section-title">
+      🔬 গবেষণা
+    </h2>
+
+
+    <div class="research">
+
+      <strong>আরবি মূলপাঠ</strong>
+
+      <p>
+        মূল পাঠ ও উৎস যাচাইয়ের তথ্য এখানে সংরক্ষণ করা হবে।
+      </p>
+
+    </div>
+
+
+    <div class="research">
+
+      <strong>শব্দ বিশ্লেষণ</strong>
+
+      <p>
+        প্রতিটি শব্দের ধাতু, রূপতত্ত্ব ও ব্যাকরণ যুক্ত করা হবে।
+      </p>
+
+    </div>
+
+
+    <div class="research">
+
+      <strong>অর্থপরিসর</strong>
+
+      <p>
+        শব্দের সম্ভাব্য অর্থ এবং কুরআনের অন্যান্য স্থানে ব্যবহার তুলনা করা হবে।
+      </p>
+
+    </div>
+
+
+    <div class="research">
+
+      <strong>বিশেষ বাংলা অনুবাদ</strong>
+
+      <p>
+        গবেষণার ভিত্তিতে শব্দঘনিষ্ঠ ও স্বাভাবিক বাংলা অনুবাদ পর্যায়ক্রমে যুক্ত হবে।
+      </p>
+
+    </div>
+
+  </div>
+
+
+  <!-- Status -->
+
+  <div class="card">
+
+    <h2 class="section-title">
+      📌 বর্তমান অবস্থা
+    </h2>
+
+    <p>বর্তমান Pilot: সূরা আল-ফাতিহা</p>
+
+    <p>প্রথম Test Ayah: Q001001</p>
+
+    <p>
+      গবেষণার তথ্য যাচাই করে পর্যায়ক্রমে এই পৃষ্ঠায় যুক্ত করা হবে।
+    </p>
+
+  </div>
+
+
+  <div class="footer">
+
+    আল-কুরআন ভাষাভিত্তিক গবেষণা
+
+  </div>
+
+</div>
+
+</div>
+
+
+<!-- AI -->
+
+<button class="ai-button">
+  🤖
+</button>
+
+</body>
+</html>
