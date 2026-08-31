@@ -169,64 +169,6 @@ function filterSurah(q){
  q=q.trim().toLowerCase();
  document.querySelectorAll('.surah-row').forEach(r=>r.style.display=(!q||r.innerText.toLowerCase().includes(q))?'flex':'none');
 }
-let robotMoved = false;
-
-document.querySelectorAll('.robot:not(.small)').forEach(robot => {
-
-  let startX = 0;
-  let startY = 0;
-  let robotX = 0;
-  let robotY = 0;
-
-  robot.addEventListener('pointerdown', function(e){
-
-    robotMoved = false;
-
-    startX = e.clientX;
-    startY = e.clientY;
-
-    const rect = robot.getBoundingClientRect();
-
-    robotX = rect.left;
-    robotY = rect.top;
-
-    robot.setPointerCapture(e.pointerId);
-
-  });
-
-  robot.addEventListener('pointermove', function(e){
-
-    if(!robot.hasPointerCapture(e.pointerId)) return;
-
-    const dx = e.clientX - startX;
-    const dy = e.clientY - startY;
-
-    if(Math.abs(dx) > 5 || Math.abs(dy) > 5){
-      robotMoved = true;
-    }
-
-    robot.style.left = (robotX + dx) + 'px';
-    robot.style.top = (robotY + dy) + 'px';
-    robot.style.right = 'auto';
-    robot.style.bottom = 'auto';
-
-  });
-
-  robot.addEventListener('pointerup', function(e){
-
-    robot.releasePointerCapture(e.pointerId);
-
-  });
-
-  robot.addEventListener('click', function(e){
-
-    if(robotMoved){
-      e.stopPropagation();
-      robotMoved = false;
-    }
-
-  });
-
-});</script>
+</script>
 </body>
  </html>
