@@ -36,9 +36,6 @@ box-shadow:inset 0 0 35px #d6aa3830}
 .big-text b{font-size:25px;display:block}.big-text span{color:#ddd8d0;font-size:14px}.arrow{margin-left:auto;font-size:36px;color:#e8d58e}
 .quote{position:relative;text-align:center;color:#d6d1c5;margin:28px 24px;font-size:14px}
 .quote small{display:block;color:#b9a866;margin-top:6px}
-.robot{position:absolute;z-index:6;right:13px;bottom:15px;width:82px;height:82px;border-radius:50%;border:3px solid var(--gold);background:radial-gradient(circle at 50% 32%,#eaf2ef 0 9%,#9bb8b0 10% 12%,#244844 13% 46%,#102625 47%);box-shadow:0 7px 20px #0008,0 0 0 5px #d6b7501a;display:grid;place-items:center;font-size:42px}
-.robot:after{content:"🤖";transform:translateY(2px);filter:drop-shadow(0 2px 2px #0008)}
-.robot.small{position:relative;right:auto;bottom:auto;width:60px;height:60px;font-size:30px;flex:none}
 .topbar{height:68px;display:flex;align-items:center;justify-content:space-between;padding:0 6px;border-bottom:1px solid #cda84a55}
 .topbar .back{font-size:31px;cursor:pointer;color:#ead67d}.top-title{text-align:center}.top-title b{display:block;font-size:24px}.top-title span{font-size:13px;color:#d8d0c4}.gear{font-size:26px}
 .search{margin:16px 0;border:1px solid #ffffff22;background:#ffffff12;border-radius:26px;padding:15px 18px;display:flex;gap:10px;align-items:center;color:#d7d0c6}
@@ -172,6 +169,64 @@ function filterSurah(q){
  q=q.trim().toLowerCase();
  document.querySelectorAll('.surah-row').forEach(r=>r.style.display=(!q||r.innerText.toLowerCase().includes(q))?'flex':'none');
 }
-</script>
+</script>let robotMoved = false;
+
+document.querySelectorAll('.robot:not(.small)').forEach(robot => {
+
+  let startX = 0;
+  let startY = 0;
+  let robotX = 0;
+  let robotY = 0;
+
+  robot.addEventListener('pointerdown', function(e){
+
+    robotMoved = false;
+
+    startX = e.clientX;
+    startY = e.clientY;
+
+    const rect = robot.getBoundingClientRect();
+
+    robotX = rect.left;
+    robotY = rect.top;
+
+    robot.setPointerCapture(e.pointerId);
+
+  });
+
+  robot.addEventListener('pointermove', function(e){
+
+    if(!robot.hasPointerCapture(e.pointerId)) return;
+
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+
+    if(Math.abs(dx) > 5 || Math.abs(dy) > 5){
+      robotMoved = true;
+    }
+
+    robot.style.left = (robotX + dx) + 'px';
+    robot.style.top = (robotY + dy) + 'px';
+    robot.style.right = 'auto';
+    robot.style.bottom = 'auto';
+
+  });
+
+  robot.addEventListener('pointerup', function(e){
+
+    robot.releasePointerCapture(e.pointerId);
+
+  });
+
+  robot.addEventListener('click', function(e){
+
+    if(robotMoved){
+      e.stopPropagation();
+      robotMoved = false;
+    }
+
+  });
+
+});
 </body>
  </html>
