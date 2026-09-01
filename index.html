@@ -267,6 +267,47 @@ floatingAI.addEventListener('pointerup', function(e){
     show('chat');
   }
 
+});const floatingAI = document.getElementById('floatingAI');
+
+let startX = 0;
+let startY = 0;
+let startLeft = 0;
+let startTop = 0;
+
+floatingAI.addEventListener('pointerdown', function(e){
+
+  const rect = floatingAI.getBoundingClientRect();
+
+  startX = e.clientX;
+  startY = e.clientY;
+  startLeft = rect.left;
+  startTop = rect.top;
+
+  floatingAI.setPointerCapture(e.pointerId);
+
+});
+
+floatingAI.addEventListener('pointermove', function(e){
+
+  if(!floatingAI.hasPointerCapture(e.pointerId)) return;
+
+  const moveX = e.clientX - startX;
+  const moveY = e.clientY - startY;
+
+  floatingAI.style.left = (startLeft + moveX) + 'px';
+  floatingAI.style.top = (startTop + moveY) + 'px';
+
+  floatingAI.style.right = 'auto';
+  floatingAI.style.bottom = 'auto';
+
+});
+
+floatingAI.addEventListener('pointerup', function(e){
+
+  if(floatingAI.hasPointerCapture(e.pointerId)){
+    floatingAI.releasePointerCapture(e.pointerId);
+  }
+
 });</script>
 </body>
  </html>
