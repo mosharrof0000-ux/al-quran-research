@@ -203,6 +203,70 @@ function filterSurah(q){
  q=q.trim().toLowerCase();
  document.querySelectorAll('.surah-row').forEach(r=>r.style.display=(!q||r.innerText.toLowerCase().includes(q))?'flex':'none');
 }
-</script>
+const floatingAI = document.getElementById('floatingAI');
+
+let dragStartX = 0;
+let dragStartY = 0;
+let startLeft = 0;
+let startTop = 0;
+let moved = false;
+
+floatingAI.addEventListener('pointerdown', function(e){
+
+  moved = false;
+
+  const rect = floatingAI.getBoundingClientRect();
+
+  dragStartX = e.clientX;
+  dragStartY = e.clientY;
+
+  startLeft = rect.left;
+  startTop = rect.top;
+
+  floatingAI.setPointerCapture(e.pointerId);
+  floatingAI.classList.add('dragging');
+
+});
+
+floatingAI.addEventListener('pointermove', function(e){
+
+  if(!floatingAI.hasPointerCapture(e.pointerId)) return;
+
+  const dx = e.clientX - dragStartX;
+  const dy = e.clientY - dragStartY;
+
+  if(Math.abs(dx) > 5 || Math.abs(dy) > 5){
+    moved = true;
+  }
+
+  let newLeft = startLeft + dx;
+  let newTop = startTop + dy;
+
+  const maxLeft = window.innerWidth - floatingAI.offsetWidth;
+  const maxTop = window.innerHeight - floatingAI.offsetHeight;
+
+  newLeft = Math.max(0, Math.min(maxLeft, newLeft));
+  newTop = Math.max(0, Math.min(maxTop, newTop));
+
+  floatingAI.style.left = newLeft + 'px';
+  floatingAI.style.top = newTop + 'px';
+  floatingAI.style.right = 'auto';
+  floatingAI.style.bottom = 'auto';
+
+});
+
+floatingAI.addEventListener('pointerup', function(e){
+
+  floatingAI.classList.remove('dragging');
+
+  if(floatingAI.hasPointerCapture(e.pointerId)){
+    floatingAI.releasePointerCapture(e.pointerId);
+  }
+
+  if(!moved){
+    show('chat');
+  }
+
+});</script>
 </body>
  </html>
