@@ -4,7 +4,7 @@
 */
 (function(){
   'use strict';
-  window.AL_QURAN_CHAT_API = 'https://weathered-block-c1db.mosharrof0000.workers.dev/';
+  window.AL_QURAN_CHAT_API = 'https://al-quran-research.mosharrof0000.workers.dev/';
   const modes=[['general','💬 সাধারণ প্রশ্ন'],['word','🔎 শব্দ গবেষণা'],['ayah','🧩 আয়াত বিশ্লেষণ'],['math','📊 গাণিতিক গবেষণা'],['concordance','🔗 একই শব্দ অনুসন্ধান'],['translation','📝 অনুবাদ গবেষণা']];
   let mode='general', speaker=true, recognition=null, listening=false;
 
