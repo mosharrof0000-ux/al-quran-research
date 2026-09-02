@@ -32,7 +32,9 @@ const SYSTEM = `তুমি “আল-কুরআন গবেষণা” প
 গাণিতিক গবেষণায় কেবল যাচাইযোগ্য ডেটা থাকলে হিসাব করবে এবং সূত্র/ধাপ দেখাবে।`;
 
 async function askGemini(prompt, env) {
-  if (!env.GEMINI_API_KEY) return null;
+  if (!env.GEMINI_API_KEY) {
+    throw new Error('GEMINI_API_KEY সেট করা নেই।');
+  }
 
   const response = await fetch(
     'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.7-flash:generateContent',
@@ -53,8 +55,7 @@ async function askGemini(prompt, env) {
           }
         ],
         generationConfig: {
-          maxOutputTokens: 900,
-          temperature: 0.25
+          maxOutputTokens: 900
         }
       })
     }
@@ -138,6 +139,10 @@ export default {
             detail: `Gemini: ${String(geminiError?.message || geminiError)}; Cloudflare AI: ${String(cloudflareError?.message || cloudflareError)}`
           }, 500, origin);
         }
+      }
+
+      if (!answer) {
+        return json({ error: 'AI কোনো উত্তর দেয়নি।' }, 502, origin);
       }
 
       return json({ answer, mode, language: 'bn', provider }, 200, origin);
