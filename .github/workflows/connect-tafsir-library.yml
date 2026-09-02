@@ -1,0 +1,59 @@
+name: Connect Tafsir Library
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'tafsir-library.html'
+      - '.github/workflows/connect-tafsir-library.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  connect:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Connect Tafsir Library to main site
+        shell: python
+        run: |
+          from pathlib import Path
+
+          path = Path('index.html')
+          text = path.read_text(encoding='utf-8')
+          marker = 'id="tafsir-library-link"'
+
+          if marker in text:
+              print('তাফসীর গ্রন্থাগার লিংক আগে থেকেই আছে।')
+              raise SystemExit(0)
+
+          card = '''\n      <button id="tafsir-library-link" class="hub-card" onclick="window.location.href='tafsir-library.html'">\n        <span class="emoji">📚</span>\n        <b>তাফসীর গ্রন্থাগার</b>\n        <span>ধারা, গ্রন্থ, পদ্ধতি ও তুলনামূলক গবেষণা</span>\n      </button>\n'''
+
+          start = text.find('<section id="research"')
+          if start == -1:
+              start = text.find("<section id='research'")
+          if start == -1:
+              raise SystemExit('research section পাওয়া যায়নি')
+
+          end = text.find('</section>', start)
+          if end == -1:
+              raise SystemExit('research section-এর শেষ পাওয়া যায়নি')
+
+          text = text[:end] + card + text[end:]
+          path.write_text(text, encoding='utf-8')
+          print('তাফসীর গ্রন্থাগার মূল গবেষণা মেনুতে যুক্ত করা হয়েছে।')
+      - name: Commit connection
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          if git diff --cached --quiet; then
+            echo 'কোনো পরিবর্তন নেই।'
+          else
+            git commit -m 'মূল গবেষণা মেনুতে তাফসীর গ্রন্থাগার যুক্ত করা হলো'
+            git push
+          fi
