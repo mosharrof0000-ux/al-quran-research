@@ -11,7 +11,7 @@ function corsHeaders(origin) {
   const allowed = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
   return {
     'Access-Control-Allow-Origin': allowed,
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS, GET',
     'Access-Control-Allow-Headers': 'Content-Type',
     'Content-Type': 'application/json; charset=utf-8',
     'Vary': 'Origin'
@@ -62,7 +62,8 @@ async function askGemini(prompt, env) {
   );
 
   if (!response.ok) {
-    throw new Error(`Gemini API HTTP ${response.status}`);
+    const detail = await response.text().catch(() => '');
+    throw new Error(`Gemini API HTTP ${response.status}${detail ? `: ${detail.slice(0, 300)}` : ''}`);
   }
 
   const data = await response.json();
@@ -100,8 +101,18 @@ export default {
       return new Response(null, { status: 204, headers: corsHeaders(origin) });
     }
 
+    // সরাসরি Worker URL খুললে দ্রুত বোঝা যাবে নতুন Worker আসলেই চালু হয়েছে কি না।
+    if (request.method === 'GET') {
+      return json({
+        ok: true,
+        service: 'al-quran-research-chat',
+        status: 'Worker চালু আছে',
+        version: '2026-09-03-gemini-fallback-health'
+      }, 200, origin);
+    }
+
     if (request.method !== 'POST') {
-      return json({ error: 'শুধু POST অনুরোধ গ্রহণ করা হয়।' }, 405, origin);
+      return json({ error: 'শুধু POST/GET অনুরোধ গ্রহণ করা হয়।' }, 405, origin);
     }
 
     try {
@@ -123,7 +134,6 @@ export default {
 
       const prompt = `${modeInstruction}\n\nব্যবহারকারীর প্রশ্ন:\n${message}`;
 
-      // প্রথমে Gemini ব্যবহার করা হবে। Gemini ব্যর্থ হলে Cloudflare AI fallback হিসেবে কাজ করবে।
       let answer;
       let provider = 'gemini';
 
