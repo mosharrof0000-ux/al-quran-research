@@ -22,26 +22,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
-      - name: Detect Cloudflare Account ID
-        id: cf-account
-        shell: bash
-        run: |
-          set -euo pipefail
-          response="$(curl -fsS https://api.cloudflare.com/client/v4/accounts \
-            -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
-            -H "Content-Type: application/json")"
-          account_id="$(printf '%s' "$response" | jq -r '.result[0].id // empty')"
-          if [ -z "$account_id" ]; then
-            echo "Cloudflare Account ID পাওয়া যায়নি। Token-এর account permission পরীক্ষা করুন।"
-            exit 1
-          fi
-          echo "account_id=$account_id" >> "$GITHUB_OUTPUT"
-          echo "Cloudflare Account ID শনাক্ত হয়েছে।"
-
       - name: Deploy Worker
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ steps.cf-account.outputs.account_id }}
           workingDirectory: backend
           command: deploy worker.js --config wrangler.jsonc
