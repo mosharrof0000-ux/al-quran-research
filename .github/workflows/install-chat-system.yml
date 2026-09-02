@@ -13,23 +13,27 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: বর্তমান ডিজাইন অক্ষুণ্ণ রেখে chat-system.js সংযুক্ত
+      - name: বর্তমান ডিজাইন অক্ষুণ্ণ রেখে chat-system.js সংযুক্ত ও ক্যাশ সমস্যা ঠিক করা
         shell: python
         run: |
+          import re
           from pathlib import Path
           p=Path('index.html')
           s=p.read_text(encoding='utf-8')
-          tag='<script src="chat-system.js"></script>'
-          if tag not in s:
+          tag='<script src="chat-system.js?v=20260902-2"></script>'
+          pattern=r'<script\s+src="chat-system\.js(?:\?[^\"]*)?"></script>'
+          if re.search(pattern, s):
+              s=re.sub(pattern, tag, s, count=1)
+          else:
               marker='</body>'
               if marker not in s:
                   raise SystemExit('index.html-এ </body> পাওয়া যায়নি')
               s=s.replace(marker, tag+'\n'+marker, 1)
-              p.write_text(s,encoding='utf-8')
+          p.write_text(s,encoding='utf-8')
       - name: পরিবর্তন সংরক্ষণ
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html
-          git diff --cached --quiet || git commit -m 'চ্যাট সিস্টেম index.html-এ সংযুক্ত'
+          git diff --cached --quiet || git commit -m 'চ্যাট সিস্টেমের ক্যাশ সমস্যা ঠিক করা'
           git push
