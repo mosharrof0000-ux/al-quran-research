@@ -20,13 +20,16 @@
       .aq-tool{width:43px;height:43px;border:1px solid #c9c4b8;background:#fff;border-radius:12px;font-size:19px}
       .aq-tool.active{background:#e8e0c8}
       .aq-status{font-size:11px;color:#6a645c;text-align:center;padding:4px 12px}
+      /* মোবাইলে নিচের নেভিগেশন যেন লেখার বক্স ঢেকে না ফেলে */
+      .composer{z-index:10001!important;bottom:78px!important;width:min(720px,calc(100% - 28px))!important}
+      .chat{padding-bottom:155px!important}
+      .chat .chat-body{padding-bottom:18px}
     `;
     document.head.appendChild(s);
   }
 
   function getChat(){return document.querySelector('.chat')}
 
-  // চ্যাট খোলার জন্য আলাদা নিরাপদ পথ—মূল ডিজাইন বা অন্য নেভিগেশন বদলায় না।
   function openChat(){
     const screens=document.querySelectorAll('.screen');
     const chat=document.getElementById('chat');
