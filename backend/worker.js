@@ -1,5 +1,5 @@
 /* আল-কুরআন গবেষণা — নিরাপদ AI চ্যাট ব্যাকএন্ড
-   Cloudflare Workers AI
+   Gemini API + Cloudflare Workers AI fallback
    API key/index.html-এ রাখা হবে না।
 */
 
@@ -31,6 +31,66 @@ const SYSTEM = `তুমি “আল-কুরআন গবেষণা” প
 কুরআন গবেষণায় মূল শব্দ, ধাতু, শব্দরূপ, ব্যাকরণ, সম্ভাব্য অর্থপরিসর, প্রসঙ্গ এবং অনুবাদ আলাদা করে দেখাবে। নিশ্চিত তথ্য ও অনুমান আলাদা রাখবে। তথ্য না থাকলে বানিয়ে সংখ্যা বা উদ্ধৃতি দেবে না।
 গাণিতিক গবেষণায় কেবল যাচাইযোগ্য ডেটা থাকলে হিসাব করবে এবং সূত্র/ধাপ দেখাবে।`;
 
+async function askGemini(prompt, env) {
+  if (!env.GEMINI_API_KEY) return null;
+
+  const response = await fetch(
+    'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.7-flash:generateContent',
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-goog-api-key': env.GEMINI_API_KEY
+      },
+      body: JSON.stringify({
+        systemInstruction: {
+          parts: [{ text: SYSTEM }]
+        },
+        contents: [
+          {
+            role: 'user',
+            parts: [{ text: prompt }]
+          }
+        ],
+        generationConfig: {
+          maxOutputTokens: 900,
+          temperature: 0.25
+        }
+      })
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(`Gemini API HTTP ${response.status}`);
+  }
+
+  const data = await response.json();
+  const answer = data?.candidates?.[0]?.content?.parts
+    ?.map(part => part?.text || '')
+    .join('')
+    .trim();
+
+  if (!answer) throw new Error('Gemini কোনো উত্তর দেয়নি।');
+  return answer;
+}
+
+async function askCloudflareAI(prompt, env) {
+  if (!env.AI) throw new Error('Cloudflare AI binding পাওয়া যায়নি।');
+
+  const result = await env.AI.run('@cf/meta/llama-3.1-8b-instruct-fast', {
+    messages: [
+      { role: 'system', content: SYSTEM },
+      { role: 'user', content: prompt }
+    ],
+    max_tokens: 900,
+    temperature: 0.25
+  });
+
+  const answer = result?.response || result?.choices?.[0]?.message?.content;
+  if (!answer) throw new Error('Cloudflare AI কোনো উত্তর দেয়নি।');
+  return answer;
+}
+
 export default {
   async fetch(request, env) {
     const origin = request.headers.get('Origin') || '';
@@ -60,19 +120,27 @@ export default {
         translation: 'অনুবাদ গবেষণা হিসেবে মূল শব্দের অর্থপরিসর, প্রসঙ্গ এবং সম্ভাব্য বাংলা রূপ তুলনা করো।'
       }[mode] || 'সাধারণ প্রশ্নের উত্তর দাও।';
 
-      const prompt = `${SYSTEM}\n\nগবেষণা মোড: ${modeInstruction}\n\nব্যবহারকারীর প্রশ্ন:\n${message}`;
+      const prompt = `${modeInstruction}\n\nব্যবহারকারীর প্রশ্ন:\n${message}`;
 
-      const result = await env.AI.run('@cf/meta/llama-3.1-8b-instruct-fast', {
-        messages: [
-          { role: 'system', content: SYSTEM },
-          { role: 'user', content: `${modeInstruction}\n\n${message}` }
-        ],
-        max_tokens: 900,
-        temperature: 0.25
-      });
+      // প্রথমে Gemini ব্যবহার করা হবে। Gemini ব্যর্থ হলে Cloudflare AI fallback হিসেবে কাজ করবে।
+      let answer;
+      let provider = 'gemini';
 
-      const answer = result?.response || result?.choices?.[0]?.message?.content || 'দুঃখিত, এই মুহূর্তে উত্তর তৈরি করা যায়নি।';
-      return json({ answer, mode, language: 'bn' }, 200, origin);
+      try {
+        answer = await askGemini(prompt, env);
+      } catch (geminiError) {
+        provider = 'cloudflare-ai';
+        try {
+          answer = await askCloudflareAI(prompt, env);
+        } catch (cloudflareError) {
+          return json({
+            error: 'AI ব্যাকএন্ডে সমস্যা হয়েছে।',
+            detail: `Gemini: ${String(geminiError?.message || geminiError)}; Cloudflare AI: ${String(cloudflareError?.message || cloudflareError)}`
+          }, 500, origin);
+        }
+      }
+
+      return json({ answer, mode, language: 'bn', provider }, 200, origin);
     } catch (error) {
       return json({ error: 'AI ব্যাকএন্ডে সমস্যা হয়েছে।', detail: String(error?.message || error) }, 500, origin);
     }
