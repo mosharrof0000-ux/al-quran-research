@@ -1,7 +1,8 @@
 /* আল-কুরআন গবেষণা — নিরাপদ AI চ্যাট ব্যাকএন্ড
    Gemini API + Cloudflare Workers AI fallback
    API key/index.html-এ রাখা হবে না।
-   DEPLOY TRIGGER: 2026-09-03-03
+   FREE CHAT: Gemini 3.5 Flash / Flash-Lite
+   DEPLOY TRIGGER: 2026-09-03-04
 */
 
 const ALLOWED_ORIGINS = [
@@ -32,13 +33,13 @@ const SYSTEM = `তুমি “আল-কুরআন গবেষণা” প
 কুরআন গবেষণায় মূল শব্দ, ধাতু, শব্দরূপ, ব্যাকরণ, সম্ভাব্য অর্থপরিসর, প্রসঙ্গ এবং অনুবাদ আলাদা করে দেখাবে। নিশ্চিত তথ্য ও অনুমান আলাদা রাখবে। তথ্য না থাকলে বানিয়ে সংখ্যা বা উদ্ধৃতি দেবে না।
 গাণিতিক গবেষণায় কেবল যাচাইযোগ্য ডেটা থাকলে হিসাব করবে এবং সূত্র/ধাপ দেখাবে।`;
 
-async function askGemini(prompt, env) {
+async function askGeminiModel(prompt, env, model) {
   if (!env.GEMINI_API_KEY) {
     throw new Error('GEMINI_API_KEY সেট করা নেই।');
   }
 
   const response = await fetch(
-    'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.7-flash:generateContent',
+    `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
     {
       method: 'POST',
       headers: {
@@ -64,7 +65,7 @@ async function askGemini(prompt, env) {
 
   if (!response.ok) {
     const detail = await response.text().catch(() => '');
-    throw new Error(`Gemini API HTTP ${response.status}${detail ? `: ${detail.slice(0, 300)}` : ''}`);
+    throw new Error(`${model} HTTP ${response.status}${detail ? `: ${detail.slice(0, 300)}` : ''}`);
   }
 
   const data = await response.json();
@@ -73,8 +74,21 @@ async function askGemini(prompt, env) {
     .join('')
     .trim();
 
-  if (!answer) throw new Error('Gemini কোনো উত্তর দেয়নি।');
+  if (!answer) throw new Error(`${model} কোনো উত্তর দেয়নি।`);
   return answer;
+}
+
+async function askGemini(prompt, env) {
+  // প্রথমে ভালো মানের ফ্রি-টিয়ার মডেল; সমস্যা হলে হালকা ফ্রি মডেলে চেষ্টা।
+  try {
+    return { answer: await askGeminiModel(prompt, env, 'gemini-3.5-flash'), model: 'gemini-3.5-flash' };
+  } catch (firstError) {
+    try {
+      return { answer: await askGeminiModel(prompt, env, 'gemini-3.5-flash-lite'), model: 'gemini-3.5-flash-lite' };
+    } catch (secondError) {
+      throw new Error(`Gemini 3.5 Flash: ${String(firstError?.message || firstError)}; Flash-Lite: ${String(secondError?.message || secondError)}`);
+    }
+  }
 }
 
 async function askCloudflareAI(prompt, env) {
@@ -102,13 +116,12 @@ export default {
       return new Response(null, { status: 204, headers: corsHeaders(origin) });
     }
 
-    // সরাসরি Worker URL খুললে দ্রুত বোঝা যাবে নতুন Worker আসলেই চালু হয়েছে কি না।
     if (request.method === 'GET') {
       return json({
         ok: true,
         service: 'al-quran-research-chat',
         status: 'Worker চালু আছে',
-        version: '2026-09-03-gemini-fallback-health'
+        version: '2026-09-03-free-gemini-chat'
       }, 200, origin);
     }
 
@@ -136,10 +149,12 @@ export default {
       const prompt = `${modeInstruction}\n\nব্যবহারকারীর প্রশ্ন:\n${message}`;
 
       let answer;
-      let provider = 'gemini';
+      let provider = 'gemini-3.5-flash';
 
       try {
-        answer = await askGemini(prompt, env);
+        const result = await askGemini(prompt, env);
+        answer = result.answer;
+        provider = result.model;
       } catch (geminiError) {
         provider = 'cloudflare-ai';
         try {
