@@ -1,0 +1,53 @@
+{
+  "registry_version": "0.1",
+  "purpose": "প্রতিটি গুরুত্বপূর্ণ চিন্তা, সিদ্ধান্ত, নির্দেশ, কাজ, পরীক্ষা ও ফলাফলের পুনরুৎপাদনযোগ্য ইতিহাস সংরক্ষণ।",
+  "rules": [
+    "কোনো গুরুত্বপূর্ণ কাজের ইতিহাস মুছে ফেলা যাবে না।",
+    "Correction নতুন record/version হিসেবে যুক্ত হবে।",
+    "AI output স্বয়ংক্রিয়ভাবে verified নয়।",
+    "মূল গবেষণা data এই registry দ্বারা overwrite করা যাবে না।",
+    "প্রতিটি record-এর parent chain থাকবে।"
+  ],
+  "records": [
+    {
+      "chain_id": "CHAIN-20260904-001",
+      "parent_chain_id": null,
+      "type": "VISION",
+      "title": "গবেষণার চিন্তা ও কাজের স্থায়ী ধারাবাহিকতা",
+      "status": "ACTIVE",
+      "source": "user_direction",
+      "decision": "প্রতিটি গুরুত্বপূর্ণ চিন্তা ও কাজকে Chain ID দিয়ে সংযুক্ত করা হবে।",
+      "actions": ["চেইন কাঠামো নির্ধারণ", "Structured Registry তৈরি"],
+      "result": "প্রথম Structured Chain Registry তৈরি হয়েছে।",
+      "next_chain_id": "CHAIN-20260904-002",
+      "created_at": "2026-09-04"
+    },
+    {
+      "chain_id": "CHAIN-20260904-002",
+      "parent_chain_id": "CHAIN-20260904-001",
+      "type": "SYSTEM_DESIGN",
+      "title": "গবেষণা Chain Registry-এর ক্ষেত্র নির্ধারণ",
+      "status": "ACTIVE",
+      "source": "project_design",
+      "fields": [
+        "chain_id",
+        "parent_chain_id",
+        "type",
+        "title",
+        "status",
+        "source",
+        "decision",
+        "actions",
+        "files_changed",
+        "evidence",
+        "test_result",
+        "result",
+        "next_chain_id",
+        "created_at"
+      ],
+      "result": "চিন্তা থেকে পরবর্তী কাজ পর্যন্ত সম্পর্ক রাখার ন্যূনতম data model নির্ধারিত।",
+      "next_chain_id": null,
+      "created_at": "2026-09-04"
+    }
+  ]
+}
