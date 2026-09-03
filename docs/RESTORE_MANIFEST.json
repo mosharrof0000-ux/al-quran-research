@@ -1,0 +1,28 @@
+{
+  "manifest_version": "0.1",
+  "purpose": "নিরাপদ অবস্থায় ওয়েবসাইট ও গবেষণা প্রকল্প পুনরুদ্ধারের মানচিত্র",
+  "repository": "mosharrof0000-ux/al-quran-research",
+  "branch": "main",
+  "restore_source": "GitHub commit history",
+  "protected_assets": [
+    "index.html",
+    "1.html",
+    "MASTER_PROJECT.md",
+    "PROJECT_STATE.md",
+    "quran_research.db",
+    "docs/RESEARCH_CHAIN_OF_COMMAND.md",
+    "docs/research-chain-registry.json",
+    "docs/OUR_THINKING_AND_VISION.md",
+    "our-thinking.html",
+    "chat-system.js"
+  ],
+  "rules": [
+    "পুরোনো commit মুছে ফেলা যাবে না",
+    "Safe Point overwrite করা যাবে না",
+    "Database ও Website আলাদা করে restore/verify করতে হবে",
+    "Restore-এর আগে বর্তমান সমস্যাযুক্ত অবস্থাও সংরক্ষণ করতে হবে",
+    "প্রতিটি restore নতুন Chain record হবে"
+  ],
+  "current_safe_point_commit": "8c1bce5817d620cf19c166f153def05a851ee499",
+  "note": "এই commit-টি Backup Policy যোগ করার পরের বর্তমান repository অবস্থাকে নির্দেশ করে। Website-এর নির্দিষ্ট Last Known Good commit আলাদা পরীক্ষার পরে চিহ্নিত করতে হবে।"
+}
