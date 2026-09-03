@@ -1,8 +1,7 @@
 /* আল-কুরআন গবেষণা — নিরাপদ AI চ্যাট ব্যাকএন্ড
    Gemini API + Cloudflare Workers AI fallback
    API key/index.html-এ রাখা হবে না।
-   FREE CHAT: Gemini 3.5 Flash / Flash-Lite
-   DEPLOY TRIGGER: 2026-09-03-04
+   Gemini primary: 3.8 Flash; fallback: 3.5 Flash-Lite
 */
 
 const ALLOWED_ORIGINS = [
@@ -21,10 +20,7 @@ function corsHeaders(origin) {
 }
 
 function json(data, status, origin) {
-  return new Response(JSON.stringify(data), {
-    status,
-    headers: corsHeaders(origin)
-  });
+  return new Response(JSON.stringify(data), { status, headers: corsHeaders(origin) });
 }
 
 const SYSTEM = `তুমি “আল-কুরআন গবেষণা” প্রকল্পের বাংলা গবেষণা সহকারী।
@@ -34,34 +30,20 @@ const SYSTEM = `তুমি “আল-কুরআন গবেষণা” প
 গাণিতিক গবেষণায় কেবল যাচাইযোগ্য ডেটা থাকলে হিসাব করবে এবং সূত্র/ধাপ দেখাবে।`;
 
 async function askGeminiModel(prompt, env, model) {
-  if (!env.GEMINI_API_KEY) {
-    throw new Error('GEMINI_API_KEY সেট করা নেই।');
-  }
+  if (!env.GEMINI_API_KEY) throw new Error('GEMINI_API_KEY সেট করা নেই।');
 
-  const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-goog-api-key': env.GEMINI_API_KEY
-      },
-      body: JSON.stringify({
-        systemInstruction: {
-          parts: [{ text: SYSTEM }]
-        },
-        contents: [
-          {
-            role: 'user',
-            parts: [{ text: prompt }]
-          }
-        ],
-        generationConfig: {
-          maxOutputTokens: 900
-        }
-      })
-    }
-  );
+  const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-goog-api-key': env.GEMINI_API_KEY
+    },
+    body: JSON.stringify({
+      systemInstruction: { parts: [{ text: SYSTEM }] },
+      contents: [{ role: 'user', parts: [{ text: prompt }] }],
+      generationConfig: { maxOutputTokens: 900 }
+    })
+  });
 
   if (!response.ok) {
     const detail = await response.text().catch(() => '');
@@ -69,31 +51,25 @@ async function askGeminiModel(prompt, env, model) {
   }
 
   const data = await response.json();
-  const answer = data?.candidates?.[0]?.content?.parts
-    ?.map(part => part?.text || '')
-    .join('')
-    .trim();
-
+  const answer = data?.candidates?.[0]?.content?.parts?.map(part => part?.text || '').join('').trim();
   if (!answer) throw new Error(`${model} কোনো উত্তর দেয়নি।`);
   return answer;
 }
 
 async function askGemini(prompt, env) {
-  // প্রথমে ভালো মানের ফ্রি-টিয়ার মডেল; সমস্যা হলে হালকা ফ্রি মডেলে চেষ্টা।
   try {
-    return { answer: await askGeminiModel(prompt, env, 'gemini-3.5-flash'), model: 'gemini-3.5-flash' };
+    return { answer: await askGeminiModel(prompt, env, 'gemini-3.8-flash'), model: 'gemini-3.8-flash' };
   } catch (firstError) {
     try {
       return { answer: await askGeminiModel(prompt, env, 'gemini-3.5-flash-lite'), model: 'gemini-3.5-flash-lite' };
     } catch (secondError) {
-      throw new Error(`Gemini 3.5 Flash: ${String(firstError?.message || firstError)}; Flash-Lite: ${String(secondError?.message || secondError)}`);
+      throw new Error(`Gemini primary: ${String(firstError?.message || firstError)}; fallback: ${String(secondError?.message || secondError)}`);
     }
   }
 }
 
 async function askCloudflareAI(prompt, env) {
   if (!env.AI) throw new Error('Cloudflare AI binding পাওয়া যায়নি।');
-
   const result = await env.AI.run('@cf/meta/llama-3.1-8b-instruct-fast', {
     messages: [
       { role: 'system', content: SYSTEM },
@@ -102,7 +78,6 @@ async function askCloudflareAI(prompt, env) {
     max_tokens: 900,
     temperature: 0.25
   });
-
   const answer = result?.response || result?.choices?.[0]?.message?.content;
   if (!answer) throw new Error('Cloudflare AI কোনো উত্তর দেয়নি।');
   return answer;
@@ -111,29 +86,21 @@ async function askCloudflareAI(prompt, env) {
 export default {
   async fetch(request, env) {
     const origin = request.headers.get('Origin') || '';
-
-    if (request.method === 'OPTIONS') {
-      return new Response(null, { status: 204, headers: corsHeaders(origin) });
-    }
-
-    if (request.method === 'GET') {
-      return json({
-        ok: true,
-        service: 'al-quran-research-chat',
-        status: 'Worker চালু আছে',
-        version: '2026-09-03-free-gemini-chat'
-      }, 200, origin);
-    }
-
-    if (request.method !== 'POST') {
-      return json({ error: 'শুধু POST/GET অনুরোধ গ্রহণ করা হয়।' }, 405, origin);
-    }
+    if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: corsHeaders(origin) });
+    if (request.method === 'GET') return json({
+      ok: true,
+      service: 'al-quran-research-chat',
+      status: 'Worker চালু আছে',
+      gemini: 'gemini-3.8-flash',
+      fallback: 'gemini-3.5-flash-lite',
+      version: '2026-09-04-gemini-3.8-chat'
+    }, 200, origin);
+    if (request.method !== 'POST') return json({ error: 'শুধু POST/GET অনুরোধ গ্রহণ করা হয়।' }, 405, origin);
 
     try {
       const body = await request.json();
       const message = String(body?.message || '').trim();
       const mode = String(body?.mode || 'general');
-
       if (!message) return json({ error: 'প্রশ্নটি খালি।' }, 400, origin);
       if (message.length > 6000) return json({ error: 'প্রশ্নটি খুব বড়।' }, 413, origin);
 
@@ -147,9 +114,8 @@ export default {
       }[mode] || 'সাধারণ প্রশ্নের উত্তর দাও।';
 
       const prompt = `${modeInstruction}\n\nব্যবহারকারীর প্রশ্ন:\n${message}`;
-
       let answer;
-      let provider = 'gemini-3.5-flash';
+      let provider = 'gemini-3.8-flash';
 
       try {
         const result = await askGemini(prompt, env);
@@ -167,10 +133,7 @@ export default {
         }
       }
 
-      if (!answer) {
-        return json({ error: 'AI কোনো উত্তর দেয়নি।' }, 502, origin);
-      }
-
+      if (!answer) return json({ error: 'AI কোনো উত্তর দেয়নি।' }, 502, origin);
       return json({ answer, mode, language: 'bn', provider }, 200, origin);
     } catch (error) {
       return json({ error: 'AI ব্যাকএন্ডে সমস্যা হয়েছে।', detail: String(error?.message || error) }, 500, origin);
