@@ -5,11 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>আল-কুরআন গবেষণা</title>
 <style>
-:root{
-  --bg:#071d1d; --deep:#082525; --green:#0d4b3e; --green2:#123d36;
-  --gold:#cda84a; --gold2:#f2d786; --cream:#f7f2e8; --ink:#202328;
-  --purple:#30254e; --purple2:#4b356d; --line:rgba(223,185,85,.7);
-}
+:root{--bg:#071d1d;--deep:#082525;--green:#0d4b3e;--green2:#123d36;--gold:#cda84a;--gold2:#f2d786;--cream:#f7f2e8;--ink:#202328;--purple:#30254e;--purple2:#4b356d;--line:rgba(223,185,85,.7)}
 *{box-sizing:border-box}
 html,body{margin:0;min-height:100%;font-family:"Noto Sans Bengali",system-ui,sans-serif;background:radial-gradient(circle at 50% 0,#123f3c 0,#071d1d 52%,#041314 100%);color:var(--cream)}
 body{padding-bottom:94px}.app{max-width:760px;margin:auto;min-height:100vh;position:relative;overflow:hidden}.screen{display:none;min-height:100vh;padding:16px 14px 96px}.screen.active{display:block}
@@ -21,7 +17,7 @@ body{padding-bottom:94px}.app{max-width:760px;margin:auto;min-height:100vh;posit
 <body>
 <div class="app">
 <section id="home" class="screen active">
-  <div class="home-hero"><div class="pattern"></div><div class="arch"></div><div class="logo">ﷲ</div><h1 class="home-title">আল-কুরআন</h1><p class="home-sub">পড়ুন, বুঝুন, গবেষণা করুন</p><div class="home-actions"><button class="big-btn quran" onclick="show('quran')"><span class="big-icon">📖</span><span class="big-text"><b>কুরআন খুলুন</b><span>পড়ুন এবং চিন্তা করুন</span></span><span class="arrow">›</span></button><button class="big-btn research" onclick="show('research')"><span class="big-icon">🔎</span><span class="big-text"><b>গবেষণা</b><span>ভাষা, শব্দ ও আয়াত বিশ্লেষণ</span></span><span class="arrow">›</span></button></div><div class="quote">“পড়ুন, বুঝুন, গবেষণা করুন”<small>ভাষাভিত্তিক কুরআন গবেষণা</small></div></div>
+<div class="home-hero"><div class="pattern"></div><div class="arch"></div><div class="logo">ﷲ</div><h1 class="home-title">আল-কুরআন</h1><p class="home-sub">পড়ুন, বুঝুন, গবেষণা করুন</p><div class="home-actions"><button class="big-btn quran" onclick="show('quran')"><span class="big-icon">📖</span><span class="big-text"><b>কুরআন খুলুন</b><span>পড়ুন এবং চিন্তা করুন</span></span><span class="arrow">›</span></button><button class="big-btn research" onclick="show('research')"><span class="big-icon">🔎</span><span class="big-text"><b>গবেষণা</b><span>ভাষা, শব্দ ও আয়াত বিশ্লেষণ</span></span><span class="arrow">›</span></button></div><div class="quote">“পড়ুন, বুঝুন, গবেষণা করুন”<small>ভাষাভিত্তিক কুরআন গবেষণা</small></div></div>
 </section>
 <section id="quran" class="screen"><div class="topbar"><span class="back" onclick="show('home')">‹</span><div class="top-title"><b>কুরআন</b><span>সূরা নির্বাচন করুন</span></div><span class="gear">⚙</span></div><div class="search">🔍<input id="surahSearch" placeholder="সূরার নাম বা নম্বর খুঁজুন" oninput="filterSurahs()"></div><div class="surah-list" id="surahList"></div></section>
 <section id="research" class="screen"><div class="topbar"><span class="back" onclick="show('home')">‹</span><div class="top-title"><b>গবেষণা</b><span>ভাষাভিত্তিক গবেষণা কেন্দ্র</span></div><span class="gear">⚙</span></div><div class="library-head"><h3>গবেষণা গ্রন্থাগার</h3><p>কুরআনের আয়াত, শব্দ, Root, ব্যাকরণ ও অর্থের তথ্য API থেকে ধাপে ধাপে আনা হবে।</p></div><div class="hub-grid"><div class="hub-card" onclick="loadResearchAyah()"><span class="emoji">📖</span><b>আয়াত গবেষণা</b><span>সূরা ফাতিহা ১:১</span></div><div class="hub-card"><span class="emoji">🔤</span><b>শব্দ গবেষণা</b><span>শব্দভিত্তিক বিশ্লেষণ</span></div><div class="hub-card"><span class="emoji">🌱</span><b>Root গবেষণা</b><span>মূলধাতু অনুসন্ধান</span></div><div class="hub-card"><span class="emoji">📊</span><b>গবেষণা মেট্রিক</b><span>সংজ্ঞা ও হিসাব</span></div></div><div id="apiResearchCard" class="api-research-card"></div></section>
@@ -41,5 +37,5 @@ async function openSurah(n){show('reading');document.getElementById('readingTitl
 async function loadResearchAyah(){show('research');const box=document.getElementById('apiResearchCard');box.classList.add('show');box.innerHTML='<b>গবেষণার তথ্য লোড হচ্ছে…</b>';try{const d=await apiGet('/ayah/1/1');box.innerHTML=`<h3>${d.surah_name||'সূরা ফাতিহা'} — আয়াত ${d.ayah_number}</h3><div class="api-status">${d.text_status||''} · ${d.analysis_status||''}</div><div style="font-family:serif;font-size:28px;direction:rtl;text-align:right;margin:12px 0">${d.arabic_text||''}</div>${(d.tokens||[]).map(t=>`<div class="api-word"><b>${t.arabic}</b> — ${t.bengali_pronunciation||''}<div class="api-meta">Root: ${(t.root&&t.root.value)||'উল্লেখ নেই'}<br>ব্যাকরণ: ${(t.grammar&&t.grammar.role_bn)||'উল্লেখ নেই'}<br>আক্ষরিক অর্থ: ${(t.meaning&&t.meaning.literal_bn)||'উল্লেখ নেই'}</div></div>`).join('')}`;}catch(e){box.innerHTML='<b>API সংযোগে সমস্যা হয়েছে।</b><div class="api-meta">Research API উত্তর দেয়নি।</div>';}}
 renderSurahs();
 </script>
-<script src="chat-system.js?v=20260902-2"></script>
+<script src="chat-system.js?v=20260905-3"></script>
 </body></html>
