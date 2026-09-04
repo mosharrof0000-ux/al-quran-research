@@ -1,0 +1,120 @@
+{
+  "dataset": "al-quran-research",
+  "version": "2026-09-04-fatiha-v1",
+  "research_status": "verified-text-foundation",
+  "principles": {
+    "aqidah_neutral": true,
+    "raw_text_preserved": true,
+    "ai_generated_data_auto_verified": false,
+    "uncertainty_must_be_explicit": true,
+    "no_sectarian_interpretation": true
+  },
+  "surah": {
+    "number": 1,
+    "name_ar": "الفاتحة",
+    "name_bn": "সূরা ফাতিহা",
+    "ayah_count": 7
+  },
+  "ayahs": [
+    {
+      "ayah_number": 1,
+      "arabic_text": "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ",
+      "text_status": "verified",
+      "analysis_status": "verified_word_analysis",
+      "words": [
+        {
+          "token_id": "1:1:1",
+          "arabic": "بِسْمِ",
+          "bengali_pronunciation": "বিসমি",
+          "literal_meaning": "নামের দ্বারা / নামের সঙ্গে",
+          "root": "স-م-و / و-س-م — ব্যুৎপত্তিগত বিশ্লেষণভেদে ভিন্নতা আছে",
+          "root_status": "disputed",
+          "morphology": "بِـ প্রিপোজিশন + اسْم নামবাচক পদ; اسْم এখানে مجرور",
+          "grammar_role": "حرف جر + اسم مجرور; بِسْمِ اللَّهِ-এ إضافة গঠনের অংশ",
+          "certainty": "high_for_form_and_syntax; disputed_for_etymology",
+          "note": "এখানে আক্ষরিক অর্থকে শুধু ‘সম্পর্কে’ বলা যথেষ্ট নয়।"
+        },
+        {
+          "token_id": "1:1:2",
+          "arabic": "اللَّهِ",
+          "bengali_pronunciation": "আল্লাহি",
+          "literal_meaning": "আল্লাহ — একটি বিশেষ নাম",
+          "root": "إ-ل-ه-এর সঙ্গে সম্পর্ক দেখানো হয়; ব্যুৎপত্তি নিয়ে মতভেদ আছে",
+          "root_status": "disputed",
+          "morphology": "বিশেষ নাম (اسم عَلَم)",
+          "grammar_role": "مضاف إليه مجرور — بِسْمِ-এর إضافة-র দ্বিতীয় পদ",
+          "certainty": "high_for_form_and_syntax; disputed_for_etymology",
+          "note": "নিশ্চিত একক Root হিসেবে উপস্থাপন করা হবে না।"
+        },
+        {
+          "token_id": "1:1:3",
+          "arabic": "الرَّحْمَٰنِ",
+          "bengali_pronunciation": "আর-রহমানি",
+          "literal_meaning": "পরম দয়াময় / অত্যন্ত দয়াশীল",
+          "root": "ر-ح-م (র-হ-ম)",
+          "root_status": "established",
+          "morphology": "الـ + رَحْمَان; ওজন فَعْلَان",
+          "grammar_role": "نعت/صفة مجرور — اللَّهِ-এর বিশেষণ",
+          "certainty": "high",
+          "note": "শুধু ‘দয়ালু’ লিখে অর্থপরিসর অযথা সংকুচিত করা হবে না।"
+        },
+        {
+          "token_id": "1:1:4",
+          "arabic": "الرَّحِيمِ",
+          "bengali_pronunciation": "আর-রহিমি",
+          "literal_meaning": "অতি দয়াশীল / করুণাময়",
+          "root": "ر-ح-م (র-হ-ম)",
+          "root_status": "established",
+          "morphology": "الـ + رَحِيم; ওজন فَعِيل",
+          "grammar_role": "نعت/صفة مجرور — اللَّهِ-এর আরেকটি বিশেষণ",
+          "certainty": "high",
+          "note": "এখানে নিজে থেকে কোনো নির্দিষ্ট ধর্মতাত্ত্বিক পার্থক্য আরোপ করা হবে না।"
+        }
+      ]
+    },
+    {
+      "ayah_number": 2,
+      "arabic_text": "الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ",
+      "text_status": "verified",
+      "analysis_status": "raw_text_verified_analysis_pending"
+    },
+    {
+      "ayah_number": 3,
+      "arabic_text": "الرَّحْمَٰنِ الرَّحِيمِ",
+      "text_status": "verified",
+      "analysis_status": "raw_text_verified_analysis_pending"
+    },
+    {
+      "ayah_number": 4,
+      "arabic_text": "مَالِكِ يَوْمِ الدِّينِ",
+      "text_status": "verified",
+      "analysis_status": "raw_text_verified_analysis_pending"
+    },
+    {
+      "ayah_number": 5,
+      "arabic_text": "إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ",
+      "text_status": "verified",
+      "analysis_status": "raw_text_verified_analysis_pending"
+    },
+    {
+      "ayah_number": 6,
+      "arabic_text": "اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ",
+      "text_status": "verified",
+      "analysis_status": "raw_text_verified_analysis_pending"
+    },
+    {
+      "ayah_number": 7,
+      "arabic_text": "صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ",
+      "text_status": "verified",
+      "analysis_status": "raw_text_verified_analysis_pending"
+    }
+  ],
+  "evidence": [
+    {
+      "type": "linguistic_grammar_reference",
+      "name": "Quranic Arabic Corpus",
+      "scope": "Arabic grammar, morphology and word-by-word analysis",
+      "url": "https://corpus.quran.com/"
+    }
+  ]
+}
