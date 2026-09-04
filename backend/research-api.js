@@ -1,9 +1,6 @@
-/* আল-কুরআন গবেষণা — Research API Adapter v1.0
+/* আল-কুরআন গবেষণা — Research API Adapter v1.1
    Master Dataset → Read-only API
-
-   এই স্তর UI বা AI logic বদলায় না।
    Canonical dataset: data/fatiha-master-v1.json
-   ভবিষ্যতে একই API contract Cloudflare D1-এ সরানো যাবে।
 */
 
 const DATA_URL = 'https://raw.githubusercontent.com/mosharrof0000-ux/al-quran-research/main/data/fatiha-master-v1.json';
@@ -22,14 +19,11 @@ function apiJson(data, status = 200) {
 async function loadMasterDataset() {
   const cached = await caches.default.match(new Request('https://cache.local/' + CACHE_KEY));
   if (cached) return cached.json();
-
   const response = await fetch(DATA_URL, {
     headers: { 'Accept': 'application/json' },
     cf: { cacheTtl: 60, cacheEverything: true }
   });
-
   if (!response.ok) throw new Error(`Master dataset fetch failed: ${response.status}`);
-
   const data = await response.json();
   const cacheResponse = new Response(JSON.stringify(data), {
     headers: { 'Content-Type': 'application/json; charset=utf-8' }
@@ -42,17 +36,27 @@ function normalizePath(pathname) {
   return pathname.replace(/^\/+|\/+$/g, '').split('/').filter(Boolean);
 }
 
+function getSurahs(db) {
+  if (Array.isArray(db.surahs)) return db.surahs;
+  if (db.surah && typeof db.surah === 'object') {
+    return [{
+      ...db.surah,
+      name_bengali: db.surah.name_bn,
+      ayahs: Array.isArray(db.ayahs) ? db.ayahs : []
+    }];
+  }
+  return [];
+}
+
 export async function handleResearchApi(request) {
   const url = new URL(request.url);
   const parts = normalizePath(url.pathname);
-
-  // API contract: /api/v1/...
   if (parts[0] !== 'api' || parts[1] !== 'v1') return null;
   if (request.method !== 'GET') return apiJson({ error: 'METHOD_NOT_ALLOWED' }, 405);
 
   try {
     const db = await loadMasterDataset();
-    const surahs = Array.isArray(db.surahs) ? db.surahs : [];
+    const surahs = getSurahs(db);
 
     if (parts[2] === 'status') {
       return apiJson({
@@ -79,7 +83,7 @@ export async function handleResearchApi(request) {
       if (!ayah) return apiJson({ error: 'AYAH_NOT_FOUND' }, 404);
       return apiJson({
         surah_number: surahNumber,
-        surah_name: surah.name_bengali,
+        surah_name: surah.name_bengali || surah.name_bn || surah.name_ar,
         ...ayah
       });
     }
@@ -102,7 +106,6 @@ export async function handleResearchApi(request) {
     if (parts[2] === 'search') {
       const q = String(url.searchParams.get('q') || '').trim().toLowerCase();
       if (!q) return apiJson({ results: [] });
-
       const results = [];
       for (const surah of surahs) {
         for (const ayah of (surah.ayahs || [])) {
