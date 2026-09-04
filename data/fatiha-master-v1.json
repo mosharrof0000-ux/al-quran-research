@@ -1,0 +1,124 @@
+{
+  "dataset": "al-quran-research",
+  "schema_version": "1.0",
+  "dataset_version": "2026-09-04-fatiha-master-v1",
+  "status": "PILOT",
+  "rules": {
+    "aqidah_neutral": true,
+    "raw_text_preserved": true,
+    "ai_output_auto_verified": false,
+    "uncertainty_explicit": true,
+    "sectarian_interpretation": false
+  },
+  "surah": {
+    "surah_id": "S001",
+    "surah_number": 1,
+    "name_ar": "الفاتحة",
+    "name_bn": "সূরা ফাতিহা",
+    "ayah_count": 7,
+    "status": "ACTIVE"
+  },
+  "ayahs": [
+    {
+      "ayah_id": "S001-A001",
+      "ayah_number": 1,
+      "arabic_text": "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ",
+      "text_status": "VERIFIED",
+      "analysis_status": "VERIFIED_WORD_ANALYSIS",
+      "tokens": [
+        {
+          "token_id": "S001-A001-T001",
+          "position": 1,
+          "arabic": "بِسْمِ",
+          "bengali_pronunciation": "বিসমি",
+          "root": {"value": "س-م-و / و-س-م", "status": "DISPUTED", "note_bn": "ব্যুৎপত্তিগত বিশ্লেষণভেদে ভিন্নতা আছে।"},
+          "morphology": {"analysis_bn": "بِـ প্রিপোজিশন + اسْم নামবাচক পদ; اسْم এখানে مجرور।", "certainty": "HIGH"},
+          "grammar": {"role_bn": "حرف جر + اسم مجرور; بِسْمِ اللَّهِ-এ إضافة গঠনের অংশ।", "certainty": "HIGH"},
+          "meaning": {"literal_bn": "নামের দ্বারা / নামের সঙ্গে", "certainty": "HIGH"}
+        },
+        {
+          "token_id": "S001-A001-T002",
+          "position": 2,
+          "arabic": "اللَّهِ",
+          "bengali_pronunciation": "আল্লাহি",
+          "root": {"value": "إ-ل-ه-এর সঙ্গে সম্পর্ক দেখানো হয়", "status": "DISPUTED", "note_bn": "ব্যুৎপত্তি নিয়ে মতভেদ আছে; একক নিশ্চিত Root হিসেবে উপস্থাপন নয়।"},
+          "morphology": {"analysis_bn": "বিশেষ নাম (اسم عَلَم)।", "certainty": "HIGH"},
+          "grammar": {"role_bn": "مضاف إليه مجرور — بِسْمِ-এর إضافة-র দ্বিতীয় পদ।", "certainty": "HIGH"},
+          "meaning": {"literal_bn": "আল্লাহ — একটি বিশেষ নাম", "certainty": "HIGH"}
+        },
+        {
+          "token_id": "S001-A001-T003",
+          "position": 3,
+          "arabic": "الرَّحْمَٰنِ",
+          "bengali_pronunciation": "আর-রহমানি",
+          "root": {"value": "ر-ح-م", "status": "ESTABLISHED"},
+          "morphology": {"pattern_ar": "فَعْلَان", "analysis_bn": "الـ + رَحْمَان; ওজন فَعْلَان।", "certainty": "HIGH"},
+          "grammar": {"role_bn": "نعت/صفة مجرور — اللَّهِ-এর বিশেষণ।", "certainty": "HIGH"},
+          "meaning": {"literal_bn": "পরম দয়াময় / অত্যন্ত দয়াশীল", "certainty": "HIGH"}
+        },
+        {
+          "token_id": "S001-A001-T004",
+          "position": 4,
+          "arabic": "الرَّحِيمِ",
+          "bengali_pronunciation": "আর-রহিমি",
+          "root": {"value": "ر-ح-م", "status": "ESTABLISHED"},
+          "morphology": {"pattern_ar": "فَعِيل", "analysis_bn": "الـ + رَحِيم; ওজন فَعِيل।", "certainty": "HIGH"},
+          "grammar": {"role_bn": "نعت/صفة مجرور — اللَّهِ-এর আরেকটি বিশেষণ।", "certainty": "HIGH"},
+          "meaning": {"literal_bn": "অতি দয়াশীল / করুণাময়", "certainty": "HIGH"}
+        }
+      ]
+    },
+    {
+      "ayah_id": "S001-A002",
+      "ayah_number": 2,
+      "arabic_text": "الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ",
+      "text_status": "VERIFIED",
+      "analysis_status": "ANALYSIS_PENDING"
+    },
+    {
+      "ayah_id": "S001-A003",
+      "ayah_number": 3,
+      "arabic_text": "الرَّحْمَٰنِ الرَّحِيمِ",
+      "text_status": "VERIFIED",
+      "analysis_status": "ANALYSIS_PENDING"
+    },
+    {
+      "ayah_id": "S001-A004",
+      "ayah_number": 4,
+      "arabic_text": "مَالِكِ يَوْمِ الدِّينِ",
+      "text_status": "VERIFIED",
+      "analysis_status": "ANALYSIS_PENDING"
+    },
+    {
+      "ayah_id": "S001-A005",
+      "ayah_number": 5,
+      "arabic_text": "إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ",
+      "text_status": "VERIFIED",
+      "analysis_status": "ANALYSIS_PENDING"
+    },
+    {
+      "ayah_id": "S001-A006",
+      "ayah_number": 6,
+      "arabic_text": "اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ",
+      "text_status": "VERIFIED",
+      "analysis_status": "ANALYSIS_PENDING"
+    },
+    {
+      "ayah_id": "S001-A007",
+      "ayah_number": 7,
+      "arabic_text": "صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ",
+      "text_status": "VERIFIED",
+      "analysis_status": "ANALYSIS_PENDING"
+    }
+  ],
+  "evidence": [
+    {
+      "evidence_id": "E-QAC-001",
+      "source_type": "LINGUISTIC_REFERENCE",
+      "name": "Quranic Arabic Corpus",
+      "scope": "Arabic morphology, syntax and word-by-word analysis",
+      "url": "https://corpus.quran.com/",
+      "note_bn": "বাহ্যিক উৎসের তথ্য প্রকল্পের নিজস্ব verified data হিসেবে স্বয়ংক্রিয়ভাবে গ্রহণ করা হবে না।"
+    }
+  ]
+}
