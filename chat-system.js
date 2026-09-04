@@ -59,5 +59,5 @@
   async function sendMessage(){const input=document.getElementById('aq-input');if(!input)return;const text=input.value.trim();if(!text)return;input.value='';addUser(text);const endpoint=window.AL_QURAN_CHAT_API;if(!endpoint){addAI('আপনার প্রশ্ন পেয়েছি। AI উত্তর দেওয়ার Worker সংযোগটি এখনো নির্ধারিত হয়নি।',false);return}try{const r=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:text,mode,language:'bn'})});const data=await r.json().catch(()=>({}));if(!r.ok)throw new Error(data?.detail||data?.error||`Worker HTTP ${r.status}`);if(!data.answer)throw new Error('Worker থেকে উত্তর আসেনি।');addAI(data.answer)}catch(e){console.error(e);addAI('AI সংযোগে সমস্যা হয়েছে।\nকারণ: '+String(e?.message||e),false)}}
   function watch(){addStyles();bindChatOpenButtons();addThinkingButton();setTimeout(()=>{if(!document.getElementById('aq-thinking-btn'))watch()},500)}
   window.AlQuranChat={setup,sendMessage,startVoice,say,openChat,closeChat};
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',watch);else watch();
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>{watch();setup()});else{watch();setup()}
 })();
