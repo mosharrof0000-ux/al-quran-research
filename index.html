@@ -37,5 +37,5 @@ async function openSurah(n){show('reading');document.getElementById('readingTitl
 async function loadResearchAyah(){show('research');const box=document.getElementById('apiResearchCard');box.classList.add('show');box.innerHTML='<b>গবেষণার তথ্য লোড হচ্ছে…</b>';try{const d=await apiGet('/ayah/1/1');box.innerHTML=`<h3>${d.surah_name||'সূরা ফাতিহা'} — আয়াত ${d.ayah_number}</h3><div class="api-status">${d.text_status||''} · ${d.analysis_status||''}</div><div style="font-family:serif;font-size:28px;direction:rtl;text-align:right;margin:12px 0">${d.arabic_text||''}</div>${(d.tokens||[]).map(t=>`<div class="api-word"><b>${t.arabic}</b> — ${t.bengali_pronunciation||''}<div class="api-meta">Root: ${(t.root&&t.root.value)||'উল্লেখ নেই'}<br>ব্যাকরণ: ${(t.grammar&&t.grammar.role_bn)||'উল্লেখ নেই'}<br>আক্ষরিক অর্থ: ${(t.meaning&&t.meaning.literal_bn)||'উল্লেখ নেই'}</div></div>`).join('')}`;}catch(e){box.innerHTML='<b>API সংযোগে সমস্যা হয়েছে।</b><div class="api-meta">Research API উত্তর দেয়নি।</div>';}}
 renderSurahs();
 </script>
-<script src="chat-system.js?v=20260902-2"></script>
+<script src="chat-system.js?v=20260905-2"></script>
 </body></html>
