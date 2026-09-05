@@ -1,12 +1,13 @@
-/* আল-কুরআন গবেষণা — নিরাপদ Worker Entry Wrapper v1.4
+/* আল-কুরআন গবেষণা — নিরাপদ Worker Entry Wrapper v1.5
 
-Research API ও মূল worker.js অপরিবর্তিত রেখে chat-এর জন্য একটি নির্ভরযোগ্য
+Research API ও মূল worker.js অপরিবর্তিত রেখে chat-এর জন্য নির্ভরযোগ্য
 Workers AI fallback রাখা হয়েছে। মূল AI ব্যর্থ হলে বর্তমান সক্রিয় Gemma 4
-model দিয়ে উত্তর দেওয়ার চেষ্টা করা হবে।
+model, তারপর দ্বিতীয় সক্রিয় Llama recovery model দিয়ে উত্তর দেওয়ার চেষ্টা করা হবে।
 */
 
 import worker from './worker.js';
 import { handleResearchApi } from './research-api.js';
+import { recoverChat } from './chat-recovery.js';
 
 const ALLOWED_ORIGINS = [
   'https://mosharrof0000-ux.github.io'
@@ -133,9 +134,13 @@ export default {
     const response = await worker.fetch(request.clone(), env, ctx);
     if (response.status < 500) return response;
 
-    // মূল AI ব্যর্থ হলে বর্তমান Workers AI model দিয়ে উত্তর দেওয়ার চেষ্টা।
+    // প্রথম Workers AI fallback।
     const fallback = await workersAiFallback(request, env, origin);
     if (fallback) return fallback;
+
+    // দ্বিতীয় recovery layer। প্রথম fallback ব্যর্থ হলেও সক্রিয় Llama model দিয়ে চেষ্টা করবে।
+    const recovery = await recoverChat(request.clone(), env);
+    if (recovery) return recovery;
 
     return response;
   }
