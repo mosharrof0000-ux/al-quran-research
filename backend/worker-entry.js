@@ -1,12 +1,7 @@
-/* আল-কুরআন গবেষণা — নিরাপদ Worker Entry Wrapper v1.1
+/* আল-কুরআন গবেষণা — নিরাপদ Worker Entry Wrapper v1.2
 
-বর্তমান worker.js অপরিবর্তিত রেখে Research API-কে সামনে আনার জন্য
-এই wrapper ব্যবহার করা হবে। Research API route হলে সেটি response দেবে;
-অন্য সব request বর্তমান worker.js-এ চলে যাবে।
-
-নিরাপদ AI diagnostic endpoint:
-/diagnostic — Secret-এর মূল্য প্রকাশ না করে runtime-এ GEMINI_API_KEY
-আছে কি না এবং Gemini API reachable কি না পরীক্ষা করে।
+বর্তমান worker.js অপরিবর্তিত রেখে Research API ও AI chat চালানো হয়।
+Fallback হিসেবে বর্তমান Workers AI catalog-এর সক্রিয় Gemma 4 model ব্যবহার করা হয়।
 */
 
 import worker from './worker.js';
@@ -20,7 +15,7 @@ function corsHeaders(origin) {
   const allowed = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
   return {
     'Access-Control-Allow-Origin': allowed,
-    'Access-Control-Allow-Methods': 'GET, OPTIONS',
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type',
     'Content-Type': 'application/json; charset=utf-8',
     'Vary': 'Origin'
@@ -51,6 +46,7 @@ async function handleDiagnostic(request, env) {
     service: 'al-quran-research-diagnostic',
     worker_runtime: 'reachable',
     gemini_key_present: Boolean(env.GEMINI_API_KEY),
+    workers_ai_binding_present: Boolean(env.AI),
     gemini_test: 'not-run'
   };
 
@@ -61,7 +57,7 @@ async function handleDiagnostic(request, env) {
   }
 
   try {
-    const model = env.GEMINI_MODEL || 'gemini-2.5-flash';
+    const model = env.GEMINI_MODEL || 'gemini-3.8-flash';
     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
       method: 'POST',
       headers: {
@@ -97,10 +93,7 @@ export default {
     if (diagnosticResponse) return diagnosticResponse;
 
     const researchResponse = await handleResearchApi(request);
-
-    if (researchResponse) {
-      return researchResponse;
-    }
+    if (researchResponse) return researchResponse;
 
     return worker.fetch(request, env, ctx);
   }
