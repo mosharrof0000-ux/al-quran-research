@@ -153,7 +153,7 @@ async function askGemini(prompt, env) {
 
 async function askCloudflareAI(prompt, env) {
   if (!env.AI) throw new Error('Cloudflare AI binding পাওয়া যায়নি।');
-  const result = await env.AI.run('@cf/meta/llama-3.1-8b-instruct-fast', {
+  const result = await env.AI.run('@cf/google/gemma-4-26b-a4b-it', {
     messages: [
       { role: 'system', content: SYSTEM },
       { role: 'user', content: prompt }
@@ -175,8 +175,8 @@ export default {
       service: 'al-quran-research-chat',
       status: 'Worker চালু আছে',
       gemini: env.GEMINI_MODEL || 'gemini-2.5-flash',
-      fallback: 'gemini-2.5-flash-lite',
-      version: '2026-09-04-quran-research-v3'
+      fallback: '@cf/google/gemma-4-26b-a4b-it',
+      version: '2026-09-05-quran-research-v4'
     }, 200, origin);
     if (request.method !== 'POST') return json({ error: 'শুধু POST/GET অনুরোধ গ্রহণ করা হয়।' }, 405, origin);
 
