@@ -1,7 +1,6 @@
 /* আল-কুরআন গবেষণা — Worker Entry Wrapper v1.9
    Research API + Gemini chat + Cloudflare AI recovery.
    chat.html / website design অপরিবর্তিত রাখা হয়েছে।
-   Deployment trigger: latest chat connection.
 */
 import worker from './worker.js';
 import { handleResearchApi } from './research-api.js';
@@ -23,8 +22,8 @@ async function diagnostic(request,env){
 async function directGemini(request,env,origin){
  if(request.method!=='POST'||!env.GEMINI_API_KEY)return null;let body;try{body=await request.clone().json();}catch{return null;}
  const message=String(body?.message||'').trim();if(!message)return null;const mode=String(body?.mode||'general');
- const instruction=({general:'সাধারণ প্রশ্নের উত্তর দাও।',word:'শব্দ গবেষণা: মূল/ধাতু, শব্দরূপ, অর্থপরিসর, ব্যাকরণ ও নিশ্চিততার মাত্রা আলাদা করো।',ayah:'আয়াত বিশ্লেষণ: যাচাইযোগ্য তথ্য ছাড়া কুরআনের পাঠ বানাবে না।',math:'গাণিতিক গবেষণা: প্রদত্ত বা যাচাইযোগ্য ডেটা ও হিসাবের ধাপ ব্যবহার করো।',concordance:'একই শব্দ অনুসন্ধান: যাচাইযোগ্য ডেটা না থাকলে সংখ্যা বা তালিকা বানাবে না।',translation:'অনুবাদ গবেষণা: আক্ষরিক অর্থ, প্রসঙ্গ ও সম্ভাব্য বাংলা রূপ আলাদা করো।'})[mode]||'সাধারণ প্রশ্নের উত্তর দাও।';
- const system=`তুমি “আল-কুরআন গবেষণা” প্রকল্পের বাংলা গবেষণা সহকারী। বাংলায় পরিষ্কার উত্তর দাও। কুরআনের আয়াত বা আরবি পাঠ অনুমান করে বানাবে না। যাচাইযোগ্য প্রকল্প-ডেটা না থাকলে তা স্পষ্ট বলবে। আকিদা-নিরপেক্ষ, ভাষাতাত্ত্বিক ও প্রমাণভিত্তিক থাকবে। AI-এর তৈরি তথ্য স্বয়ংক্রিয়ভাবে verified নয়.`;
+ const instruction=({general:'সাধারণ প্রশ্নের উত্তর দাও।',word:'শব্দ গবেষণা: মূল/ধাতু, শব্দরূপ, অর্থপরিসর, ব্যাকরণ ও নিশ্চিততার মাত্রা আলাদা করো।',ayah:'আয়াত বিশ্লেষণ: যাচাইযোগ্য তথ্য ছাড়া কুরআনের পাঠ বানাবে না।',math:'গাণিতিক গবেষণা: প্রদত্ত বা যাচাইযোগ্য ডেটা ও হিসাবের ধাপ ব্যবহার করো।',concordance:'একই শব্দ অনুসন্ধান: যাচাইযোগ্য তথ্য না থাকলে অনুমান করো না।',translation:'অনুবাদ গবেষণা: আক্ষরিক অর্থ, প্রসঙ্গ ও সম্ভাব্য বাংলা রূপ আলাদা করো.'})[mode]||'সাধারণ প্রশ্নের উত্তর দাও.';
+ const system='তুমি “আল-কুরআন গবেষণা” প্রকল্পের বাংলা গবেষণা সহকারী। বাংলায় পরিষ্কার উত্তর দাও। কুরআনের আয়াত বা আরবি পাঠ অনুমান করে বানাবে না। যাচাইযোগ্য প্রকল্প-ডেটা না থাকলে তা স্পষ্ট বলবে। আকিদা-নিরপেক্ষ, ভাষাতাত্ত্বিক ও প্রমাণভিত্তিক থাকবে। AI-এর তৈরি তথ্য স্বয়ংক্রিয়ভাবে verified নয়.';
  const models=[env.GEMINI_MODEL||'gemini-2.5-flash','gemini-2.5-flash-lite'].filter((v,i,a)=>a.indexOf(v)===i);
  for(const model of models){try{const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':env.GEMINI_API_KEY},body:JSON.stringify({systemInstruction:{parts:[{text:system}]},contents:[{role:'user',parts:[{text:`${instruction}\n\nব্যবহারকারীর প্রশ্ন:\n${message}`}]}],generationConfig:{maxOutputTokens:1600,temperature:0.1}})});if(!r.ok)continue;const data=await r.json();const answer=data?.candidates?.[0]?.content?.parts?.map(p=>p?.text||'').join('').trim();if(answer)return json({answer,mode,language:'bn',provider:model},200,origin);}catch{}}
  return null;
