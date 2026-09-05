@@ -1,8 +1,12 @@
-/* আল-কুরআন গবেষণা — AI Chat Recovery v2
+/* আল-কুরআন গবেষণা — AI Chat Recovery v3
    মূল AI ব্যর্থ হলে সক্রিয় Cloudflare Workers AI model দিয়ে উত্তর ফেরত দেয়।
+   বর্তমান সক্রিয় Cloudflare model ব্যবহার করা হয়েছে।
 */
 
-const RECOVERY_MODEL = '@cf/meta/llama-3.1-8b-instruct-fp8-fast';
+const RECOVERY_MODELS = [
+  '@cf/meta/llama-3.1-8b-instruct-fast',
+  '@cf/meta/llama-3.1-8b-instruct-fp8'
+];
 
 export async function recoverChat(request, env) {
   if (request.method !== 'POST' || !env.AI) return null;
@@ -26,29 +30,34 @@ export async function recoverChat(request, env) {
 আকিদা-নিরপেক্ষ ও প্রমাণভিত্তিক থাকবে। কুরআনের আয়াত বা আরবি পাঠ অনুমান করে বানাবে না।
 যাচাইযোগ্য প্রকল্প-ডেটা না থাকলে তা স্পষ্ট বলবে। AI-এর অনুমানকে যাচাই করা গবেষণা-তথ্য হিসেবে উপস্থাপন করবে না।`;
 
-  try {
-    const result = await env.AI.run(RECOVERY_MODEL, {
-      messages: [
-        { role: 'system', content: system },
-        { role: 'user', content: `${instruction}\n\nব্যবহারকারীর প্রশ্ন:\n${message}` }
-      ],
-      max_tokens: 1600,
-      temperature: 0.1
-    });
-    const answer = result?.response || result?.choices?.[0]?.message?.content;
-    if (!answer) return null;
-    return new Response(JSON.stringify({
-      answer: String(answer), mode, language: 'bn',
-      provider: 'cloudflare-workers-ai-recovery', recovery: true
-    }), {
-      status: 200,
-      headers: {
-        'Access-Control-Allow-Origin': 'https://mosharrof0000-ux.github.io',
-        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type',
-        'Content-Type': 'application/json; charset=utf-8',
-        'Vary': 'Origin'
-      }
-    });
-  } catch (_) { return null; }
+  for (const model of RECOVERY_MODELS) {
+    try {
+      const result = await env.AI.run(model, {
+        messages: [
+          { role: 'system', content: system },
+          { role: 'user', content: `${instruction}\n\nব্যবহারকারীর প্রশ্ন:\n${message}` }
+        ],
+        max_tokens: 1600,
+        temperature: 0.1
+      });
+      const answer = result?.response || result?.choices?.[0]?.message?.content;
+      if (!answer) throw new Error(`${model} কোনো উত্তর দেয়নি।`);
+      return new Response(JSON.stringify({
+        answer: String(answer), mode, language: 'bn',
+        provider: `cloudflare-workers-ai-recovery:${model}`,
+        recovery: true
+      }), {
+        status: 200,
+        headers: {
+          'Access-Control-Allow-Origin': 'https://mosharrof0000-ux.github.io',
+          'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type',
+          'Content-Type': 'application/json; charset=utf-8',
+          'Vary': 'Origin'
+        }
+      });
+    } catch (_) {}
+  }
+
+  return null;
 }
