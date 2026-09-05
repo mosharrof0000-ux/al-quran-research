@@ -1,4 +1,4 @@
-/* আল-কুরআন গবেষণা — AI Chat Recovery v5.1
+/* আল-কুরআন গবেষণা — AI Chat Recovery v5.2
    মূল AI ব্যর্থ হলে সক্রিয় Cloudflare Workers AI model দিয়ে উত্তর ফেরত দেয়।
    Free-plan compatible active recovery models রাখা হয়েছে: Gemma 4 26B A4B + GLM-4.7-Flash.
    কোনো frontend/design পরিবর্তন করা হয়নি।
