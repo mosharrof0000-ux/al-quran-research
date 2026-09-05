@@ -1,6 +1,5 @@
-/* আল-কুরআন গবেষণা — AI Chat Recovery v3
+/* আল-কুরআন গবেষণা — AI Chat Recovery v4
    মূল AI ব্যর্থ হলে সক্রিয় Cloudflare Workers AI model দিয়ে উত্তর ফেরত দেয়।
-   বর্তমান সক্রিয় Cloudflare model ব্যবহার করা হয়েছে।
 */
 
 const RECOVERY_MODELS = [
