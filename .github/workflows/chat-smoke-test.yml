@@ -1,0 +1,34 @@
+name: AI Chat Smoke Test
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'backend/**'
+      - 'chat.html'
+      - '.github/workflows/chat-smoke-test.yml'
+
+jobs:
+  smoke-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check Worker health
+        run: |
+          set -e
+          curl -fsS --retry 3 --retry-delay 2 \
+            -H 'Accept: application/json' \
+            'https://al-quran-research.mosharrof0000-ux.workers.dev/' | tee health.json
+          grep -q '"ok":true' health.json
+
+      - name: Check AI chat response
+        run: |
+          set -e
+          curl -fsS --retry 3 --retry-delay 2 \
+            -X POST \
+            -H 'Content-Type: application/json' \
+            --data '{"message":"বাংলায় একটি সংক্ষিপ্ত উত্তর দিন: ২+২ কত?","mode":"general","language":"bn"}' \
+            'https://al-quran-research.mosharrof0000-ux.workers.dev/' | tee chat.json
+          grep -q '"answer"' chat.json
