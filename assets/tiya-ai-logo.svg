@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title desc">
+<title id="title">তিয়া — কুরআন গবেষণা AI সহকারী</title>
+<desc id="desc">সবুজ টিয়া পাখি, যার দুই পাশে খোলা কুরআনের দুই পৃষ্ঠা ডানার মতো ছড়ানো।</desc>
+<defs>
+  <radialGradient id="bg" cx="50%" cy="35%" r="70%"><stop offset="0" stop-color="#174f43"/><stop offset="1" stop-color="#061d1c"/></radialGradient>
+  <linearGradient id="green" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#72b84b"/><stop offset=".45" stop-color="#23824c"/><stop offset="1" stop-color="#07513d"/></linearGradient>
+  <linearGradient id="page" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fffdf4"/><stop offset="1" stop-color="#e9d9a9"/></linearGradient>
+  <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f7df86"/><stop offset="1" stop-color="#b88925"/></linearGradient>
+  <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="5" stdDeviation="5" flood-opacity=".5"/></filter>
+</defs>
+<circle cx="128" cy="128" r="123" fill="url(#bg)" stroke="url(#gold)" stroke-width="6"/>
+<!-- left Quran page / wing -->
+<path d="M119 113 C101 91 72 62 35 55 C43 88 57 126 91 158 C101 168 112 173 123 176 Z" fill="url(#page)" stroke="url(#gold)" stroke-width="5" filter="url(#shadow)"/>
+<path d="M113 119 C94 99 68 77 47 69 C55 97 69 126 93 147" fill="none" stroke="#c7a65a" stroke-width="2.5"/>
+<path d="M103 88 C83 84 66 80 53 78 M110 101 C89 98 72 94 60 91 M116 115 C96 113 80 109 68 105" fill="none" stroke="#d2bd82" stroke-width="2" opacity=".65"/>
+<!-- right Quran page / wing -->
+<path d="M137 113 C155 91 184 62 221 55 C213 88 199 126 165 158 C155 168 144 173 133 176 Z" fill="url(#page)" stroke="url(#gold)" stroke-width="5" filter="url(#shadow)"/>
+<path d="M143 119 C162 99 188 77 209 69 C201 97 187 126 163 147" fill="none" stroke="#c7a65a" stroke-width="2.5"/>
+<path d="M153 88 C173 84 190 80 203 78 M146 101 C167 98 184 94 196 91 M140 115 C160 113 176 109 188 105" fill="none" stroke="#d2bd82" stroke-width="2" opacity=".65"/>
+<!-- subtle Quran ornaments -->
+<path d="M70 68 l6 7 -6 7 -6 -7z M186 68 l6 7 -6 7 -6 -7z" fill="#0c5a43" stroke="#cda84a" stroke-width="1.5"/>
+<!-- parrot body -->
+<ellipse cx="128" cy="139" rx="39" ry="57" fill="url(#green)" stroke="#073d31" stroke-width="4" filter="url(#shadow)"/>
+<circle cx="128" cy="91" r="38" fill="url(#green)" stroke="#073d31" stroke-width="4"/>
+<!-- cheek highlight -->
+<path d="M103 107 C111 120 126 126 142 120 C137 132 124 138 111 132 C104 126 101 117 103 107Z" fill="#b6d85a" opacity=".7"/>
+<!-- eye -->
+<circle cx="116" cy="86" r="12" fill="#fff"/><circle cx="118" cy="87" r="6" fill="#151b17"/><circle cx="120" cy="84" r="2" fill="#fff"/>
+<!-- beak -->
+<path d="M145 92 C166 91 170 102 153 111 C145 115 137 109 137 102 C137 98 140 94 145 92Z" fill="#e6c35d" stroke="#6b5120" stroke-width="3"/>
+<path d="M148 103 C158 101 163 100 167 99" fill="none" stroke="#6b5120" stroke-width="2"/>
+<!-- chest feather detail -->
+<path d="M118 132 C126 138 136 138 143 132 M115 145 C125 151 137 151 145 144 M116 158 C126 164 136 164 142 158" fill="none" stroke="#9dcc57" stroke-width="3" stroke-linecap="round" opacity=".65"/>
+<!-- tail -->
+<path d="M111 181 C91 198 77 205 63 201 C79 190 91 177 103 164Z" fill="#19734a" stroke="#0a4938" stroke-width="4"/>
+<path d="M119 185 C105 207 94 218 81 220 C91 204 99 188 106 174Z" fill="#2b9150" stroke="#0a4938" stroke-width="4"/>
+<!-- feet -->
+<path d="M113 190 q-8 8 2 10 M143 190 q8 8-2 10" fill="none" stroke="#d4b24f" stroke-width="5" stroke-linecap="round"/>
+<!-- center book seam and golden knowledge glow -->
+<path d="M128 112 C127 133 127 154 128 177" stroke="#b68c31" stroke-width="3"/>
+<path d="M47 183 C72 205 94 214 128 217 C162 214 184 205 209 183" fill="none" stroke="#cda84a" stroke-width="2" opacity=".45"/>
+<circle cx="128" cy="30" r="4" fill="#f4d879"/><circle cx="44" cy="126" r="3" fill="#f4d879"/><circle cx="212" cy="126" r="3" fill="#f4d879"/>
+</svg>
