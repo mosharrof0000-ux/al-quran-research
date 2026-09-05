@@ -1,4 +1,4 @@
-/* আল-কুরআন গবেষণা — নিরাপদ Worker Entry Wrapper v1.3
+/* আল-কুরআন গবেষণা — নিরাপদ Worker Entry Wrapper v1.4
 
 Research API ও মূল worker.js অপরিবর্তিত রেখে chat-এর জন্য একটি নির্ভরযোগ্য
 Workers AI fallback রাখা হয়েছে। মূল AI ব্যর্থ হলে বর্তমান সক্রিয় Gemma 4
