@@ -1,0 +1,46 @@
+name: Set Tiya Site Favicon
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'assets/tiya-ai-logo.svg'
+      - '.github/workflows/set-site-favicon.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  favicon:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Install favicon link without replacing index.html
+        shell: bash
+        run: |
+          cp assets/tiya-ai-logo.svg favicon.svg
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          marker = '<link rel="icon" type="image/svg+xml" href="favicon.svg">'
+          if marker not in s:
+              s = s.replace('<title>আল-কুরআন গবেষণা</title>', '<title>আল-কুরআন গবেষণা</title>\n' + marker, 1)
+              p.write_text(s, encoding='utf-8')
+          PY
+
+      - name: Commit favicon integration
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add favicon.svg index.html
+          if git diff --cached --quiet; then
+            echo 'Favicon already integrated.'
+          else
+            git commit -m 'সার্চ ও ব্রাউজার সাইট আইকনে তিয়া লোগো যুক্ত করা হলো'
+            git push
+          fi
