@@ -1,6 +1,7 @@
-/* আল-কুরআন গবেষণা — Worker Entry Wrapper v1.9
+/* আল-কুরআন গবেষণা — Worker Entry Wrapper v2.0
    Research API + Gemini chat + Cloudflare AI recovery.
    chat.html / website design অপরিবর্তিত রাখা হয়েছে।
+   Deployment trigger: chat AI connection repair.
 */
 import worker from './worker.js';
 import { handleResearchApi } from './research-api.js';
