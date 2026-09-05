@@ -1,10 +1,11 @@
-/* আল-কুরআন গবেষণা — AI Chat Recovery v4
+/* আল-কুরআন গবেষণা — AI Chat Recovery v5
    মূল AI ব্যর্থ হলে সক্রিয় Cloudflare Workers AI model দিয়ে উত্তর ফেরত দেয়।
+   Deprecated Llama model বাদ দিয়ে বর্তমানে সক্রিয় Gemma 4 recovery রাখা হয়েছে।
 */
 
 const RECOVERY_MODELS = [
-  '@cf/meta/llama-3.1-8b-instruct-fast',
-  '@cf/meta/llama-3.1-8b-instruct-fp8'
+  '@cf/google/gemma-4-26b-a4b-it',
+  '@cf/zai-org/glm-4.7-flash'
 ];
 
 export async function recoverChat(request, env) {
@@ -25,7 +26,7 @@ export async function recoverChat(request, env) {
     translation: 'অনুবাদ গবেষণায় আক্ষরিক অর্থ, প্রসঙ্গ ও সম্ভাব্য বাংলা রূপ আলাদা করো।'
   }[mode] || 'সাধারণ প্রশ্নের উত্তর দাও।';
 
-  const system = `তুমি “আল-কুরআন গবেষণা” প্রকল্পের বাংলা গবেষণা সহকারী। বাংলায় উত্তর দাও।
+  const system = `তুমি “আল-কুরআন গবেষণা” প্রকল্পের বাংলা গবেষণা সহকারী। বাংলায় পরিষ্কার উত্তর দাও।
 আকিদা-নিরপেক্ষ ও প্রমাণভিত্তিক থাকবে। কুরআনের আয়াত বা আরবি পাঠ অনুমান করে বানাবে না।
 যাচাইযোগ্য প্রকল্প-ডেটা না থাকলে তা স্পষ্ট বলবে। AI-এর অনুমানকে যাচাই করা গবেষণা-তথ্য হিসেবে উপস্থাপন করবে না।`;
 
@@ -40,7 +41,7 @@ export async function recoverChat(request, env) {
         temperature: 0.1
       });
       const answer = result?.response || result?.choices?.[0]?.message?.content;
-      if (!answer) throw new Error(`${model} কোনো উত্তর দেয়নি।`);
+      if (!answer) continue;
       return new Response(JSON.stringify({
         answer: String(answer), mode, language: 'bn',
         provider: `cloudflare-workers-ai-recovery:${model}`,
