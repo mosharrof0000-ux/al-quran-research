@@ -83,6 +83,48 @@ README-তে specification যুক্ত করার commit:
 
 পরবর্তী AI/backend উন্নয়ন এই specification-এর সঙ্গে মিলিয়ে করতে হবে এবং বর্তমান সফল Cloudflare AI সংযোগ নষ্ট করা যাবে না।
 
+## ২০২৬-০৯-০৭ — AI Research Brain v1 বাস্তব কোডে সংযুক্ত
+
+### উদ্দেশ্য
+AI Brain-কে শুধু document হিসেবে না রেখে live Gemini chat-এর আচরণে কার্যকর করা।
+
+### কী করা হয়েছে
+নতুন backend module:
+`backend/ai-research-brain.js`
+
+এতে বাস্তবভাবে যুক্ত হয়েছে:
+- প্রশ্নের intent classification
+- research-type অনুযায়ী নির্দেশনা
+- Evidence-first উত্তরনীতি
+- uncertainty/verification control
+- Bengali-first আচরণ
+- Tool/continuation/research প্রশ্ন আলাদা করার ভিত্তি
+
+তারপর live Worker entry:
+`backend/worker-entry.js`
+এ Brain v1-এর system policy ও intent classification ব্যবহার করতে আপডেট করা হয়েছে। পুরোনো chat API contract রাখা হয়েছে:
+`POST {message, mode, language}`
+এবং `answer` response field অপরিবর্তিত রাখা হয়েছে। অতিরিক্তভাবে `brain_version` ও `intent` metadata যোগ হয়েছে।
+
+### Git commit
+Brain module:
+`9f4baf8af21ddfefb3fe11749807c7cfb7d7c0a0`
+
+Worker integration:
+`a6d01907ba4b589b7626a3bb7c1cf6d758fbed11`
+
+### নিরাপত্তা সিদ্ধান্ত
+- বর্তমান সফল Cloudflare/Gemini connection contract পরিবর্তন করা হয়নি।
+- Research API ও raw research data পরিবর্তন করা হয়নি।
+- Brain শুধু AI-এর request/policy layer-এ যুক্ত হয়েছে।
+- ভবিষ্যৎ dataset retrieval আলাদা ধাপে করা হবে।
+
+### বর্তমান অবস্থা
+**AI Research Brain v1 specification → live Gemini backend — সংযুক্ত।**
+
+### পরবর্তী ধাপ
+পরবর্তী ধাপে Brain-কে প্রকল্পের read-only Research API-এর সঙ্গে যুক্ত করা হবে, যাতে প্রয়োজন অনুযায়ী Fatiha/master dataset থেকে যাচাইযোগ্য তথ্য এনে AI উত্তর দিতে পারে। তারপর Root/Lemma/Morphology/Grammar/Concordance intelligence ধাপে ধাপে যোগ হবে।
+
 ## প্রকল্পের গবেষণা নীতি
 এই প্রযুক্তিগত ইতিহাস মূল গবেষণা-সংবিধানের বিকল্প নয়। কুরআন গবেষণায়:
 - আকিদাভিত্তিক/মতবাদভিত্তিক পক্ষপাত এড়িয়ে ভাষাভিত্তিক গবেষণা করা হবে।
