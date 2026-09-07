@@ -1,204 +1,279 @@
 # আল-কুরআন ভাষাভিত্তিক গবেষণা — PROJECT STATE
 
-## বর্তমান প্রকল্পের অবস্থা
+## ১. বর্তমান প্রকল্পের অবস্থা
 
-Status: ACTIVE — Pilot Development
-
+Status: ACTIVE — Pilot + Research Infrastructure + Interface Experimentation
 Project Name: al-quran-research
+Repository: mosharrof0000-ux/al-quran-research
 
-Repository:
-mosharrof0000-ux/al-quran-research
+এই Project State হলো বর্তমান দৃশ্যমান প্রকল্প-অবস্থার রেকর্ড। এটি Master Project-এর বিকল্প নয়।
 
-## প্রকল্পের মূল উদ্দেশ্য
+## ২. প্রকল্পের মূল উদ্দেশ্য
 
-আল-কুরআনের ভাষাভিত্তিক, প্রমাণ-নির্ভর এবং ভবিষ্যতে সম্প্রসারণযোগ্য গবেষণা কাঠামো তৈরি করা।
+আল-কুরআনের ভাষা, শব্দ, Root/ধাতু, Morphology, Grammar, Syntax, অর্থপরিসর, Context, Translation, Evidence এবং পরিসংখ্যানকে স্বচ্ছ, প্রমাণ-নির্ভর, version-controlled এবং ভবিষ্যতে সম্প্রসারণযোগ্য গবেষণা কাঠামোয় সংরক্ষণ করা।
 
-এই প্রকল্পে থাকবে:
+দীর্ঘমেয়াদি লক্ষ্য হলো Quran Research-কে ভিত্তি করে একটি বৃহত্তর Research Laboratory Engine তৈরি করা, যেখানে ভবিষ্যতে বিভিন্ন গবেষণা-tool ও universal chat/voice controller যুক্ত হতে পারবে।
 
-* মূল আরবি পাঠ
-* বাংলা উচ্চারণ
-* ভবিষ্যতে অন্যান্য ভাষার উচ্চারণ
-* শব্দভিত্তিক বিশ্লেষণ
-* Root / ধাতু
-* Morphology / রূপতত্ত্ব
-* Grammar / ব্যাকরণ
-* অর্থপরিসর
-* Context / প্রসঙ্গ
-* Translation Candidate
-* Translation Decision
-* আন্তঃআয়াত তুলনা
-* গবেষণা প্রশ্ন
-* Evidence / প্রমাণ
-* গণিত ও পরিসংখ্যান
-* Version ও পরিবর্তনের ইতিহাস
-
----
-
-# বর্তমানে GitHub-এ থাকা প্রধান Website Files
-
-* index.html
-* 1.html
-* README.md
-
-বর্তমান Website হলো প্রকল্পের প্রাথমিক Interface।
-
-Website-এর কাজ:
-
-মানুষের কাছে গবেষণার তথ্য সহজভাবে প্রদর্শন করা।
-
-Website মূল গবেষণা Database নয়।
-
----
-
-# গবেষণার মূল কাঠামো
-
-বর্তমান Pilot Package:
-
-al-quran-research-pilot-v0.1
-
-প্রধান ফাইলসমূহ:
-
-* research_rules.md
-* data_dictionary.md
-* schema.sql
-* quran_research.db
-* pilot.sql
-* schema_manifest.json
-* pilot_validation.md
-* README.md
-
----
-
-# গুরুত্বপূর্ণ নীতি
+## ৩. স্থায়ী গবেষণা নীতি
 
 1. AI-generated তথ্য স্বয়ংক্রিয়ভাবে Verified নয়।
 2. Raw data overwrite করা যাবে না।
 3. সংশোধন হলে নতুন version/proposal তৈরি হবে।
-4. প্রতিটি প্রকাশিত দাবির traceable evidence থাকতে হবে।
-5. মতভেদ মুছে ফেলা হবে না।
-6. OPEN QUESTION সংরক্ষণ করা হবে।
-7. গাণিতিক ফলের definition ও formula থাকতে হবে।
-8. Dataset/version ও calculation পুনরুৎপাদনযোগ্য হতে হবে।
-9. Website পরিবর্তন হলেও মূল গবেষণা data ব্যবহারযোগ্য থাকতে হবে।
+4. প্রকাশিত গবেষণা-দাবির traceable evidence থাকতে হবে।
+5. মতভেদ মুছে ফেলা হবে না; পৃথক analysis variant রাখা হবে।
+6. OPEN QUESTION স্থায়ীভাবে সংরক্ষণ করা হবে।
+7. গণিত/পরিসংখ্যানের definition, formula, dataset/version ও calculation record থাকতে হবে।
+8. Research result পুনরুৎপাদনযোগ্য হতে হবে।
+9. Website interface বদলালেও মূল database/research data ব্যবহারযোগ্য থাকতে হবে।
+10. গবেষণা aqidah-neutral এবং ভাষাভিত্তিক থাকবে।
+11. মানুষের সিদ্ধান্ত, গবেষণা-ইতিহাস ও audit trail সংরক্ষণ করা হবে; কোনো AI-এর গোপন chain-of-thought সংরক্ষণ করা হবে না।
 
----
+## ৪. বর্তমান Master Database Schema
 
-# বর্তমান Pilot
+বর্তমান `schema.sql`-এ Schema Version 1.0 হিসেবে SQLite-compatible master structure আছে।
 
-Schema Version: 0.1
+মূল entityগুলো:
+
+project_meta, schema_migrations, surah, ayah, token, root, lemma, morphology, grammar_annotation, syntax_relation, meaning, translation_edition, translation, evidence_source, evidence_link, research_claim, analysis_variant, data_release, change_log, metric_definition, metric_run, extension_registry, external_resource, sync_state, concept, concept_relation.
+
+এতে version, status, certainty, evidence, hash/snapshot, release, change log, metric এবং concept relation-এর ভিত্তি আছে।
+
+## ৫. Research Chain
+
+গবেষণার দৃশ্যমান কাজের ধারাবাহিকতা:
+
+চিন্তা → প্রশ্ন → উদ্দেশ্য → সিদ্ধান্ত → নির্দেশ → কাজ → পরিবর্তন → পরীক্ষা → ফলাফল → যাচাই → সংশোধন/অনুমোদন → পরবর্তী কাজ
+
+Chain ID এবং Parent Chain ID-এর মাধ্যমে গুরুত্বপূর্ণ গবেষণা-ইতিহাস অনুসরণযোগ্য রাখার নীতি আছে। বিস্তারিত নথি:
+
+`docs/RESEARCH_CHAIN_OF_COMMAND.md`
+
+গুরুত্বপূর্ণ চিন্তা ও দীর্ঘমেয়াদি vision-এর নথি:
+
+`docs/OUR_THINKING_AND_VISION.md`
+
+## ৬. বর্তমান Website / Interface
+
+বর্তমান `index.html` একটি mobile-first Quran research interface। এতে home, Quran reading, research, search, library/chat এবং bottom navigation-এর ভিত্তি আছে। বর্তমান visual language-এ dark green/gold, cream reading surface, research purple এবং card-based interface ব্যবহৃত হয়েছে।
+
+Website মূল research database নয়; এটি database/research system-এর ব্যবহারকারী Interface।
+
+## ৭. বর্তমান Pilot
 
 Pilot Scope: সূরা আল-ফাতিহা
-
 First Test Ayah ID: Q001001
 
-বর্তমান অবস্থান:
+Pilot documentation ও database foundation ইতিমধ্যে তৈরি। Arabic source যাচাই ছাড়া কোনো Arabic text-কে Verified হিসেবে বসানো যাবে না।
 
-গবেষণার Database কাঠামো তৈরি হয়েছে।
+## ৮. বর্তমান AI Chat / Voice Infrastructure
 
-প্রাথমিক Website তৈরি হয়েছে।
+`chat-system.js` বর্তমানে Chat System v2.7। এতে:
 
-GitHub Pages চালু হয়েছে।
+* সাধারণ প্রশ্ন
+* শব্দ গবেষণা
+* আয়াত বিশ্লেষণ
+* গাণিতিক গবেষণা
+* একই শব্দ অনুসন্ধান / Concordance
+* অনুবাদ গবেষণা
+* বাংলা voice input
+* বাংলা speech output
+* local fallback
+* Universal Tool Engine registration
+* Universal Controller-এর ভবিষ্যৎ ভিত্তি
+* Backup & Restore Controller-এর ভিত্তি
 
-Pilot documentation package তৈরি হয়েছে।
+রয়েছে।
 
----
+AI backend উত্তর না দিলে local research assistant fallback ব্যবহার করে; অনুমানকে Verified তথ্য হিসেবে দেখানো যাবে না।
 
-# বর্তমানে অসম্পূর্ণ কাজ
+## ৯. বর্তমান Robot / Home Interface Work
 
-## ১. Master Project নিশ্চিতকরণ
+### Page 1 — Locked Master
+`design-preview.html`
 
-MASTER_PROJECT.md GitHub-এ সফলভাবে Commit হয়েছে কি না যাচাই করতে হবে।
+এটি পূর্বে অনুমোদিত/লক করা master design। সরাসরি edit করা যাবে না।
 
-যদি না থাকে:
+Live:
+https://mosharrof0000-ux.github.io/al-quran-research/design-preview.html
 
-MASTER_PROJECT.md তৈরি ও Commit করতে হবে।
+### Page 2 — Robot Work
+`design-preview-work.html`
 
----
+তিন-robot interaction-এর experimental work page। বড় robot draggable; ছোট দুই robot button-এর সঙ্গে যুক্ত। Quran/Research interaction অনুযায়ী reaction ও navigation behaviour নির্ধারিত।
 
-## ২. Project State
+Live:
+https://mosharrof0000-ux.github.io/al-quran-research/design-preview-work.html
 
-এই PROJECT_STATE.md ফাইলটি GitHub-এ Commit করতে হবে।
+### Page 1 Chat/Voice Demo
+`design-preview-page1-chatbox-robot-demo.html`
 
-ভবিষ্যতে প্রতিটি গুরুত্বপূর্ণ কাজের পরে এই ফাইল Update করতে হবে।
+বর্তমান নকশায় বড় robot voice interaction-এর জন্য এবং ছোট robot visual chatbox interaction-এর জন্য ব্যবহারের ভিত্তি আছে।
 
----
+### Locked Voice Home v4
+`page-1-home-voice-v4.html`
 
-## ৩. গবেষণা ফাইল GitHub কাঠামো
+বড় robot: voice-only interaction; visual chatbox নয়।
+ছোট robot: visual chatbox open/close interaction।
 
-পরবর্তী ধাপে নিরাপদ Folder Structure তৈরি করতে হবে।
+Live:
+https://mosharrof0000-ux.github.io/al-quran-research/page-1-home-voice-v4.html
 
-সম্ভাব্য কাঠামো:
+Locked branch:
+`locked/page-1-home-voice-v4-2026-09-07`
 
-/docs
-/database
-/data
-/validation
-/exports
-/website
+এই locked version সরাসরি পরিবর্তন করা যাবে না। নতুন পরীক্ষা আলাদা file-এ করতে হবে।
 
-পুরোনো Website Files নষ্ট করা যাবে না।
+## ১০. নতুন Sufi/Spiritual Design Experiment
 
----
+`suﬁ-spiritual-design-demo-v1.html` নয়; প্রকৃত filename:
 
-## ৪. Database নিরাপত্তা
+`sufi-spiritual-design-demo-v1.html`
 
-quran_research.db হলো গুরুত্বপূর্ণ গবেষণা Database।
+এটি আলাদা experimental demo। এতে dark green, gold, stars, crescent, central robot এবং Quran/Research action-এর সুফি-আধ্যাত্মিক visual direction পরীক্ষা করা হয়েছে।
 
-Database পরিবর্তনের আগে:
+Live:
+https://mosharrof0000-ux.github.io/al-quran-research/sufi-spiritual-design-demo-v1.html
 
-* Backup রাখতে হবে
-* Version রাখতে হবে
-* পরিবর্তনের কারণ লিখতে হবে
+এটি এখনও locked final design নয়।
 
----
+## ১১. পরবর্তী Interface Direction — এখনও Experimental
 
-# পরবর্তী একমাত্র কাজ
+পরবর্তী design experiment-এ নিচের ধারণাগুলো একত্রে পরীক্ষা করা হবে:
 
-এই PROJECT_STATE.md GitHub-এ Commit করা।
+1. ধীর Ambient colour transition
+2. Content-aware/context-aware environment
+3. Sufi spiritual atmosphere + modern research laboratory feel
+4. Material-style expressive motion
+5. Subtle depth/glass, অতিরিক্ত decoration নয়
+6. Robot-responsive glow/state
+7. Button spring/shape response
+8. Fluid page transition
+9. Voice-first interaction
+10. Mobile-first adaptive layout
+11. তথ্যের status বোঝাতে purposeful colour/state
+12. Research result-এর evidence/version/uncertainty দৃশ্যমান করা
 
-Commit সফল হওয়ার পরে:
+এগুলো design proposal; কোনো locked page-এ প্রয়োগ করা হয়নি।
 
-GitHub repository-এর বর্তমান File List পরীক্ষা করা হবে।
+## ১২. ভবিষ্যৎ Research Graph
 
-তারপর:
+Schema-তে `concept` এবং `concept_relation` আছে। ভবিষ্যতে শব্দ, Root, আয়াত, ধারণা, evidence এবং research claim-এর মধ্যে অনুসরণযোগ্য knowledge graph তৈরি করা হবে।
 
-MASTER_PROJECT.md আছে কি না নিশ্চিত করা হবে।
+## ১৩. Permanent Research Object
 
-তারপর গবেষণা Folder Structure ধাপে ধাপে GitHub-এ যোগ করা হবে।
+ভবিষ্যতে প্রতিটি গুরুত্বপূর্ণ Token/শব্দকে স্থায়ী research object হিসেবে দেখা হবে:
 
----
+শব্দ → উচ্চারণ → Root → Lemma → Morphology → Grammar → অর্থপরিসর → আয়াতসমূহ → Context → Evidence → Research History → Version
 
-# ভবিষ্যতে ChatGPT-কে কীভাবে প্রকল্পের অবস্থা জানাবেন
+এটি ভবিষ্যৎ architecture-এর লক্ষ্য; বর্তমান Pilot-এ সম্পূর্ণভাবে বাস্তবায়িত হয়েছে বলে দাবি করা হচ্ছে না।
 
-নতুন ChatGPT conversation-এ:
+## ১৪. Evidence-first AI
 
-১. GitHub repository link দেবেন।
+ভবিষ্যৎ AI research response-এর লক্ষ্য:
 
-২. বলবেন:
+উত্তর → ব্যবহৃত Data → Evidence → Version → Certainty/Status → প্রয়োজনে Alternative Analysis
 
-"এই লিংক দেখে আমার আল-কুরআন গবেষণা প্রকল্পের বর্তমান অবস্থান নির্ণয় করুন।"
+AI-এর উত্তর এবং Verified Research Finding আলাদা থাকবে।
 
-৩. সম্ভব হলে MASTER_PROJECT.md এবং PROJECT_STATE.md দেখাবেন।
+## ১৫. Universal Controller
 
-তাহলে:
+দীর্ঘমেয়াদি লক্ষ্য হলো ব্যবহারকারী স্বাভাবিক বাংলায় নির্দেশ দিলে Chat/Voice প্রয়োজনীয় Tool ও research capability নির্বাচন করবে। উদাহরণ:
 
-আগের কাজ → বর্তমান অবস্থা → পরবর্তী কাজ
+“সূরা ফাতিহার ১ নম্বর আয়াত খুলুন” → আয়াত খুলবে।
 
-দ্রুত পুনরুদ্ধার করা যাবে।
+“বিসমিল্লাহ শব্দটি দেখান” → সংশ্লিষ্ট token research object দেখাবে।
 
----
+“এর Root দেখান” → Root analysis দেখাবে।
 
-# সর্বশেষ আপডেট
+এটি ভবিষ্যৎ capability; বর্তমানে Universal Tool Engine-এর ভিত্তি তৈরি হয়েছে, পূর্ণ controller হিসেবে সম্পূর্ণ হয়নি।
 
-Project State Version: 0.1
+## ১৬. Research Question Lifecycle
 
-Last Recorded Date: 2026-08-29
+ভবিষ্যৎ standard workflow:
 
-Current Phase:
+OPEN → INVESTIGATING → EVIDENCE FOUND → ANALYSIS → VERIFIED → PUBLISHED
 
-Project Memory and Research Infrastructure Setup
+যে প্রশ্নের উত্তর পাওয়া যায়নি সেটি মুছে ফেলা হবে না।
 
-Next Step:
+## ১৭. Reproducible Research
 
-Commit PROJECT_STATE.md and verify repository status.
+Metrics-এর ক্ষেত্রে:
 
+Definition → Formula → Dataset → Calculation → Independent Check → Result → Interpretation
+
+এই ধারাটি বাধ্যতামূলক করার লক্ষ্য রয়েছে।
+
+## ১৮. বর্তমান কাজের অবস্থা
+
+### সম্পন্ন/বিদ্যমান
+
+* GitHub repository ও GitHub Pages চালু
+* Master project documentation বিদ্যমান
+* Project State বিদ্যমান
+* Pilot research structure বিদ্যমান
+* Master database schema v1.0 বিদ্যমান
+* SQLite research database বিদ্যমান
+* Evidence/version/change-log architecture বিদ্যমান
+* Concept relation-এর schema বিদ্যমান
+* Research Chain documentation বিদ্যমান
+* Quran website interface বিদ্যমান
+* AI Chat v2.7 infrastructure বিদ্যমান
+* Universal Tool Engine-এর ভিত্তি বিদ্যমান
+* Robot interaction demos তৈরি
+* Voice Home v4 তৈরি ও locked
+* Sufi spiritual design demo তৈরি
+
+### এখনও অসম্পূর্ণ
+
+* পূর্ণ ১১৪ সূরার research corpus তৈরি
+* সম্পূর্ণ token/lemma/root/morphology/grammar data population
+* সম্পূর্ণ evidence-linked research claims
+* Production-grade Universal Controller
+* সম্পূর্ণ Research Graph UI
+* Permanent Word Research Object UI
+* Reproducible calculation execution/validation pipeline সম্পূর্ণ করা
+* Evidence-first AI response pipeline সম্পূর্ণ করা
+* Context-aware voice command দিয়ে website navigation/action সম্পূর্ণ করা
+* Final modern interface নির্বাচন ও production integration
+
+## ১৯. নিরাপত্তা ও Backup নীতি
+
+কোনো locked/approved page সরাসরি edit করা যাবে না। নতুন experimental file তৈরি করতে হবে। গুরুত্বপূর্ণ পরিবর্তনের আগে পুরোনো অবস্থার rollback path রাখতে হবে। Git history নিজেও version/rollback record হিসেবে থাকবে। Database পরিবর্তনের আগে আলাদা backup রাখতে হবে।
+
+## ২০. বর্তমান Phase
+
+**Phase: Research Infrastructure + Pilot + Interface Experimentation**
+
+এখন আর শুধু visual design নয়; Data + Evidence + Research Engine + Universal Controller + Interface—এই পাঁচ স্তর সমন্বিতভাবে এগোবে।
+
+## ২১. পরবর্তী অগ্রাধিকার
+
+১. Project State বাস্তব repository-এর সঙ্গে synchronised রাখা।
+২. Research folder/data structure পরিষ্কার ও স্থিতিশীল করা।
+৩. Pilot data validation সম্পূর্ণ করা।
+৪. Research Graph ও Permanent Word Object-এর technical design নির্ধারণ করা।
+৫. Evidence-first AI response structure তৈরি করা।
+৬. Universal Controller-এর নিরাপদ tool-routing design তৈরি করা।
+৭. তারপর নতুন modern Sufi/ambient interface-এর experimental versions তৈরি ও তুলনা করা।
+
+## ২২. গুরুত্বপূর্ণ Locked Pages
+
+প্রথম locked master:
+`design-preview.html`
+
+সর্বশেষ গুরুত্বপূর্ণ locked voice version:
+`page-1-home-voice-v4.html`
+
+Locked branch:
+`locked/page-1-home-voice-v4-2026-09-07`
+
+Locked files সরাসরি পরিবর্তন নয়; copy → experiment → verify → approve → নতুন version lock—এই নিয়ম চলবে।
+
+## ২৩. সর্বশেষ আপডেট
+
+Project State Version: 0.2
+Last Recorded Date: 2026-09-07
+Update Reason: বর্তমান GitHub repository, database schema, AI chat infrastructure, robot/voice demos, locked versions এবং ভবিষ্যৎ research architecture-এর সঙ্গে Project State synchronise করা হয়েছে।
+
+Status: ACTIVE
+Verification: বর্তমান `PROJECT_STATE.md`, `MASTER_PROJECT.md`, `index.html`, `schema.sql` এবং `chat-system.js` পর্যালোচনা করে এই state record আপডেট করা হয়েছে।
