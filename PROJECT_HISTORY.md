@@ -25,9 +25,7 @@
 `da05a3dedc361450fb7806fe985ea38693d15b12`
 
 ### পরীক্ষার ফল
-২০২৬-০৯-০৭ তারিখে ওয়েবসাইটের রোবট চ্যাটে **“আপনি কেমন আছেন”** পাঠানোর পর সফলভাবে বাংলা AI উত্তর পাওয়া গেছে:
-
-> আলহামদুলিল্লাহ, আমি ভালো আছি। আমি আপনার “আল-কুরআন গবেষণা” প্রকল্পের বাংলা গবেষণা সহকারী হিসেবে আপনাকে সাহায্য করার জন্য প্রস্তুত। আপনার যদি কুরআন সংক্রান্ত কোনো শব্দ, আয়াত, ব্যাকরণ বা ভাষাতাত্ত্বিক বিষয়ে গবেষণামূলক প্রশ্ন থাকে, তবে তা করতে পারেন। আমি নির্ধারিত গবেষণা নিয়ম মেনে তথ্য প্রদান করার চেষ্টা করব।
+২০২৬-০৯-০৭ তারিখে ওয়েবসাইটের রোবট চ্যাটে **“আপনি কেমন আছেন”** পাঠানোর পর সফলভাবে বাংলা AI উত্তর পাওয়া গেছে।
 
 ### বর্তমান অবস্থা
 **Cloudflare Worker → AI → রোবট চ্যাট → উত্তর প্রদর্শন — সফল।**
@@ -40,6 +38,51 @@
 5. Cloudflare Worker deployment সক্রিয় আছে কি না।
 6. Gemini/API configuration ও প্রয়োজনীয় secret/binding ঠিক আছে কি না।
 
+## ২০২৬-০৯-০৭ — AI Research Brain v1 কেন্দ্রীয়করণ
+
+### কারণ
+AI-সংক্রান্ত গুরুত্বপূর্ণ চিন্তা ও নিয়ম বিভিন্ন project document-এ ছড়িয়ে ছিল। সেগুলো বাস্তবায়নের সময় কোনো একটি কেন্দ্রীয় operational specification না থাকলে AI-এর আচরণ অসম্পূর্ণ বা অসামঞ্জস্যপূর্ণ হওয়ার ঝুঁকি থাকে।
+
+### কী করা হয়েছে
+নতুন কেন্দ্রীয় specification তৈরি করা হয়েছে:
+`docs/AI_RESEARCH_BRAIN_V1.md`
+
+এতে একত্র করা হয়েছে:
+- AI-এর ভূমিকা ও সীমা
+- প্রশ্ন শ্রেণিবিন্যাস
+- গবেষণা execution pipeline
+- Evidence-first উত্তরনীতি
+- কুরআন ভাষা গবেষণা
+- Root/Lemma/Morphology/Grammar/Concordance-এর ভবিষ্যৎ ক্ষমতা
+- Translation research
+- Research Memory
+- Research Chain awareness
+- Status ও certainty
+- Tool intelligence
+- Universal Controller
+- Voice intelligence
+- AI independence/AI Bridge
+- Human approval
+- Hallucination control
+- Technology Watcher
+- AI answer quality checklist
+- Brain v1/v2/v3 implementation roadmap
+
+### Architecture principle
+`User → Chat/Voice → Intent → Research/Tool Engine → Evidence/Analysis → Status/Verification → Answer/Record`
+
+### Git commit
+AI Research Brain specification:
+`fee9d2800371de406d963b8d2bb4c3164ed0bad4`
+
+README-তে specification যুক্ত করার commit:
+`974c01a3df307f610eaeb0914be6173fc8fae2a4`
+
+### গুরুত্বপূর্ণ সিদ্ধান্ত
+এই specification কোনো পুরোনো Research Constitution বা Master Project rule বাতিল করে না। এটি বিভিন্ন নথিতে থাকা AI-সংক্রান্ত ধারণাগুলোকে একটি কেন্দ্রীয় implementation baseline হিসেবে একত্র করেছে।
+
+পরবর্তী AI/backend উন্নয়ন এই specification-এর সঙ্গে মিলিয়ে করতে হবে এবং বর্তমান সফল Cloudflare AI সংযোগ নষ্ট করা যাবে না।
+
 ## প্রকল্পের গবেষণা নীতি
 এই প্রযুক্তিগত ইতিহাস মূল গবেষণা-সংবিধানের বিকল্প নয়। কুরআন গবেষণায়:
 - আকিদাভিত্তিক/মতবাদভিত্তিক পক্ষপাত এড়িয়ে ভাষাভিত্তিক গবেষণা করা হবে।
@@ -50,4 +93,4 @@
 - প্রযুক্তিগত পরিবর্তনে গবেষণার ডেটা ও কাঠামো নষ্ট করা যাবে না।
 
 ## পরবর্তী কাজের নিয়ম
-কোনো ভবিষ্যৎ AI সহকারী প্রকল্পে কাজ শুরু করলে প্রথমে এই `PROJECT_HISTORY.md`, `README.md`, গবেষণা-সংবিধান এবং সংশ্লিষ্ট বর্তমান কোড দেখে বর্তমান অবস্থা বুঝবে। পুরোনো সফল সংযোগ পুনরায় নষ্ট না করে তারপর পরিবর্তন করবে।
+কোনো ভবিষ্যৎ AI সহকারী প্রকল্পে কাজ শুরু করলে প্রথমে এই `PROJECT_HISTORY.md`, `README.md`, `MASTER_PROJECT.md`, `PROJECT_STATE.md`, `docs/AI_RESEARCH_BRAIN_V1.md` এবং সংশ্লিষ্ট বর্তমান কোড দেখে বর্তমান অবস্থা বুঝবে। পুরোনো সফল সংযোগ পুনরায় নষ্ট না করে তারপর পরিবর্তন করবে।
