@@ -1,4 +1,4 @@
-/* আল-কুরআন গবেষণা — Research API Adapter v1.1
+/* আল-কুরআন গবেষণা — Research API Adapter v1.2
    Master Dataset → Read-only API
    Canonical dataset: data/fatiha-master-v1.json
 */
@@ -18,17 +18,34 @@ function apiJson(data, status = 200) {
 
 async function loadMasterDataset() {
   const cached = await caches.default.match(new Request('https://cache.local/' + CACHE_KEY));
-  if (cached) return cached.json();
+  if (cached) {
+    const cachedData = await cached.json();
+    return unwrapDataset(cachedData);
+  }
+
   const response = await fetch(DATA_URL, {
     headers: { 'Accept': 'application/json' },
     cf: { cacheTtl: 60, cacheEverything: true }
   });
   if (!response.ok) throw new Error(`Master dataset fetch failed: ${response.status}`);
+
   const data = await response.json();
-  const cacheResponse = new Response(JSON.stringify(data), {
+  const dataset = unwrapDataset(data);
+
+  const cacheResponse = new Response(JSON.stringify(dataset), {
     headers: { 'Content-Type': 'application/json; charset=utf-8' }
   });
   await caches.default.put(new Request('https://cache.local/' + CACHE_KEY), cacheResponse);
+  return dataset;
+}
+
+function unwrapDataset(data) {
+  // GitHub connector may expose a file as an envelope whose `content`
+  // field contains the actual JSON dataset. Accept both forms safely.
+  if (data && typeof data.content === 'string') {
+    const parsed = JSON.parse(data.content);
+    if (parsed && typeof parsed === 'object') return parsed;
+  }
   return data;
 }
 
