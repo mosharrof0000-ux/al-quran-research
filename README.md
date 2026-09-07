@@ -20,12 +20,19 @@
 - `docs/website-data-map-v1.md` — বর্তমান website UI থেকে database/API mapping
 - `data/fatiha.json` — Pilot data foundation; অসম্পূর্ণ অংশ verified না হওয়া পর্যন্ত verified হিসেবে গণ্য নয়
 - `docs/research-laboratory-vision-v1.md` — ভবিষ্যৎ বৃহৎ Research Laboratory, Tool, Workspace ও Universal Chat Controller-এর Vision
+- `docs/AI_RESEARCH_BRAIN_V1.md` — AI-এর কেন্দ্রীয় দায়িত্ব, গবেষণা-ক্ষমতা, evidence, memory, verification, Tool/Voice control ও বাস্তবায়ন roadmap
 - `docs/backup-restore-policy-v1.md` — প্রতিটি গুরুত্বপূর্ণ কাজের version, backup, known-good reference ও দ্রুত restore-এর স্থায়ী নীতি
 
 ## Data flow
 `Database -> Research API v1 -> Website -> AI Chat`
 
+## AI direction
+AI Research Brain হলো model-এর উপরের project-specific intelligence layer। AI model পরিবর্তন করা গেলেও research rules, data, evidence, memory এবং audit history project-এর নিজস্ব সম্পদ হিসেবে থাকবে।
+
+কেন্দ্রীয় flow:
+`User -> Chat/Voice -> Intent -> Research/Tool Engine -> Evidence/Analysis -> Status/Verification -> Answer/Record`
+
 ## Long-term direction
 আল-কুরআন গবেষণা এই প্রকল্পের প্রথম গবেষণা-ক্ষেত্র। ভবিষ্যতে একই Core Engine-এর উপর বিভিন্ন Research Domain, Tool, ব্যক্তিগত Workspace, Tool sharing/promotion এবং Chat-controlled Tool ecosystem তৈরি করা হবে।
 
-বর্তমান website design অক্ষুণ্ণ রেখে database architecture ও ভবিষ্যৎ laboratory engine ধাপে ধাপে বাস্তবায়ন করা হবে। কোনো পরিবর্তন করার পর version/backup/reference রেখে known-good অবস্থায় ফিরে যাওয়ার পথ বজায় রাখতে হবে।
+বর্তমান website design অক্ষুণ্ণ রেখে database architecture, AI Research Brain ও ভবিষ্যৎ laboratory engine ধাপে ধাপে বাস্তবায়ন করা হবে। কোনো পরিবর্তন করার পর version/backup/reference রেখে known-good অবস্থায় ফিরে যাওয়ার পথ বজায় রাখতে হবে।
