@@ -1,6 +1,7 @@
-/* আল-কুরআন গবেষণা — Worker Entry Wrapper v4.2
+/* আল-কুরআন গবেষণা — Worker Entry Wrapper v4.3
    Research API + Gemini chat + Cloudflare AI recovery + AI Research Brain.
    Research context is fetched internally as read-only project data before Gemini.
+   Provenance is explicitly attached so the AI can identify the exact dataset/record used.
 */
 import worker from './worker.js';
 import { handleResearchApi } from './research-api.js';
@@ -39,17 +40,38 @@ function extractAyahReference(message){
  return null;
 }
 
+function buildResearchProvenance(data,surah,ayah){
+ const datasetVersion=data?.dataset_version||'unknown';
+ const ayahId=data?.ayah_id||`S${String(surah).padStart(3,'0')}-A${String(ayah).padStart(3,'0')}`;
+ const tokenIds=Array.isArray(data?.tokens)?data.tokens.map(t=>t?.token_id).filter(Boolean):[];
+ return {
+   source_type:'PROJECT_MASTER_DATASET',
+   source_file:'data/fatiha-master-v1.json',
+   dataset_version:datasetVersion,
+   dataset_status:data?.dataset_status||'PILOT',
+   ayah_id:ayahId,
+   record_scope:`surah=${surah}, ayah=${ayah}`,
+   token_ids:tokenIds,
+   text_status:data?.text_status||null,
+   analysis_status:data?.analysis_status||null,
+   evidence_records:Array.isArray(data?.evidence)?data.evidence.map(e=>({evidence_id:e.evidence_id,source_type:e.source_type,name:e.name,scope:e.scope,note_bn:e.note_bn})):[],
+   rule:'এই গবেষণা-রেকর্ডের বাইরে থাকা তথ্যকে প্রকল্পের verified data হিসেবে দাবি করা যাবে না।'
+ };
+}
+
 async function getResearchContext(message){
- const ref=extractAyahReference(message);if(!ref)return {context:'',ref:null,used:false};
+ const ref=extractAyahReference(message);if(!ref)return {context:'',ref:null,used:false,provenance:null};
  const [surah,ayah]=ref;
  try{
    const req=new Request(`https://research.local/api/v1/ayah/${surah}/${ayah}`,{method:'GET'});
    const response=await handleResearchApi(req);
-   if(!response||!response.ok)return {context:'',ref,used:false};
+   if(!response||!response.ok)return {context:'',ref,used:false,provenance:null};
    const data=await response.json();
-   if(!data||data.error)return {context:'',ref,used:false};
-   return {context:JSON.stringify(data,null,2).slice(0,12000),ref,used:true};
- }catch{return {context:'',ref,used:false};}
+   if(!data||data.error)return {context:'',ref,used:false,provenance:null};
+   const provenance=buildResearchProvenance(data,surah,ayah);
+   const context=JSON.stringify({provenance,record:data},null,2).slice(0,14000);
+   return {context,ref,used:true,provenance};
+ }catch{return {context:'',ref,used:false,provenance:null};}
 }
 
 async function directGemini(request,env,origin){
@@ -63,9 +85,10 @@ async function directGemini(request,env,origin){
  if(research.ref&&!research.used){
    return json({answer:'এই আয়াতের জন্য প্রকল্পের Research API থেকে যাচাইযোগ্য গবেষণা-রেকর্ড পাওয়া যায়নি। তাই আমি সাধারণ তাফসির বা অনুমান দিয়ে প্রকল্পের তথ্যের বিকল্প উত্তর দিচ্ছি না। আগে Research API সংযোগ/ডেটা যাচাই করতে হবে।',mode,language:'bn',provider:'research-api',brain_version:BRAIN_VERSION,intent:brain.type,research_context_used:false,research_context_ref:`${research.ref[0]}:${research.ref[1]}`},200,origin);
  }
- const prompt=`${brain.prompt}\n\nফ্রন্টএন্ডের মোড: ${mode}\n\nপ্রকল্পের file-based read-only context:\n${projectContext}`;
+ const provenanceInstruction=`\n\nগবেষণা-উৎস প্রদানের বাধ্যতামূলক নিয়ম:\n- যদি PROJECT_MASTER_DATASET context দেওয়া থাকে, প্রতিটি গবেষণা-দাবির পাশে প্রকল্পের সুনির্দিষ্ট উৎস দাও।\n- উৎসের ন্যূনতম পরিচয়: source_file, dataset_version, ayah_id; শব্দ-স্তরে token_id থাকলে সেটিও দাও।\n- কোন তথ্য VERIFIED/ESTABLISHED/DISPUTED/PENDING তা রেকর্ডের status অনুযায়ী বলো।\n- প্রকল্পের রেকর্ডে কোনো তথ্য না থাকলে ঠিক এই অর্থে বলো: “প্রকল্পের ডেটায় নেই”। নিজের সাধারণ জ্ঞান দিয়ে অনুপস্থিত তথ্য পূরণ করবে না।\n- evidence_records থাকলে সেগুলোকে বাহ্যিক reference হিসেবে আলাদা দেখাও; বাহ্যিক উৎসকে নিজস্ব verified data বানিও না।\n- source_file বা record না থাকলে কোনো কাল্পনিক ফাইল/রেকর্ড/লাইন নম্বর তৈরি করবে না।`;
+ const prompt=`${brain.prompt}\n\nফ্রন্টএন্ডের মোড: ${mode}\n\nপ্রকল্পের file-based read-only context:\n${projectContext}\n\nপ্রকল্পের read-only research record ও provenance:\n${research.context}${provenanceInstruction}`;
  const models=[env.GEMINI_MODEL||'gemini-2.5-flash','gemini-2.5-flash-lite'].filter((v,i,a)=>a.indexOf(v)===i);
- for(const model of models){try{const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':env.GEMINI_API_KEY},body:JSON.stringify({systemInstruction:{parts:[{text:BRAIN_SYSTEM}]},contents:[{role:'user',parts:[{text:prompt}]}],generationConfig:{maxOutputTokens:1600,temperature:0.1}})});if(!r.ok)continue;const data=await r.json();const answer=data?.candidates?.[0]?.content?.parts?.map(p=>p?.text||'').join('').trim();if(answer)return json({answer,mode,language:'bn',provider:model,brain_version:BRAIN_VERSION,intent:brain.type,research_context_used:research.used,research_context_ref:research.ref?`${research.ref[0]}:${research.ref[1]}`:null,project_context_loaded:Boolean(projectContext)},200,origin);}catch{}}
+ for(const model of models){try{const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':env.GEMINI_API_KEY},body:JSON.stringify({systemInstruction:{parts:[{text:BRAIN_SYSTEM}]},contents:[{role:'user',parts:[{text:prompt}]}],generationConfig:{maxOutputTokens:1800,temperature:0.1}})});if(!r.ok)continue;const data=await r.json();const answer=data?.candidates?.[0]?.content?.parts?.map(p=>p?.text||'').join('').trim();if(answer)return json({answer,mode,language:'bn',provider:model,brain_version:BRAIN_VERSION,intent:brain.type,research_context_used:research.used,research_context_ref:research.ref?`${research.ref[0]}:${research.ref[1]}`:null,project_context_loaded:Boolean(projectContext),research_provenance:research.provenance},200,origin);}catch{}}
  return null;
 }
 
