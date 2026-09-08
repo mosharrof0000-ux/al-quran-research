@@ -41,6 +41,11 @@ Requested exact page-এর link, redirect, title এবং page identity যা
 
 AI উত্তরের নিচে `↗ পরামর্শটি পাঠান` বোতাম যোগ করা হয়েছে। বোতামে চাপলে ওই AI বার্তার লেখাটি সরাসরি পরবর্তী user message হিসেবে একই Cloudflare Worker AI chat-এ পাঠানো হয়। এটি বর্তমান নির্দিষ্ট গবেষণা-চ্যাট পেজেই যোগ করা হয়েছে; `chat.html` পরিবর্তন করা হয়নি।
 
+### প্রস্তাব ৭ — Legacy backend history verification
+অবস্থা: `পর্যালোচনা প্রয়োজন`
+
+`worker-entry-v1.2.js`, `chat-recovery-v3.js`, এবং `research-api-entry.js` বর্তমান `wrangler.jsonc` entrypoint/caller নয়—এটি যাচাই হয়েছে। Git history-তে তিনটির historical addition commit-ও নথিভুক্ত হয়েছে। এখনই delete করা হবে না; আগে rollback/deployment value এবং archival প্রয়োজন মূল্যায়ন করতে হবে।
+
 ## মালিকের মন্তব্য
 
 মালিকের মন্তব্য/সিদ্ধান্ত এখানে যোগ করা যাবে।
