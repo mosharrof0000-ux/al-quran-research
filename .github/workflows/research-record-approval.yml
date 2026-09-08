@@ -1,0 +1,85 @@
+name: Research Record Approval
+
+on:
+  workflow_dispatch:
+    inputs:
+      proposal_json:
+        description: 'PENDING_REVIEW research_record_proposal JSON'
+        required: true
+        type: string
+      approval:
+        description: 'Type APPROVE to authorize a new versioned research record'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  approve-and-save:
+    if: ${{ inputs.approval == 'APPROVE' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Validate proposal and create next immutable version
+        env:
+          PROPOSAL_JSON: ${{ inputs.proposal_json }}
+        run: |
+          python3 - <<'PY'
+          import json, os, pathlib, sys
+          proposal=json.loads(os.environ['PROPOSAL_JSON'])
+          if proposal.get('status') != 'PENDING_REVIEW':
+              raise SystemExit('REJECTED: proposal status must be PENDING_REVIEW')
+          if not proposal.get('source_refs'):
+              raise SystemExit('REJECTED: source_refs required')
+          if proposal.get('save_policy') != 'APPROVAL_REQUIRED_NO_MASTER_OVERWRITE':
+              raise SystemExit('REJECTED: invalid save policy')
+          if any(f.startswith('data/fatiha-master-v1.json') for f in ['data/fatiha-master-v1.json']):
+              pass
+          root=pathlib.Path('data/research-records')
+          root.mkdir(parents=True, exist_ok=True)
+          scope=proposal.get('scope',{}).get('ayah_id') or 'UNSCOPED'
+          candidates=[]
+          for p in root.glob('*.json'):
+              try:
+                  d=json.loads(p.read_text(encoding='utf-8'))
+                  if d.get('scope',{}).get('ayah_id')==scope:
+                      candidates.append((int(d.get('version',0)),p,d))
+              except Exception:
+                  continue
+          previous=max(candidates,key=lambda x:x[0]) if candidates else None
+          next_version=(previous[0]+1) if previous else 1
+          new_id=f"RR-{scope.replace('-','')}-V{next_version}"
+          proposal['record_id']=new_id
+          proposal['version']=next_version
+          proposal['status']='VERIFIED'
+          proposal['supersedes']=previous[2].get('record_id') if previous else None
+          proposal['approved_by']='human_workflow_approval'
+          proposal['approval_basis']='Manual GitHub Actions approval (APPROVE)'
+          proposal['created_at']=proposal.get('created_at')
+          out=root/(new_id+'.json')
+          if out.exists():
+              raise SystemExit('REJECTED: target version already exists')
+          # Never modify the master dataset in this workflow.
+          proposal.pop('record_id_proposal',None)
+          out.write_text(json.dumps(proposal,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+          print(f'Created {out} version={next_version} supersedes={proposal["supersedes"]}')
+          PY
+
+      - name: Verify master dataset unchanged
+        run: |
+          git diff --exit-code -- data/fatiha-master-v1.json
+
+      - name: Commit approved research record
+        run: |
+          git config user.name 'al-quran-research approval bot'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add data/research-records/
+          git diff --cached --quiet && { echo 'No record change'; exit 1; }
+          git commit -m 'Approve and save versioned research record'
+          git push origin main
