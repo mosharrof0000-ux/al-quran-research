@@ -20,7 +20,7 @@ jobs:
           set -e
           curl -fsS --retry 3 --retry-delay 2 \
             -H 'Accept: application/json' \
-            'https://al-quran-research.mosharrof0000-ux.workers.dev/' | tee health.json
+            'https://al-quran-research.mosharrof0000.workers.dev/' | tee health.json
           grep -q '"ok":true' health.json
 
       - name: Check AI chat response
@@ -30,5 +30,5 @@ jobs:
             -X POST \
             -H 'Content-Type: application/json' \
             --data '{"message":"বাংলায় একটি সংক্ষিপ্ত উত্তর দিন: ২+২ কত?","mode":"general","language":"bn"}' \
-            'https://al-quran-research.mosharrof0000-ux.workers.dev/' | tee chat.json
+            'https://al-quran-research.mosharrof0000.workers.dev/' | tee chat.json
           grep -q '"answer"' chat.json
