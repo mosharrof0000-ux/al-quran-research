@@ -58,6 +58,13 @@ AI উত্তরের নিচে `↗ পরামর্শটি পাঠ
 
 এটি documentation/system-instruction স্তরের পরিবর্তন; কোনো raw research data বা বর্তমান production chat path পরিবর্তন করা হয়নি।
 
+### প্রস্তাব ১০ — AI-কে প্রকল্পের ফাইল পড়ার runtime ক্ষমতা দেওয়া
+অবস্থা: `বাস্তবায়িত — read-only context চালু`
+
+AI chat-এর আগে একটি নিরাপদ read-only Project Context Loader যোগ করা হয়েছে। এটি GitHub-এর public project documents থেকে সর্বশেষ গবেষণা-নীতি, architecture, backup, AI rules, research chain, project comments, vision এবং technology watch context এনে AI-কে দেয়। Research API-এর raw research data path অপরিবর্তিত রাখা হয়েছে। Context cache করা হয় এবং কোনো project file এই loader নিজে পরিবর্তন করে না।
+
+বর্তমান Worker path-এ `backend/research-project-context.js` যুক্ত হয়েছে এবং `backend/worker-entry.js` থেকে এটি AI prompt-এ দেওয়া হচ্ছে। এটি production AI-কে project documentation বাস্তবে পড়ার সক্ষমতা দেয়; `chat.html` ও বর্তমান নির্দিষ্ট design page পরিবর্তন করা হয়নি।
+
 ## মালিকের মন্তব্য
 
 মালিকের মন্তব্য/সিদ্ধান্ত এখানে যোগ করা যাবে।
