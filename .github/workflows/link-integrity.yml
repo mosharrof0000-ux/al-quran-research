@@ -1,0 +1,43 @@
+name: Link Integrity Check
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'index.html'
+      - 'design-preview-work-chat-v3-cloudflare-ai-2026-09-07.html'
+      - '.github/workflows/link-integrity.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  verify-project-link:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Verify main page redirect and exact target
+        shell: bash
+        run: |
+          set -euo pipefail
+          base='https://mosharrof0000-ux.github.io/al-quran-research'
+          source="$base/index.html"
+          expected='https://mosharrof0000-ux.github.io/al-quran-research/design-preview-work-chat-v3-cloudflare-ai-2026-09-07.html?v=20260908-2'
+
+          html="$(curl -fsSL --retry 3 --retry-delay 2 "$source")"
+          printf '%s\n' "$html" | grep -Fq 'design-preview-work-chat-v3-cloudflare-ai-2026-09-07.html?v=20260908-2'
+
+          final_url="$(curl -fsSL -o /dev/null -w '%{url_effective}' --retry 3 --retry-delay 2 "$source")"
+          test "$final_url" = "$expected"
+
+      - name: Verify target page identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          target='https://mosharrof0000-ux.github.io/al-quran-research/design-preview-work-chat-v3-cloudflare-ai-2026-09-07.html?v=20260908-2'
+          html="$(curl -fsSL --retry 3 --retry-delay 2 "$target")"
+          printf '%s\n' "$html" | grep -Fq '<title>গবেষণা সহকারী</title>'
+          printf '%s\n' "$html" | grep -Fq 'id="composer"'
+          printf '%s\n' "$html" | grep -Fq 'পাঠান'
