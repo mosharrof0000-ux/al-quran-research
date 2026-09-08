@@ -46,28 +46,40 @@ Deployment workflow-এ `backend`-কে working directory করে `wrangler d
 
 ### 6. `worker-entry-v1.2.js` — LEGACY CANDIDATE / NOT ACTIVE ENTRYPOINT
 
-বর্তমান `wrangler.jsonc` এটিকে `main` হিসেবে নির্দেশ করে না। বর্তমান deployment workflow-ও `wrangler.jsonc` ব্যবহার করে। তাই এটি বর্তমান production entrypoint নয়। তবে পুরোনো deployment/history বা rollback-এর প্রমাণ না দেখে delete করা যাবে না।
+বর্তমান `wrangler.jsonc` এটিকে `main` হিসেবে নির্দেশ করে না। বর্তমান deployment workflow-ও `wrangler.jsonc` ব্যবহার করে। Git history-তে এটি 2026-09-05-এ `চ্যাটের জন্য AI rescue backend v1.2 যোগ করা হয়েছে` commit-এ যোগ হয়েছিল। বর্তমান main-branch code search-এ এর active caller/reference পাওয়া যায়নি। তাই এটি বর্তমান production entrypoint নয়; rollback/history-এর জন্য আপাতত রাখা হবে।
 
 ### 7. `chat-recovery-v3.js` — LEGACY CANDIDATE / CURRENT CALLER NOT FOUND
 
-বর্তমান `worker-entry.js` `chat-recovery.js` ব্যবহার করে, `chat-recovery-v3.js` নয়। তাই বর্তমান Worker call path-এ এটি পাওয়া যায়নি। পুরোনো workflow/commit/history-তে ব্যবহার ছিল কি না যাচাই না করে delete নয়।
+বর্তমান `worker-entry.js` `chat-recovery.js` ব্যবহার করে, `chat-recovery-v3.js` নয়। Git history-তে এটি 2026-09-05-এ `AI chat recovery fallback v3 যোগ করা` commit-এ যোগ হয়েছিল। বর্তমান main-branch code search-এ active caller/reference পাওয়া যায়নি। তাই বর্তমান Worker call path-এ এটি নেই; এখনই delete নয়।
 
 ### 8. `research-api-entry.js` — LEGACY/SEPARATE ENTRY CANDIDATE
 
-এটি `research-api.js` import করে একটি আলাদা Research API entrypoint দেয়, কিন্তু বর্তমান `wrangler.jsonc`-এর `main` এটি নয়। তাই এটি বর্তমান deployed Worker entrypoint নয়। ভবিষ্যৎ আলাদা API deployment-এর জন্য রাখা হতে পারে; delete নয়।
+এটি `research-api.js` import করে একটি আলাদা Research API entrypoint দেয়, কিন্তু বর্তমান `wrangler.jsonc`-এর `main` এটি নয়। Git history-তে এটি 2026-09-04-এ `Add safe Research API entry bridge` commit-এ যোগ হয়েছিল। বর্তমান main-branch deployment path-এ এর caller পাওয়া যায়নি। তাই এটি বর্তমান deployed Worker entrypoint নয়; এখনই delete নয়।
 
-## গুরুত্বপূর্ণ যাচাই ফল
+## Git history / deployment verification — 2026-09-08
 
-- বর্তমান deployed Worker-এর entrypoint: **`worker-entry.js`**।
-- বর্তমান entrypoint-এর চারটি সরাসরি dependency: **`worker.js` + `research-api.js` + `chat-recovery.js` + `ai-research-brain.js`**।
-- `worker-entry-v1.2.js`, `chat-recovery-v3.js`, `research-api-entry.js` বর্তমানে মূল deployment configuration-এর entrypoint/caller নয়।
+- `worker-entry-v1.2.js`-এর historical addition: commit `7f3e473bdae2dce8596d6254554bcd78da865758`।
+- `chat-recovery-v3.js`-এর historical addition: commit `1b506b79505f695a01c5eb210e51a779fa6476d3`।
+- `research-api-entry.js`-এর historical addition: commit `e5ca2993cab6e9ff14d51fd0282f40d35ca1e605`।
+- বর্তমান deployment workflow `.github/workflows/deploy-worker.yml` backend directory থেকে `wrangler deploy --config wrangler.jsonc` চালায়।
+- বর্তমান `backend/wrangler.jsonc`-এ `main` = `worker-entry.js`।
+- যাচাই করা তিনটি versioned/alternate file-এর কোনোটি বর্তমান `main` entrypoint নয়।
+- বর্তমান main-branch code search-এ তিনটির active caller/reference পাওয়া যায়নি।
+
+## গুরুত্বপূর্ণ সিদ্ধান্ত
+
+এখন পর্যন্ত প্রমাণ **legacy candidate** অবস্থানকে সমর্থন করে, কিন্তু historical file থাকা মানেই নিরাপদে delete করা যাবে—এমন প্রমাণ হয়নি। তাই এই ধাপে কোনো backend file delete/rename করা হয়নি। প্রথমে rollback value, historical deployment usage এবং recovery necessity আলাদা করে মূল্যায়ন করতে হবে।
+
+## সংরক্ষিত অবস্থা
+
 - কোনো backend file এই ধাপে delete করা হয়নি।
 - `chat.html`-এ কোনো পরিবর্তন করা হয়নি।
 - বর্তমান Worker endpoint পরিবর্তন করা হয়নি।
+- এই যাচাইয়ের আগে backup: `backup/pre-git-history-legacy-verification-2026-09-08` → `7a9ea14f13c95937041238f2a09a2d2e9b395ef2`।
 
 ## পরবর্তী নিরাপদ কাজ
 
-1. পুরোনো versioned backend ফাইলগুলোর Git history/Actions workflow reference যাচাই করা।
-2. কোনো পুরোনো ফাইল কেবল legacy candidate হিসেবে নিশ্চিত হলে তার জন্য আলাদা cleanup proposal তৈরি করা।
-3. Cleanup-এর আগে অবশ্যই নতুন backup এবং rollback path নিশ্চিত করা।
+1. এই তিনটি legacy candidate-এর deployment/rollback মূল্য আলাদা করে মূল্যায়ন করা।
+2. প্রয়োজন হলে delete নয়, আগে `archive/legacy-backend/`-জাতীয় নিরাপদ archival পরিকল্পনার প্রস্তাব তৈরি করা।
+3. কোনো cleanup-এর আগে backup + rollback path নিশ্চিত করা।
 4. ভবিষ্যতে provider-neutral AI Adapter যোগ করা যেতে পারে, তবে বর্তমান production path না ভেঙে আলাদা adapter layer হিসেবে।
