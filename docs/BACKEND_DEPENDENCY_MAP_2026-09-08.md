@@ -4,39 +4,70 @@
 
 এই নথি backend-এর একাধিক/ভার্সনযুক্ত ফাইলের ভূমিকা, বর্তমান ব্যবহারের প্রমাণ এবং cleanup-এর আগে নিরাপদ অবস্থান নথিভুক্ত করে। কোনো ফাইল শুধু নাম দেখে delete করা যাবে না।
 
-## বর্তমান AI request path
+## যাচাই করা বর্তমান AI request path
 
 `design-preview-work-chat-v3-cloudflare-ai-2026-09-07.html`
 → `WORKER_URL`
 → `https://al-quran-research.mosharrof0000.workers.dev/`
 → Cloudflare Worker
+→ `backend/wrangler.jsonc`
+→ `worker-entry.js`
 
-বর্তমান chat page-এ সরাসরি provider-neutral adapter নেই; browser থেকে Worker endpoint-এ POST যায়। তাই provider-neutral adapter-কে ভবিষ্যৎ উন্নয়ন হিসেবে রাখা হয়েছে, তাৎক্ষণিক migration নয়।
+Deployment workflow-এ `backend`-কে working directory করে `wrangler deploy --config wrangler.jsonc` চালানো হয়। তাই `worker-entry.js` বর্তমানে **সক্রিয় Worker entrypoint** হিসেবে প্রমাণিত।
 
-## Backend file inventory
+## যাচাই করা backend dependency
 
-নিচের ফাইলগুলো repository-তে পাওয়া backend/AI-related নাম হিসেবে inventory করা হয়েছে:
+### 1. `worker-entry.js` — ACTIVE / প্রধান entrypoint
 
-- `worker.js` — Worker implementation candidate; active কিনা deployment configuration দিয়ে নিশ্চিত করতে হবে।
-- `worker-entry.js` — Worker entry candidate; deployment reference দিয়ে active কিনা নিশ্চিত করতে হবে।
-- `worker-entry-v1.2.js` — versioned entry candidate; legacy/experimental হওয়ার সম্ভাবনা আছে, কিন্তু প্রমাণ ছাড়া delete নয়।
-- `chat-recovery.js` — chat recovery logic candidate; caller/deployment reference পরীক্ষা প্রয়োজন।
-- `chat-recovery-v3.js` — versioned recovery logic candidate; caller/deployment reference পরীক্ষা প্রয়োজন।
-- `research-api.js` — research API implementation candidate।
-- `research-api-entry.js` — research API entry candidate।
-- `ai-research-brain.js` — project-specific AI research logic candidate; active call path যাচাই প্রয়োজন।
+`wrangler.jsonc`-এর `main` সরাসরি `worker-entry.js` নির্দেশ করে। এই entrypoint বর্তমানে নিচের module-গুলো import করে:
 
-## সিদ্ধান্ত
+- `worker.js`
+- `research-api.js`
+- `chat-recovery.js`
+- `ai-research-brain.js`
 
-1. কোনো backend file এই audit-এ delete করা হয়নি।
-2. Active/legacy status নির্ধারণের জন্য deployment config, workflow এবং code callers-এর পূর্ণ cross-reference পরবর্তী ধাপে করতে হবে।
-3. বর্তমান working Worker endpoint পরিবর্তন করা হয়নি।
-4. Cleanup-এর আগে আলাদা backup বাধ্যতামূলক থাকবে।
+অতএব এই চারটি module-কে বর্তমান Worker path-এর অংশ হিসেবে গণ্য করতে হবে।
+
+### 2. `worker.js` — ACTIVE / primary worker implementation
+
+`worker-entry.js` এটি import করে এবং fallback/recovery-এর আগে `worker.fetch(...)` হিসেবে ব্যবহার করে। তাই এটি active supporting implementation।
+
+### 3. `research-api.js` — ACTIVE / Research API implementation
+
+`worker-entry.js` এটি import করে। এটি Master Dataset-কে read-only API হিসেবে পরিবেশন করে এবং `/api/v1/status`, `/surah`, `/ayah`, `/word`, `/search` route পরিচালনা করে।
+
+### 4. `ai-research-brain.js` — ACTIVE / research intelligence layer
+
+`worker-entry.js` এটি import করে এবং `BRAIN_VERSION`, `BRAIN_SYSTEM`, `buildBrainPrompt` ব্যবহার করে। এটি প্রশ্নের ধরন ও গবেষণা-নিয়ম অনুযায়ী Gemini prompt তৈরিতে যুক্ত।
+
+### 5. `chat-recovery.js` — ACTIVE / recovery layer
+
+`worker-entry.js` এটি import করে এবং primary response ব্যর্থ হলে `recoverChat(...)` চালায়। বর্তমানে এটি Cloudflare Workers AI recovery model-গুলোর fallback path হিসেবে ব্যবহৃত।
+
+### 6. `worker-entry-v1.2.js` — LEGACY CANDIDATE / NOT ACTIVE ENTRYPOINT
+
+বর্তমান `wrangler.jsonc` এটিকে `main` হিসেবে নির্দেশ করে না। বর্তমান deployment workflow-ও `wrangler.jsonc` ব্যবহার করে। তাই এটি বর্তমান production entrypoint নয়। তবে পুরোনো deployment/history বা rollback-এর প্রমাণ না দেখে delete করা যাবে না।
+
+### 7. `chat-recovery-v3.js` — LEGACY CANDIDATE / CURRENT CALLER NOT FOUND
+
+বর্তমান `worker-entry.js` `chat-recovery.js` ব্যবহার করে, `chat-recovery-v3.js` নয়। তাই বর্তমান Worker call path-এ এটি পাওয়া যায়নি। পুরোনো workflow/commit/history-তে ব্যবহার ছিল কি না যাচাই না করে delete নয়।
+
+### 8. `research-api-entry.js` — LEGACY/SEPARATE ENTRY CANDIDATE
+
+এটি `research-api.js` import করে একটি আলাদা Research API entrypoint দেয়, কিন্তু বর্তমান `wrangler.jsonc`-এর `main` এটি নয়। তাই এটি বর্তমান deployed Worker entrypoint নয়। ভবিষ্যৎ আলাদা API deployment-এর জন্য রাখা হতে পারে; delete নয়।
+
+## গুরুত্বপূর্ণ যাচাই ফল
+
+- বর্তমান deployed Worker-এর entrypoint: **`worker-entry.js`**।
+- বর্তমান entrypoint-এর চারটি সরাসরি dependency: **`worker.js` + `research-api.js` + `chat-recovery.js` + `ai-research-brain.js`**।
+- `worker-entry-v1.2.js`, `chat-recovery-v3.js`, `research-api-entry.js` বর্তমানে মূল deployment configuration-এর entrypoint/caller নয়।
+- কোনো backend file এই ধাপে delete করা হয়নি।
+- `chat.html`-এ কোনো পরিবর্তন করা হয়নি।
+- বর্তমান Worker endpoint পরিবর্তন করা হয়নি।
 
 ## পরবর্তী নিরাপদ কাজ
 
-- Wrangler/deployment configuration খুঁজে active entrypoint নির্ধারণ।
-- GitHub Actions workflow-এ কোন backend file deploy/modify হয় তা নির্ধারণ।
-- `import`, `fetch`, `Worker`, `research-api`, `ai-research-brain` caller/reference cross-reference করা।
-- তারপর প্রতিটি file-কে `active`, `supporting`, `legacy candidate`, `experimental`, বা `unknown` হিসেবে চিহ্নিত করা।
-- প্রমাণ ছাড়া cleanup নয়।
+1. পুরোনো versioned backend ফাইলগুলোর Git history/Actions workflow reference যাচাই করা।
+2. কোনো পুরোনো ফাইল কেবল legacy candidate হিসেবে নিশ্চিত হলে তার জন্য আলাদা cleanup proposal তৈরি করা।
+3. Cleanup-এর আগে অবশ্যই নতুন backup এবং rollback path নিশ্চিত করা।
+4. ভবিষ্যতে provider-neutral AI Adapter যোগ করা যেতে পারে, তবে বর্তমান production path না ভেঙে আলাদা adapter layer হিসেবে।
