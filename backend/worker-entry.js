@@ -1,4 +1,4 @@
-/* আল-কুরআন গবেষণা — Worker Entry Wrapper v4.1
+/* আল-কুরআন গবেষণা — Worker Entry Wrapper v4.2
    Research API + Gemini chat + Cloudflare AI recovery + AI Research Brain.
    Research context is fetched internally as read-only project data before Gemini.
 */
@@ -6,6 +6,7 @@ import worker from './worker.js';
 import { handleResearchApi } from './research-api.js';
 import { recoverChat } from './chat-recovery.js';
 import { BRAIN_VERSION, BRAIN_SYSTEM, buildBrainPrompt } from './ai-research-brain.js';
+import { loadProjectContext } from './research-project-context.js';
 
 const ALLOWED_ORIGINS=['https://mosharrof0000-ux.github.io'];
 function corsHeaders(origin){return {'Access-Control-Allow-Origin':ALLOWED_ORIGINS.includes(origin)?origin:ALLOWED_ORIGINS[0],'Access-Control-Allow-Methods':'GET, POST, OPTIONS','Access-Control-Allow-Headers':'Content-Type','Content-Type':'application/json; charset=utf-8','Vary':'Origin'};}
@@ -56,13 +57,15 @@ async function directGemini(request,env,origin){
  const message=String(body?.message||'').trim();if(!message)return null;
  const mode=String(body?.mode||'general');
  const research=await getResearchContext(message);
+ let projectContext='';
+ try{projectContext=await loadProjectContext();}catch{projectContext='';}
  const brain=buildBrainPrompt(message,research.context);
  if(research.ref&&!research.used){
    return json({answer:'এই আয়াতের জন্য প্রকল্পের Research API থেকে যাচাইযোগ্য গবেষণা-রেকর্ড পাওয়া যায়নি। তাই আমি সাধারণ তাফসির বা অনুমান দিয়ে প্রকল্পের তথ্যের বিকল্প উত্তর দিচ্ছি না। আগে Research API সংযোগ/ডেটা যাচাই করতে হবে।',mode,language:'bn',provider:'research-api',brain_version:BRAIN_VERSION,intent:brain.type,research_context_used:false,research_context_ref:`${research.ref[0]}:${research.ref[1]}`},200,origin);
  }
- const prompt=`${brain.prompt}\n\nফ্রন্টএন্ডের মোড: ${mode}`;
+ const prompt=`${brain.prompt}\n\nফ্রন্টএন্ডের মোড: ${mode}\n\nপ্রকল্পের file-based read-only context:\n${projectContext}`;
  const models=[env.GEMINI_MODEL||'gemini-2.5-flash','gemini-2.5-flash-lite'].filter((v,i,a)=>a.indexOf(v)===i);
- for(const model of models){try{const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':env.GEMINI_API_KEY},body:JSON.stringify({systemInstruction:{parts:[{text:BRAIN_SYSTEM}]},contents:[{role:'user',parts:[{text:prompt}]}],generationConfig:{maxOutputTokens:1600,temperature:0.1}})});if(!r.ok)continue;const data=await r.json();const answer=data?.candidates?.[0]?.content?.parts?.map(p=>p?.text||'').join('').trim();if(answer)return json({answer,mode,language:'bn',provider:model,brain_version:BRAIN_VERSION,intent:brain.type,research_context_used:research.used,research_context_ref:research.ref?`${research.ref[0]}:${research.ref[1]}`:null},200,origin);}catch{}}
+ for(const model of models){try{const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':env.GEMINI_API_KEY},body:JSON.stringify({systemInstruction:{parts:[{text:BRAIN_SYSTEM}]},contents:[{role:'user',parts:[{text:prompt}]}],generationConfig:{maxOutputTokens:1600,temperature:0.1}})});if(!r.ok)continue;const data=await r.json();const answer=data?.candidates?.[0]?.content?.parts?.map(p=>p?.text||'').join('').trim();if(answer)return json({answer,mode,language:'bn',provider:model,brain_version:BRAIN_VERSION,intent:brain.type,research_context_used:research.used,research_context_ref:research.ref?`${research.ref[0]}:${research.ref[1]}`:null,project_context_loaded:Boolean(projectContext)},200,origin);}catch{}}
  return null;
 }
 
