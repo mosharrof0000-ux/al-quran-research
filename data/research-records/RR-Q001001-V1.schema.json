@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Al-Quran Research Versioned Research Record",
+  "type": "object",
+  "required": ["record_id", "version", "status", "question", "objective", "scope", "source_refs", "evidence_refs", "findings", "uncertainties", "created_at"],
+  "properties": {
+    "record_id": {"type": "string"},
+    "version": {"type": "integer", "minimum": 1},
+    "status": {"enum": ["DRAFT", "PENDING_REVIEW", "VERIFIED", "DISPUTED", "SUPERSEDED"]},
+    "question": {"type": "string"},
+    "objective": {"type": "string"},
+    "scope": {"type": "object"},
+    "source_refs": {"type": "array"},
+    "evidence_refs": {"type": "array"},
+    "findings": {"type": "array"},
+    "uncertainties": {"type": "array"},
+    "created_at": {"type": "string"},
+    "supersedes": {"type": ["string", "null"]},
+    "notes": {"type": "string"}
+  },
+  "additionalProperties": true
+}
