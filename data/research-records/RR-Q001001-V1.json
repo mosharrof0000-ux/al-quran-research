@@ -1,0 +1,29 @@
+{
+  "record_id": "RR-Q001001",
+  "version": 1,
+  "status": "PENDING_REVIEW",
+  "question": "সূরা ফাতিহার ১ নম্বর আয়াত নিয়ে প্রকল্পের বিদ্যমান গবেষণা-ডেটা কী বলে?",
+  "objective": "প্রকল্পের নিজস্ব master dataset ও evidence identity ধরে পূর্ববর্তী গবেষণা পুনঃব্যবহারযোগ্য করা।",
+  "scope": {
+    "ayah_id": "S001-A001",
+    "dataset": "al-quran-research",
+    "dataset_version": "2026-09-04-fatiha-master-v1",
+    "source_file": "data/fatiha-master-v1.json"
+  },
+  "source_refs": [
+    {
+      "source_file": "data/fatiha-master-v1.json",
+      "dataset_version": "2026-09-04-fatiha-master-v1",
+      "ayah_id": "S001-A001"
+    }
+  ],
+  "evidence_refs": ["E-QAC-001"],
+  "findings": [],
+  "uncertainties": [
+    "এটি সংরক্ষণযোগ্য গবেষণা-রেকর্ডের কাঠামো; চূড়ান্ত গবেষণা-ফল হিসেবে গণ্য নয়।",
+    "শব্দভিত্তিক disputed root সম্পর্কগুলো master dataset-এর status অনুযায়ীই রাখতে হবে।"
+  ],
+  "created_at": "2026-09-08",
+  "supersedes": null,
+  "notes": "AI নিজে থেকে এই রেকর্ডকে VERIFIED করবে না। পরবর্তী গবেষণায় এই রেকর্ড context হিসেবে পড়া যাবে।"
+}
