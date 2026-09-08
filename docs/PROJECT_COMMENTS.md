@@ -65,6 +65,13 @@ AI chat-এর আগে একটি নিরাপদ read-only Project Conte
 
 বর্তমান Worker path-এ `backend/research-project-context.js` যুক্ত হয়েছে এবং `backend/worker-entry.js` থেকে এটি AI prompt-এ দেওয়া হচ্ছে। এটি production AI-কে project documentation বাস্তবে পড়ার সক্ষমতা দেয়; `chat.html` ও বর্তমান নির্দিষ্ট design page পরিবর্তন করা হয়নি।
 
+### প্রস্তাব ১১ — Smart Research Agent: source/provenance-aware runtime
+অবস্থা: `বাস্তবায়িত — গবেষণা-উৎস স্তর শক্তিশালী করা হয়েছে`
+
+AI-কে শুধু প্রকল্পের নিয়ম জানানো নয়, নির্দিষ্ট Research API record-এর সঙ্গে গবেষণা-উত্তরকে যুক্ত করা হয়েছে। Ayah research request হলে read-only master dataset থেকে record আনা হয় এবং AI-কে `source_file`, `dataset_version`, `ayah_id`, `token_id`, `text_status`, `analysis_status` ও available evidence record-এর পরিচয়সহ দেওয়া হয়। AI-কে প্রতিটি গবেষণা-দাবির পাশে সুনির্দিষ্ট প্রকল্প-উৎস, যাচাই-অবস্থা এবং অনুপস্থিত তথ্যের ক্ষেত্রে `প্রকল্পের ডেটায় নেই` বলতে বাধ্য করা হয়েছে। কোনো কাল্পনিক file/record/source তৈরি না করার নিয়মও runtime prompt-এ যুক্ত হয়েছে।
+
+এটি raw research data পরিবর্তন করে না এবং `chat.html` পরিবর্তন করে না। ভবিষ্যৎ উন্নয়নের ভিত্তি হিসেবে read-only research retrieval, provenance, evidence এবং পরে versioned research-memory/recording layer যোগ করা যাবে।
+
 ## মালিকের মন্তব্য
 
 মালিকের মন্তব্য/সিদ্ধান্ত এখানে যোগ করা যাবে।
