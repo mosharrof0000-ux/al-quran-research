@@ -1,0 +1,31 @@
+name: Backup main
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create timestamped backup branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin main
+          stamp="$(date -u +'%Y-%m-%d-%H%M%S')"
+          branch="backup/auto-main-${stamp}"
+          git switch -c "$branch" origin/main
+          git push origin "$branch"
+          echo "Created backup branch: $branch"
