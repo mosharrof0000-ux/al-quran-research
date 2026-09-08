@@ -10,19 +10,23 @@ export function buildResearchRecordProposal({message='', answer='', researchProv
  for(const r of memoryRecords||[]){
   if(r?.record_id)sourceRefs.push({record_id:r.record_id,version:r.version||null,status:r.status||null,ayah_id:r.scope?.ayah_id||null});
  }
+ const scopeAyahId=researchProvenance?.ayah_id||null;
+ const scoped=(memoryRecords||[]).filter(r=>!scopeAyahId || r?.scope?.ayah_id===scopeAyahId);
+ const previous=scoped.reduce((best,r)=>Number(r?.version||0)>Number(best?.version||0)?r:best,null);
+ const nextVersion=Number(previous?.version||0)+1;
  return {
   record_id_proposal:'NEW-RESEARCH-RECORD',
-  version:1,
+  version:nextVersion,
   status:'PENDING_REVIEW',
   question:String(message).trim(),
   objective:'এই AI গবেষণা-উত্তরের সংরক্ষণযোগ্য ফল আলাদা versioned research record হিসেবে রাখার প্রস্তাব।',
-  scope:{ayah_id:researchProvenance?.ayah_id||null},
+  scope:{ayah_id:scopeAyahId},
   source_refs:sourceRefs,
   evidence_refs:researchProvenance?.evidence_records||[],
   findings:answer?[{text:String(answer).trim(),status:'PENDING_REVIEW'}]:[],
   uncertainties:['AI-generated output নিজে থেকে VERIFIED নয়।','মানব অনুমোদন ছাড়া persistent save করা যাবে না।'],
   created_at:new Date().toISOString(),
-  supersedes:null,
+  supersedes:previous?.record_id||null,
   save_policy:'APPROVAL_REQUIRED_NO_MASTER_OVERWRITE'
  };
 }
