@@ -1,13 +1,13 @@
-/* আল-কুরআন গবেষণা — Worker Entry Wrapper v4.3
+/* আল-কুরআন গবেষণা — Worker Entry Wrapper v4.4
    Research API + Gemini chat + Cloudflare AI recovery + AI Research Brain.
-   Research context is fetched internally as read-only project data before Gemini.
-   Provenance is explicitly attached so the AI can identify the exact dataset/record used.
+   Project context, provenance and read-only versioned research memory are attached before Gemini.
 */
 import worker from './worker.js';
 import { handleResearchApi } from './research-api.js';
 import { recoverChat } from './chat-recovery.js';
 import { BRAIN_VERSION, BRAIN_SYSTEM, buildBrainPrompt } from './ai-research-brain.js';
 import { loadProjectContext } from './research-project-context.js';
+import { loadResearchMemory } from './research-memory.js';
 
 const ALLOWED_ORIGINS=['https://mosharrof0000-ux.github.io'];
 function corsHeaders(origin){return {'Access-Control-Allow-Origin':ALLOWED_ORIGINS.includes(origin)?origin:ALLOWED_ORIGINS[0],'Access-Control-Allow-Methods':'GET, POST, OPTIONS','Access-Control-Allow-Headers':'Content-Type','Content-Type':'application/json; charset=utf-8','Vary':'Origin'};}
@@ -81,14 +81,15 @@ async function directGemini(request,env,origin){
  const research=await getResearchContext(message);
  let projectContext='';
  try{projectContext=await loadProjectContext();}catch{projectContext='';}
+ const memory=await loadResearchMemory(message);
  const brain=buildBrainPrompt(message,research.context);
  if(research.ref&&!research.used){
-   return json({answer:'এই আয়াতের জন্য প্রকল্পের Research API থেকে যাচাইযোগ্য গবেষণা-রেকর্ড পাওয়া যায়নি। তাই আমি সাধারণ তাফসির বা অনুমান দিয়ে প্রকল্পের তথ্যের বিকল্প উত্তর দিচ্ছি না। আগে Research API সংযোগ/ডেটা যাচাই করতে হবে।',mode,language:'bn',provider:'research-api',brain_version:BRAIN_VERSION,intent:brain.type,research_context_used:false,research_context_ref:`${research.ref[0]}:${research.ref[1]}`},200,origin);
+   return json({answer:'এই আয়াতের জন্য প্রকল্পের Research API থেকে যাচাইযোগ্য গবেষণা-রেকর্ড পাওয়া যায়নি। তাই আমি সাধারণ তাফসির বা অনুমান দিয়ে প্রকল্পের তথ্যের বিকল্প উত্তর দিচ্ছি না। আগে Research API সংযোগ/ডেটা যাচাই করতে হবে।',mode,language:'bn',provider:'research-api',brain_version:BRAIN_VERSION,intent:brain.type,research_context_used:false,research_context_ref:`${research.ref[0]}:${research.ref[1]}`,research_memory_used:memory.used},200,origin);
  }
- const provenanceInstruction=`\n\nগবেষণা-উৎস প্রদানের বাধ্যতামূলক নিয়ম:\n- যদি PROJECT_MASTER_DATASET context দেওয়া থাকে, প্রতিটি গবেষণা-দাবির পাশে প্রকল্পের সুনির্দিষ্ট উৎস দাও।\n- উৎসের ন্যূনতম পরিচয়: source_file, dataset_version, ayah_id; শব্দ-স্তরে token_id থাকলে সেটিও দাও।\n- কোন তথ্য VERIFIED/ESTABLISHED/DISPUTED/PENDING তা রেকর্ডের status অনুযায়ী বলো।\n- প্রকল্পের রেকর্ডে কোনো তথ্য না থাকলে ঠিক এই অর্থে বলো: “প্রকল্পের ডেটায় নেই”। নিজের সাধারণ জ্ঞান দিয়ে অনুপস্থিত তথ্য পূরণ করবে না।\n- evidence_records থাকলে সেগুলোকে বাহ্যিক reference হিসেবে আলাদা দেখাও; বাহ্যিক উৎসকে নিজস্ব verified data বানিও না।\n- source_file বা record না থাকলে কোনো কাল্পনিক ফাইল/রেকর্ড/লাইন নম্বর তৈরি করবে না।`;
- const prompt=`${brain.prompt}\n\nফ্রন্টএন্ডের মোড: ${mode}\n\nপ্রকল্পের file-based read-only context:\n${projectContext}\n\nপ্রকল্পের read-only research record ও provenance:\n${research.context}${provenanceInstruction}`;
+ const provenanceInstruction=`\n\nগবেষণা-উৎস ও গবেষণা-মেমরি ব্যবহারের বাধ্যতামূলক নিয়ম:\n- যদি PROJECT_MASTER_DATASET context দেওয়া থাকে, প্রতিটি গবেষণা-দাবির পাশে প্রকল্পের সুনির্দিষ্ট উৎস দাও।\n- উৎসের ন্যূনতম পরিচয়: source_file, dataset_version, ayah_id; শব্দ-স্তরে token_id থাকলে সেটিও দাও।\n- কোন তথ্য VERIFIED/ESTABLISHED/DISPUTED/PENDING তা রেকর্ডের status অনুযায়ী বলো।\n- প্রকল্পের রেকর্ডে কোনো তথ্য না থাকলে ঠিক এই অর্থে বলো: “প্রকল্পের ডেটায় নেই”। নিজের সাধারণ জ্ঞান দিয়ে অনুপস্থিত তথ্য পূরণ করবে না।\n- evidence_records থাকলে সেগুলোকে বাহ্যিক reference হিসেবে আলাদা দেখাও; বাহ্যিক উৎসকে নিজস্ব verified data বানিও না।\n- source_file বা record না থাকলে কোনো কাল্পনিক ফাইল/রেকর্ড/লাইন নম্বর তৈরি করবে না।\n- READ_ONLY_VERSIONED_RESEARCH_MEMORY context থাকলে সেটিকে পূর্ববর্তী গবেষণার context হিসেবে ব্যবহার করো; record_id, version, status, scope ও source_refs স্পষ্ট রাখো।\n- পুরোনো record-কে নতুন ফল বলে উপস্থাপন করবে না। SUPERSEDED/PENDING_REVIEW/DISPUTED record-এর status গোপন করবে না।\n- AI নিজে থেকে GitHub research record লিখেছে বা VERIFIED করেছে—এমন দাবি করবে না। নতুন গবেষণা-ফল সংরক্ষণের প্রয়োজন হলে সংরক্ষণযোগ্য record প্রস্তাব করবে।`;
+ const prompt=`${brain.prompt}\n\nফ্রন্টএন্ডের মোড: ${mode}\n\nপ্রকল্পের file-based read-only context:\n${projectContext}\n\nপ্রকল্পের read-only research record ও provenance:\n${research.context}\n\nপূর্ববর্তী versioned research memory (read-only):\n${memory.context}${provenanceInstruction}`;
  const models=[env.GEMINI_MODEL||'gemini-2.5-flash','gemini-2.5-flash-lite'].filter((v,i,a)=>a.indexOf(v)===i);
- for(const model of models){try{const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':env.GEMINI_API_KEY},body:JSON.stringify({systemInstruction:{parts:[{text:BRAIN_SYSTEM}]},contents:[{role:'user',parts:[{text:prompt}]}],generationConfig:{maxOutputTokens:1800,temperature:0.1}})});if(!r.ok)continue;const data=await r.json();const answer=data?.candidates?.[0]?.content?.parts?.map(p=>p?.text||'').join('').trim();if(answer)return json({answer,mode,language:'bn',provider:model,brain_version:BRAIN_VERSION,intent:brain.type,research_context_used:research.used,research_context_ref:research.ref?`${research.ref[0]}:${research.ref[1]}`:null,project_context_loaded:Boolean(projectContext),research_provenance:research.provenance},200,origin);}catch{}}
+ for(const model of models){try{const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':env.GEMINI_API_KEY},body:JSON.stringify({systemInstruction:{parts:[{text:BRAIN_SYSTEM}]},contents:[{role:'user',parts:[{text:prompt}]}],generationConfig:{maxOutputTokens:1800,temperature:0.1}})});if(!r.ok)continue;const data=await r.json();const answer=data?.candidates?.[0]?.content?.parts?.map(p=>p?.text||'').join('').trim();if(answer)return json({answer,mode,language:'bn',provider:model,brain_version:BRAIN_VERSION,intent:brain.type,research_context_used:research.used,research_context_ref:research.ref?`${research.ref[0]}:${research.ref[1]}`:null,research_memory_used:memory.used,research_memory_records:memory.records.map(r=>({record_id:r.record_id,version:r.version,status:r.status,ayah_id:r.scope?.ayah_id||null})),project_context_loaded:Boolean(projectContext),research_provenance:research.provenance},200,origin);}catch{}}
  return null;
 }
 
