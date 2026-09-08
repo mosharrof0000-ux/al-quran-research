@@ -1,0 +1,20 @@
+name: Research Record Gate Test
+
+on:
+  push:
+    paths:
+      - 'backend/research-record-gate.js'
+      - 'scripts/test-research-record-gate.py'
+      - '.github/workflows/test-research-record-gate.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run save-gate contract test
+        run: python3 scripts/test-research-record-gate.py
