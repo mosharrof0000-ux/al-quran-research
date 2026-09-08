@@ -39,3 +39,53 @@ GitHub history একমাত্র backup নয়; গুরুত্বপ�
 এই baseline-এর পরে গুরুত্বপূর্ণ কাজের আগে/পরে project history, backup reference এবং verification record `PROJECT_WORK_LOG.md` ও এই index-এ যোগ করতে হবে।
 
 **Status:** VERIFIED DOCUMENTATION BASELINE
+
+---
+
+## BACKUP-2026-09-08-CHAT-FULLSCREEN-PRECHANGE
+
+**Date:** 2026-09-08
+
+**Purpose:** Full-screen adaptive reading chat পরিবর্তনের ঠিক আগের নিরাপদ restore point
+
+**Restore branch:** `backup/fullscreen-chat-before-2026-09-08`
+
+**Restore commit:** `99cbbcf63513287a89c055f4fc0ac503960cfad1`
+
+**Protected file:** `chat.html` — পরিবর্তনের আগের অবস্থার SHA `6c9d94cd7cdb7acc0559a3d515ec6328592f37a2`
+
+**Status:** VERIFIED PRE-CHANGE BACKUP
+
+---
+
+## SAFE-POINT-2026-09-08-CHAT-FULLSCREEN-READING-V1
+
+**Date:** 2026-09-08
+
+**Purpose:** Full-screen chat ও adaptive reading interface সফল পরিবর্তনের restore point
+
+**Main commit:** `139ad87a4ce67bc29a37b5d588dbbe32493f16e2`
+
+**Protected file:** `chat.html`
+
+**New file SHA:** `35ccdd643d43caed98c53c23d1947a91b1e4f33b`
+
+**Restore branch:** `safe/chat-fullscreen-reading-v1-2026-09-08`
+
+**Implemented:**
+- Chat পুরো viewport/full-screen করা হয়েছে
+- মোবাইল safe-area সমর্থন
+- ধীর, মসৃণ dynamic background color flow
+- reading/speech চলার সময় visual reading state
+- light/dark background অনুযায়ী পাঠযোগ্যতার জন্য contrasting text treatment
+- reduced-motion preference সমর্থন
+- বিদ্যমান Worker API URL ও chat modes রাখা হয়েছে
+- বাংলা voice input ও speech output রাখা হয়েছে
+
+**Verification:**
+- GitHub file update accepted
+- নতুন file SHA যাচাইযোগ্য
+- pre-change backup branch অক্ষুণ্ণ
+- কোনো research dataset/backend file পরিবর্তন করা হয়নি
+
+**Status:** VERIFIED SAFE POINT — LIVE BROWSER TEST STILL RECOMMENDED
