@@ -44,7 +44,7 @@ AI উত্তরের নিচে `↗ পরামর্শটি পাঠ
 ### প্রস্তাব ৭ — Legacy backend history verification
 অবস্থা: `সম্পন্ন — cleanup proposal প্রস্তুত`
 
-`worker-entry-v1.2.js`, `chat-recovery-v3.js`, এবং `research-api-entry.js` বর্তমান production entrypoint/caller নয়—এটি Git history ও বর্তমান deployment configuration দিয়ে যাচাই হয়েছে। কোনো file delete করা হয়নি। নিরাপদ archival/cleanup-এর জন্য আলাদা proposal তৈরি হয়েছে: `docs/LEGACY_BACKEND_CLEANUP_PROPOSAL_2026-09-08.md`।
+`worker-entry-v1.2.js`, `chat-recovery-v3.js`, এবং `research-api-entry.js` বর্তমান production entrypoint/caller নয়—এটি Git history ও বর্তমান deployment configuration দিয়ে যাচাই হয়েছে। কোনো file delete করা হয়নি। নিরাপদ archival/cleanup-এর জন্য আলাদা proposal তৈরি হয়েছে: `docs/LEGACY_BACKEND_CLEANUP_PROPOSAL-2026-09-08.md`।
 
 ### প্রস্তাব ৮ — Legacy backend cleanup
 অবস্থা: `পর্যালোচনা প্রয়োজন`
@@ -72,6 +72,9 @@ AI-কে শুধু প্রকল্পের নিয়ম জানান�
 
 এটি raw research data পরিবর্তন করে না এবং `chat.html` পরিবর্তন করে না। ভবিষ্যৎ উন্নয়নের ভিত্তি হিসেবে read-only research retrieval, provenance, evidence এবং পরে versioned research-memory/recording layer যোগ করা যাবে।
 
-## মালিকের মন্তব্য
+### প্রস্তাব ১২ — Research Memory + Versioned Research Record
+অবস্থা: `বাস্তবায়িত — read-only স্মৃতি স্তর চালু`
 
-মালিকের মন্তব্য/সিদ্ধান্ত এখানে যোগ করা যাবে।
+পূর্ববর্তী গবেষণা পুনঃব্যবহারযোগ্য করার জন্য `data/research-records/`-এ versioned research record কাঠামো যোগ করা হয়েছে। প্রথম pilot record `RR-Q001001-V1.json`। এটি `S001-A001` ও dataset version `2026-09-04-fatiha-master-v1`-এর সঙ্গে source reference ধরে রেখেছে এবং `PENDING_REVIEW` status বজায় রেখেছে।
+
+`backend/research-memory.js` একটি read-only retrieval layer হিসেবে এই record AI prompt-এ দেয়। পুরোনো record overwrite করা হয় না; AI নিজে থেকে GitHub-এ নতুন record লিখে বা VERIFIED করে না। নতুন ফল সংরক্ষণ দরকার হলে ভবিষ্যতে অনুমোদিত write/approval workflow আলাদা করে যোগ করতে হবে।
