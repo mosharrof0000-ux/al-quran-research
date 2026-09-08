@@ -64,7 +64,7 @@ GitHub history একমাত্র backup নয়; গুরুত্বপ�
 
 **Purpose:** Full-screen chat ও adaptive reading interface সফল পরিবর্তনের restore point
 
-**Main commit:** `139ad87a4ce67bc29a37b5d588dbbe32493f16e2`
+**Final main commit:** `f4b5fa774611b80a71d91e610ec513b3bb051ac3`
 
 **Protected file:** `chat.html`
 
@@ -84,8 +84,9 @@ GitHub history একমাত্র backup নয়; গুরুত্বপ�
 
 **Verification:**
 - GitHub file update accepted
-- নতুন file SHA যাচাইযোগ্য
+- নতুন file SHA যাচাই করা হয়েছে
 - pre-change backup branch অক্ষুণ্ণ
 - কোনো research dataset/backend file পরিবর্তন করা হয়নি
+- code-level structure verified; live browser test এখনও করা বাকি
 
-**Status:** VERIFIED SAFE POINT — LIVE BROWSER TEST STILL RECOMMENDED
+**Status:** SAFE POINT CREATED — LIVE BROWSER TEST PENDING
