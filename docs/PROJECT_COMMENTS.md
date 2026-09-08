@@ -51,6 +51,13 @@ AI উত্তরের নিচে `↗ পরামর্শটি পাঠ
 
 প্রস্তাবিত পরবর্তী ধাপ হলো legacy candidate file-গুলোকে সরাসরি delete না করে rollback value ও archival record নিশ্চিত করে নিরাপদ archive/cleanup করা। `research-api-entry.js`-এর সম্ভাব্য ভবিষ্যৎ standalone API value থাকায় এটিকে সবচেয়ে কম আগ্রাসীভাবে handle করার সুপারিশ করা হয়েছে।
 
+### প্রস্তাব ৯ — AI Research Agent-কে প্রকল্পের গবেষণা-নীতি শেখানো
+অবস্থা: `বাস্তবায়িত — নির্দেশিকা যুক্ত`
+
+অন্য AI/agent যেন শুধু সাধারণ উত্তরদাতা না হয়ে এই প্রকল্পের file, research record, evidence, version, history, uncertainty এবং governance rules মেনে গবেষণা করতে পারে—এই উদ্দেশ্যে `docs/AI_RESEARCH_AGENT_SYSTEM_V1.md` তৈরি করা হয়েছে। এতে boot protocol, research workflow, file-reading rules, AI-এর ক্ষমতা/সীমা, backup/change discipline, Bengali-first rule এবং provider-independent architecture-এর নির্দেশনা দেওয়া হয়েছে।
+
+এটি documentation/system-instruction স্তরের পরিবর্তন; কোনো raw research data বা বর্তমান production chat path পরিবর্তন করা হয়নি।
+
 ## মালিকের মন্তব্য
 
 মালিকের মন্তব্য/সিদ্ধান্ত এখানে যোগ করা যাবে।
