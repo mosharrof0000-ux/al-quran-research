@@ -77,4 +77,15 @@ AI-কে শুধু প্রকল্পের নিয়ম জানান�
 
 পূর্ববর্তী গবেষণা পুনঃব্যবহারযোগ্য করার জন্য `data/research-records/`-এ versioned research record কাঠামো যোগ করা হয়েছে। প্রথম pilot record `RR-Q001001-V1.json`। এটি `S001-A001` ও dataset version `2026-09-04-fatiha-master-v1`-এর সঙ্গে source reference ধরে রেখেছে এবং `PENDING_REVIEW` status বজায় রেখেছে।
 
-`backend/research-memory.js` একটি read-only retrieval layer হিসেবে এই record AI prompt-এ দেয়। পুরোনো record overwrite করা হয় না; AI নিজে থেকে GitHub-এ নতুন record লিখে বা VERIFIED করে না। নতুন ফল সংরক্ষণ দরকার হলে ভবিষ্যতে অনুমোদিত write/approval workflow আলাদা করে যোগ করতে হবে।
+`backend/research-memory.js` read-only ভাবে এই record AI-কে দিতে পারে। AI পুরোনো record-কে নতুন verified finding হিসেবে দেখাতে পারবে না এবং record-এর status/source identity ধরে রাখতে হবে।
+
+### প্রস্তাব ১৩ — অনুমোদন-ভিত্তিক Research Record Save Gate
+অবস্থা: `বাস্তবায়িত — নিরাপদ approval gate নকশা/নীতিমালা চালু; write credential ছাড়া read-only`
+
+AI-এর গবেষণা-ফল সরাসরি master dataset-এ লেখার পরিবর্তে আগে সংরক্ষণযোগ্য record proposal হিসেবে তৈরি হবে। অনুমোদন ছাড়া কোনো write হবে না। নতুন record হলে নতুন version/record তৈরি হবে; পুরোনো record overwrite/delete হবে না। `VERIFIED` status AI একা দিতে পারবে না। Save gate আলাদা research-record storage-এ কাজ করবে এবং `data/fatiha-master-v1.json` পরিবর্তন করবে না।
+
+নীতিমালা ও নিরাপত্তা স্পেসিফিকেশন: `docs/RESEARCH_RECORD_SAVE_GATE_V1.md`। Approval credential/secret এখনও সংযুক্ত করা হয়নি; তাই বর্তমান সিস্টেম নিরাপদ read-only অবস্থায় থাকে।
+
+## মালিকের মন্তব্য
+
+মালিকের মন্তব্য/সিদ্ধান্ত এখানে যোগ করা যাবে।
