@@ -19,7 +19,7 @@ Versioned backend files-এর কোনটি active এবং কোনটি 
 ### প্রস্তাব ২ — Provider-neutral AI Adapter
 অবস্থা: `ভবিষ্যৎ উন্নয়ন`
 
-Research Core-কে Gemini/Cloudflare/provider-specific code থেকে আলাদা রাখার জন্য adapter layer-এর নকশা করা হবে। বর্তমান working system ভেঙে সরাসরি migration করা হবে না।
+Research Core-কে Gemini/Cloudflare/provider-specific code থেকে আলাদা করার জন্য adapter layer-এর নকশা করা হবে। বর্তমান working system ভেঙে সরাসরি migration করা হবে না।
 
 ### প্রস্তাব ৩ — Technology Watch
 অবস্থা: `চালু`
@@ -42,9 +42,14 @@ Requested exact page-এর link, redirect, title এবং page identity যা
 AI উত্তরের নিচে `↗ পরামর্শটি পাঠান` বোতাম যোগ করা হয়েছে। বোতামে চাপলে ওই AI বার্তার লেখাটি সরাসরি পরবর্তী user message হিসেবে একই Cloudflare Worker AI chat-এ পাঠানো হয়। এটি বর্তমান নির্দিষ্ট গবেষণা-চ্যাট পেজেই যোগ করা হয়েছে; `chat.html` পরিবর্তন করা হয়নি।
 
 ### প্রস্তাব ৭ — Legacy backend history verification
+অবস্থা: `সম্পন্ন — cleanup proposal প্রস্তুত`
+
+`worker-entry-v1.2.js`, `chat-recovery-v3.js`, এবং `research-api-entry.js` বর্তমান production entrypoint/caller নয়—এটি Git history ও বর্তমান deployment configuration দিয়ে যাচাই হয়েছে। কোনো file delete করা হয়নি। নিরাপদ archival/cleanup-এর জন্য আলাদা proposal তৈরি হয়েছে: `docs/LEGACY_BACKEND_CLEANUP_PROPOSAL_2026-09-08.md`।
+
+### প্রস্তাব ৮ — Legacy backend cleanup
 অবস্থা: `পর্যালোচনা প্রয়োজন`
 
-`worker-entry-v1.2.js`, `chat-recovery-v3.js`, এবং `research-api-entry.js` বর্তমান `wrangler.jsonc` entrypoint/caller নয়—এটি যাচাই হয়েছে। Git history-তে তিনটির historical addition commit-ও নথিভুক্ত হয়েছে। এখনই delete করা হবে না; আগে rollback/deployment value এবং archival প্রয়োজন মূল্যায়ন করতে হবে।
+প্রস্তাবিত পরবর্তী ধাপ হলো legacy candidate file-গুলোকে সরাসরি delete না করে rollback value ও archival record নিশ্চিত করে নিরাপদ archive/cleanup করা। `research-api-entry.js`-এর সম্ভাব্য ভবিষ্যৎ standalone API value থাকায় এটিকে সবচেয়ে কম আগ্রাসীভাবে handle করার সুপারিশ করা হয়েছে।
 
 ## মালিকের মন্তব্য
 
