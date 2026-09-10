@@ -18,13 +18,25 @@ jobs:
   discover:
     runs-on: ubuntu-latest
     steps:
-      - name: Discover Workers subdomain
+      - name: Verify Worker route and chat
         run: |
           set -euo pipefail
-          echo "Cloudflare account: $CLOUDFLARE_ACCOUNT_ID"
-          echo "WORKERS_SUBDOMAIN_RESPONSE="
-          curl -fsS \
-            -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+          URL='https://al-quran-research.mosharrof0000.workers.dev'
+          ORIGIN='https://mosharrof0000-ux.github.io'
+          echo '=== Worker diagnostic ==='
+          curl -fsS --connect-timeout 8 --max-time 20 \
+            -H "Origin: $ORIGIN" "$URL/diagnostic"
+          echo
+          echo '=== CORS preflight ==='
+          curl -fsS -D - -o /dev/null -X OPTIONS \
+            -H "Origin: $ORIGIN" \
+            -H 'Access-Control-Request-Method: POST' \
+            -H 'Access-Control-Request-Headers: content-type' \
+            "$URL/"
+          echo '=== Real chat POST ==='
+          curl -fsS --connect-timeout 8 --max-time 45 \
+            -H "Origin: $ORIGIN" \
             -H 'Content-Type: application/json' \
-            "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/subdomain"
+            --data '{"message":"আপনি কেমন আছেন","mode":"general","language":"bn"}' \
+            "$URL/"
           echo
