@@ -28,3 +28,18 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           workingDirectory: backend
           command: deploy --config wrangler.jsonc
+
+      - name: Smoke test Worker diagnostic
+        run: |
+          set -e
+          echo "Checking Worker diagnostic endpoint..."
+          curl -fsS --retry 3 --retry-delay 2 \
+            -H 'Origin: https://mosharrof0000-ux.github.io' \
+            'https://al-quran-research.mosharroff0000.workers.dev/diagnostic'
+          echo
+          echo "Checking CORS preflight..."
+          curl -fsS -o /dev/null -D - -X OPTIONS \
+            -H 'Origin: https://mosharrof0000-ux.github.io' \
+            -H 'Access-Control-Request-Method: POST' \
+            -H 'Access-Control-Request-Headers: content-type' \
+            'https://al-quran-research.mosharroff0000.workers.dev/'
