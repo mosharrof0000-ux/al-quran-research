@@ -12,28 +12,19 @@ permissions:
 
 env:
   CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+  CLOUDFLARE_ACCOUNT_ID: 5deb168bbc31c47db0419913860fce21
 
 jobs:
   discover:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-
-      - name: Discover Wrangler account and Workers subdomain
-        working-directory: backend
+      - name: Discover Workers subdomain
         run: |
           set -euo pipefail
-          npx --yes wrangler whoami
-          ACCOUNT_ID="$(npx --yes wrangler whoami 2>/dev/null | sed -n 's/.*Account ID: \([^ ]*\).*/\1/p' | head -n1)"
-          if [ -z "$ACCOUNT_ID" ]; then
-            echo "ACCOUNT_ID_NOT_FOUND"
-            exit 1
-          fi
-          echo "ACCOUNT_ID=$ACCOUNT_ID"
+          echo "Cloudflare account: $CLOUDFLARE_ACCOUNT_ID"
           echo "WORKERS_SUBDOMAIN_RESPONSE="
           curl -fsS \
             -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
             -H 'Content-Type: application/json' \
-            "https://api.cloudflare.com/client/v4/accounts/$ACCOUNT_ID/workers/subdomain"
+            "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/subdomain"
           echo
