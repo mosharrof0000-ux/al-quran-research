@@ -1,19 +1,18 @@
 # Safe Workspace State
 
-**Version:** 1.0
-**State:** SAFE WORKSPACE CREATED
+**Version:** 1.1
+**State:** SAFE / READY FOR NEXT WORK
 
-## Known-Good base
+## Current Known-Good base
 - Branch: `main`
-- Commit: `7454163d7920d85cd404094ee78c2ea1126bbf0e`
+- Commit: `80caa3bc77edc8bf0dd243353dd35261a3855d5b`
 
-## Safety backup
-- Branch: `backup/before-safe-workspace-2026-09-10`
-- Base commit: `7454163d7920d85cd404094ee78c2ea1126bbf0e`
+## Safety backups
+- Latest: `backup/known-good-safe-workspace-2026-09-10`
+- Earlier: `backup/before-safe-workspace-2026-09-10`
 
-## Current working branch
-- `safety/safe-workspace-v1-2026-09-10`
-- Purpose: install the safe workspace protocol without changing the website design or research logic.
+## Active working branch
+- None. A new isolated branch must be created for the next meaningful change.
 
 ## Current Known-Good chat page
 - `design-preview-work-chat-v3-cloudflare-ai-2026-09-07.html`
@@ -28,12 +27,17 @@
 7. Keep backend/API changes isolated from frontend changes whenever possible.
 8. Keep research data isolated from UI experiments.
 
-## Recovery command pattern
-**Frontend/page failure:** open the Known-Good page and create a new version.
+## Recovery levels
+- Page failure → return to the Known-Good page and create a new version.
+- Frontend failure → restore the last Known-Good frontend commit/branch.
+- Worker/API failure → restore the last Known-Good backend commit/deployment.
+- Large failure → restore from the latest Known-Good backup branch.
 
-**Backend/API failure:** restore the last Known-Good backend branch/commit; do not rewrite research data.
+## Standard workflow
+`KNOWN-GOOD → BACKUP → NEW BRANCH → NEW VERSION/PAGE → TEST → VERIFY → MERGE`
 
-**Large failure:** restore from the latest Known-Good backup branch.
+## Failure workflow
+`EXPERIMENT FAILS → STOP → KNOWN-GOOD → VERIFY → NEW BRANCH → CONTINUE`
 
 ## Success condition
-A change becomes part of `main` only after testing and verification. Until then it is experimental.
+A change becomes part of `main` only after testing and verification. Until then it remains experimental.
