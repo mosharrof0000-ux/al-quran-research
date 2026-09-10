@@ -7,4 +7,5 @@
   "ai": {
     "binding": "AI"
   }
+  // Chat connection recovery: keep the public workers.dev route explicitly enabled.
 }
