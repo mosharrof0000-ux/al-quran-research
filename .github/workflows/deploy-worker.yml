@@ -17,7 +17,7 @@ env:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 10
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -31,24 +31,14 @@ jobs:
 
       - name: Smoke test Worker diagnostic and chat
         run: |
-          set -e
+          set -euo pipefail
           URL='https://al-quran-research.mosharroff0000.workers.dev'
-          ORIGIN='https://mosharrof0000-ux.github.io'
+          ORIGIN='https://mosharroff0000-ux.github.io'
 
-          echo "Waiting for Worker DNS/route to become reachable..."
-          for i in $(seq 1 30); do
-            if curl -fsS --connect-timeout 3 --max-time 8 \
-              -H "Origin: $ORIGIN" "$URL/diagnostic"; then
-              echo
-              echo "Worker diagnostic is reachable."
-              break
-            fi
-            if [ "$i" -eq 30 ]; then
-              echo "Worker DNS/route was not reachable after 60 seconds."
-              exit 1
-            fi
-            sleep 2
-          done
+          echo "Checking Worker diagnostic..."
+          curl -fsS --connect-timeout 8 --max-time 20 \
+            -H "Origin: $ORIGIN" "$URL/diagnostic"
+          echo
 
           echo "Checking CORS preflight..."
           curl -fsS -o /dev/null -D - -X OPTIONS \
@@ -58,7 +48,7 @@ jobs:
             "$URL/"
 
           echo "Checking real POST chat path..."
-          curl -fsS --connect-timeout 5 --max-time 30 \
+          curl -fsS --connect-timeout 8 --max-time 45 \
             -H "Origin: $ORIGIN" \
             -H 'Content-Type: application/json' \
             --data '{"message":"আপনি কেমন আছেন","mode":"general","language":"bn"}' \
