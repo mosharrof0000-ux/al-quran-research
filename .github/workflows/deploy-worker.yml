@@ -29,17 +29,38 @@ jobs:
           workingDirectory: backend
           command: deploy --config wrangler.jsonc
 
-      - name: Smoke test Worker diagnostic
+      - name: Smoke test Worker diagnostic and chat
         run: |
           set -e
-          echo "Checking Worker diagnostic endpoint..."
-          curl -fsS --retry 3 --retry-delay 2 \
-            -H 'Origin: https://mosharrof0000-ux.github.io' \
-            'https://al-quran-research.mosharroff0000.workers.dev/diagnostic'
-          echo
+          URL='https://al-quran-research.mosharroff0000.workers.dev'
+          ORIGIN='https://mosharrof0000-ux.github.io'
+
+          echo "Waiting for Worker DNS/route to become reachable..."
+          for i in $(seq 1 30); do
+            if curl -fsS --connect-timeout 3 --max-time 8 \
+              -H "Origin: $ORIGIN" "$URL/diagnostic"; then
+              echo
+              echo "Worker diagnostic is reachable."
+              break
+            fi
+            if [ "$i" -eq 30 ]; then
+              echo "Worker DNS/route was not reachable after 60 seconds."
+              exit 1
+            fi
+            sleep 2
+          done
+
           echo "Checking CORS preflight..."
           curl -fsS -o /dev/null -D - -X OPTIONS \
-            -H 'Origin: https://mosharrof0000-ux.github.io' \
+            -H "Origin: $ORIGIN" \
             -H 'Access-Control-Request-Method: POST' \
             -H 'Access-Control-Request-Headers: content-type' \
-            'https://al-quran-research.mosharroff0000.workers.dev/'
+            "$URL/"
+
+          echo "Checking real POST chat path..."
+          curl -fsS --connect-timeout 5 --max-time 30 \
+            -H "Origin: $ORIGIN" \
+            -H 'Content-Type: application/json' \
+            --data '{"message":"আপনি কেমন আছেন","mode":"general","language":"bn"}' \
+            "$URL/"
+          echo
