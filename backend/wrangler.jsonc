@@ -6,6 +6,9 @@
   "workers_dev": true,
   "ai": {
     "binding": "AI"
+  },
+  "vars": {
+    "GEMINI_MODEL": "gemini-3.6-flash"
   }
   // Chat connection recovery: keep the public workers.dev route explicitly enabled.
 }
