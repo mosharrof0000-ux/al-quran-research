@@ -17,6 +17,9 @@ jobs:
   discover:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
       - name: Discover Wrangler account and Workers subdomain
         working-directory: backend
         run: |
