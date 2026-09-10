@@ -1,6 +1,7 @@
 /* আল-কুরআন গবেষণা — CORS Safety Wrapper v1
    Worker-এর যেকোনো success/error/recovery response-এ browser CORS header নিশ্চিত করে।
    মূল গবেষণা/AI logic পরিবর্তন করে না।
+   Deployment trigger: 2026-09-10 connection recovery check.
 */
 import entry from './worker-entry.js';
 
