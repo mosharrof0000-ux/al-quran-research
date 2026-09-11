@@ -1,4 +1,4 @@
-# Instruction Registry — v1.0
+# Instruction Registry — v1.1
 
 This registry is the dictionary/index of project instructions. It records which instructions govern which project assets.
 
@@ -12,33 +12,60 @@ This registry is the dictionary/index of project instructions. It records which 
 | `INSTRUCTION_AUDIT_PROTOCOL.md` | Detect missing, stale, conflicting, or incomplete instructions | ACTIVE |
 | `INSTRUCTION_CHANGE_LOG.md` | History of instruction-system changes | ACTIVE |
 
+## Individual Critical Instructions
+
+| Instruction | Governs | Status |
+|---|---|---|
+| `docs/instructions/MASTER_PROJECT.instruction.md` | `MASTER_PROJECT.md` | ACTIVE |
+| `docs/instructions/PROJECT_STATE.instruction.md` | `PROJECT_STATE.md` | ACTIVE |
+| `docs/instructions/PROJECT_WORK_LOG.instruction.md` | `PROJECT_WORK_LOG.md` | ACTIVE |
+| `docs/instructions/PROJECT_CONTINUITY_PROTOCOL.instruction.md` | `PROJECT_CONTINUITY_PROTOCOL.md` | ACTIVE |
+| `docs/instructions/PROJECT_BACKUP_INDEX.instruction.md` | `PROJECT_BACKUP_INDEX.md` | ACTIVE |
+| `docs/instructions/AI_RESEARCH_BRAIN_V1.instruction.md` | `docs/AI_RESEARCH_BRAIN_V1.md` | ACTIVE |
+| `docs/instructions/AI_RESEARCH_AGENT_SYSTEM_V1.instruction.md` | `docs/AI_RESEARCH_AGENT_SYSTEM_V1.md` | ACTIVE |
+| `docs/instructions/RESEARCH_CHAIN_OF_COMMAND.instruction.md` | `docs/RESEARCH_CHAIN_OF_COMMAND.md` | ACTIVE |
+| `docs/instructions/DATA_FATIHA.instruction.md` | `data/fatiha.json` | ACTIVE |
+| `docs/instructions/BACKUP_SYSTEM.instruction.md` | `BACKUP_SYSTEM.md` | ACTIVE |
+| `docs/instructions/BACKUP_POLICY.instruction.md` | `docs/BACKUP_POLICY.md` | ACTIVE |
+| `docs/instructions/RESEARCH_MEMORY_V1.instruction.md` | `docs/RESEARCH_MEMORY_V1.md` | ACTIVE |
+| `docs/instructions/RESEARCH_RECORD_APPROVAL_HANDOFF_V1.instruction.md` | `docs/RESEARCH_RECORD_APPROVAL_HANDOFF_V1.md` | ACTIVE |
+
+## Individual Important Instructions
+
+| Instruction | Governs | Status |
+|---|---|---|
+| `docs/instructions/BACKEND_DEPENDENCY_MAP_2026-09-08.instruction.md` | `docs/BACKEND_DEPENDENCY_MAP_2026-09-08.md` | ACTIVE |
+| `docs/instructions/BACKEND_DEPENDENCY_VERIFICATION_2026-09-08.instruction.md` | `docs/BACKEND_DEPENDENCY_VERIFICATION_2026-09-08.md` | ACTIVE |
+| `docs/instructions/CHATBOX-DESIGN-2026-09-08.instruction.md` | `CHATBOX-DESIGN-2026-09-08.md` | ACTIVE |
+| `docs/instructions/CHATBOX-V2.8-STATUS-2026-09-10.instruction.md` | `CHATBOX-V2.8-STATUS-2026-09-10.md` | ACTIVE |
+
 ## Existing Project Documents
 
 | File | Governed role | Instruction status |
 |---|---|---|
 | `README.md` | Public/general project overview | Category coverage needed |
-| `MASTER_PROJECT.md` | Project constitution, vision, architecture | Critical — individual instruction needed |
-| `PROJECT_STATE.md` | Current state | Critical — individual instruction needed |
-| `PROJECT_WORK_LOG.md` | Operational work history | Critical — individual instruction needed |
+| `MASTER_PROJECT.md` | Project constitution, vision, architecture | Individual instruction active |
+| `PROJECT_STATE.md` | Current state | Individual instruction active |
+| `PROJECT_WORK_LOG.md` | Operational work history | Individual instruction active |
 | `PROJECT_HISTORY.md` | Historical record | Important — individual instruction needed |
-| `PROJECT_CONTINUITY_PROTOCOL.md` | Continuity and handoff rules | Critical — individual instruction needed |
-| `PROJECT_BACKUP_INDEX.md` | Backup/restore registry | Critical — individual instruction needed |
-| `BACKUP_SYSTEM.md` | Backup architecture | Critical — individual instruction needed |
-| `data/fatiha.json` | Verified Quran research dataset | Critical — dataset instruction needed |
-| `docs/AI_RESEARCH_BRAIN_V1.md` | AI research brain architecture | Critical — individual instruction needed |
-| `docs/AI_RESEARCH_AGENT_SYSTEM_V1.md` | AI agent architecture | Critical — individual instruction needed |
-| `docs/RESEARCH_CHAIN_OF_COMMAND.md` | Research decision chain | Critical — individual instruction needed |
-| `docs/RESEARCH_MEMORY_V1.md` | Research memory | Critical — individual instruction needed |
-| `docs/RESEARCH_RECORD_APPROVAL_HANDOFF_V1.md` | Research approval workflow | Critical — individual instruction needed |
-| `docs/BACKUP_POLICY.md` | Backup policy | Critical — individual instruction needed |
-| `docs/BACKEND_DEPENDENCY_MAP_2026-09-08.md` | Backend dependency map | Important — category/individual instruction needed |
-| `docs/BACKEND_DEPENDENCY_VERIFICATION_2026-09-08.md` | Backend dependency verification | Important — category/individual instruction needed |
+| `PROJECT_CONTINUITY_PROTOCOL.md` | Continuity and handoff rules | Individual instruction active |
+| `PROJECT_BACKUP_INDEX.md` | Backup/restore registry | Individual instruction active |
+| `BACKUP_SYSTEM.md` | Backup architecture | Individual instruction active |
+| `data/fatiha.json` | Verified Quran research dataset | Dataset instruction active |
+| `docs/AI_RESEARCH_BRAIN_V1.md` | AI research brain architecture | Individual instruction active |
+| `docs/AI_RESEARCH_AGENT_SYSTEM_V1.md` | AI agent architecture | Individual instruction active |
+| `docs/RESEARCH_CHAIN_OF_COMMAND.md` | Research decision chain | Individual instruction active |
+| `docs/RESEARCH_MEMORY_V1.md` | Research memory | Individual instruction active |
+| `docs/RESEARCH_RECORD_APPROVAL_HANDOFF_V1.md` | Research approval workflow | Individual instruction active |
+| `docs/BACKUP_POLICY.md` | Backup policy | Individual instruction active |
+| `docs/BACKEND_DEPENDENCY_MAP_2026-09-08.md` | Backend dependency map | Individual instruction active |
+| `docs/BACKEND_DEPENDENCY_VERIFICATION_2026-09-08.md` | Backend dependency verification | Individual instruction active |
 | `docs/LEGACY_BACKEND_CLEANUP_PROPOSAL_2026-09-08.md` | Cleanup proposal | Historical/proposal — do not execute automatically |
 | `docs/LEGACY_BACKEND_CLEANUP_STATUS_2026-09-08.md` | Cleanup status | Historical/status — do not execute automatically |
 | `docs/OUR_THINKING_AND_VISION.md` | Project thinking/vision | Important — individual instruction needed |
 | `docs/PROJECT_COMMENTS.md` | Project comments/notes | Important — individual instruction needed |
-| `CHATBOX-DESIGN-2026-09-08.md` | Chatbox design record | Important — individual instruction needed |
-| `CHATBOX-V2.8-STATUS-2026-09-10.md` | Chatbox status record | Important — individual instruction needed |
+| `CHATBOX-DESIGN-2026-09-08.md` | Chatbox design record | Individual instruction active |
+| `CHATBOX-V2.8-STATUS-2026-09-10.md` | Chatbox status record | Individual instruction active |
 
 ## Coverage Classes
 
@@ -55,4 +82,4 @@ Static/generated/temporary assets may be covered by a category rule unless they 
 Any new critical file must be added here and must have an applicable instruction before it becomes part of the active research workflow.
 
 ## Status
-ACTIVE — initial governance map. This registry is intentionally conservative and must be expanded as the repository is audited.
+ACTIVE — v1.1. Initial critical instruction coverage has been expanded. Remaining uncovered important documents and live website assets must be addressed before structural reorganization or automated instruction enforcement.
