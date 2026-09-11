@@ -2,7 +2,7 @@
 
 - ID: INST-BACKEND-LIVE-UI
 - Class: A — Critical production assets
-- Status: ACTIVE
+- Status: ACTIVE — v1.1
 
 ## Scope
 Covers the active backend deployment path and live website/core UI assets, including `backend/wrangler.jsonc`, `backend/worker-entry.js`, its active dependencies, GitHub Pages entry files such as `index.html`, `chatbox-v28-live.html`, and related runtime JavaScript.
@@ -22,11 +22,23 @@ Prevent accidental breakage of the deployed research system and GitHub Pages sit
 9. If a change may affect the live site, verify the relevant entry path and links after the change.
 10. A documentation claim of ACTIVE/LEGACY must be supported by current configuration or repository evidence.
 
+## Live Research-ID execution rule
+The Live UI must expose a clear execution path for canonical Research IDs such as `S001-A001` and `S001-A002`.
+
+Required chain:
+`Live Page → Research ID input → canonical ID lookup → Research API → actual record → UI result`
+
+Research-ID execution is a shared UI/API capability. If multiple IDs fail at the same execution step, fix that shared layer first rather than treating each ID as a separate defect.
+
+The UI must not claim verification from page availability or ordinary AI-chat output alone. Verification requires actual ID submission, canonical record retrieval, captured result, expected-record establishment, comparison, and recorded evidence.
+
+If the UI cannot execute a supplied Research ID, status is `NOT VERIFIED` until the shared execution path is repaired and tested.
+
 ## Protected live path
 `https://mosharrof0000-ux.github.io/al-quran-research/`
 
 ## Verification
-Check intended file changes, dependency integrity, public paths, API contracts, and absence of unrelated critical changes.
+Check intended file changes, dependency integrity, public paths, API contracts, Research-ID execution path, canonical dataset linkage, and absence of unrelated critical changes. After any Live UI change, verify the protected entry path and test representative canonical IDs before promotion.
 
 ## Related
 `BACKUP_SYSTEM.md`, `docs/BACKUP_POLICY.md`, `docs/BACKEND_DEPENDENCY_MAP_2026-09-08.md`, `docs/BACKEND_DEPENDENCY_VERIFICATION_2026-09-08.md`, `MASTER_INSTRUCTION.md`, `INSTRUCTION_AUDIT_PROTOCOL.md`.
