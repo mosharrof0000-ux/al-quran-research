@@ -271,9 +271,9 @@ Locked files সরাসরি পরিবর্তন নয়; copy → experi
 
 ## ২৩. সর্বশেষ আপডেট
 
-Project State Version: 0.2
-Last Recorded Date: 2026-09-07
-Update Reason: বর্তমান GitHub repository, database schema, AI chat infrastructure, robot/voice demos, locked versions এবং ভবিষ্যৎ research architecture-এর সঙ্গে Project State synchronise করা হয়েছে।
+Project State Version: 0.3
+Last Recorded Date: 2026-09-11
+Update Reason: Universal AI governance control set `cf6a49812e14ab7a04d0aafb2ce9a7dc6bde4c3a`-এ main-এ promoted হয়েছে; GitHub Actions deployment ও smoke test সফল হয়েছে; Cloudflare production build সফল হয়েছে; এবং ব্যবহারকারী live site খুলে connection ও chat response কাজ করছে বলে বাস্তব পরীক্ষা নিশ্চিত করেছেন। এই state-টি stable checkpoint হিসেবে নথিভুক্ত করা হলো।
 
-Status: ACTIVE
-Verification: বর্তমান `PROJECT_STATE.md`, `MASTER_PROJECT.md`, `index.html`, `schema.sql` এবং `chat-system.js` পর্যালোচনা করে এই state record আপডেট করা হয়েছে।
+Status: VERIFIED — STABLE CHECKPOINT
+Verification: `PROJECT_STATE.md` ও এর instruction পর্যালোচনা করা হয়েছে; deployment/check results এবং ব্যবহারকারীর live-site verification-এর সঙ্গে state মিলিয়ে আপডেট করা হয়েছে।
