@@ -114,3 +114,27 @@ GitHub history একমাত্র backup নয়; গুরুত্বপ�
 
 **Post-change governance:**
 A single canonical automatic writer now controls these live-entrypoint integrations through `.github/workflows/live-entrypoint-sync.yml`. Former writers remain as manual/read-only legacy workflow files.
+
+---
+
+## STABLE-CHECKPOINT-2026-09-11-01
+
+**Date:** 2026-09-11
+
+**Purpose:** Governance promotion-এর পরে verified known-good operational state সংরক্ষণ
+
+**Main commit:** `cf6a49812e14ab7a04d0aafb2ce9a7dc6bde4c3a`
+
+**Verification:**
+- GitHub Actions deploy: SUCCESS
+- GitHub Pages deployment check: SUCCESS
+- Smoke test: SUCCESS
+- Cloudflare production build: SUCCESS
+- Cloudflare production version: `32ed44fe-c7ad-4802-ae54-539b9ee6b2f2`
+- User live-site test: connection এবং chat response SUCCESS
+
+**Protected meaning:**
+এই checkpoint-কে পরবর্তী কাজের known-good baseline হিসেবে ব্যবহার করা যাবে। এটি নতুন research feature সম্পূর্ণ হয়েছে—এমন দাবি নয়।
+
+**State record:** `PROJECT_STATE.md` Version 0.3 — VERIFIED / STABLE CHECKPOINT
+**Work record:** `PROJECT_WORK_LOG.md` — `WORK-2026-09-11-STABLE-CHECKPOINT-01`
