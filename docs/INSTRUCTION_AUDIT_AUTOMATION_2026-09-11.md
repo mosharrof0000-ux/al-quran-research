@@ -1,58 +1,78 @@
 # Automation Instruction Audit — 2026-09-11
 
 ## Status
-VERIFIED — audit mapping completed. No workflow was deleted, disabled, renamed, or rewritten.
+VERIFIED — controlled live-entrypoint consolidation completed.
 
 ## Scope
-Audited the repository workflows that were identified as relevant to live UI, backend deployment, research-record approval, backup, and CI verification.
+Audited and then consolidated the repository workflows that could mutate the protected GitHub Pages `index.html` entrypoint.
 
-## Findings
+## Pre-change finding
+Four workflows could independently write the live entrypoint:
+- `connect-tafsir-library.yml`
+- `connect-tafsir-library-now.yml`
+- `set-site-favicon.yml`
+- `install-chat-system.yml`
 
-| Workflow | Write permission | Writes repo files | Risk | Decision |
-|---|---|---|---|---|
-| `connect-tafsir-library.yml` | `contents: write` | `index.html` | HIGH — live entrypoint writer | Preserve; redesign/retire only after approved replacement |
-| `connect-tafsir-library-now.yml` | `contents: write` | `index.html` | HIGH — overlapping live entrypoint writer | Preserve for now; overlap requires controlled remediation |
-| `set-site-favicon.yml` | `contents: write` | `favicon.svg`, `index.html` | HIGH — live entrypoint writer | Preserve; review for PR/manual model |
-| `install-chat-system.yml` | `contents: write` | `index.html` | HIGH — live entrypoint writer on every main push | Preserve; highest-priority remediation candidate |
-| `research-record-approval.yml` | `contents: write` | `data/research-records/*.json` | CONTROLLED — human APPROVE gate | Preserve; research governance workflow |
-| `backup-main.yml` | `contents: write` | backup branches | CONTROLLED/POSITIVE — rollback support | Preserve |
-| `deploy-worker.yml` | `contents: read` | no repo write; deploys Worker | PRODUCTION DEPLOYMENT | Preserve; secrets isolated in GitHub Actions |
-| `chat-smoke-test.yml` | default/read behavior | no repo write | LOW | Preserve |
-| `link-integrity.yml` | `contents: read` | no repo write | LOW | Preserve |
-| `test-research-record-gate.yml` | `contents: read` | no repo write | LOW | Preserve |
+The two Tafsir workflows had overlapping insertion logic and the chat installer had a broad `push` trigger.
 
-## Confirmed live-entrypoint duplication
-Three independently identified workflows write `index.html` for narrow purposes, while `install-chat-system.yml` also writes `index.html` on main pushes. The two Tafsir workflows implement materially overlapping insertion logic and use the same marker `id="tafsir-library-link"`.
+## Approved remediation
+A pre-change restore branch was created from the known main commit:
+- Branch: `backup/pre-live-entrypoint-consolidation-2026-09-11`
+- Pre-change commit: `35249656450757813964b2fd83287edf0551ee49`
 
-This creates a concurrency/drift risk because more than one automation path can mutate the same protected production entrypoint.
+### Canonical writer
+Created:
+- `.github/workflows/live-entrypoint-sync.yml`
 
-## Recommended controlled remediation
-1. Do **not** delete or disable any workflow yet.
-2. Establish one canonical mechanism for production `index.html` changes.
-3. Prefer a PR/review-based or explicitly approved automation model for live-entrypoint modifications.
-4. Convert duplicate Tafsir automation into a single canonical path only after comparing history and confirming no unique behavior is lost.
-5. Review `install-chat-system.yml` trigger scope before allowing broad automatic mutation of `index.html`.
-6. Keep `backup-main.yml` as the rollback safety layer.
-7. After any approved change: backup/safe point → minimal diff → syntax/test → live path verification → work-log entry.
+The canonical workflow is now the single automatic writer for the live entrypoint integrations. It handles, with idempotent checks:
+1. Tafsir Library button insertion.
+2. Favicon file/link synchronization.
+3. Chat-system script-tag normalization.
 
-## Protected assets
-- GitHub Pages entrypoint: `index.html`
-- Live project path: `https://mosharrof0000-ux.github.io/al-quran-research/`
-- Active backend deployment: `backend/**` → Cloudflare Worker
-- Research approval records: `data/research-records/`
-- Backup branches produced by `backup-main.yml`
+It uses a concurrency group so multiple live-entrypoint sync runs do not intentionally overlap.
 
-## Evidence SHAs
-- `connect-tafsir-library.yml`: `d7ae1800cf189b582f005ae7b7b0e4192e5e222c`
-- `connect-tafsir-library-now.yml`: `87c1df24201bd24f45375235b4fe7c51463fca00`
-- `set-site-favicon.yml`: `cf607bad20342405dcb440eaa161e04b5291145b`
-- `install-chat-system.yml`: `e03081fab2b9866304882e894a7a0255022bc57b`
-- `research-record-approval.yml`: `fda36652642d21cb106a6172a5614e06560cbed3`
-- `backup-main.yml`: `553622bc6ca68eab88d192b3fd27e8876788293d`
-- `deploy-worker.yml`: `60b043241fc715ebcbadd2ee94a215cfc16f5c62`
-- `chat-smoke-test.yml`: `3c3e131b7be64c2c3b5c037c74fbe5c895dba2e1`
-- `link-integrity.yml`: `250261e3691671be8ad4643cbbb89ba726f65cde`
-- `test-research-record-gate.yml`: `f9e9d5e29abbf856ed9b5578856906f8cb86808c`
+### Legacy workflows retained, but no longer write
+The existing files were preserved in their original paths and converted to read-only manual notice workflows:
+- `connect-tafsir-library.yml`
+- `connect-tafsir-library-now.yml`
+- `set-site-favicon.yml`
+- `install-chat-system.yml`
 
-## Safety conclusion
-The audit confirms that the main governance risk is **automation writing directly to a protected live entrypoint**. The correct next action is controlled consolidation, not destructive cleanup. Existing architecture and rollback mechanisms remain preserved.
+They now use `workflow_dispatch`, `contents: read`, and only report that the canonical workflow replaced their write behavior.
+
+## Safety result
+- No workflow file was deleted.
+- No workflow file was renamed or moved.
+- Existing filenames and paths were preserved.
+- `index.html` was not manually replaced during this consolidation.
+- `backup-main.yml` remains intact as the automatic backup mechanism.
+- Backend deployment, research-record approval, smoke tests, and link-integrity workflows were not changed.
+
+## Current automation model
+`main push / approved workflow event`
+→ `live-entrypoint-sync.yml`
+→ `index.html` / `favicon.svg` integration checks
+→ minimal commit only when needed
+→ GitHub Pages continues using the existing public path.
+
+## Verification performed
+- Canonical workflow fetched after creation and SHA recorded.
+- All four former live-entrypoint writers fetched after modification and confirmed as legacy/read-only.
+- Pre-change backup branch exists at the recorded commit.
+- Existing `index.html` remains present and its current content was inspected before consolidation.
+
+## Evidence
+Canonical workflow:
+- `.github/workflows/live-entrypoint-sync.yml`
+- SHA: `3259b5ca515b996b4b9ceb5ef5b4d644f1e88414`
+
+Legacy workflow SHAs after consolidation:
+- `connect-tafsir-library.yml`: `000c0f5a3e94412978d4519947fb1cd368b824cf`
+- `connect-tafsir-library-now.yml`: `4f773e9ae13043c08b7c394ca3db4d7ac33609d4`
+- `set-site-favicon.yml`: `bdeeaf596def85905a15b5d630ffd2b88f195143`
+- `install-chat-system.yml`: `fab30ae22fbcc48952247f52040dbfef64919a09`
+
+## Final decision
+The repository now has **one canonical automatic live-entrypoint writer**. The previous writers remain preserved as historical/manual workflow files, but they no longer have repository write permission or automatic push triggers.
+
+This is controlled consolidation, not destructive cleanup.
