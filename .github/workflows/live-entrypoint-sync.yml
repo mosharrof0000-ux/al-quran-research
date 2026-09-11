@@ -1,0 +1,106 @@
+name: Canonical Live Entrypoint Sync
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'tafsir-library.html'
+      - 'assets/tiya-ai-logo.svg'
+      - 'chat-system.js'
+      - '.github/workflows/live-entrypoint-sync.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: live-entrypoint-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Apply canonical live-entrypoint integrations
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          original = s
+
+          # 1. Tafsir Library button — add once, only when the library exists.
+          if Path('tafsir-library.html').exists() and 'id="tafsir-library-link"' not in s:
+              card = '''\n      <button id="tafsir-library-link" class="hub-card" onclick="window.location.href='tafsir-library.html'">\n        <span class="emoji">📚</span>\n        <b>তাফসীর গ্রন্থাগার</b>\n        <span>ধারা, গ্রন্থ, পদ্ধতি ও তুলনামূলক গবেষণা</span>\n      </button>\n'''
+              start = s.find('<section id="research"')
+              if start < 0:
+                  start = s.find("<section id='research'")
+              if start < 0:
+                  raise SystemExit('research section not found')
+              end = s.find('</section>', start)
+              if end < 0:
+                  raise SystemExit('research section end not found')
+              s = s[:end] + card + s[end:]
+
+          # 2. Favicon — add the file and link once when the source logo exists.
+          if Path('assets/tiya-ai-logo.svg').exists():
+              favicon = Path('favicon.svg')
+              source = Path('assets/tiya-ai-logo.svg').read_text(encoding='utf-8')
+              if not favicon.exists() or favicon.read_text(encoding='utf-8') != source:
+                  favicon.write_text(source, encoding='utf-8')
+              marker = '<link rel="icon" type="image/svg+xml" href="favicon.svg">'
+              if marker not in s:
+                  title = '<title>আল-কুরআন গবেষণা</title>'
+                  if title in s:
+                      s = s.replace(title, title + '\n' + marker, 1)
+
+          # 3. Chat system — normalize the existing script tag, without changing layout.
+          tag = '<script src="chat-system.js?v=20260902-2"></script>'
+          pattern = r'<script\s+src="chat-system\.js(?:\?[^\"]*)?"></script>'
+          if re.search(pattern, s):
+              s = re.sub(pattern, tag, s, count=1)
+          elif '</body>' in s:
+              s = s.replace('</body>', tag + '\n</body>', 1)
+
+          p.write_text(s, encoding='utf-8')
+
+          changed = s != original or Path('favicon.svg').exists()
+          print('Canonical live-entrypoint integration check completed.')
+          print('index.html changed:', s != original)
+          print('favicon source present:', Path('assets/tiya-ai-logo.svg').exists())
+
+      - name: Verify canonical targets
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f index.html
+          grep -Fq 'chat-system.js?v=20260902-2' index.html
+          if test -f tafsir-library.html; then
+            grep -Fq 'id="tafsir-library-link"' index.html
+          fi
+          if test -f assets/tiya-ai-logo.svg; then
+            test -f favicon.svg
+            grep -Fq 'favicon.svg' index.html
+          fi
+
+      - name: Commit only canonical integration changes
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html favicon.svg
+          if git diff --cached --quiet; then
+            echo 'No canonical live-entrypoint changes required.'
+            exit 0
+          fi
+          git diff --cached --check
+          git commit -m 'Canonicalize live entrypoint integrations'
+          git push origin main
