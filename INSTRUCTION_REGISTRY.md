@@ -1,4 +1,4 @@
-# Instruction Registry — v1.3
+# Instruction Registry — v1.4
 
 This registry is the dictionary/index of project instructions. It records which instructions govern which project assets.
 
@@ -49,7 +49,25 @@ This registry is the dictionary/index of project instructions. It records which 
 
 | Record | Purpose | Status |
 |---|---|---|
-| `docs/INSTRUCTION_AUDIT_AUTOMATION_2026-09-11.md` | Verified mapping of workflow permissions, write targets, overlap, and remediation plan | VERIFIED |
+| `docs/INSTRUCTION_AUDIT_AUTOMATION_2026-09-11.md` | Workflow permissions, live-entrypoint overlap, and completed consolidation record | VERIFIED |
+
+## Canonical Production Automation
+
+| Asset | Role | Status |
+|---|---|---|
+| `.github/workflows/live-entrypoint-sync.yml` | Single automatic writer for protected live-entrypoint integrations | ACTIVE |
+| `.github/workflows/backup-main.yml` | Automatic main-branch rollback/backup support | ACTIVE |
+| `.github/workflows/deploy-worker.yml` | Backend Worker deployment | ACTIVE |
+| `.github/workflows/research-record-approval.yml` | Human-approved versioned research record creation | ACTIVE |
+
+## Legacy Automation Preserved
+
+| Workflow | Current role | Status |
+|---|---|---|
+| `.github/workflows/connect-tafsir-library.yml` | Historical/manual notice; no repository write | LEGACY |
+| `.github/workflows/connect-tafsir-library-now.yml` | Historical/manual notice; no repository write | LEGACY |
+| `.github/workflows/set-site-favicon.yml` | Historical/manual notice; no repository write | LEGACY |
+| `.github/workflows/install-chat-system.yml` | Historical/manual notice; no repository write | LEGACY |
 
 ## Existing Project Documents
 
@@ -94,4 +112,4 @@ Static/generated/temporary assets may be covered by a category rule unless they 
 Any new critical file must be added here and must have an applicable instruction before it becomes part of the active research workflow.
 
 ## Status
-ACTIVE — v1.3. Critical/important documentation coverage is established, automation governance is registered, and the workflow audit is recorded. Next work is controlled remediation/consolidation, not destructive cleanup.
+ACTIVE — v1.4. Critical/important documentation coverage is established, the automation audit is verified, and live-entrypoint write behavior is consolidated under one canonical workflow. Legacy workflow files remain preserved for traceability.
