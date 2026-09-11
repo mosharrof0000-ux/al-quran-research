@@ -104,3 +104,28 @@ No workflow file was deleted, renamed, or moved. Existing backend deployment, re
 
 ### Result
 There is now one canonical automatic live-entrypoint writer. Existing legacy workflow paths remain available for historical traceability without automatic repository-write behavior.
+
+---
+
+## WORK-2026-09-11-STABLE-CHECKPOINT-01
+
+**Status:** VERIFIED — stable checkpoint established
+
+### Checkpoint
+- Main baseline: `cf6a49812e14ab7a04d0aafb2ce9a7dc6bde4c3a`
+- Governance control set promoted to `main`.
+- GitHub Actions deployment: successful.
+- GitHub Pages deployment check: successful.
+- Smoke test: successful.
+- Cloudflare production build: successful.
+- Cloudflare production version: `32ed44fe-c7ad-4802-ae54-539b9ee6b2f2`.
+- User manually opened the live site and confirmed connection and chat responses are working.
+
+### Scope
+This checkpoint records a known-good operational state. It does not claim that all future research features are complete.
+
+### Protected meaning
+No locked page, research dataset, or production architecture was intentionally changed for this checkpoint. Documentation/state records are being synchronized so a future AI/session can resume from a verified baseline without relying on chat memory.
+
+### Next step
+Resume future work from this checkpoint. Any new material change must follow the Master Instruction, Universal AI Governance Gate, relevant individual instruction, backup/safe-point procedure, verification, and state/log update rules.
