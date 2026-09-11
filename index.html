@@ -7,7 +7,21 @@
 <style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#071d1d}iframe{display:block;width:100%;height:100%;border:0}</style>
 </head>
 <body>
-<iframe id="researchApp" title="আল-কুরআন গবেষণা" src="chatbox-v28-live.html?v=20260911-direct-v28"></iframe>
-<script src="chat-system.js?v=20260902-2"></script>
+<iframe id="researchApp" title="আল-কুরআন গবেষণা" src="chatbox-v28-live.html?v=20260911-direct-v28-fix"></iframe>
+<script>
+(function(){
+  const frame=document.getElementById('researchApp');
+  frame.addEventListener('load',function(){
+    try{
+      if(frame.contentDocument && !frame.contentDocument.getElementById('chatboxTimeoutFixScript')){
+        const s=frame.contentDocument.createElement('script');
+        s.id='chatboxTimeoutFixScript';
+        s.src='chatbox-timeout-fix.js?v=20260911-90s';
+        frame.contentDocument.head.appendChild(s);
+      }
+    }catch(e){ console.warn('Chat Box timeout hardening could not load',e); }
+  });
+})();
+</script>
 </body>
 </html>
