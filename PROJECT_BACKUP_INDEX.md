@@ -90,3 +90,27 @@ GitHub history একমাত্র backup নয়; গুরুত্বপ�
 - code-level structure verified; live browser test এখনও করা বাকি
 
 **Status:** SAFE POINT CREATED — LIVE BROWSER TEST PENDING
+
+---
+
+## SAFE-POINT-2026-09-11-LIVE-ENTRYPOINT-CONSOLIDATION
+
+**Date:** 2026-09-11
+
+**Purpose:** Protected live-entrypoint automation consolidation-এর আগের restore point
+
+**Restore branch:** `backup/pre-live-entrypoint-consolidation-2026-09-11`
+
+**Pre-change commit:** `35249656450757813964b2fd83287edf0551ee49`
+
+**Protected assets:**
+- `.github/workflows/*.yml` live-entrypoint automation
+- `index.html`
+- favicon integration
+- chat-system integration
+- Tafsir Library integration
+
+**Status:** VERIFIED PRE-CHANGE BACKUP BRANCH
+
+**Post-change governance:**
+A single canonical automatic writer now controls these live-entrypoint integrations through `.github/workflows/live-entrypoint-sync.yml`. Former writers remain as manual/read-only legacy workflow files.
