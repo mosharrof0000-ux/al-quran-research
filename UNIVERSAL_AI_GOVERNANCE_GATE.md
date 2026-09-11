@@ -1,4 +1,4 @@
-# Universal AI Governance Gate — v1.0
+# Universal AI Governance Gate — v1.1
 
 ## Purpose
 This is the universal startup gate for the Al-Quran Research project.
@@ -42,14 +42,25 @@ Before editing, determine:
 
 ### Step 4 — Load the target instruction
 For every existing target file:
-- locate its corresponding instruction in `docs/instructions/`;
-- read that instruction before editing;
+- locate its applicable individual instruction;
+- for files governed by the new same-folder rule, this is `<filename>.instruction.md` in the same directory;
+- existing files that still use `docs/instructions/` remain governed by their existing instruction until separately migrated;
+- read the instruction before editing;
 - confirm its status is applicable/ACTIVE;
 - if no instruction exists, do not silently invent governance: apply the Master Instruction/category rule, flag the missing instruction, and create the instruction before the file becomes part of an active critical workflow.
 
-For every new critical file:
-- create its instruction as part of the same governed change;
-- register the instruction and the file in `INSTRUCTION_REGISTRY.md` before treating the file as an active critical asset.
+### Step 5 — Mandatory new-file pairing
+Whenever a new non-instruction project file is created:
+1. create the governed file;
+2. immediately create its sibling `<filename>.instruction.md` in the same directory;
+3. make the instruction complete enough to govern the file safely;
+4. register the governed file and its instruction where required;
+5. verify the pair before considering the change complete.
+
+The only exception is an `.instruction.md` governance artifact itself; it does not require another instruction file because that would create infinite recursion. It is governed directly by the Master Instruction, Registry, audit process, and change log.
+
+### Step 6 — Registry and activation
+A new critical file must have both its file and instruction represented in `INSTRUCTION_REGISTRY.md` before it is treated as an active critical project asset.
 
 ## Master Rule
 `MASTER_INSTRUCTION.md` is the common governing rule for all individual file instructions.
@@ -70,18 +81,6 @@ Instead:
 `Master Governance → Registry Lookup → Relevant Individual Instruction → Target File`
 
 Therefore, if the project eventually contains 1,000 files, it may contain approximately 1,000 corresponding instructions, while the Master Instruction remains the common governing layer and the Registry remains the index.
-
-## New File Rule
-Whenever a new file is introduced:
-
-1. Identify its role and risk class.
-2. Determine whether it is Critical, Important, or Passive.
-3. Create the appropriate individual instruction when required.
-4. Record identity, purpose, scope, inputs/outputs, dependencies, allowed/forbidden operations, verification, evidence requirements, update triggers, related instructions, version, and history.
-5. Register the instruction in `INSTRUCTION_REGISTRY.md`.
-6. Only then treat the new critical file as an established project asset.
-
-Do not create duplicate instructions for the same governed file without a documented reason.
 
 ## Protected Assets
 The following are protected by default:
@@ -123,6 +122,7 @@ If two instructions conflict:
 ## Completion Gate
 A task is not complete until applicable checks confirm:
 - intended file(s) changed;
+- every new non-instruction file has its same-folder sibling instruction;
 - required instruction(s) exist and are consistent;
 - registry is accurate;
 - no unrelated critical files changed;
@@ -138,12 +138,13 @@ Stop and ask for clarification or review when:
 - a target's dependency cannot be established;
 - required evidence is unavailable;
 - a destructive operation appears necessary;
+- a new file would be created without its required same-folder instruction;
 - the current state cannot be verified safely.
 
 ## Universal Handoff Statement
 A new AI/session may begin work only after it can state, in substance:
 
-> I have loaded the project governance entry point, Master Instruction, Registry, relevant project state, and the specific instruction(s) governing my target. I will preserve protected assets, make only the requested/minimal change, and verify and record the result before considering the task complete.
+> I have loaded the project governance entry point, Master Instruction, Registry, relevant project state, and the specific instruction(s) governing my target. I will preserve protected assets, create a same-folder instruction for every new non-instruction file, make only the requested/minimal change, and verify and record the result before considering the task complete.
 
 ## Status
-DRAFT — created as a safety-reviewed candidate on a dedicated branch. It must be reviewed before becoming the canonical universal entry point on `main`.
+ACTIVE — v1.1 candidate on the safety branch; promotion to `main` remains a controlled governance change.
