@@ -1,4 +1,4 @@
-# Instruction Change Log — v1.5
+# Instruction Change Log — v1.6
 
 This file records controlled changes to the instruction-governance layer.
 
@@ -124,3 +124,25 @@ Every new non-instruction project file must be created together with its same-fo
 
 ### Safety result
 This governance change was made on the dedicated safety branch `safety/universal-ai-governance-gate-2026-09-11`. No production website, research dataset, backend entrypoint, or public path was changed.
+
+## 2026-09-11 — Colocated Instruction Migration
+
+### Purpose
+Remove the loose `docs/instructions/` instruction container and place each instruction beside its governed target or governing scope.
+
+### Migration rule
+Each legacy instruction was copied to its colocated destination, verified by target mapping/content review, registered in `INSTRUCTION_REGISTRY.md`, and only then prepared for removal from the old loose directory.
+
+### Colocated destinations
+- Root governance/project instructions remain beside their root targets.
+- `docs/*` instructions are beside their governed `docs/*` documents.
+- `data/fatiha.json.instruction.md` is beside the Fatiha dataset.
+- `backend/BACKEND_AND_LIVE_UI.instruction.md` governs the backend/live UI scope.
+- `.github/workflows/GITHUB_ACTIONS_AND_AUTOMATION.instruction.md` governs workflow automation.
+- Chatbox instructions remain beside their root chatbox records.
+
+### Historical preservation
+The old instruction content remains preserved in Git history. No governed project file was moved as part of this migration.
+
+### Safety result
+Website entrypoints, backend code, research datasets, APIs, workflows, stable IDs, and public paths were not moved or structurally altered by the instruction migration.
