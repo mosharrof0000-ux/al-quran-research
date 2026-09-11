@@ -1,4 +1,4 @@
-# Instruction Change Log — v1.2
+# Instruction Change Log — v1.3
 
 This file records controlled changes to the instruction-governance layer.
 
@@ -60,5 +60,19 @@ Only additive instruction/governance files and registry/log documentation were c
 ### Live-Site Decision
 The GitHub Pages path remains protected. The backend/live-UI instruction explicitly requires dependency identification, backup/safe point, minimal diff, testing, and verification before production changes.
 
+## 2026-09-11 — Automation Governance Audit
+
+### Finding
+Repository inspection identified multiple GitHub Actions workflows with write permissions and workflows capable of modifying the live `index.html` entrypoint.
+
+### Added
+- `docs/instructions/GITHUB_ACTIONS_AND_AUTOMATION.instruction.md`
+
+### Classification
+The finding is classified as `LIVE-ENTRYPOINT-WRITE` / production-impacting automation. It is an audit finding only, not authorization to delete, disable, rename, or rewrite any workflow.
+
+### Safety Decision
+No workflow was deleted, disabled, renamed, or modified during this audit step. Existing backup/deployment architecture remains intact.
+
 ### Next Controlled Work
-Perform a repository-wide instruction audit for missing coverage, stale references, conflicting rules, and dependency drift. Do not begin structural cleanup or automated enforcement until the audit is reviewed.
+Map each write-capable workflow's trigger, target files, permissions, overlap, rollback path, and live-site impact. Any retirement or redesign must follow backup → impact review → minimal change → test → verification.
