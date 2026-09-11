@@ -1,4 +1,4 @@
-# Instruction Registry — v1.7
+# Instruction Registry — v1.8
 
 This registry is the dictionary/index of project instructions. It records which instructions govern which project assets.
 
@@ -7,7 +7,7 @@ This registry is the dictionary/index of project instructions. It records which 
 | Instruction | Role | Status |
 |---|---|---|
 | `AI_ENTRY_PROTOCOL.md` | Bootstrap entry point and mandatory reading order for new AI/session | ACTIVE |
-| `UNIVERSAL_AI_GOVERNANCE_GATE.md` | Universal startup gate and master-first governance check | DRAFT — safety branch candidate |
+| `UNIVERSAL_AI_GOVERNANCE_GATE.md` | Universal startup gate and master-first governance check | REVIEW — safety branch candidate; not promoted to `main` |
 | `NEW_AI_SESSION_START_GUIDE.md` | Legacy/operational startup guide for new AI, ID, agent, or chat | ACTIVE — preserved historical/operational guide |
 | `MASTER_INSTRUCTION.md` | Operational governance and instruction hierarchy | ACTIVE |
 | `INSTRUCTION_REGISTRY.md` | Instruction index and coverage map | ACTIVE |
@@ -23,7 +23,7 @@ This registry is the dictionary/index of project instructions. It records which 
 | `INSTRUCTION_REGISTRY.instruction.md` | `INSTRUCTION_REGISTRY.md` | ACTIVE |
 | `INSTRUCTION_AUDIT_PROTOCOL.instruction.md` | `INSTRUCTION_AUDIT_PROTOCOL.md` | ACTIVE |
 | `INSTRUCTION_CHANGE_LOG.instruction.md` | `INSTRUCTION_CHANGE_LOG.md` | ACTIVE |
-| `UNIVERSAL_AI_GOVERNANCE_GATE.instruction.md` | `UNIVERSAL_AI_GOVERNANCE_GATE.md` | ACTIVE — governs candidate gate |
+| `UNIVERSAL_AI_GOVERNANCE_GATE.instruction.md` | `UNIVERSAL_AI_GOVERNANCE_GATE.md` | ACTIVE — governs safety-branch candidate gate |
 
 ## Individual Critical Instructions
 
@@ -84,7 +84,7 @@ This registry is the dictionary/index of project instructions. It records which 
 
 ## Existing Project Documents
 
-The individual instructions above are now colocated with their governed target file or governing scope. Historical instruction content remains preserved in Git history; the old `docs/instructions/` directory is being retired as a loose instruction container.
+The individual instructions above are now colocated with their governed target file or governing scope. Historical instruction content remains preserved in Git history; the old `docs/instructions/` directory is retired as a loose instruction container.
 
 ## Coverage Classes
 
@@ -102,8 +102,11 @@ Any new governed project file must be paired with its same-folder `<filename>.in
 
 Before any requested task begins, the Master-First Governance Check must confirm that applicable instructions are current. Missing or stale instructions are corrected first. Removal, retirement, or weakening of an existing instruction/rule requires user approval.
 
+## Controlled Promotion Rule
+Safety-branch governance work is not production publication. Before promotion to `main`, the branch must be compared against `main`, protected assets must be checked, governance documents must be consistent, required verification must pass, and explicit user/authorized approval must be obtained when required. Promotion and post-promotion verification are recorded separately from the safety-branch implementation.
+
 ## Migration Rule
-Instructions formerly stored under `docs/instructions/` are migrated by copy → verify → registry update → old-path removal. No governed target file, website path, backend path, data file, or research record is moved as part of this instruction migration.
+Instructions formerly stored under `docs/instructions/` were migrated by copy → verify → registry update → old-path removal. No governed target file, website path, backend path, data file, or research record was moved as part of this instruction migration.
 
 ## Status
-ACTIVE — v1.7. Colocated instruction architecture is established on the safety branch. Universal startup governance remains a candidate until explicitly promoted; legacy guide/history is preserved.
+ACTIVE — v1.8. Colocated instruction architecture is established on the safety branch. Universal startup governance remains in REVIEW on the safety branch and is not promoted to `main`.
