@@ -1,4 +1,4 @@
-# Instruction Change Log — v1.3
+# Instruction Change Log — v1.4
 
 This file records controlled changes to the instruction-governance layer.
 
@@ -69,10 +69,39 @@ Repository inspection identified multiple GitHub Actions workflows with write pe
 - `docs/instructions/GITHUB_ACTIONS_AND_AUTOMATION.instruction.md`
 
 ### Classification
-The finding is classified as `LIVE-ENTRYPOINT-WRITE` / production-impacting automation. It is an audit finding only, not authorization to delete, disable, rename, or rewrite any workflow.
+The finding is classified as `LIVE-ENTRYPOINT-WRITE` / production-impacting automation.
 
 ### Safety Decision
-No workflow was deleted, disabled, renamed, or modified during this audit step. Existing backup/deployment architecture remains intact.
+No workflow was deleted during the audit phase. A dedicated pre-change backup branch was later created before controlled consolidation.
 
-### Next Controlled Work
-Map each write-capable workflow's trigger, target files, permissions, overlap, rollback path, and live-site impact. Any retirement or redesign must follow backup → impact review → minimal change → test → verification.
+## 2026-09-11 — Canonical Live-Entrypoint Consolidation
+
+### User approval
+The user explicitly approved controlled consolidation of live-entrypoint writers.
+
+### Safe point
+- Branch: `backup/pre-live-entrypoint-consolidation-2026-09-11`
+- Pre-change commit: `35249656450757813964b2fd83287edf0551ee49`
+
+### Added
+- `.github/workflows/live-entrypoint-sync.yml`
+
+### Changed, preserved in place
+The following existing workflow files were retained but converted to manual/read-only legacy notices:
+- `.github/workflows/connect-tafsir-library.yml`
+- `.github/workflows/connect-tafsir-library-now.yml`
+- `.github/workflows/set-site-favicon.yml`
+- `.github/workflows/install-chat-system.yml`
+
+### Governance updates
+- `docs/INSTRUCTION_AUDIT_AUTOMATION_2026-09-11.md` updated to VERIFIED consolidation status.
+- `docs/instructions/GITHUB_ACTIONS_AND_AUTOMATION.instruction.md` updated to define the canonical writer rule.
+- `INSTRUCTION_REGISTRY.md` advanced to v1.4.
+- `PROJECT_BACKUP_INDEX.md` updated with the pre-change safe point.
+- `PROJECT_WORK_LOG.md` updated with the verified implementation record.
+
+### Safety result
+No workflow file was deleted, renamed, or moved. Backend deployment, research approval, backup, smoke-test, and link-integrity workflows were preserved.
+
+### Final rule
+Only `.github/workflows/live-entrypoint-sync.yml` retains automatic repository-write behavior for the protected live-entrypoint integrations.
