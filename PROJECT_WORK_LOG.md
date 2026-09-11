@@ -53,3 +53,54 @@ Verify → Record result → Record backup/restore reference → Update current 
 
 ### Next step
 পরবর্তী actual interface change-এর আগে সংশ্লিষ্ট বর্তমান file/branch পুনরায় inspect করতে হবে, backup reference নিতে হবে, তারপর user-approved change করতে হবে।
+
+---
+
+## WORK-2026-09-11-LIVE-ENTRYPOINT-CONSOLIDATION-01
+
+**Status:** VERIFIED — canonical automation consolidation completed
+
+### User decision
+ব্যবহারকারী live-entrypoint automation-এর controlled consolidation অনুমোদন করেছেন।
+
+### Objective
+একাধিক GitHub Actions workflow যেন একই protected `index.html`-এ আলাদা আলাদাভাবে write না করে—তার জন্য একটি canonical automatic writer প্রতিষ্ঠা করা।
+
+### Safe point
+- `backup/pre-live-entrypoint-consolidation-2026-09-11`
+- Pre-change commit: `35249656450757813964b2fd83287edf0551ee49`
+
+### Changes made
+Created:
+- `.github/workflows/live-entrypoint-sync.yml`
+
+Converted to preserved manual/read-only legacy workflows:
+- `.github/workflows/connect-tafsir-library.yml`
+- `.github/workflows/connect-tafsir-library-now.yml`
+- `.github/workflows/set-site-favicon.yml`
+- `.github/workflows/install-chat-system.yml`
+
+Updated governance records:
+- `docs/INSTRUCTION_AUDIT_AUTOMATION_2026-09-11.md`
+- `docs/instructions/GITHUB_ACTIONS_AND_AUTOMATION.instruction.md`
+- `PROJECT_BACKUP_INDEX.md`
+
+### Canonical behavior
+The new canonical workflow handles:
+- Tafsir Library button integration
+- favicon synchronization
+- chat-system script-tag normalization
+
+It uses concurrency control and verifies target content before committing.
+
+### Preservation decision
+No workflow file was deleted, renamed, or moved. Existing backend deployment, research-record approval, backup, smoke-test, and link-integrity workflows were not changed.
+
+### Verification
+- Canonical workflow fetched after creation: SHA `3259b5ca515b996b4b9ceb5ef5b4d644f1e88414`.
+- All four former live-entrypoint writers were fetched after modification and confirmed as manual/read-only legacy workflows.
+- Pre-change backup branch was created and recorded.
+- Existing `index.html` was inspected before consolidation.
+
+### Result
+There is now one canonical automatic live-entrypoint writer. Existing legacy workflow paths remain available for historical traceability without automatic repository-write behavior.
