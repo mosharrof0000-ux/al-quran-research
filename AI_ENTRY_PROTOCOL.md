@@ -1,4 +1,4 @@
-# AI Entry Protocol — v1.2
+# AI Entry Protocol — v1.3
 
 ## Purpose
 This is the bootstrap pointer for any AI, ChatGPT ID, agent, automation, or new project session entering the repository.
@@ -8,7 +8,7 @@ The universal startup gate is `UNIVERSAL_AI_GOVERNANCE_GATE.md`. Any AI/session 
 ## Safety Rule
 The existing project must not be damaged while the instruction system is being introduced.
 
-**Never delete, rename, move, overwrite, or restructure existing project files merely to make the instruction system cleaner.** Such changes require a separate reviewed change proposal.
+**Never delete, rename, move, overwrite, retire, or restructure existing project files merely to make the instruction system cleaner.** Such changes require a separate reviewed change proposal and, where removal/retirement/weakening is involved, explicit user approval.
 
 ## Mandatory Reading Order
 1. `AI_ENTRY_PROTOCOL.md`
@@ -20,11 +20,19 @@ The existing project must not be damaged while the instruction system is being i
 7. The applicable instruction for each target file
 8. The target file(s)
 
+## Master-First Rule
+Before starting the requested project work, the AI must first check whether the applicable instruction layer is complete and current for the task.
+
+If a target's instruction is missing, stale, incomplete, conflicting, or no longer matches the target file, the instruction must be created or updated first through the governance/audit process. The underlying project work starts only after the required instruction state is usable.
+
+If making an instruction current would require removing, retiring, weakening, deleting, renaming, or moving an existing instruction or rule, the AI must stop and ask the user. It must not make that governance decision autonomously.
+
 ## First-Session Procedure
 Before doing project work, the AI must:
 - identify the requested task;
 - identify the affected files;
 - determine whether each target already exists or will be newly created;
+- complete the Master-First Rule;
 - read the applicable instruction before editing an existing target;
 - for every new non-instruction file, create its sibling `<filename>.instruction.md` in the same directory as part of the same governed change;
 - preserve the live website and existing public paths;
@@ -65,4 +73,4 @@ A task is not complete merely because a file was changed. The AI must verify:
 - registry/change log updates are complete where required.
 
 ## Status
-ACTIVE — v1.2
+ACTIVE — v1.3
