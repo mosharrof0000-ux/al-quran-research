@@ -1,4 +1,4 @@
-# Master Instruction — v1.3
+# Master Instruction — v1.4
 
 ## 1. Role
 This document is the operational control layer for the Al-Quran Research project. It governs how AI systems work with the repository without replacing the project's existing research architecture.
@@ -94,7 +94,7 @@ Every individual instruction is itself governed by this `MASTER_INSTRUCTION.md`,
 An individual `.instruction.md` file is a governance artifact and is exempt from requiring another sibling `.instruction.md` for itself; otherwise the rule would recurse indefinitely. It remains governed by the Master Instruction, Registry, audit process, and change log.
 
 ### Existing files and migration
-Existing governed files are paired with their instruction in the same folder or governed scope. Legacy instructions previously stored under `docs/instructions/` are migrated by copy → verify → registry update → old-path removal. Their content/history remains preserved in Git history. The migration must not move the governed target files themselves.
+Existing governed files are paired with their instruction in the same folder or governed scope. Legacy instructions previously stored under `docs/instructions/` were migrated by copy → verify → registry update → old-path removal. Their content/history remains preserved in Git history. The migration did not move the governed target files themselves.
 
 ## 7. Protected Project Assets
 The following are protected by default:
@@ -163,20 +163,35 @@ After a change, verify as applicable:
 - for every new non-instruction file, existence of its same-folder sibling instruction;
 - registry coverage for newly governed critical assets.
 
-## 13. Lifecycle
+## 13. Controlled Promotion Gate
+Safety-branch governance work and production promotion are separate control stages.
+
+Before promoting a governance/instruction change from a safety branch to `main`:
+1. compare the branch against `main`;
+2. confirm only intended changes are included;
+3. confirm protected website, backend, data, API, automation, and public paths are not unintentionally changed;
+4. confirm the Registry, applicable instructions, and Change Log are consistent;
+5. confirm relevant syntax/data/tests/checks pass;
+6. obtain explicit user/authorized approval for the promotion when required by the change;
+7. promote to `main` only after approval;
+8. verify the resulting `main` state and record the promotion.
+
+Approval to perform a safety-branch migration is not automatically approval to publish that migration to `main` unless promotion is explicitly requested or approved.
+
+## 14. Lifecycle
 Instructions use this lifecycle:
 `DRAFT → REVIEW → ACTIVE → SUPERSEDED → ARCHIVED`
 
 Old instructions should be preserved as history rather than silently deleted. Superseding or archiving an instruction requires an explicit governance decision and documented replacement where applicable.
 
-## 14. Master Learning Rule
+## 15. Master Learning Rule
 The Master Instruction does not automatically rewrite itself based on an AI's preference. It learns through controlled governance:
 
 `Individual Instruction → Audit → Change Detection → Proposal → Conflict Check → Impact Analysis → User/Authorized Approval → Master Update → Registry Update → Change Log`
 
 The Master is therefore both the common rule for all file instructions and a governed artifact that must obey its own instruction and audit controls.
 
-## 15. Relationship to Existing Architecture
+## 16. Relationship to Existing Architecture
 The instruction system does not replace:
 - `MASTER_PROJECT.md` — project constitution/vision;
 - `PROJECT_STATE.md` — current project state;
@@ -188,4 +203,4 @@ The instruction system does not replace:
 Those documents remain project assets and are governed by this operational layer.
 
 ## Status
-ACTIVE — v1.3
+ACTIVE — v1.4
