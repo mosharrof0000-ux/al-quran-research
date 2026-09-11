@@ -1,4 +1,4 @@
-# Instruction Change Log — v1.6
+# Instruction Change Log — v1.7
 
 This file records controlled changes to the instruction-governance layer.
 
@@ -146,3 +146,19 @@ The old instruction content remains preserved in Git history. No governed projec
 
 ### Safety result
 Website entrypoints, backend code, research datasets, APIs, workflows, stable IDs, and public paths were not moved or structurally altered by the instruction migration.
+
+## 2026-09-11 — Control Set Alignment and Promotion Gate
+
+### Finding
+The safety-branch governance layer had a status/wording mismatch: the Universal Gate was treated as mandatory by the entry protocol while the Registry still labeled it only as a draft candidate, and the gate contained an obsolete reference to `docs/instructions/` as a current fallback location.
+
+### Changes
+- `UNIVERSAL_AI_GOVERNANCE_GATE.md` advanced to v1.3 and now clearly defines the colocated instruction location rule plus a separate Controlled Promotion Gate.
+- `MASTER_INSTRUCTION.md` advanced to v1.4 and now defines the safety-branch-to-`main` promotion control separately from the implementation/migration control.
+- `INSTRUCTION_REGISTRY.md` advanced to v1.8 and now aligns the gate status and records the promotion rule.
+
+### Control rule
+Safety-branch work and production promotion are separate stages. A prior approval to perform a safety-branch migration does not automatically authorize publication to `main` unless promotion is explicitly requested or approved.
+
+### Safety result
+This alignment changed governance documents only on the safety branch. No production website, backend, research dataset, public path, or live entrypoint was changed. No promotion to `main` was performed.
