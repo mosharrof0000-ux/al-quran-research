@@ -1,4 +1,4 @@
-# Instruction Registry — v1.5
+# Instruction Registry — v1.6
 
 This registry is the dictionary/index of project instructions. It records which instructions govern which project assets.
 
@@ -6,9 +6,10 @@ This registry is the dictionary/index of project instructions. It records which 
 
 | Instruction | Role | Status |
 |---|---|---|
-| `AI_ENTRY_PROTOCOL.md` | Entry point and mandatory reading order for new AI/session | ACTIVE |
-| `NEW_AI_SESSION_START_GUIDE.md` | Operational startup guide for new AI, ID, agent, or chat | ACTIVE |
-| `MASTER_INSTRUCTION.md` | Operational governance and instruction hierarchy | ACTIVE |
+| `AI_ENTRY_PROTOCOL.md` | Bootstrap entry point and mandatory reading order for new AI/session | ACTIVE |
+| `UNIVERSAL_AI_GOVERNANCE_GATE.md` | Universal startup gate and master-first governance check | ACTIVE |
+| `NEW_AI_SESSION_START_GUIDE.md` | Legacy/operational startup guide for new AI, ID, agent, or chat | ACTIVE |
+| `MASTER_INSTRUCTION.md` | Operational governance and instruction hierarchy | ACTIVE v1.2 |
 | `INSTRUCTION_REGISTRY.md` | Instruction index and coverage map | ACTIVE |
 | `INSTRUCTION_AUDIT_PROTOCOL.md` | Detect missing, stale, conflicting, or incomplete instructions | ACTIVE |
 | `INSTRUCTION_CHANGE_LOG.md` | History of instruction-system changes | ACTIVE |
@@ -110,7 +111,9 @@ Category or individual instruction required depending on complexity.
 Static/generated/temporary assets may be covered by a category rule unless they contain project logic.
 
 ## Registry Rule
-Any new critical file must be added here and must have an applicable instruction before it becomes part of the active research workflow.
+Any new governed project file must be paired with its same-folder `<filename>.instruction.md` instruction in the same governed change, unless the file itself is an `.instruction.md` governance artifact. New critical files must also be represented in this Registry before becoming part of the active research workflow.
+
+Before any requested task begins, the Master-First Governance Check must confirm that applicable instructions are current. Missing or stale instructions are corrected first. Removal, retirement, or weakening of an existing instruction/rule requires user approval.
 
 ## Status
-ACTIVE — v1.5. Critical/important documentation coverage is established, the automation audit is verified, live-entrypoint write behavior is consolidated under one canonical workflow, and a dedicated startup guide now exists for new AI/ID/chat sessions. Legacy workflow files remain preserved for traceability.
+ACTIVE — v1.6. Universal startup governance and master-first instruction verification are now recorded. Existing instruction locations remain preserved; same-folder pairing is mandatory for new non-instruction files.
