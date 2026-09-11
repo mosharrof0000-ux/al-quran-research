@@ -1,4 +1,4 @@
-# Master Instruction — v1.2
+# Master Instruction — v1.3
 
 ## 1. Role
 This document is the operational control layer for the Al-Quran Research project. It governs how AI systems work with the repository without replacing the project's existing research architecture.
@@ -93,8 +93,8 @@ Every individual instruction is itself governed by this `MASTER_INSTRUCTION.md`,
 ### Instruction-file exception
 An individual `.instruction.md` file is a governance artifact and is exempt from requiring another sibling `.instruction.md` for itself; otherwise the rule would recurse indefinitely. It remains governed by the Master Instruction, Registry, audit process, and change log.
 
-### Existing files
-Existing project files that currently have instructions in `docs/instructions/` remain valid and must not be moved merely for organization. New files follow the same-folder rule. Migration of older instructions into same-folder form is a separate reviewed governance project and must not be performed automatically.
+### Existing files and migration
+Existing governed files are paired with their instruction in the same folder or governed scope. Legacy instructions previously stored under `docs/instructions/` are migrated by copy → verify → registry update → old-path removal. Their content/history remains preserved in Git history. The migration must not move the governed target files themselves.
 
 ## 7. Protected Project Assets
 The following are protected by default:
@@ -108,14 +108,16 @@ The following are protected by default:
 Do not delete, rename, move, retire, or replace these simply for organization. If removal or structural retirement is proposed, stop and ask the user unless the user has explicitly authorized that specific operation.
 
 ## 8. Safe Organization Rule
-The instruction system is an additional governance layer. It must initially be additive.
+Instruction organization may be improved only through an auditable migration:
+1. map each legacy instruction to its governed target/scope;
+2. create the colocated instruction without altering the governed target;
+3. verify content and target mapping;
+4. update the Registry and relevant governance references;
+5. verify that all replacements exist;
+6. only then remove the obsolete loose instruction copy;
+7. preserve historical content in Git history and record the migration in the Change Log.
 
-Preferred order:
-1. Add or update instruction files.
-2. Build/update the registry.
-3. Audit relationships.
-4. Propose structural cleanup separately.
-5. Only after explicit review/approval, perform any move/rename/delete/retirement operation.
+No project code, data, backend, website path, or research record is moved merely to relocate an instruction.
 
 ## 9. File Instruction Standard
 Each critical file should eventually have an instruction record containing:
@@ -186,4 +188,4 @@ The instruction system does not replace:
 Those documents remain project assets and are governed by this operational layer.
 
 ## Status
-ACTIVE — v1.2
+ACTIVE — v1.3
