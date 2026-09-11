@@ -1,4 +1,4 @@
-# Instruction Registry — v1.4
+# Instruction Registry — v1.5
 
 This registry is the dictionary/index of project instructions. It records which instructions govern which project assets.
 
@@ -7,6 +7,7 @@ This registry is the dictionary/index of project instructions. It records which 
 | Instruction | Role | Status |
 |---|---|---|
 | `AI_ENTRY_PROTOCOL.md` | Entry point and mandatory reading order for new AI/session | ACTIVE |
+| `NEW_AI_SESSION_START_GUIDE.md` | Operational startup guide for new AI, ID, agent, or chat | ACTIVE |
 | `MASTER_INSTRUCTION.md` | Operational governance and instruction hierarchy | ACTIVE |
 | `INSTRUCTION_REGISTRY.md` | Instruction index and coverage map | ACTIVE |
 | `INSTRUCTION_AUDIT_PROTOCOL.md` | Detect missing, stale, conflicting, or incomplete instructions | ACTIVE |
@@ -112,4 +113,4 @@ Static/generated/temporary assets may be covered by a category rule unless they 
 Any new critical file must be added here and must have an applicable instruction before it becomes part of the active research workflow.
 
 ## Status
-ACTIVE — v1.4. Critical/important documentation coverage is established, the automation audit is verified, and live-entrypoint write behavior is consolidated under one canonical workflow. Legacy workflow files remain preserved for traceability.
+ACTIVE — v1.5. Critical/important documentation coverage is established, the automation audit is verified, live-entrypoint write behavior is consolidated under one canonical workflow, and a dedicated startup guide now exists for new AI/ID/chat sessions. Legacy workflow files remain preserved for traceability.
