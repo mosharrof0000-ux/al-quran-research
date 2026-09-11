@@ -1,4 +1,4 @@
-# Instruction Change Log — v1.8
+# Instruction Change Log — v1.9
 
 This file records controlled changes to the instruction-governance layer.
 
@@ -179,5 +179,28 @@ The protected Live Page loads, but the current `chatbox-v28-live.html` exposes o
 ### Safety result
 Governance clarification was performed on the safety branch `fix/live-research-id-execution`. No production `main` change was made by this governance update.
 
+## 2026-09-12 — Canonical Live Connection Map
+
+### Finding
+Repository inspection established the current production connection path used by the working live chat. The live page is an iframe-based entrypoint, the chat UI contains two Worker endpoints with fallback, and the Worker is deployed from `main` through the backend deployment workflow.
+
+### Canonical path recorded
+`GitHub Pages live site → index.html → chatbox-v28-live.html → Cloudflare Worker endpoint/fallback → backend/cors-entry.js → backend/worker-entry.js → Research API / Gemini / Cloudflare AI recovery`
+
+### Added
+- `LIVE_CONNECTION_MAP.md`
+- `LIVE_CONNECTION_MAP.instruction.md`
+
+### Governance changes
+- `MASTER_INSTRUCTION.md` advanced to v1.6 and now makes the canonical live connection chain the first diagnostic reference for connection incidents.
+- `INSTRUCTION_REGISTRY.md` advanced to v1.9 and registers the new live connection map.
+- `MASTER_INSTRUCTION.instruction.md` updated to govern the new live connection reference.
+
+### Future learning rule
+Future live connection incidents must identify the failing layer, observed error, root cause, exact file/path changed, verification, and resulting production commit/version. Branch switching or UI redesign must not be the first diagnostic step.
+
+### Safety result
+This change is documentation/governance only. No existing website entrypoint, backend code, research dataset, public path, or chat UI behavior was intentionally changed.
+
 ## Status
-ACTIVE — v1.8
+ACTIVE — v1.9
