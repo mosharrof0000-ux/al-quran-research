@@ -1,4 +1,4 @@
-# Instruction Change Log — v1.1
+# Instruction Change Log — v1.2
 
 This file records controlled changes to the instruction-governance layer.
 
@@ -37,13 +37,28 @@ Existing project architecture remains in place. The new instruction layer is add
 - `docs/instructions/CHATBOX-V2.8-STATUS-2026-09-10.instruction.md`
 
 ### Registry update
-`INSTRUCTION_REGISTRY.md` advanced from v1.0 to v1.1 and now records the active individual instruction coverage created so far.
+`INSTRUCTION_REGISTRY.md` advanced to v1.1 and recorded the critical/important instruction coverage created so far.
 
 ### Safety Decision
 This phase added instruction files and registry documentation only. No research dataset, website entrypoint, backend entrypoint, historical file, or live-site path was deleted, renamed, moved, or replaced.
 
-### Verification Decision
-The newly governed source documents were read before their instructions were created. The instructions preserve their existing safety intent rather than changing the governed assets.
+## 2026-09-11 — Documentation and Live-System Protection Expansion
+
+### Added
+- `docs/instructions/PROJECT_HISTORY.instruction.md`
+- `docs/instructions/OUR_THINKING_AND_VISION.instruction.md`
+- `docs/instructions/PROJECT_COMMENTS.instruction.md`
+- `docs/instructions/README.instruction.md`
+- `docs/instructions/BACKEND_AND_LIVE_UI.instruction.md`
+
+### Registry update
+`INSTRUCTION_REGISTRY.md` advanced from v1.1 to v1.2 and now records these instructions as active.
+
+### Safety Decision
+Only additive instruction/governance files and registry/log documentation were changed. Existing research, backend, website, history, and data assets were not structurally altered.
+
+### Live-Site Decision
+The GitHub Pages path remains protected. The backend/live-UI instruction explicitly requires dependency identification, backup/safe point, minimal diff, testing, and verification before production changes.
 
 ### Next Controlled Work
-Cover the remaining important documents (`PROJECT_HISTORY.md`, `OUR_THINKING_AND_VISION.md`, `PROJECT_COMMENTS.md`, `README.md`) and then add a dedicated live-website/core-UI protection instruction after inspecting the current website files. Only after that should a repository-wide instruction audit or automation be considered.
+Perform a repository-wide instruction audit for missing coverage, stale references, conflicting rules, and dependency drift. Do not begin structural cleanup or automated enforcement until the audit is reviewed.
