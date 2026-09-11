@@ -1,4 +1,4 @@
-# Master Instruction — v1.5
+# Master Instruction — v1.6
 
 ## 1. Role
 This document is the operational control layer for the Al-Quran Research project. It governs how AI systems work with the repository without replacing the project's existing research architecture.
@@ -118,6 +118,33 @@ If the Live UI cannot execute the supplied Research ID, record `NOT VERIFIED` an
 
 A common failure affecting multiple Research IDs must be fixed at the shared UI/API execution layer first; do not repeatedly re-test individual IDs as though each were an independent defect.
 
+### 12.2 Canonical Live Connection Rule
+The production Live Page has one documented canonical connection chain. Future connection diagnosis must start from this chain rather than from branch switching, UI redesign, or guesswork.
+
+Canonical chain:
+`GitHub Pages live site → index.html → chatbox-v28-live.html → Cloudflare Worker endpoint/fallback → backend/cors-entry.js → backend/worker-entry.js → Research API / Gemini / Cloudflare AI recovery`
+
+The authoritative detailed map is `LIVE_CONNECTION_MAP.md` and its governing instruction `LIVE_CONNECTION_MAP.instruction.md`.
+
+Current live chat Worker endpoints are, in order:
+1. `https://al-quran-research.mosharroff0000.workers.dev/`
+2. `https://al-quran-research.mosharrof0000.workers.dev/`
+
+The fallback order is part of the protected live behavior and must not be removed or changed without an approved replacement and verification.
+
+When a live connection problem occurs, diagnose the chain in order:
+1. GitHub Pages entry;
+2. iframe/chat UI target;
+3. Worker endpoint and fallback;
+4. Worker reachability and diagnostic endpoint;
+5. CORS;
+6. Worker configuration;
+7. Worker entry/runtime;
+8. Gemini/API credential and model availability;
+9. recovery path.
+
+Every verified connection fix must record the failing layer, observed error, root cause, exact file/path changed, verification performed, and resulting production commit/version. This record becomes reusable project knowledge for future incidents.
+
 ## 13. Controlled Promotion Gate
 Safety-branch governance work and production promotion are separate control stages.
 
@@ -148,4 +175,4 @@ The Master is therefore both the common rule for all file instructions and a gov
 The instruction system does not replace `MASTER_PROJECT.md`, `PROJECT_STATE.md`, `PROJECT_WORK_LOG.md`, `PROJECT_HISTORY.md`, `PROJECT_CONTINUITY_PROTOCOL.md`, or existing research, AI, backup, backend, and website documents. Those remain project assets governed by this operational layer.
 
 ## Status
-ACTIVE — v1.5
+ACTIVE — v1.6
