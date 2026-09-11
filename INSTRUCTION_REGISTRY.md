@@ -1,4 +1,4 @@
-# Instruction Registry — v1.8
+# Instruction Registry — v1.9
 
 This registry is the dictionary/index of project instructions. It records which instructions govern which project assets.
 
@@ -24,6 +24,7 @@ This registry is the dictionary/index of project instructions. It records which 
 | `INSTRUCTION_AUDIT_PROTOCOL.instruction.md` | `INSTRUCTION_AUDIT_PROTOCOL.md` | ACTIVE |
 | `INSTRUCTION_CHANGE_LOG.instruction.md` | `INSTRUCTION_CHANGE_LOG.md` | ACTIVE |
 | `UNIVERSAL_AI_GOVERNANCE_GATE.instruction.md` | `UNIVERSAL_AI_GOVERNANCE_GATE.md` | ACTIVE — governs safety-branch candidate gate |
+| `LIVE_CONNECTION_MAP.instruction.md` | `LIVE_CONNECTION_MAP.md` | ACTIVE — canonical live connection and troubleshooting reference |
 
 ## Individual Critical Instructions
 
@@ -109,4 +110,4 @@ Safety-branch governance work is not production publication. Before promotion to
 Instructions formerly stored under `docs/instructions/` were migrated by copy → verify → registry update → old-path removal. No governed target file, website path, backend path, data file, or research record was moved as part of this instruction migration.
 
 ## Status
-ACTIVE — v1.8. Colocated instruction architecture is established on the safety branch. Universal startup governance remains in REVIEW on the safety branch and is not promoted to `main`.
+ACTIVE — v1.9. Canonical live connection map is registered on `main`. Universal startup governance remains in REVIEW on the safety branch and is not promoted to `main`.
