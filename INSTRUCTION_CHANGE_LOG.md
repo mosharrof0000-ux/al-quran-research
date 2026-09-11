@@ -1,4 +1,4 @@
-# Instruction Change Log — v1.4
+# Instruction Change Log — v1.7
 
 This file records controlled changes to the instruction-governance layer.
 
@@ -105,3 +105,60 @@ No workflow file was deleted, renamed, or moved. Backend deployment, research ap
 
 ### Final rule
 Only `.github/workflows/live-entrypoint-sync.yml` retains automatic repository-write behavior for the protected live-entrypoint integrations.
+
+## 2026-09-11 — Master-First Governance and Universal Startup Gate
+
+### Added / strengthened
+- `UNIVERSAL_AI_GOVERNANCE_GATE.md` established as the universal startup gate candidate.
+- `MASTER_INSTRUCTION.md` advanced to v1.2.
+- `INSTRUCTION_REGISTRY.md` advanced to v1.6.
+
+### New mandatory rule
+Before any requested project work begins, the governing AI must first verify the applicable instruction layer. Missing, stale, incomplete, conflicting, or outdated instructions must be created or updated first through the audit/governance process.
+
+### Approval safeguard
+If bringing the instruction layer current would require removing, deleting, renaming, moving, retiring, or materially weakening an existing instruction or project rule, the AI must stop and ask the user. It may not make that governance decision autonomously.
+
+### New-file rule reaffirmed
+Every new non-instruction project file must be created together with its same-folder `<filename>.instruction.md` sibling. An instruction artifact itself is exempt from recursive self-instruction.
+
+### Safety result
+This governance change was made on the dedicated safety branch `safety/universal-ai-governance-gate-2026-09-11`. No production website, research dataset, backend entrypoint, or public path was changed.
+
+## 2026-09-11 — Colocated Instruction Migration
+
+### Purpose
+Remove the loose `docs/instructions/` instruction container and place each instruction beside its governed target or governing scope.
+
+### Migration rule
+Each legacy instruction was copied to its colocated destination, verified by target mapping/content review, registered in `INSTRUCTION_REGISTRY.md`, and only then prepared for removal from the old loose directory.
+
+### Colocated destinations
+- Root governance/project instructions remain beside their root targets.
+- `docs/*` instructions are beside their governed `docs/*` documents.
+- `data/fatiha.json.instruction.md` is beside the Fatiha dataset.
+- `backend/BACKEND_AND_LIVE_UI.instruction.md` governs the backend/live UI scope.
+- `.github/workflows/GITHUB_ACTIONS_AND_AUTOMATION.instruction.md` governs workflow automation.
+- Chatbox instructions remain beside their root chatbox records.
+
+### Historical preservation
+The old instruction content remains preserved in Git history. No governed project file was moved as part of this migration.
+
+### Safety result
+Website entrypoints, backend code, research datasets, APIs, workflows, stable IDs, and public paths were not moved or structurally altered by the instruction migration.
+
+## 2026-09-11 — Control Set Alignment and Promotion Gate
+
+### Finding
+The safety-branch governance layer had a status/wording mismatch: the Universal Gate was treated as mandatory by the entry protocol while the Registry still labeled it only as a draft candidate, and the gate contained an obsolete reference to `docs/instructions/` as a current fallback location.
+
+### Changes
+- `UNIVERSAL_AI_GOVERNANCE_GATE.md` advanced to v1.3 and now clearly defines the colocated instruction location rule plus a separate Controlled Promotion Gate.
+- `MASTER_INSTRUCTION.md` advanced to v1.4 and now defines the safety-branch-to-`main` promotion control separately from the implementation/migration control.
+- `INSTRUCTION_REGISTRY.md` advanced to v1.8 and now aligns the gate status and records the promotion rule.
+
+### Control rule
+Safety-branch work and production promotion are separate stages. A prior approval to perform a safety-branch migration does not automatically authorize publication to `main` unless promotion is explicitly requested or approved.
+
+### Safety result
+This alignment changed governance documents only on the safety branch. No production website, backend, research dataset, public path, or live entrypoint was changed. No promotion to `main` was performed.

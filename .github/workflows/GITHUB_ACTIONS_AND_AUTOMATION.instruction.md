@@ -11,7 +11,7 @@ Control repository automation so GitHub Actions cannot silently damage protected
 All `.github/workflows/*.yml` and `.github/workflows/*.yaml` files, with special protection for workflows that write to `index.html`, live UI, backend deployment assets, research data, or project governance files.
 
 ## Canonical live-entrypoint rule
-` .github/workflows/live-entrypoint-sync.yml` is the single canonical automatic writer for the protected live-entrypoint integrations.
+`.github/workflows/live-entrypoint-sync.yml` is the single canonical automatic writer for the protected live-entrypoint integrations.
 
 It is responsible for the controlled integration of:
 - Tafsir Library navigation;
