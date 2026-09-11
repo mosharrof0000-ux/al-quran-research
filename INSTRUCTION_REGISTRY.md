@@ -1,4 +1,4 @@
-# Instruction Registry — v1.6
+# Instruction Registry — v1.7
 
 This registry is the dictionary/index of project instructions. It records which instructions govern which project assets.
 
@@ -7,45 +7,56 @@ This registry is the dictionary/index of project instructions. It records which 
 | Instruction | Role | Status |
 |---|---|---|
 | `AI_ENTRY_PROTOCOL.md` | Bootstrap entry point and mandatory reading order for new AI/session | ACTIVE |
-| `UNIVERSAL_AI_GOVERNANCE_GATE.md` | Universal startup gate and master-first governance check | ACTIVE |
-| `NEW_AI_SESSION_START_GUIDE.md` | Legacy/operational startup guide for new AI, ID, agent, or chat | ACTIVE |
-| `MASTER_INSTRUCTION.md` | Operational governance and instruction hierarchy | ACTIVE v1.2 |
+| `UNIVERSAL_AI_GOVERNANCE_GATE.md` | Universal startup gate and master-first governance check | DRAFT — safety branch candidate |
+| `NEW_AI_SESSION_START_GUIDE.md` | Legacy/operational startup guide for new AI, ID, agent, or chat | ACTIVE — preserved historical/operational guide |
+| `MASTER_INSTRUCTION.md` | Operational governance and instruction hierarchy | ACTIVE |
 | `INSTRUCTION_REGISTRY.md` | Instruction index and coverage map | ACTIVE |
 | `INSTRUCTION_AUDIT_PROTOCOL.md` | Detect missing, stale, conflicting, or incomplete instructions | ACTIVE |
 | `INSTRUCTION_CHANGE_LOG.md` | History of instruction-system changes | ACTIVE |
+
+## Colocated governance instructions
+
+| Instruction | Governs | Status |
+|---|---|---|
+| `AI_ENTRY_PROTOCOL.instruction.md` | `AI_ENTRY_PROTOCOL.md` | ACTIVE |
+| `MASTER_INSTRUCTION.instruction.md` | `MASTER_INSTRUCTION.md` | ACTIVE |
+| `INSTRUCTION_REGISTRY.instruction.md` | `INSTRUCTION_REGISTRY.md` | ACTIVE |
+| `INSTRUCTION_AUDIT_PROTOCOL.instruction.md` | `INSTRUCTION_AUDIT_PROTOCOL.md` | ACTIVE |
+| `INSTRUCTION_CHANGE_LOG.instruction.md` | `INSTRUCTION_CHANGE_LOG.md` | ACTIVE |
+| `UNIVERSAL_AI_GOVERNANCE_GATE.instruction.md` | `UNIVERSAL_AI_GOVERNANCE_GATE.md` | ACTIVE — governs candidate gate |
 
 ## Individual Critical Instructions
 
 | Instruction | Governs | Status |
 |---|---|---|
-| `docs/instructions/MASTER_PROJECT.instruction.md` | `MASTER_PROJECT.md` | ACTIVE |
-| `docs/instructions/PROJECT_STATE.instruction.md` | `PROJECT_STATE.md` | ACTIVE |
-| `docs/instructions/PROJECT_WORK_LOG.instruction.md` | `PROJECT_WORK_LOG.md` | ACTIVE |
-| `docs/instructions/PROJECT_CONTINUITY_PROTOCOL.instruction.md` | `PROJECT_CONTINUITY_PROTOCOL.md` | ACTIVE |
-| `docs/instructions/PROJECT_BACKUP_INDEX.instruction.md` | `PROJECT_BACKUP_INDEX.md` | ACTIVE |
-| `docs/instructions/PROJECT_HISTORY.instruction.md` | `PROJECT_HISTORY.md` | ACTIVE |
-| `docs/instructions/AI_RESEARCH_BRAIN_V1.instruction.md` | `docs/AI_RESEARCH_BRAIN_V1.md` | ACTIVE |
-| `docs/instructions/AI_RESEARCH_AGENT_SYSTEM_V1.instruction.md` | `docs/AI_RESEARCH_AGENT_SYSTEM_V1.md` | ACTIVE |
-| `docs/instructions/RESEARCH_CHAIN_OF_COMMAND.instruction.md` | `docs/RESEARCH_CHAIN_OF_COMMAND.md` | ACTIVE |
-| `docs/instructions/DATA_FATIHA.instruction.md` | `data/fatiha.json` | ACTIVE |
-| `docs/instructions/BACKUP_SYSTEM.instruction.md` | `BACKUP_SYSTEM.md` | ACTIVE |
-| `docs/instructions/BACKUP_POLICY.instruction.md` | `docs/BACKUP_POLICY.md` | ACTIVE |
-| `docs/instructions/RESEARCH_MEMORY_V1.instruction.md` | `docs/RESEARCH_MEMORY_V1.md` | ACTIVE |
-| `docs/instructions/RESEARCH_RECORD_APPROVAL_HANDOFF_V1.instruction.md` | `docs/RESEARCH_RECORD_APPROVAL_HANDOFF_V1.md` | ACTIVE |
-| `docs/instructions/BACKEND_AND_LIVE_UI.instruction.md` | Active backend and live website/core UI assets | ACTIVE |
-| `docs/instructions/GITHUB_ACTIONS_AND_AUTOMATION.instruction.md` | `.github/workflows/*.yml`, `.github/workflows/*.yaml` | ACTIVE |
+| `MASTER_PROJECT.instruction.md` | `MASTER_PROJECT.md` | ACTIVE |
+| `PROJECT_STATE.instruction.md` | `PROJECT_STATE.md` | ACTIVE |
+| `PROJECT_WORK_LOG.instruction.md` | `PROJECT_WORK_LOG.md` | ACTIVE |
+| `PROJECT_CONTINUITY_PROTOCOL.instruction.md` | `PROJECT_CONTINUITY_PROTOCOL.md` | ACTIVE |
+| `PROJECT_BACKUP_INDEX.instruction.md` | `PROJECT_BACKUP_INDEX.md` | ACTIVE |
+| `PROJECT_HISTORY.instruction.md` | `PROJECT_HISTORY.md` | ACTIVE |
+| `BACKUP_SYSTEM.instruction.md` | `BACKUP_SYSTEM.md` | ACTIVE |
+| `docs/AI_RESEARCH_BRAIN_V1.instruction.md` | `docs/AI_RESEARCH_BRAIN_V1.md` | ACTIVE |
+| `docs/AI_RESEARCH_AGENT_SYSTEM_V1.instruction.md` | `docs/AI_RESEARCH_AGENT_SYSTEM_V1.md` | ACTIVE |
+| `docs/RESEARCH_CHAIN_OF_COMMAND.instruction.md` | `docs/RESEARCH_CHAIN_OF_COMMAND.md` | ACTIVE |
+| `docs/RESEARCH_MEMORY_V1.instruction.md` | `docs/RESEARCH_MEMORY_V1.md` | ACTIVE |
+| `docs/RESEARCH_RECORD_APPROVAL_HANDOFF_V1.instruction.md` | `docs/RESEARCH_RECORD_APPROVAL_HANDOFF_V1.md` | ACTIVE |
+| `data/fatiha.json.instruction.md` | `data/fatiha.json` | ACTIVE |
+| `docs/BACKUP_POLICY.instruction.md` | `docs/BACKUP_POLICY.md` | ACTIVE |
+| `backend/BACKEND_AND_LIVE_UI.instruction.md` | Active backend and live website/core UI assets | ACTIVE |
+| `.github/workflows/GITHUB_ACTIONS_AND_AUTOMATION.instruction.md` | `.github/workflows/*.yml`, `.github/workflows/*.yaml` | ACTIVE |
 
 ## Individual Important Instructions
 
 | Instruction | Governs | Status |
 |---|---|---|
-| `docs/instructions/BACKEND_DEPENDENCY_MAP_2026-09-08.instruction.md` | `docs/BACKEND_DEPENDENCY_MAP_2026-09-08.md` | ACTIVE |
-| `docs/instructions/BACKEND_DEPENDENCY_VERIFICATION_2026-09-08.instruction.md` | `docs/BACKEND_DEPENDENCY_VERIFICATION_2026-09-08.md` | ACTIVE |
-| `docs/instructions/CHATBOX-DESIGN-2026-09-08.instruction.md` | `CHATBOX-DESIGN-2026-09-08.md` | ACTIVE |
-| `docs/instructions/CHATBOX-V2.8-STATUS-2026-09-10.instruction.md` | `CHATBOX-V2.8-STATUS-2026-09-10.md` | ACTIVE |
-| `docs/instructions/OUR_THINKING_AND_VISION.instruction.md` | `docs/OUR_THINKING_AND_VISION.md` | ACTIVE |
-| `docs/instructions/PROJECT_COMMENTS.instruction.md` | `docs/PROJECT_COMMENTS.md` | ACTIVE |
-| `docs/instructions/README.instruction.md` | `README.md` | ACTIVE |
+| `docs/BACKEND_DEPENDENCY_MAP_2026-09-08.instruction.md` | `docs/BACKEND_DEPENDENCY_MAP_2026-09-08.md` | ACTIVE |
+| `docs/BACKEND_DEPENDENCY_VERIFICATION_2026-09-08.instruction.md` | `docs/BACKEND_DEPENDENCY_VERIFICATION_2026-09-08.md` | ACTIVE |
+| `CHATBOX-DESIGN-2026-09-08.instruction.md` | `CHATBOX-DESIGN-2026-09-08.md` | ACTIVE |
+| `CHATBOX-V2.8-STATUS-2026-09-10.instruction.md` | `CHATBOX-V2.8-STATUS-2026-09-10.md` | ACTIVE |
+| `docs/OUR_THINKING_AND_VISION.instruction.md` | `docs/OUR_THINKING_AND_VISION.md` | ACTIVE |
+| `docs/PROJECT_COMMENTS.instruction.md` | `docs/PROJECT_COMMENTS.md` | ACTIVE |
+| `README.instruction.md` | `README.md` | ACTIVE |
 
 ## Audit Records
 
@@ -73,31 +84,7 @@ This registry is the dictionary/index of project instructions. It records which 
 
 ## Existing Project Documents
 
-| File | Governed role | Instruction status |
-|---|---|---|
-| `README.md` | Public/general project overview | Individual instruction active |
-| `MASTER_PROJECT.md` | Project constitution, vision, architecture | Individual instruction active |
-| `PROJECT_STATE.md` | Current state | Individual instruction active |
-| `PROJECT_WORK_LOG.md` | Operational work history | Individual instruction active |
-| `PROJECT_HISTORY.md` | Historical record | Individual instruction active |
-| `PROJECT_CONTINUITY_PROTOCOL.md` | Continuity and handoff rules | Individual instruction active |
-| `PROJECT_BACKUP_INDEX.md` | Backup/restore registry | Individual instruction active |
-| `BACKUP_SYSTEM.md` | Backup architecture | Individual instruction active |
-| `data/fatiha.json` | Verified Quran research dataset | Dataset instruction active |
-| `docs/AI_RESEARCH_BRAIN_V1.md` | AI research brain architecture | Individual instruction active |
-| `docs/AI_RESEARCH_AGENT_SYSTEM_V1.md` | AI agent architecture | Individual instruction active |
-| `docs/RESEARCH_CHAIN_OF_COMMAND.md` | Research decision chain | Individual instruction active |
-| `docs/RESEARCH_MEMORY_V1.md` | Research memory | Individual instruction active |
-| `docs/RESEARCH_RECORD_APPROVAL_HANDOFF_V1.md` | Research approval workflow | Individual instruction active |
-| `docs/BACKUP_POLICY.md` | Backup policy | Individual instruction active |
-| `docs/BACKEND_DEPENDENCY_MAP_2026-09-08.md` | Backend dependency map | Individual instruction active |
-| `docs/BACKEND_DEPENDENCY_VERIFICATION_2026-09-08.md` | Backend dependency verification | Individual instruction active |
-| `docs/LEGACY_BACKEND_CLEANUP_PROPOSAL_2026-09-08.md` | Cleanup proposal | Historical/proposal — do not execute automatically |
-| `docs/LEGACY_BACKEND_CLEANUP_STATUS_2026-09-08.md` | Cleanup status | Historical/status — do not execute automatically |
-| `docs/OUR_THINKING_AND_VISION.md` | Project thinking/vision | Individual instruction active |
-| `docs/PROJECT_COMMENTS.md` | Project comments/notes | Individual instruction active |
-| `CHATBOX-DESIGN-2026-09-08.md` | Chatbox design record | Individual instruction active |
-| `CHATBOX-V2.8-STATUS-2026-09-10.md` | Chatbox status record | Individual instruction active |
+The individual instructions above are now colocated with their governed target file or governing scope. Historical instruction content remains preserved in Git history; the old `docs/instructions/` directory is being retired as a loose instruction container.
 
 ## Coverage Classes
 
@@ -115,5 +102,8 @@ Any new governed project file must be paired with its same-folder `<filename>.in
 
 Before any requested task begins, the Master-First Governance Check must confirm that applicable instructions are current. Missing or stale instructions are corrected first. Removal, retirement, or weakening of an existing instruction/rule requires user approval.
 
+## Migration Rule
+Instructions formerly stored under `docs/instructions/` are migrated by copy → verify → registry update → old-path removal. No governed target file, website path, backend path, data file, or research record is moved as part of this instruction migration.
+
 ## Status
-ACTIVE — v1.6. Universal startup governance and master-first instruction verification are now recorded. Existing instruction locations remain preserved; same-folder pairing is mandatory for new non-instruction files.
+ACTIVE — v1.7. Colocated instruction architecture is established on the safety branch. Universal startup governance remains a candidate until explicitly promoted; legacy guide/history is preserved.
