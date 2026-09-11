@@ -1,4 +1,4 @@
-# Universal AI Governance Gate — v1.2
+# Universal AI Governance Gate — v1.3
 
 ## Purpose
 This is the universal startup gate for the Al-Quran Research project.
@@ -55,8 +55,8 @@ Before editing, determine:
 ### Step 5 — Load the target instruction
 For every existing target file:
 - locate its applicable individual instruction;
-- for files governed by the new same-folder rule, this is `<filename>.instruction.md` in the same directory;
-- existing files that still use `docs/instructions/` remain governed by their existing instruction until separately migrated;
+- for files governed by the colocated rule, use `<filename>.instruction.md` in the same directory, or the clearly scoped category instruction where the Registry defines a category-wide scope;
+- do not treat the retired `docs/instructions/` directory as a canonical instruction location;
 - read the instruction before editing;
 - confirm its status is applicable/ACTIVE;
 - if no instruction exists, do not silently invent governance: apply the Master Instruction/category rule, flag the missing instruction, and create the instruction before the file becomes part of an active critical workflow.
@@ -115,10 +115,33 @@ Never delete, rename, move, retire, or overwrite an existing project asset merel
 - Uncertainty and legitimate scholarly disagreement must remain explicit.
 - No hidden chain-of-thought or private reasoning is to be stored as a project research record.
 
+## Controlled Promotion Gate
+Safety-branch work and production promotion are separate control stages.
+
+### Safety branch
+Governance changes, migrations, and structural proposals should be prepared and verified on a dedicated safety branch whenever practical.
+
+### Promotion to `main`
+No safety-branch governance change is considered published merely because it exists on the safety branch. Promotion to `main` requires a separate controlled release check:
+1. compare the safety branch against `main`;
+2. confirm only intended governance/instruction changes are included;
+3. confirm protected website, backend, data, API, automation, and public paths are not unintentionally changed;
+4. confirm Registry, relevant instructions, and Change Log are consistent;
+5. confirm required tests/syntax/data checks pass;
+6. obtain explicit user/authorized approval for the promotion when the change is a governance, removal, retirement, or weakening decision;
+7. merge/update `main` only after that approval;
+8. verify the resulting `main` state and record the promotion.
+
+The earlier user approval to perform an instruction migration does not automatically authorize later promotion to `main` unless that promotion is explicitly requested or approved.
+
 ## Change Procedure
 Before a meaningful change:
 
 `Inspect → Read Instructions → Audit Instruction State → Update Governance if Needed → Map Dependencies → Safe Point → Minimal Change → Verify → Update Instruction/Registry → Log Change`
+
+For promotion:
+
+`Compare → Protected-Asset Check → Governance Consistency Check → Approval → Promote → Post-Promotion Verification → Log`
 
 When instructions, dependencies, architecture, or governance rules change, use `INSTRUCTION_AUDIT_PROTOCOL.md`.
 
@@ -144,6 +167,8 @@ A task is not complete until applicable checks confirm:
 - research evidence/uncertainty rules remain intact;
 - relevant change history is recorded.
 
+A safety-branch change is not a production release until the Controlled Promotion Gate has also been completed.
+
 ## Stop Conditions
 Stop and ask for clarification or review when:
 - the requested change conflicts with a higher-priority instruction;
@@ -153,12 +178,13 @@ Stop and ask for clarification or review when:
 - a destructive operation appears necessary;
 - removing or weakening an existing instruction appears necessary;
 - a new file would be created without its required same-folder instruction;
-- the current state cannot be verified safely.
+- the current state cannot be verified safely;
+- promotion to `main` is requested without the required comparison/approval state.
 
 ## Universal Handoff Statement
 A new AI/session may begin work only after it can state, in substance:
 
-> I have loaded the project governance entry point, Master Instruction, Registry, relevant project state, and the specific instruction(s) governing my target. I have checked that the applicable instructions are current; if not, I will update them before the requested work. I will preserve protected assets, create a same-folder instruction for every new non-instruction file, make only the requested/minimal change, and ask the user before removing or weakening an existing rule.
+> I have loaded the project governance entry point, Master Instruction, Registry, relevant project state, and the specific instruction(s) governing my target. I have checked that the applicable instructions are current; if not, I will update them before the requested work. I will preserve protected assets, create a same-folder instruction for every new non-instruction file, make only the requested/minimal change, and ask the user before removing or weakening an existing rule. I will treat safety-branch work and promotion to `main` as separate controlled stages.
 
 ## Status
-ACTIVE — v1.2 candidate on the safety branch; promotion to `main` remains a controlled governance change.
+REVIEW — v1.3 candidate on the safety branch; not promoted to `main`.
