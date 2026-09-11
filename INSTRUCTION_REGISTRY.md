@@ -1,4 +1,4 @@
-# Instruction Registry — v1.2
+# Instruction Registry — v1.3
 
 This registry is the dictionary/index of project instructions. It records which instructions govern which project assets.
 
@@ -31,6 +31,7 @@ This registry is the dictionary/index of project instructions. It records which 
 | `docs/instructions/RESEARCH_MEMORY_V1.instruction.md` | `docs/RESEARCH_MEMORY_V1.md` | ACTIVE |
 | `docs/instructions/RESEARCH_RECORD_APPROVAL_HANDOFF_V1.instruction.md` | `docs/RESEARCH_RECORD_APPROVAL_HANDOFF_V1.md` | ACTIVE |
 | `docs/instructions/BACKEND_AND_LIVE_UI.instruction.md` | Active backend and live website/core UI assets | ACTIVE |
+| `docs/instructions/GITHUB_ACTIONS_AND_AUTOMATION.instruction.md` | `.github/workflows/*.yml`, `.github/workflows/*.yaml` | ACTIVE |
 
 ## Individual Important Instructions
 
@@ -43,6 +44,12 @@ This registry is the dictionary/index of project instructions. It records which 
 | `docs/instructions/OUR_THINKING_AND_VISION.instruction.md` | `docs/OUR_THINKING_AND_VISION.md` | ACTIVE |
 | `docs/instructions/PROJECT_COMMENTS.instruction.md` | `docs/PROJECT_COMMENTS.md` | ACTIVE |
 | `docs/instructions/README.instruction.md` | `README.md` | ACTIVE |
+
+## Audit Records
+
+| Record | Purpose | Status |
+|---|---|---|
+| `docs/INSTRUCTION_AUDIT_AUTOMATION_2026-09-11.md` | Verified mapping of workflow permissions, write targets, overlap, and remediation plan | VERIFIED |
 
 ## Existing Project Documents
 
@@ -75,7 +82,7 @@ This registry is the dictionary/index of project instructions. It records which 
 ## Coverage Classes
 
 ### Class A — Critical
-Own instruction required. Includes core project state, protocols, research data, schemas, API/backend, and live website assets.
+Own instruction required. Includes core project state, protocols, research data, schemas, API/backend, live website assets, and production automation.
 
 ### Class B — Important
 Category or individual instruction required depending on complexity.
@@ -87,4 +94,4 @@ Static/generated/temporary assets may be covered by a category rule unless they 
 Any new critical file must be added here and must have an applicable instruction before it becomes part of the active research workflow.
 
 ## Status
-ACTIVE — v1.2. Critical and important documentation coverage is substantially established. Live backend/UI assets are additionally protected by a category instruction. Remaining work is audit/verification, not structural reorganization.
+ACTIVE — v1.3. Critical/important documentation coverage is established, automation governance is registered, and the workflow audit is recorded. Next work is controlled remediation/consolidation, not destructive cleanup.
