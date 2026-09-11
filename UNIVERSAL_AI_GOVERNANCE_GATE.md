@@ -1,4 +1,4 @@
-# Universal AI Governance Gate — v1.1
+# Universal AI Governance Gate — v1.2
 
 ## Purpose
 This is the universal startup gate for the Al-Quran Research project.
@@ -21,7 +21,19 @@ Read, in this order:
 3. `INSTRUCTION_REGISTRY.md`
 4. `INSTRUCTION_AUDIT_PROTOCOL.md`
 
-### Step 2 — Establish current project state
+### Step 2 — Master-First Governance Check
+Before doing the requested project work, the AI must verify the governance layer for the task:
+- identify every target file and its applicable instruction;
+- check that the instruction exists and is current, complete, registered where required, and consistent with the target;
+- identify missing, stale, incomplete, conflicting, or obsolete instruction rules;
+- update/create the required instruction first through the audit process;
+- only then begin the requested underlying work.
+
+The AI must not knowingly postpone required instruction maintenance until after the project task.
+
+If making the governance layer current would require deleting, removing, renaming, moving, retiring, or materially weakening an existing rule or instruction, stop and ask the user for approval. Do not decide that removal is necessary on your own.
+
+### Step 3 — Establish current project state
 Read as relevant:
 - `MASTER_PROJECT.md`
 - `PROJECT_STATE.md`
@@ -31,7 +43,7 @@ Read as relevant:
 
 Do not treat old chat memory as the current repository state.
 
-### Step 3 — Identify the target
+### Step 4 — Identify the target
 Before editing, determine:
 - exact task requested by the user;
 - exact target file(s);
@@ -40,7 +52,7 @@ Before editing, determine:
 - whether the target affects research data, website, backend, API, automation, or public paths;
 - whether a safe point/backup is required.
 
-### Step 4 — Load the target instruction
+### Step 5 — Load the target instruction
 For every existing target file:
 - locate its applicable individual instruction;
 - for files governed by the new same-folder rule, this is `<filename>.instruction.md` in the same directory;
@@ -49,7 +61,7 @@ For every existing target file:
 - confirm its status is applicable/ACTIVE;
 - if no instruction exists, do not silently invent governance: apply the Master Instruction/category rule, flag the missing instruction, and create the instruction before the file becomes part of an active critical workflow.
 
-### Step 5 — Mandatory new-file pairing
+### Step 6 — Mandatory new-file pairing
 Whenever a new non-instruction project file is created:
 1. create the governed file;
 2. immediately create its sibling `<filename>.instruction.md` in the same directory;
@@ -59,7 +71,7 @@ Whenever a new non-instruction project file is created:
 
 The only exception is an `.instruction.md` governance artifact itself; it does not require another instruction file because that would create infinite recursion. It is governed directly by the Master Instruction, Registry, audit process, and change log.
 
-### Step 6 — Registry and activation
+### Step 7 — Registry and activation
 A new critical file must have both its file and instruction represented in `INSTRUCTION_REGISTRY.md` before it is treated as an active critical project asset.
 
 ## Master Rule
@@ -93,7 +105,7 @@ The following are protected by default:
 - backup and continuity mechanisms;
 - historical records and audit trails.
 
-Never delete, rename, move, or overwrite an existing project asset merely for organization.
+Never delete, rename, move, retire, or overwrite an existing project asset merely for organization.
 
 ## Research Safety
 - AI-generated information is not automatically verified.
@@ -106,7 +118,7 @@ Never delete, rename, move, or overwrite an existing project asset merely for or
 ## Change Procedure
 Before a meaningful change:
 
-`Inspect → Read Instructions → Map Dependencies → Safe Point → Minimal Change → Verify → Update Instruction/Registry → Log Change`
+`Inspect → Read Instructions → Audit Instruction State → Update Governance if Needed → Map Dependencies → Safe Point → Minimal Change → Verify → Update Instruction/Registry → Log Change`
 
 When instructions, dependencies, architecture, or governance rules change, use `INSTRUCTION_AUDIT_PROTOCOL.md`.
 
@@ -116,8 +128,9 @@ If two instructions conflict:
 2. identify the exact conflict;
 3. apply the hierarchy in `MASTER_INSTRUCTION.md`;
 4. preserve the safer interpretation temporarily;
-5. do not silently rewrite the Master Instruction;
-6. route permanent governance changes through the instruction-audit process.
+5. do not silently rewrite or weaken the Master Instruction;
+6. if permanent removal, retirement, or weakening is proposed, ask the user for approval;
+7. route permanent governance changes through the instruction-audit process.
 
 ## Completion Gate
 A task is not complete until applicable checks confirm:
@@ -138,13 +151,14 @@ Stop and ask for clarification or review when:
 - a target's dependency cannot be established;
 - required evidence is unavailable;
 - a destructive operation appears necessary;
+- removing or weakening an existing instruction appears necessary;
 - a new file would be created without its required same-folder instruction;
 - the current state cannot be verified safely.
 
 ## Universal Handoff Statement
 A new AI/session may begin work only after it can state, in substance:
 
-> I have loaded the project governance entry point, Master Instruction, Registry, relevant project state, and the specific instruction(s) governing my target. I will preserve protected assets, create a same-folder instruction for every new non-instruction file, make only the requested/minimal change, and verify and record the result before considering the task complete.
+> I have loaded the project governance entry point, Master Instruction, Registry, relevant project state, and the specific instruction(s) governing my target. I have checked that the applicable instructions are current; if not, I will update them before the requested work. I will preserve protected assets, create a same-folder instruction for every new non-instruction file, make only the requested/minimal change, and ask the user before removing or weakening an existing rule.
 
 ## Status
-ACTIVE — v1.1 candidate on the safety branch; promotion to `main` remains a controlled governance change.
+ACTIVE — v1.2 candidate on the safety branch; promotion to `main` remains a controlled governance change.
