@@ -1,4 +1,4 @@
-# Instruction Change Log — v1.7
+# Instruction Change Log — v1.8
 
 This file records controlled changes to the instruction-governance layer.
 
@@ -162,3 +162,22 @@ Safety-branch work and production promotion are separate stages. A prior approva
 
 ### Safety result
 This alignment changed governance documents only on the safety branch. No production website, backend, research dataset, public path, or live entrypoint was changed. No promotion to `main` was performed.
+
+## 2026-09-11 — Live Research-ID Execution Defect and Governance Clarification
+
+### Finding
+The protected Live Page loads, but the current `chatbox-v28-live.html` exposes ordinary chat/mode controls without a dedicated canonical Research-ID execution path. Therefore multiple Research IDs can fail at the same shared UI execution layer even when the Live Page itself is reachable.
+
+### Governance changes
+- `MASTER_INSTRUCTION.md` advanced to v1.5.
+- `backend/BACKEND_AND_LIVE_UI.instruction.md` advanced to v1.1.
+- Both now explicitly require the chain:
+  `Live Page → Research ID input → canonical ID lookup → Research API → actual record → UI result`.
+- Multiple-ID failures must be treated as one shared UI/API execution defect first, not as independent ID defects.
+- Research-ID verification remains `NOT VERIFIED` until actual submission, canonical retrieval, capture, expected-record establishment, comparison, and evidence recording are completed.
+
+### Safety result
+Governance clarification was performed on the safety branch `fix/live-research-id-execution`. No production `main` change was made by this governance update.
+
+## Status
+ACTIVE — v1.8
