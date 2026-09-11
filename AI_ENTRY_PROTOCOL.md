@@ -1,4 +1,4 @@
-# AI Entry Protocol — v1.0
+# AI Entry Protocol — v1.1
 
 ## Purpose
 This is the first document an AI, ChatGPT ID, agent, or new project session must read before changing this repository.
@@ -10,13 +10,14 @@ The existing project must not be damaged while the instruction system is being i
 
 ## Mandatory Reading Order
 1. `AI_ENTRY_PROTOCOL.md`
-2. `MASTER_INSTRUCTION.md`
-3. `MASTER_PROJECT.md`
-4. `PROJECT_STATE.md`
-5. `INSTRUCTION_REGISTRY.md`
-6. The instruction document(s) relevant to the requested task
-7. The target file(s)
-8. `INSTRUCTION_AUDIT_PROTOCOL.md` when instructions, dependencies, or architecture are changed
+2. `NEW_AI_SESSION_START_GUIDE.md`
+3. `MASTER_INSTRUCTION.md`
+4. `MASTER_PROJECT.md`
+5. `PROJECT_STATE.md`
+6. `INSTRUCTION_REGISTRY.md`
+7. The instruction document(s) relevant to the requested task
+8. The target file(s)
+9. `INSTRUCTION_AUDIT_PROTOCOL.md` when instructions, dependencies, or architecture are changed
 
 ## First-Session Procedure
 Before doing project work, the AI must:
@@ -27,6 +28,8 @@ Before doing project work, the AI must:
 - avoid unrelated edits;
 - verify the result after changes;
 - record instruction changes in `INSTRUCTION_CHANGE_LOG.md`.
+
+For a new AI, new ChatGPT ID, new agent, or new chat/page, also follow `NEW_AI_SESSION_START_GUIDE.md` as the operational startup checklist.
 
 ## Live-Site Protection
 The current GitHub Pages site and its existing entry paths are treated as protected project assets.
@@ -56,4 +59,4 @@ A task is not complete merely because a file was changed. The AI must verify:
 - the relevant instruction reflects the new state.
 
 ## Status
-ACTIVE
+ACTIVE — v1.1
