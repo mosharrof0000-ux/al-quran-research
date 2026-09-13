@@ -1,4 +1,4 @@
-# Project Folder Master Index — v1.2
+# Project Folder Master Index — v1.3
 
 ## Purpose
 এই নথি পুরো repository-র folder-by-folder organization-এর কেন্দ্রীয় সূচি। এটি `MASTER_INSTRUCTION.md` ও `PROJECT_STATE.md`-এর অধীন।
@@ -37,6 +37,15 @@
 - `.github/workflows/` — local Master established
 - `data/research-records/` — local Master established
 - `data/dictionary/` — Dictionary-first Master established
+- `docs/design-history/` — historical/design archive
+- `docs/backup-history/` — historical backup-point archive
+
+## Recent safe organization moves
+- `CHATBOX-DESIGN-2026-09-08.md` + sibling instruction → `docs/design-history/`
+- `CHATBOX-V2.8-STATUS-2026-09-10.md` + sibling instruction → `docs/design-history/`
+- `BACKUP-POINT-2026-09-05.md` → `docs/backup-history/`
+
+These moves preserved the original blob contents and did not alter runtime/backend/data paths.
 
 ## Central file inventory and audit
 - `MASTER/REPOSITORY_FILE_INVENTORY_2026-09-13.md` — repository-wide file/path inventory and role classification
@@ -50,10 +59,10 @@ The research-data architecture is explicitly organized around:
 The dictionary layer is defined at `data/dictionary/MASTER/`. Existing research files remain in place; no destructive migration has been performed.
 
 ## Protected rule
-কেবল organization করার জন্য existing code/data/website/backend path সরানো, rename বা delete করা যাবে না। প্রথমে inventory ও dependency verification হবে।
+কেবল organization করার জন্য existing code/data/website/backend path সরানো যাবে না, যদি dependency verification ছাড়া ঝুঁকি থাকে। ব্যবহারকারীর অনুমোদিত safe move হলে প্রথমে target তৈরি, blob/content যাচাই, তারপর old path removal এবং final verification করতে হবে।
 
 ## Completion gate
-Repository organization/documentation is complete when the recursive tree is inventoried, governed folders have local Masters, applicable instructions are mapped, dependency-sensitive paths are preserved, verification is recorded, and continuity records identify the current safe branch.
+Repository organization/documentation is complete when the recursive tree is inventoried, governed folders have local Masters, applicable instructions are mapped, dependency-sensitive paths are preserved, safe historical files are organized, verification is recorded, and continuity records identify the current safe branch.
 
 ## Current status
-`DOCUMENTATION / ORGANIZATION COMPLETE — repository-wide inventory and final audit completed on safety branch test/write-access-2026-09-13. No known remaining task exists in this documentation phase. Production promotion and future product/research development remain separate gates.`
+`SAFE ORGANIZATION IN PROGRESS — historical documentation moves completed on safety branch test/write-access-2026-09-13. Runtime/deployment-sensitive files remain protected until dependency verification proves a move is safe.`
