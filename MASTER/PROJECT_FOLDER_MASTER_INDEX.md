@@ -1,4 +1,4 @@
-# Project Folder Master Index — v1.0
+# Project Folder Master Index — v1.1
 
 ## Purpose
 এই নথি পুরো repository-র folder-by-folder organization-এর কেন্দ্রীয় সূচি। এটি `MASTER_INSTRUCTION.md` ও `PROJECT_STATE.md`-এর অধীন।
@@ -21,21 +21,28 @@
 
 `MASTER/` নিজে আবার `MASTER/MASTER/` তৈরি করবে না।
 
-## Existing top-level folders to inventory
-- `.github/`
-- `assets/`
-- `backend/`
-- `data/`
-- `database/`
-- `docs/`
-- `exports/`
-- `migrations/`
-- `scripts/`
-- `validation/`
+## Existing top-level folders
+- `.github/` — local Master established
+- `assets/` — local Master established
+- `backend/` — local Master established
+- `data/` — local Master established
+- `database/` — local Master established
+- `docs/` — local Master established
+- `exports/` — local Master established
+- `migrations/` — local Master established
+- `scripts/` — local Master established
+- `validation/` — local Master established
 
-## Known nested folder requiring its own local Master
-- `data/research-records/`
-- `.github/workflows/`
+## Known nested governed folders
+- `.github/workflows/` — local Master established
+- `data/research-records/` — local Master established
+- `data/dictionary/` — Dictionary-first Master established
+
+## Dictionary-first organization
+The research-data architecture is now explicitly organized around:
+`আরবি শব্দ → Lemma → Root → শব্দরূপ/মরফোলজি → ব্যাকরণ → অর্থের পরিসর → কুরআনে ব্যবহার → আয়াত → প্রসঙ্গ → প্রমাণ → গবেষণা/বিশ্লেষণ → সংস্করণ ইতিহাস`.
+
+The dictionary layer is defined at `data/dictionary/MASTER/`. Existing research files remain in place; no destructive migration has been performed.
 
 ## Protected rule
 কেবল organization করার জন্য existing code/data/website/backend path সরানো, rename বা delete করা যাবে না। প্রথমে inventory ও dependency verification হবে।
@@ -50,4 +57,4 @@ Folder organization সম্পূর্ণ বলা যাবে কেবল
 - Registry/State update করা হয়েছে।
 
 ## Current status
-`IN PROGRESS — central master established; folder-by-folder local Masters remain to be completed and verified.`
+`STRUCTURE ESTABLISHED — local Masters and dictionary-first architecture are established on safety branch test/write-access-2026-09-13. Full dependency/inventory verification and controlled promotion remain separate gates.`
