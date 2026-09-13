@@ -1,4 +1,4 @@
-# Instruction Registry — v2.1
+# Instruction Registry — v2.2
 
 This registry is the dictionary/index of project instructions. It records which instructions govern which project assets.
 
@@ -9,7 +9,7 @@ This registry is the dictionary/index of project instructions. It records which 
 | `AI_ENTRY_PROTOCOL.md` | Bootstrap entry point and mandatory reading order for new AI/session | ACTIVE |
 | `UNIVERSAL_AI_GOVERNANCE_GATE.md` | Universal startup gate and master-first governance check | REVIEW — safety branch candidate; not promoted to `main` |
 | `NEW_AI_SESSION_START_GUIDE.md` | Legacy/operational startup guide for new AI, ID, agent, or chat | ACTIVE — preserved historical/operational guide |
-| `MASTER_INSTRUCTION.md` | Operational governance and instruction hierarchy | ACTIVE |
+| `MASTER_INSTRUCTION.md` | Operational governance and instruction hierarchy | ACTIVE — v1.9; canonical Live Link quick reference declared |
 | `INSTRUCTION_REGISTRY.md` | Instruction index and coverage map | ACTIVE |
 | `INSTRUCTION_AUDIT_PROTOCOL.md` | Detect missing, stale, conflicting, or incomplete instructions | ACTIVE |
 | `INSTRUCTION_CHANGE_LOG.md` | History of instruction-system changes | ACTIVE |
@@ -57,8 +57,8 @@ This registry is the dictionary/index of project instructions. It records which 
 |---|---|---|
 | `docs/BACKEND_DEPENDENCY_MAP_2026-09-08.instruction.md` | `docs/BACKEND_DEPENDENCY_MAP_2026-09-08.md` | ACTIVE |
 | `docs/BACKEND_DEPENDENCY_VERIFICATION_2026-09-08.instruction.md` | `docs/BACKEND_DEPENDENCY_VERIFICATION_2026-09-08.md` | ACTIVE |
-| `CHATBOX-DESIGN-2026-09-08.instruction.md` | `CHATBOX-DESIGN-2026-09-08.md` | ACTIVE |
-| `CHATBOX-V2.8-STATUS-2026-09-10.instruction.md` | `CHATBOX-V2.8-STATUS-2026-09-10.md` | ACTIVE |
+| `docs/CHATBOX-DESIGN-2026-09-08.instruction.md` | `docs/design-history/CHATBOX-DESIGN-2026-09-08.md` | ACTIVE — historical design record moved without content change |
+| `docs/CHATBOX-V2.8-STATUS-2026-09-10.instruction.md` | `docs/design-history/CHATBOX-V2.8-STATUS-2026-09-10.md` | ACTIVE — historical status record moved without content change |
 | `docs/OUR_THINKING_AND_VISION.instruction.md` | `docs/OUR_THINKING_AND_VISION.md` | ACTIVE |
 | `docs/PROJECT_COMMENTS.instruction.md` | `docs/PROJECT_COMMENTS.md` | ACTIVE |
 | `README.instruction.md` | `README.md` | ACTIVE |
@@ -71,6 +71,7 @@ This registry is the dictionary/index of project instructions. It records which 
 | `MASTER/REPOSITORY_AUDIT_2026-09-13.md` | Final repository documentation/organization audit | VERIFIED |
 | `MASTER/REPOSITORY_FILE_INVENTORY_2026-09-13.md` | Repository-wide path inventory and role classification | VERIFIED |
 | `MASTER/REPOSITORY_DOCUMENTATION_WORKLOG_2026-09-13.md` | Dated completion record for the documentation/organization phase | VERIFIED |
+| `MASTER/PROJECT_STATE_HANDOFF_2026-09-13.md` | Continuity handoff for the verified safety-branch state | VERIFIED |
 
 ## Canonical Production Automation
 
@@ -116,5 +117,8 @@ Safety-branch governance work is not production publication. Before promotion to
 ## Migration Rule
 Instructions formerly stored under `docs/instructions/` were migrated by copy → verify → registry update → old-path removal. No governed target file, website path, backend path, data file, or research record was moved as part of this instruction migration.
 
+## Current Safety-Branch Governance Note
+`MASTER_INSTRUCTION.md` v1.9 declares the canonical Live Link in a top-level Quick Reference section so a new AI/session does not need to search the repository to locate it. The declaration is based on the 2026-09-13 Live Page + Chat + Research-ID smoke-test record and remains a safety-branch governance declaration until any separately required production promotion is approved and verified.
+
 ## Status
-ACTIVE — v2.1. Repository-wide documentation inventory, folder organization, and final audit are recorded on the safety branch. Universal startup governance remains in REVIEW on the safety branch and is not promoted to `main`.
+ACTIVE — v2.2. Registry synchronized with Master v1.9 and the 2026-09-13 documentation/continuity audit on the safety branch. Universal startup governance remains in REVIEW on the safety branch and is not promoted to `main`.
