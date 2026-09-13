@@ -127,7 +127,7 @@ Canonical chain:
 The authoritative detailed map is `LIVE_CONNECTION_MAP.md` and its governing instruction `LIVE_CONNECTION_MAP.instruction.md`.
 
 Current live chat Worker endpoints are, in order:
-1. `https://al-quran-research.moshar0000.workers.dev/`
+1. `https://al-quran-research.mosharroff0000.workers.dev/`
 2. `https://al-quran-research.mosharrof0000.workers.dev/`
 
 The fallback order is part of the protected live behavior and must not be removed or changed without an approved replacement and verification.
