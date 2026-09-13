@@ -1,4 +1,4 @@
-# Master Instruction — v1.7
+# Master Instruction — v1.8
 
 ## 1. Role
 This document is the operational control layer for the Al-Quran Research project. It governs how AI systems work with the repository without replacing the project's existing research architecture.
@@ -145,6 +145,40 @@ When a live connection problem occurs, diagnose the chain in order:
 
 Every verified connection fix must record the failing layer, observed error, root cause, exact file/path changed, verification performed, and resulting production commit/version. This record becomes reusable project knowledge for future incidents.
 
+### 12.3 Canonical Live Link Declaration and Verification Gate
+As of `2026-09-13`, the project's **declared Canonical Live Link** is:
+`https://mosharrof0000-ux.github.io/al-quran-research/#quran`
+
+This declaration is based on the user's live-site verification on `2026-09-13`: the page opened with the expected Al-Quran Research identity and navigation, the Bengali AI chat responded to a test message, and `S001-A001` was accepted and returned the expected pilot mapping `Q001001` / `RR-Q001001-V1.json` with status `PENDING_REVIEW`.
+
+This is a **verified Live Page + Chat + Research-ID smoke-test declaration**. It does not certify that every research feature or every Research ID is complete or verified.
+
+#### Mandatory Live Link Verification Gate
+A candidate Live Link must never become Canonical merely because it looks correct, redirects, or is supplied by an AI. Before declaration, verify in this order:
+1. page opens;
+2. project identity is correct;
+3. root/navigation points to the intended project;
+4. chat UI responds;
+5. a known Research ID such as `S001-A001` can be submitted;
+6. the returned mapping/record matches the expected project record;
+7. the verification result and evidence are documented.
+
+Until all applicable checks pass, status must be `NOT VERIFIED`; the candidate must not be treated as the project's canonical Live Link.
+
+#### New AI / New ID / New Chat Entry Rule
+Any new ChatGPT account/ID, AI agent, conversation, Research ID workflow, or chat integration must:
+1. read `MASTER_INSTRUCTION.md` first;
+2. read the portable startup set defined in Section 17;
+3. use only the declared Canonical Live Link as the starting point;
+4. verify current page identity/currentness before relying on it;
+5. use the documented connection chain and Research-ID execution rule;
+6. never substitute a guessed, remembered, shortened, or older URL;
+7. record any new verification evidence in the project documentation.
+
+If the Canonical Live Link fails, is redirected to an unexpected project, or no longer matches the verified identity, mark it `LIVE LINK INVALID / NOT VERIFIED` for the affected check and stop making navigation/deployment assumptions from it until a new candidate is tested.
+
+Changing the Canonical Live Link requires a fresh verification record, documentation/audit update, and explicit user/authorized approval before the declaration is replaced.
+
 ## 13. Controlled Promotion Gate
 Safety-branch governance work and production promotion are separate control stages.
 
@@ -204,4 +238,4 @@ The root-level Master remains the highest organizational authority. Local folder
 Folder organization must be performed in stages: inventory → dependency map → local Master creation → file mapping → verification → Registry/State update → controlled promotion. Existing application/data/public paths must not be moved merely for visual organization.
 
 ## Status
-ACTIVE — v1.7
+ACTIVE — v1.8
