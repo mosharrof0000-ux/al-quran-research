@@ -1,4 +1,4 @@
-# Master Instruction — v1.6
+# Master Instruction — v1.7
 
 ## 1. Role
 This document is the operational control layer for the Al-Quran Research project. It governs how AI systems work with the repository without replacing the project's existing research architecture.
@@ -127,7 +127,7 @@ Canonical chain:
 The authoritative detailed map is `LIVE_CONNECTION_MAP.md` and its governing instruction `LIVE_CONNECTION_MAP.instruction.md`.
 
 Current live chat Worker endpoints are, in order:
-1. `https://al-quran-research.mosharroff0000.workers.dev/`
+1. `https://al-quran-research.moshar0000.workers.dev/`
 2. `https://al-quran-research.mosharrof0000.workers.dev/`
 
 The fallback order is part of the protected live behavior and must not be removed or changed without an approved replacement and verification.
@@ -174,5 +174,34 @@ The Master is therefore both the common rule for all file instructions and a gov
 ## 16. Relationship to Existing Architecture
 The instruction system does not replace `MASTER_PROJECT.md`, `PROJECT_STATE.md`, `PROJECT_WORK_LOG.md`, `PROJECT_HISTORY.md`, `PROJECT_CONTINUITY_PROTOCOL.md`, or existing research, AI, backup, backend, and website documents. Those remain project assets governed by this operational layer.
 
+## 17. Cross-ID / New-AI Portability Rule
+This project must remain understandable when a new ChatGPT account, ChatGPT ID, AI agent, or new conversation takes over the work.
+
+A new AI must not rely on hidden conversation memory. The repository documents are the source of continuity.
+
+Minimum portable startup set:
+1. `MASTER_INSTRUCTION.md` — governing rules and safe-work method.
+2. `PROJECT_STATE.md` — current known project state.
+3. `MASTER_PROJECT.md` — permanent architecture and project purpose.
+4. `AI_ENTRY_PROTOCOL.md` — startup reading order.
+5. `INSTRUCTION_REGISTRY.md` — instruction coverage.
+6. `INSTRUCTION_AUDIT_PROTOCOL.md` — governance audit.
+7. `PROJECT_WORK_LOG.md` / `PROJECT_CONTINUITY_PROTOCOL.md` — recent work and continuity when available.
+
+A new AI/session must first read these documents from the repository, then identify the user's current instruction, then inspect the relevant target files. It must never assume that a previous chat's statements are current when repository evidence is available.
+
+The current user's instruction always has priority over this Master for the specific requested task, but the AI must still preserve the project's safety, evidence, versioning, and audit requirements unless the user explicitly authorizes a conflicting operation.
+
+When the project is handed from one AI/ID to another, the receiving AI must report the repository-derived current state, the last verified checkpoint, the active branch being worked on, the exact requested next task, and any unresolved governance gap before making production changes.
+
+## 18. Folder Master Governance
+The repository organization project uses a hierarchical master index rather than uncontrolled folder duplication.
+
+Each governed project folder may have one local `MASTER/` directory containing that folder's index, purpose, file map, dependency map, and local rules. A `MASTER/` directory itself is not recursively required to contain another `MASTER/` directory; this prevents infinite nesting.
+
+The root-level Master remains the highest organizational authority. Local folder Masters cannot override `MASTER_INSTRUCTION.md`, `PROJECT_STATE.md`, or higher-priority project rules.
+
+Folder organization must be performed in stages: inventory → dependency map → local Master creation → file mapping → verification → Registry/State update → controlled promotion. Existing application/data/public paths must not be moved merely for visual organization.
+
 ## Status
-ACTIVE — v1.6
+ACTIVE — v1.7
