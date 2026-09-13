@@ -65,4 +65,4 @@ The dictionary layer is defined at `data/dictionary/MASTER/`. Existing research 
 Repository organization/documentation is complete when the recursive tree is inventoried, governed folders have local Masters, applicable instructions are mapped, dependency-sensitive paths are preserved, safe historical files are organized, verification is recorded, and continuity records identify the current safe branch.
 
 ## Current status
-`SAFE ORGANIZATION IN PROGRESS — historical documentation moves completed on safety branch test/write-access-2026-09-13. Runtime/deployment-sensitive files remain protected until dependency verification proves a move is safe.`
+`SAFE ORGANIZATION IN PROGRESS — verified historical documentation moves completed on safety branch test/write-access-2026-09-13. Runtime/deployment-sensitive files remain protected until dependency verification proves a move is safe.`
