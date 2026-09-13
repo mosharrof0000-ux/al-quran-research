@@ -1,4 +1,4 @@
-# Instruction Registry — v2.0
+# Instruction Registry — v2.1
 
 This registry is the dictionary/index of project instructions. It records which instructions govern which project assets.
 
@@ -28,6 +28,7 @@ This registry is the dictionary/index of project instructions. It records which 
 | `MASTER/PROJECT_FOLDER_MASTER_INDEX.instruction.md` | `MASTER/PROJECT_FOLDER_MASTER_INDEX.md` | ACTIVE |
 | `MASTER/REPOSITORY_FILE_INVENTORY_2026-09-13.instruction.md` | `MASTER/REPOSITORY_FILE_INVENTORY_2026-09-13.md` | ACTIVE |
 | `MASTER/REPOSITORY_AUDIT_2026-09-13.instruction.md` | `MASTER/REPOSITORY_AUDIT_2026-09-13.md` | ACTIVE |
+| `MASTER/REPOSITORY_DOCUMENTATION_WORKLOG_2026-09-13.instruction.md` | `MASTER/REPOSITORY_DOCUMENTATION_WORKLOG_2026-09-13.md` | ACTIVE |
 
 ## Individual Critical Instructions
 
@@ -69,6 +70,7 @@ This registry is the dictionary/index of project instructions. It records which 
 | `docs/INSTRUCTION_AUDIT_AUTOMATION_2026-09-11.md` | Workflow permissions, live-entrypoint overlap, and completed consolidation record | VERIFIED |
 | `MASTER/REPOSITORY_AUDIT_2026-09-13.md` | Final repository documentation/organization audit | VERIFIED |
 | `MASTER/REPOSITORY_FILE_INVENTORY_2026-09-13.md` | Repository-wide path inventory and role classification | VERIFIED |
+| `MASTER/REPOSITORY_DOCUMENTATION_WORKLOG_2026-09-13.md` | Dated completion record for the documentation/organization phase | VERIFIED |
 
 ## Canonical Production Automation
 
@@ -115,4 +117,4 @@ Safety-branch governance work is not production publication. Before promotion to
 Instructions formerly stored under `docs/instructions/` were migrated by copy → verify → registry update → old-path removal. No governed target file, website path, backend path, data file, or research record was moved as part of this instruction migration.
 
 ## Status
-ACTIVE — v2.0. Repository-wide documentation inventory and final organization audit are recorded on the safety branch. Universal startup governance remains in REVIEW on the safety branch and is not promoted to `main`.
+ACTIVE — v2.1. Repository-wide documentation inventory, folder organization, and final audit are recorded on the safety branch. Universal startup governance remains in REVIEW on the safety branch and is not promoted to `main`.
