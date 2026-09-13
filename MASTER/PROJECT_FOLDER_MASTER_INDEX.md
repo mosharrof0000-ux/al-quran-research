@@ -1,0 +1,53 @@
+# Project Folder Master Index — v1.0
+
+## Purpose
+এই নথি পুরো repository-র folder-by-folder organization-এর কেন্দ্রীয় সূচি। এটি `MASTER_INSTRUCTION.md` ও `PROJECT_STATE.md`-এর অধীন।
+
+## Root authority
+- `MASTER_INSTRUCTION.md` — সর্বোচ্চ operational governance
+- `PROJECT_STATE.md` — বর্তমান প্রকল্প-অবস্থা
+- `MASTER_PROJECT.md` — স্থায়ী architecture ও উদ্দেশ্য
+- `INSTRUCTION_REGISTRY.md` — instruction coverage
+- `PROJECT_WORK_LOG.md` — কাজের ইতিহাস
+
+## Folder organization rule
+প্রতিটি governed folder-এর জন্য প্রয়োজন অনুযায়ী একটি স্থানীয় `MASTER/` directory থাকবে। সেখানে থাকবে:
+1. Folder identity/purpose
+2. File inventory
+3. Dependency map
+4. Local rules
+5. Verification status
+6. Change history
+
+`MASTER/` নিজে আবার `MASTER/MASTER/` তৈরি করবে না।
+
+## Existing top-level folders to inventory
+- `.github/`
+- `assets/`
+- `backend/`
+- `data/`
+- `database/`
+- `docs/`
+- `exports/`
+- `migrations/`
+- `scripts/`
+- `validation/`
+
+## Known nested folder requiring its own local Master
+- `data/research-records/`
+- `.github/workflows/`
+
+## Protected rule
+কেবল organization করার জন্য existing code/data/website/backend path সরানো, rename বা delete করা যাবে না। প্রথমে inventory ও dependency verification হবে।
+
+## Completion gate
+Folder organization সম্পূর্ণ বলা যাবে কেবল যখন প্রতিটি governed folder-এর:
+- local Master আছে;
+- file inventory আছে;
+- applicable instructions mapped আছে;
+- dependencies checked আছে;
+- verification record আছে;
+- Registry/State update করা হয়েছে।
+
+## Current status
+`IN PROGRESS — central master established; folder-by-folder local Masters remain to be completed and verified.`
