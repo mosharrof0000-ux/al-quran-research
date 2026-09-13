@@ -1,4 +1,4 @@
-# Instruction Change Log — v1.9
+# Instruction Change Log — v2.0
 
 This file records controlled changes to the instruction-governance layer.
 
@@ -202,5 +202,26 @@ Future live connection incidents must identify the failing layer, observed error
 ### Safety result
 This change is documentation/governance only. No existing website entrypoint, backend code, research dataset, public path, or chat UI behavior was intentionally changed.
 
+## 2026-09-13 — Canonical Live Link Declaration and Documentation Baseline
+
+### Finding
+The project needed a single, immediately discoverable declaration of the canonical Live Link so a new AI/session does not need to search or rely on remembered/shortened URLs.
+
+### Changes
+- `MASTER_INSTRUCTION.md` advanced to v1.8 and declared the canonical Live Link.
+- `MASTER_INSTRUCTION.md` advanced to v1.9 and added a top-level `QUICK REFERENCE — CANONICAL LIVE LINK` section for immediate discovery.
+- `INSTRUCTION_REGISTRY.md` synchronized to v2.2 with the Master v1.9 status and 2026-09-13 audit/continuity records.
+- Repository-wide documentation/organization audit and folder-Master index were recorded on the safety branch.
+- Historical chatbox/backup records were moved only after content verification; runtime/backend/database/research files were not moved.
+
+### Canonical Live Link
+`https://mosharrof0000-ux.github.io/al-quran-research/#quran`
+
+### Verification record
+User verified that the page opens with the expected Al-Quran Research identity/navigation, Bengali AI chat responds, and `S001-A001` returns the expected pilot mapping `Q001001` / `RR-Q001001-V1.json` with status `PENDING_REVIEW`.
+
+### Safety result
+This is a governance/documentation baseline on `test/write-access-2026-09-13`. No promotion to `main` was performed. The canonical Live Link declaration is not a claim that every research feature or every Research ID has been independently certified.
+
 ## Status
-ACTIVE — v1.9
+ACTIVE — v2.0
