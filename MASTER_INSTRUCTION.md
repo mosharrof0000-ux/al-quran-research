@@ -1,7 +1,19 @@
-# Master Instruction — v1.8
+# Master Instruction — v1.9
 
 ## 1. Role
 This document is the operational control layer for the Al-Quran Research project. It governs how AI systems work with the repository without replacing the project's existing research architecture.
+
+## 1.1 QUICK REFERENCE — CANONICAL LIVE LINK
+**Declared Canonical Live Link:**
+`https://mosharrof0000-ux.github.io/al-quran-research/#quran`
+
+**Status:** VERIFIED LIVE PAGE + CHAT + RESEARCH-ID SMOKE TEST — 2026-09-13
+
+**Important:** This is the project's primary declared Live Page. New AI, new ChatGPT ID, new conversation, Research-ID workflow, or chat integration must look here first and must not substitute an older, remembered, shortened, or guessed URL.
+
+**Verification record:** The user verified that the page opens with the expected Al-Quran Research identity/navigation, Bengali AI chat responds, and `S001-A001` returns the expected pilot mapping `Q001001` / `RR-Q001001-V1.json` with status `PENDING_REVIEW`.
+
+**Detailed rules:** See Section 12.3, `LIVE_CONNECTION_MAP.md`, and `AI_ENTRY_PROTOCOL.md`.
 
 ## 2. Core Principles
 - Preserve the project's existing data, research records, website, APIs, and stable paths.
@@ -80,7 +92,7 @@ Instruction organization may be improved only through an auditable migration: ma
 No project code, data, backend, website path, or research record is moved merely to relocate an instruction.
 
 ## 9. File Instruction Standard
-Each critical file should eventually have an instruction record containing identity/path, purpose, scope, inputs/outputs, dependencies, allowed/forbidden operations, verification rules, evidence requirements, update triggers, related instructions, and version/change history.
+Each critical file should eventually have an instruction record containing identity/path, purpose, scope, inputs/outputs, dependencies, allowed/forbidden operations, verification rules, evidence requirements, update triggers, related instructions, version/change history.
 
 ## 10. Instruction Update Rule
 When work changes a file's meaning, behavior, schema, dependencies, workflow, or safety requirements, its instruction must be updated before the task is considered complete.
@@ -238,4 +250,4 @@ The root-level Master remains the highest organizational authority. Local folder
 Folder organization must be performed in stages: inventory → dependency map → local Master creation → file mapping → verification → Registry/State update → controlled promotion. Existing application/data/public paths must not be moved merely for visual organization.
 
 ## Status
-ACTIVE — v1.8
+ACTIVE — v1.9
