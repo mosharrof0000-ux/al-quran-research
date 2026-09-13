@@ -1,4 +1,4 @@
-# Master Instruction — v1.6
+# Master Instruction — v1.7
 
 ## 1. Role
 This document is the operational control layer for the Al-Quran Research project. It governs how AI systems work with the repository without replacing the project's existing research architecture.
@@ -145,6 +145,27 @@ When a live connection problem occurs, diagnose the chain in order:
 
 Every verified connection fix must record the failing layer, observed error, root cause, exact file/path changed, verification performed, and resulting production commit/version. This record becomes reusable project knowledge for future incidents.
 
+### 12.3 Controlled Live Design/Test/Approval Loop
+All Live Page design work must use a controlled, user-tested iteration loop.
+
+Before each design change:
+1. preserve the current known-good state through the project's backup system;
+2. identify the exact design target and make only the smallest requested change;
+3. publish/deploy the changed state as applicable;
+4. provide the user the current Live Page link for direct testing;
+5. wait for the user's test result and explicit instruction.
+
+After the user tests:
+- If the user says the result is correct/approved, record and preserve that state as the new known-good design state before proceeding.
+- If the user says it is not correct or requests a change, modify only the requested part and repeat the test loop.
+- Do not make additional unrequested design changes during the same iteration.
+- Do not treat a design change as approved merely because deployment succeeds or the page loads; user testing/approval is the acceptance gate.
+
+If a design change causes an error, broken page, or unusable Live Page, stop using the broken state as the working baseline and restore the last known-good backed-up state before attempting a new fix.
+
+For every design iteration, the Live Page link supplied to the user must refer to the canonical production Live Page unless a temporary test URL is explicitly identified as such. The canonical Live Page link is:
+`https://mosharrof0000-ux.github.io/al-quran-research/#quran`
+
 ## 13. Controlled Promotion Gate
 Safety-branch governance work and production promotion are separate control stages.
 
@@ -175,4 +196,4 @@ The Master is therefore both the common rule for all file instructions and a gov
 The instruction system does not replace `MASTER_PROJECT.md`, `PROJECT_STATE.md`, `PROJECT_WORK_LOG.md`, `PROJECT_HISTORY.md`, `PROJECT_CONTINUITY_PROTOCOL.md`, or existing research, AI, backup, backend, and website documents. Those remain project assets governed by this operational layer.
 
 ## Status
-ACTIVE — v1.6
+ACTIVE — v1.7
