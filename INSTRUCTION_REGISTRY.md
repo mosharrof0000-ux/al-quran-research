@@ -1,4 +1,4 @@
-# Instruction Registry — v1.9
+# Instruction Registry — v2.0
 
 This registry is the dictionary/index of project instructions. It records which instructions govern which project assets.
 
@@ -25,6 +25,9 @@ This registry is the dictionary/index of project instructions. It records which 
 | `INSTRUCTION_CHANGE_LOG.instruction.md` | `INSTRUCTION_CHANGE_LOG.md` | ACTIVE |
 | `UNIVERSAL_AI_GOVERNANCE_GATE.instruction.md` | `UNIVERSAL_AI_GOVERNANCE_GATE.md` | ACTIVE — governs safety-branch candidate gate |
 | `LIVE_CONNECTION_MAP.instruction.md` | `LIVE_CONNECTION_MAP.md` | ACTIVE — canonical live connection and troubleshooting reference |
+| `MASTER/PROJECT_FOLDER_MASTER_INDEX.instruction.md` | `MASTER/PROJECT_FOLDER_MASTER_INDEX.md` | ACTIVE |
+| `MASTER/REPOSITORY_FILE_INVENTORY_2026-09-13.instruction.md` | `MASTER/REPOSITORY_FILE_INVENTORY_2026-09-13.md` | ACTIVE |
+| `MASTER/REPOSITORY_AUDIT_2026-09-13.instruction.md` | `MASTER/REPOSITORY_AUDIT_2026-09-13.md` | ACTIVE |
 
 ## Individual Critical Instructions
 
@@ -64,6 +67,8 @@ This registry is the dictionary/index of project instructions. It records which 
 | Record | Purpose | Status |
 |---|---|---|
 | `docs/INSTRUCTION_AUDIT_AUTOMATION_2026-09-11.md` | Workflow permissions, live-entrypoint overlap, and completed consolidation record | VERIFIED |
+| `MASTER/REPOSITORY_AUDIT_2026-09-13.md` | Final repository documentation/organization audit | VERIFIED |
+| `MASTER/REPOSITORY_FILE_INVENTORY_2026-09-13.md` | Repository-wide path inventory and role classification | VERIFIED |
 
 ## Canonical Production Automation
 
@@ -85,7 +90,7 @@ This registry is the dictionary/index of project instructions. It records which 
 
 ## Existing Project Documents
 
-The individual instructions above are now colocated with their governed target file or governing scope. Historical instruction content remains preserved in Git history; the old `docs/instructions/` directory is retired as a loose instruction container.
+The individual instructions above are colocated with their governed target file or governing scope. Historical instruction content remains preserved in Git history; the old `docs/instructions/` directory is retired as a loose instruction container.
 
 ## Coverage Classes
 
@@ -110,4 +115,4 @@ Safety-branch governance work is not production publication. Before promotion to
 Instructions formerly stored under `docs/instructions/` were migrated by copy → verify → registry update → old-path removal. No governed target file, website path, backend path, data file, or research record was moved as part of this instruction migration.
 
 ## Status
-ACTIVE — v1.9. Canonical live connection map is registered on `main`. Universal startup governance remains in REVIEW on the safety branch and is not promoted to `main`.
+ACTIVE — v2.0. Repository-wide documentation inventory and final organization audit are recorded on the safety branch. Universal startup governance remains in REVIEW on the safety branch and is not promoted to `main`.
