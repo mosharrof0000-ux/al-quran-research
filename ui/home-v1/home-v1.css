@@ -76,3 +76,14 @@ body{animation:dayAmbient16m 960s ease-in-out infinite;background-color:#fff}
 .quran-home-body h1{margin:0 0 6px;font-size:22px}.quran-home-body p{margin:0 0 18px;color:var(--muted);font-size:13px}
 .source-list{display:flex;flex-direction:column;gap:10px}.source-card{width:100%;text-align:left;border:1px solid var(--line);background:#fff;border-radius:14px;padding:14px 15px;cursor:pointer}.source-card:active{background:var(--soft)}
 .source-top{display:flex;align-items:center;gap:10px}.source-number{min-width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:var(--soft);font-weight:700;font-size:13px}.source-name{font-size:15px;font-weight:650}.source-meta{margin:7px 0 0 42px;color:var(--muted);font-size:12px;line-height:1.5}.source-badge{display:inline-block;margin-left:auto;padding:4px 7px;border-radius:999px;background:#eef7f4;color:var(--accent);font-size:10px}
+
+/* AI response action bar: copy, feedback, read aloud, share, more */
+.message-body{white-space:pre-wrap}
+.message-actions{display:flex;align-items:center;gap:2px;margin-top:7px;padding-top:6px;border-top:1px solid rgba(100,116,139,.14)}
+.message-action{width:30px;height:30px;border:0;background:transparent;color:#66727c;border-radius:8px;display:grid;place-items:center;font-size:15px;cursor:pointer}
+.message-action:hover,.message-action:active,.message-action.active{background:#e8efec;color:#0f766e}
+.message-more{position:relative}
+.message-more-menu{position:absolute;left:0;bottom:34px;display:none;min-width:180px;padding:5px;background:#fff;border:1px solid var(--line);border-radius:11px;box-shadow:0 8px 24px rgba(0,0,0,.12);z-index:20}
+.message-more-menu.open{display:block}
+.message-more-menu button{display:block;width:100%;border:0;background:transparent;text-align:left;padding:9px 10px;border-radius:8px;color:var(--text);font:inherit;font-size:12px}
+.message-more-menu button:active,.message-more-menu button:hover{background:var(--soft)}

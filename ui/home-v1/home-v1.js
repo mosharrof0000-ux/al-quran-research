@@ -22,9 +22,54 @@ document.getElementById('profileBtn').onclick=()=>toast('প্রোফাই�
 document.getElementById('searchBtn').onclick=()=>document.getElementById('prompt').focus();
 document.getElementById('plusBtn').onclick=()=>toast('গবেষণা অপশন');
 document.getElementById('micBtn').onclick=()=>{if(!('webkitSpeechRecognition'in window||'SpeechRecognition'in window)){toast('এই ব্রাউজারে voice input নেই');return}const R=window.SpeechRecognition||window.webkitSpeechRecognition;const r=new R();r.lang='bn-BD';r.onresult=e=>document.getElementById('prompt').value=e.results[0][0].transcript;r.start();toast('শুনছি…')};
-function addMessage(text,type){const box=document.getElementById('messages');const el=document.createElement('div');el.className='chat-message '+type;el.textContent=text;box.appendChild(el);box.scrollTop=box.scrollHeight;return el}
+function addMessage(text,type){
+ const box=document.getElementById('messages');
+ const el=document.createElement('div');
+ el.className='chat-message '+type;
+ const body=document.createElement('div');
+ body.className='message-body';
+ body.textContent=text;
+ el.appendChild(body);
+ if(type.includes('ai')){
+   const actions=document.createElement('div');
+   actions.className='message-actions';
+   actions.hidden=true;
+   const makeBtn=(label,title,handler)=>{const b=document.createElement('button');b.type='button';b.className='message-action';b.textContent=label;b.title=title;b.setAttribute('aria-label',title);b.onclick=handler;actions.appendChild(b);return b};
+   makeBtn('⧉','কপি',()=>copyAiMessage(body.textContent));
+   const like=makeBtn('👍','ভালো লেগেছে',()=>{like.classList.toggle('active');dislike.classList.remove('active');toast(like.classList.contains('active')?'পছন্দ সংরক্ষিত':'পছন্দ সরানো হয়েছে')});
+   const dislike=makeBtn('👎','ভালো লাগেনি',()=>{dislike.classList.toggle('active');like.classList.remove('active');toast(dislike.classList.contains('active')?'মতামত সংরক্ষিত':'মতামত সরানো হয়েছে')});
+   makeBtn('🔊','পড়ে শোনান',()=>speakAiMessage(body.textContent));
+   makeBtn('↗','শেয়ার',()=>shareAiMessage(body.textContent));
+   const moreWrap=document.createElement('div');moreWrap.className='message-more';
+   const moreMenu=document.createElement('div');moreMenu.className='message-more-menu';
+   const more=makeBtn('⋯','আরও অপশন',()=>moreMenu.classList.toggle('open'));
+   moreWrap.appendChild(more);
+   const addMore=(label,handler)=>{const b=document.createElement('button');b.type='button';b.textContent=label;b.onclick=()=>{moreMenu.classList.remove('open');handler()};moreMenu.appendChild(b)};
+   addMore('↻ আবার উত্তর চাই',()=>{const last=sessionStorage.getItem('aqr:lastQuestion');if(last){document.getElementById('prompt').value=last;sendQuestion()}});
+   addMore('🔊 পড়ে শোনান',()=>speakAiMessage(body.textContent));
+   addMore('⧉ উত্তর কপি করুন',()=>copyAiMessage(body.textContent));
+   addMore('↗ উত্তর শেয়ার করুন',()=>shareAiMessage(body.textContent));
+   addMore('⚑ মতামত/রিপোর্ট',()=>toast('মতামত/রিপোর্ট অপশন প্রস্তুত করা হয়েছে'));
+   moreWrap.appendChild(moreMenu);actions.appendChild(moreWrap);
+   el.__actions=actions;
+   el.__body=body;
+   el.appendChild(actions);
+ }
+ box.appendChild(el);box.scrollTop=box.scrollHeight;return el
+}
+async function copyAiMessage(text){
+ try{await navigator.clipboard.writeText(text);toast('উত্তর কপি হয়েছে')}catch(e){const ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();toast('উত্তর কপি হয়েছে')}
+}
+function speakAiMessage(text){
+ if(!('speechSynthesis'in window)){toast('এই ব্রাউজারে পড়ে শোনানোর সুবিধা নেই');return}
+ window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='bn-BD';window.speechSynthesis.speak(u)
+}
+async function shareAiMessage(text){
+ if(navigator.share){try{await navigator.share({title:'আল-কুরআন রিসার্চ',text});return}catch(e){if(e?.name==='AbortError')return}}
+ await copyAiMessage(text);toast('শেয়ার সুবিধা না থাকায় উত্তরটি কপি করা হয়েছে')
+}
 function setBusy(busy){document.getElementById('sendBtn').disabled=busy;document.getElementById('sendBtn').textContent=busy?'…':'↑'}
-async function sendQuestion(){const prompt=document.getElementById('prompt');const q=prompt.value.trim();if(!q){toast('প্রশ্ন লিখুন বা বলুন');return}sessionStorage.setItem('aqr:lastQuestion',q);document.getElementById('welcome').style.display='none';addMessage(q,'user');const readerJump=parseReaderJump(q);prompt.value='';if(readerJump)openReaderAt(readerJump.sura,readerJump.ayah,readerJump.source);setBusy(true);const pending=addMessage('উত্তর তৈরি হচ্ছে…','ai pending');try{const response=await fetch(CHAT_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:q,mode:'general'})});let data={};try{data=await response.json()}catch{}if(!response.ok)throw new Error(data.error||'AI সংযোগে সমস্যা হয়েছে।');pending.textContent=data.answer||'AI কোনো উত্তর দেয়নি।';if(data.provider)pending.dataset.provider=data.provider}catch(error){pending.textContent='দুঃখিত, AI সংযোগে সমস্যা হয়েছে। আবার চেষ্টা করুন।';toast(String(error.message||error))}finally{pending.classList.remove('pending');setBusy(false)}}
+async function sendQuestion(){const prompt=document.getElementById('prompt');const q=prompt.value.trim();if(!q){toast('প্রশ্ন লিখুন বা বলুন');return}sessionStorage.setItem('aqr:lastQuestion',q);document.getElementById('welcome').style.display='none';addMessage(q,'user');const readerJump=parseReaderJump(q);prompt.value='';if(readerJump)openReaderAt(readerJump.sura,readerJump.ayah,readerJump.source);setBusy(true);const pending=addMessage('উত্তর তৈরি হচ্ছে…','ai pending');try{const response=await fetch(CHAT_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:q,mode:'general'})});let data={};try{data=await response.json()}catch{}if(!response.ok)throw new Error(data.error||'AI সংযোগে সমস্যা হয়েছে।');pending.querySelector('.message-body').textContent=data.answer||'AI কোনো উত্তর দেয়নি。';if(data.provider)pending.dataset.provider=data.provider;if(pending.__actions)pending.__actions.hidden=false}catch(error){pending.querySelector('.message-body').textContent='দুঃখিত, AI সংযোগে সমস্যা হয়েছে। আবার চেষ্টা করুন।';if(pending.__actions)pending.__actions.hidden=false;toast(String(error.message||error))}finally{pending.classList.remove('pending');setBusy(false)}}
 document.getElementById('sendBtn').onclick=sendQuestion;
 document.getElementById('prompt').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendQuestion()}});
 
