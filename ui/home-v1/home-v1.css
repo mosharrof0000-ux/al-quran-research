@@ -60,7 +60,10 @@ body{animation:dayAmbient16m 960s ease-in-out infinite;background-color:#fff}
 .quran-text{flex:1;overflow:auto;padding:10px 16px 24px;direction:rtl}
 .ayah{display:flex;align-items:flex-start;gap:10px;padding:14px 4px;border-bottom:1px solid #eef0ef}
 .ayah-no{direction:ltr;min-width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--soft);color:var(--muted);font-size:11px}
-.ayah-ar{font-family:"Noto Naskh Arabic","Amiri",serif;font-size:25px;line-height:2.15;text-align:right;flex:1}
+.ayah-body{flex:1;min-width:0}
+.ayah-ar{font-family:"Noto Naskh Arabic","Amiri",serif;font-size:25px;line-height:2.15;text-align:right;direction:rtl}
+.ayah-bn-label{margin-top:9px;color:var(--accent);font-size:11px;font-weight:700;direction:ltr;text-align:left}
+.ayah-bn{margin-top:3px;font-family:"Noto Sans Bengali",system-ui,sans-serif;font-size:15px;line-height:1.8;text-align:left;direction:ltr;color:#334155}
 .reader-credit{padding:8px 12px;border-top:1px solid var(--line);font-size:10px;color:var(--muted);text-align:center}
 .reader-credit a{color:inherit}
 
