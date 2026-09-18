@@ -16,11 +16,12 @@
 </header>
 
 <main class="chat">
-  <section class="welcome" aria-label="স্বাগতম">
+  <section class="welcome" id="welcome" aria-label="স্বাগতম">
     <div class="logo">ق</div>
     <h1>কী গবেষণা করতে চান?</h1>
     <p>আল-কুরআন সম্পর্কে আপনার প্রশ্ন লিখুন।</p>
   </section>
+  <section class="messages" id="messages" aria-live="polite" aria-label="চ্যাট"></section>
 
   <section class="composer" aria-label="প্রশ্ন লেখার স্থান">
     <textarea id="prompt" rows="1" placeholder="আপনার প্রশ্ন লিখুন..." aria-label="আপনার প্রশ্ন"></textarea>
