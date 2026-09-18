@@ -29,14 +29,21 @@ body{animation:dayAmbient96s 96s ease-in-out infinite;background-color:#fff}
 .shell{background:transparent}
 .topbar{background:rgba(255,255,255,.86)}
 @keyframes dayAmbient96s{
-  0%,6.25%{background-color:#fff}
-  12.5%,18.75%{background-color:#f7f4ea}
-  25%,31.25%{background-color:#f4edc9}
-  37.5%,43.75%{background-color:#f3dcc7}
-  50%,56.25%{background-color:#f1d8df}
-  62.5%,68.75%{background-color:#efd5d2}
-  75%,81.25%{background-color:#e3d9ed}
-  87.5%,93.75%{background-color:#dcdff0}
-  100%{background-color:#d4e7ef}
+  0%{background-color:#fff}
+  6.666%{background-color:#f7f4ea}
+  13.333%{background-color:#f4edc9}
+  20%{background-color:#f3dcc7}
+  26.666%{background-color:#f1d8df}
+  33.333%{background-color:#efd5d2}
+  40%{background-color:#e3d9ed}
+  46.666%{background-color:#dcdff0}
+  53.333%{background-color:#d4e7ef}
+  60%{background-color:#d1e8e2}
+  66.666%{background-color:#d8eadb}
+  73.333%{background-color:#dcebcf}
+  80%{background-color:#d8dfc8}
+  86.666%{background-color:#e9dfc9}
+  93.333%{background-color:#e2e4e1}
+  100%{background-color:#fff}
 }
 @media(prefers-reduced-motion:reduce){body{animation:none;background-color:#fff}}
