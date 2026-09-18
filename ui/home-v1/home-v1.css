@@ -87,3 +87,11 @@ body{animation:dayAmbient16m 960s ease-in-out infinite;background-color:#fff}
 .message-more-menu.open{display:block}
 .message-more-menu button{display:block;width:100%;border:0;background:transparent;text-align:left;padding:9px 10px;border-radius:8px;color:var(--text);font:inherit;font-size:12px}
 .message-more-menu button:active,.message-more-menu button:hover{background:var(--soft)}
+
+
+/* AI Action Bar v1 demo: compact response controls */
+.message-actions{display:flex;align-items:center;gap:1px;margin-top:8px;padding-top:5px;border-top:0;min-height:32px}
+.message-action{width:30px;height:30px;border:0;background:transparent;color:#6b7280;border-radius:7px;display:grid;place-items:center;font-size:15px;line-height:1;cursor:pointer;transition:background .15s ease,color .15s ease,transform .1s ease}
+.message-action:hover{background:rgba(15,118,110,.08);color:#0f766e}.message-action:active{transform:scale(.94)}.message-action.active{background:rgba(15,118,110,.12);color:#0f766e}.message-action:focus-visible{outline:2px solid #8ab9aa;outline-offset:1px}
+.message-more{position:relative}.message-more-menu{position:absolute;left:0;bottom:35px;display:none;min-width:190px;padding:5px;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.12);z-index:20}.message-more-menu.open{display:block}.message-more-menu button{display:block;width:100%;border:0;background:transparent;text-align:left;padding:9px 10px;border-radius:7px;color:var(--text);font:inherit;font-size:12px;cursor:pointer}.message-more-menu button:hover,.message-more-menu button:active{background:var(--soft)}
+@media(max-width:480px){.message-actions{gap:0}.message-action{width:29px;height:29px;font-size:14px}.message-more-menu{min-width:180px}}
