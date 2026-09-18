@@ -181,3 +181,9 @@ body{animation:dayAmbient16m 960s ease-in-out infinite;background-color:#fff}
 .message-more-menu.open{display:block}
 .message-more-menu button{display:block;width:100%;border:0;background:transparent;text-align:left;padding:9px 10px;border-radius:8px;color:var(--text);font:inherit;font-size:12px}
 .message-more-menu button:active,.message-more-menu button:hover{background:var(--soft)}
+
+/* First Action Bar demo refinement: compact, touch-friendly ChatGPT-style controls. */
+.message-actions{min-height:30px}
+.message-action:focus-visible{outline:2px solid #8fb9ad;outline-offset:1px}
+.message-more-menu{max-width:calc(100vw - 36px)}
+@media(max-width:650px){.message-actions{gap:1px;margin-top:8px;padding-top:7px}.message-action{width:32px;height:32px;font-size:15px}.message-more-menu{min-width:190px;bottom:36px}}
