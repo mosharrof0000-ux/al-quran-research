@@ -36,7 +36,58 @@ const SURA_AYAH_COUNTS=[7,286,200,176,120,165,206,75,129,109,123,111,43,52,99,12
 function quranSourceOffset(n){return SURA_AYAH_COUNTS.slice(0,n-1).reduce((a,b)=>a+b,0)}
 const reader=document.getElementById('quranReader'),select=document.getElementById('suraSelect'),qtext=document.getElementById('quranText'),qstatus=document.getElementById('quranStatus');
 SURA_NAMES.forEach((n,i)=>{const o=document.createElement('option');o.value=i+1;o.textContent=(i+1)+' — '+n;select.appendChild(o)});
-async function showSura(n){try{qstatus.textContent='সূরা লোড হচ্ছে…';qtext.innerHTML='';const pronOffset=quranSourceOffset(n);const [arabicResponse,bnResponse,pronResponse]=await Promise.all([fetch(QURAN_API+n+'.json',{cache:'force-cache'}),fetch(BENGALI_TRANSLATION_API+n,{cache:'no-store'}),fetch(BENGALI_PRONUNCIATION_API+'&offset='+pronOffset+'&length='+SURA_AYAH_COUNTS[n-1],{cache:'no-store'})]);if(!arabicResponse.ok)throw new Error('আরবি উৎস থেকে ডেটা পাওয়া যায়নি');if(!bnResponse.ok)throw new Error('বাংলা অনুবাদ উৎস থেকে ডেটা পাওয়া যায়নি');const d=await arabicResponse.json();const bn=await bnResponse.json();const pron=pronResponse.ok?await pronResponse.json():{rows:[]};const verses=d.verses||d.ayahs||[];const translations=Array.isArray(bn)?bn:(bn.data||bn.ayahs||[]);const translationByAya=new Map(translations.map(x=>[Number(x.aya),x.translation||'']));const pronunciationRows=Array.isArray(pron.rows)?pron.rows:[];const pronunciationByAya=new Map(pronunciationRows.map(x=>[Number(x.row?.verse_number),x.row?.transliteration_bn||'']));verses.forEach((v,i)=>{const no=Number(v.numberInSurah||i+1);const el=document.createElement('div');el.id='ayah-'+no;el.className='ayah';el.innerHTML='<span class="ayah-no">'+no+'</span><div class="ayah-body"><div class="ayah-ar">'+(v.arabic||v.text||'')+'</div><div class="ayah-bn-label">বাংলা উচ্চারণ</div><div class="ayah-pron">'+(pronunciationByAya.get(no)||'উচ্চারণ পাওয়া যায়নি')+'</div><div class="ayah-bn-label">বাংলা অনুবাদ</div><div class="ayah-bn">'+(translationByAya.get(no)||'অনুবাদ পাওয়া যায়নি')+'</div></div>';qtext.appendChild(el)});qstatus.textContent='সূরা '+n+' — '+SURA_NAMES[n-1]+' | '+verses.length+' আয়াত';select.value=n;if(pendingReaderJump){const target=document.getElementById('ayah-'+pendingReaderJump);if(target){target.scrollIntoView({behavior:'smooth',block:'center'});target.setAttribute('data-jump','true');setTimeout(()=>target.removeAttribute('data-jump'),2200)}pendingReaderJump=null}}catch(e){qstatus.textContent='সমস্যা: '+e.message}}
+function normalizeArabicPayload(payload,n){
+  const verses=payload?.verses||payload?.ayahs||payload?.data?.verses||payload?.data?.ayahs||payload?.data||[];
+  if(!Array.isArray(verses))return [];
+  return verses.map((v,i)=>({numberInSurah:Number(v.numberInSurah||v.verse_number||v.aya||i+1),arabic:v.arabic||v.text||v.text_ar||''})).filter(v=>v.numberInSurah>=1&&v.numberInSurah<=SURA_AYAH_COUNTS[n-1]);
+}
+function normalizeTranslationPayload(payload){
+  const rows=Array.isArray(payload)?payload:(payload?.data||payload?.ayahs||[]);
+  return Array.isArray(rows)?rows.map(x=>({aya:Number(x.aya||x.verse_number),translation:String(x.translation||'')})).filter(x=>x.aya>0):[];
+}
+function normalizePronunciationPayload(payload){
+  const rows=Array.isArray(payload?.rows)?payload.rows:[];
+  return rows.map(x=>x.row||{}).map(x=>({verse:Number(x.verse_number||x.aya||0),text:String(x.transliteration_bn||'')})).filter(x=>x.verse>0);
+}
+async function showSura(n){
+  n=Number(n); if(!Number.isInteger(n)||n<1||n>114)return;
+  try{
+    qstatus.textContent='সূরা '+n+' — '+SURA_NAMES[n-1]+' লোড হচ্ছে…';
+    qtext.innerHTML='';
+    select.value=String(n);
+    const pronOffset=quranSourceOffset(n);
+    const [arabicResponse,bnResponse,pronResponse]=await Promise.all([
+      fetch(QURAN_API+n+'.json',{cache:'force-cache'}),
+      fetch(BENGALI_TRANSLATION_API+n,{cache:'no-store'}),
+      fetch(BENGALI_PRONUNCIATION_API+'&offset='+pronOffset+'&length='+SURA_AYAH_COUNTS[n-1],{cache:'no-store'})
+    ]);
+    if(!arabicResponse.ok)throw new Error('আরবি উৎস থেকে ডেটা পাওয়া যায়নি ('+arabicResponse.status+')');
+    if(!bnResponse.ok)throw new Error('বাংলা অনুবাদ উৎস থেকে ডেটা পাওয়া যায়নি ('+bnResponse.status+')');
+    const [arabicPayload,bnPayload,pronPayload]=await Promise.all([arabicResponse.json(),bnResponse.json(),pronResponse.ok?pronResponse.json():Promise.resolve({rows:[]})]);
+    const verses=normalizeArabicPayload(arabicPayload,n);
+    const translations=normalizeTranslationPayload(bnPayload);
+    const pronunciationRows=normalizePronunciationPayload(pronPayload);
+    const translationByAya=new Map(translations.map(x=>[x.aya,x.translation]));
+    const pronunciationByAya=new Map(pronunciationRows.map(x=>[x.verse,x.text]));
+    if(verses.length!==SURA_AYAH_COUNTS[n-1])throw new Error('সূরা '+n+'-এর পূর্ণ আরবি আয়াত পাওয়া যায়নি; Reader থামানো হয়েছে।');
+    verses.forEach(v=>{
+      const no=v.numberInSurah;
+      const el=document.createElement('div');
+      el.id='ayah-'+no;
+      el.className='ayah';
+      el.innerHTML='<span class="ayah-no">'+no+'</span><div class="ayah-body"><div class="ayah-ar">'+v.arabic+'</div><div class="ayah-bn-label">বাংলা উচ্চারণ</div><div class="ayah-pron">'+(pronunciationByAya.get(no)||'উচ্চারণ পাওয়া যায়নি')+'</div><div class="ayah-bn-label">বাংলা অনুবাদ</div><div class="ayah-bn">'+(translationByAya.get(no)||'অনুবাদ পাওয়া যায়নি')+'</div></div>';
+      qtext.appendChild(el);
+    });
+    qstatus.textContent='সূরা '+n+' — '+SURA_NAMES[n-1]+' | '+verses.length+' আয়াত';
+    if(translations.length!==verses.length)toast('বাংলা অনুবাদের কিছু আয়াত পাওয়া যায়নি');
+    if(pronunciationRows.length!==verses.length)toast('বাংলা উচ্চারণের কিছু আয়াত পাওয়া যায়নি');
+    if(pendingReaderJump){
+      const target=document.getElementById('ayah-'+pendingReaderJump);
+      if(target){target.scrollIntoView({behavior:'smooth',block:'center'});target.setAttribute('data-jump','true');setTimeout(()=>target.removeAttribute('data-jump'),2200)}
+      pendingReaderJump=null;
+    }
+  }catch(e){qstatus.textContent='সমস্যা: '+e.message; qtext.innerHTML='<div class="reader-error">'+e.message+'</div>'}
+}
 document.getElementById('openReader').onclick=()=>{reader.classList.add('open');showSura(Number(select.value||1))};
 document.getElementById('closeReader').onclick=()=>reader.classList.remove('open');
 select.onchange=()=>showSura(Number(select.value));
