@@ -2,6 +2,15 @@ const CHAT_ENDPOINT='https://al-quran-research.mosharrof0000.workers.dev';
 const toastEl=document.getElementById('toast');
 function toast(t){toastEl.textContent=t;toastEl.classList.add('show');clearTimeout(window.__toast);window.__toast=setTimeout(()=>toastEl.classList.remove('show'),1800)}
 const drawer=document.getElementById('drawer');
+const quranHome=document.getElementById('quranHome');
+const sourceList=document.getElementById('sourceList');
+const SOURCES=[{id:'language-quran',name:'ভাষাভিত্তিক কুরআন',meta:'আমাদের তৈরি প্রধান কুরআন • স্থায়ী ১ নম্বর',status:'প্রধান'},{id:'tanzil-uthmani',name:'Tanzil Uthmani',meta:'আরবি কুরআন • বর্তমান ইনস্টল করা Reader Source',status:'Source ২'}];
+function renderSources(){sourceList.innerHTML='';SOURCES.forEach((s,i)=>{const b=document.createElement('button');b.className='source-card';b.type='button';b.dataset.source=s.id;b.innerHTML='<div class="source-top"><span class="source-number">'+(i+1)+'</span><span class="source-name">'+s.name+'</span><span class="source-badge">'+s.status+'</span></div><div class="source-meta">'+s.meta+'</div>';b.onclick=()=>selectSource(s.id);sourceList.appendChild(b)})}
+function openQuranHome(){quranHome.classList.add('open');renderSources();drawer.classList.remove('open')}
+function closeQuranHome(){quranHome.classList.remove('open')}
+function selectSource(id){if(id==='tanzil-uthmani'){closeQuranHome();reader.classList.add('open');showSura(Number(select.value||1));return}toast('ভাষাভিত্তিক কুরআন তৈরির ধাপ পরবর্তী পর্যায়ে শুরু হবে')}
+document.getElementById('openQuranHome').onclick=openQuranHome;
+document.getElementById('closeQuranHome').onclick=closeQuranHome;
 document.getElementById('menuBtn').onclick=()=>drawer.classList.add('open');
 document.getElementById('closeDrawer').onclick=()=>drawer.classList.remove('open');
 document.getElementById('themeBtn').onclick=()=>{document.body.classList.toggle('light');toast('থিম পরিবর্তনের জায়গা প্রস্তুত')};

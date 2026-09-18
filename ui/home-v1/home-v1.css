@@ -63,3 +63,12 @@ body{animation:dayAmbient16m 960s ease-in-out infinite;background-color:#fff}
 .ayah-ar{font-family:"Noto Naskh Arabic","Amiri",serif;font-size:25px;line-height:2.15;text-align:right;flex:1}
 .reader-credit{padding:8px 12px;border-top:1px solid var(--line);font-size:10px;color:var(--muted);text-align:center}
 .reader-credit a{color:inherit}
+
+
+/* Quran Home / Source Library */
+.quran-home{position:fixed;inset:0;background:#fff;z-index:46;display:none;flex-direction:column}
+.quran-home.open{display:flex}
+.quran-home-body{flex:1;overflow:auto;padding:22px 16px 32px;max-width:760px;width:100%;margin:0 auto}
+.quran-home-body h1{margin:0 0 6px;font-size:22px}.quran-home-body p{margin:0 0 18px;color:var(--muted);font-size:13px}
+.source-list{display:flex;flex-direction:column;gap:10px}.source-card{width:100%;text-align:left;border:1px solid var(--line);background:#fff;border-radius:14px;padding:14px 15px;cursor:pointer}.source-card:active{background:var(--soft)}
+.source-top{display:flex;align-items:center;gap:10px}.source-number{min-width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:var(--soft);font-weight:700;font-size:13px}.source-name{font-size:15px;font-weight:650}.source-meta{margin:7px 0 0 42px;color:var(--muted);font-size:12px;line-height:1.5}.source-badge{display:inline-block;margin-left:auto;padding:4px 7px;border-radius:999px;background:#eef7f4;color:var(--accent);font-size:10px}
