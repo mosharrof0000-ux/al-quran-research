@@ -17,7 +17,7 @@ function json(data,status,origin){return new Response(JSON.stringify(data),{stat
 
 async function diagnostic(request,env){
  const url=new URL(request.url);const origin=request.headers.get('Origin')||'';
- if(url.pathname!=='/diagnostic' && url.pathname!=='/diagnostic/research')return null;
+ if(url.pathname!=='/diagnostic' && url.pathname!=='/diagnostic/research' && url.pathname!=='/diagnostic/ai-research')return null;
  if(request.method==='OPTIONS')return new Response(null,{status:204,headers:corsHeaders(origin)});
  if(request.method!=='GET')return json({ok:false,error:'শুধু GET অনুরোধ গ্রহণ করা হয়।'},405,origin);
  if(url.pathname==='/diagnostic/ai-research'){
