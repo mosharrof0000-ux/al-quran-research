@@ -77,6 +77,7 @@ function loadActionBarDemo(){
  if(demo.__actions)demo.__actions.hidden=false;
 }
 
+document.addEventListener('click',e=>{document.querySelectorAll('.message-more-menu.open').forEach(m=>{if(!m.parentElement.contains(e.target))m.classList.remove('open')})});
 document.getElementById('sendBtn').onclick=sendQuestion;
 document.getElementById('prompt').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendQuestion()}});
 loadActionBarDemo();
