@@ -35,9 +35,20 @@ async function diagnostic(request,env){
 }
 
 function extractAyahReference(message){
- const text=String(message||'');
- if(/ফাতিহা/.test(text)&&/(?:১|1|এক)/.test(text)&&/আয়াত|আয়াত/.test(text))return [1,1];
- const m=text.match(/(?:সূরা|সুরা)\s*(\d+)\s*[:/.-]\s*(\d+)/i);
+ const raw=String(message||'').trim();
+ const digits=raw.replace(/[০-৯]/g,ch=>String('০১২৩৪৫৬৭৮৯'.indexOf(ch)));
+ const text=digits.replace(/[–—]/g,'-').replace(/\s+/g,' ');
+ const nameMap=[
+   [/\b(?:আল-)?বাকারা(?:র|কে|তে)?\b/i,2],
+   [/\b(?:আল-)?ফাতিহা(?:র|কে|তে)?\b/i,1]
+ ];
+ for(const [name,replacement] of nameMap){
+   if(name.test(text)){
+     const m=text.match(/(?:আয়াত|আয়াত|নম্বর|নং|নাম্বার|verse|ayat)?\s*(?:নম্বর|নং|নাম্বার)?\s*(\\d{1,3})\\s*(?:নম্বর|নং|নাম্বার|আয়াত|আয়াত|verse|ayat)?/i);
+     if(m)return [replacement,Number(m[1])];
+   }
+ }
+ const m=text.match(/(?:সূরা|সুরা)\s*(\\d+)\s*[:/.-]\s*(\\d+)/i);
  if(m)return [Number(m[1]),Number(m[2])];
  return null;
 }
@@ -48,7 +59,7 @@ function buildResearchProvenance(data,surah,ayah){
  const tokenIds=Array.isArray(data?.tokens)?data.tokens.map(t=>t?.token_id).filter(Boolean):[];
  return {
    source_type:'PROJECT_MASTER_DATASET',
-   source_file:'data/fatiha-master-v1.json',
+   source_file:data?.source_file||data?.source?.file||data?.record_source_file||'UNKNOWN_PROJECT_SOURCE',
    dataset_version:datasetVersion,
    dataset_status:data?.dataset_status||'PILOT',
    ayah_id:ayahId,
