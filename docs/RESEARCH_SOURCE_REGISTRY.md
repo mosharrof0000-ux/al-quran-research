@@ -22,9 +22,9 @@ RETIRED = নতুন workflow-এ আর ব্যবহারযোগ্য 
 | ID | Source / Document | Scope | Location / Endpoint | Status | Notes |
 |---|---|---|---|---|---|
 | SRC-001 | Quranic Arabic Corpus | Fatiha pilot linguistic evidence | https://corpus.quran.com/ | EXTERNAL_REFERENCE | data/fatiha-master-v1.json-এ E-QAC-001 হিসেবে নথিভুক্ত; external reference, project-verified data নয়। |
-| SRC-002 | Tanzil Uthmani text | Reader Arabic source | Reader endpoint configured in ui/home-v1/home-v1.js | PENDING_VERIFICATION | Current Reader uses a Tanzil-sourced Uthmani distribution endpoint; exact repository/source snapshot should be recorded before certification. |
-| SRC-003 | QuranEnc Bengali Zakaria | Reader Bengali translation | https://quranenc.com/api/v1/translation/sura/bengali_zakaria/{surah} | PENDING_VERIFICATION | Current Reader integration exists; displayed version text must be reconciled with the provider's current documented version before certification. |
-| SRC-004 | Anis Afifi Multilingual Quran Dataset | Reader Bengali pronunciation (transliteration_bn) | Hugging Face Dataset Viewer/API | PENDING_VERIFICATION | Dataset-level licence is documented in the Reader, but underlying provenance of the Bengali transliteration field remains separately under verification. |
+| SRC-002 | Tanzil Uthmani text | Reader Arabic source | Reader endpoint configured in ui/home-v1/home-v1.js | PENDING_VERIFICATION | Tanzil official text release is Version 1.1 (Feb 2021) and its official terms require verbatim use, source attribution, and a link to tanzil.net; the current Reader endpoint is a third-party Tanzil-sourced distribution, so the exact endpoint snapshot still needs to be fixed before certification. citeturn0search3turn0search0 |
+| SRC-003 | QuranEnc Bengali Zakaria | Reader Bengali translation | https://quranenc.com/api/v1/translation/sura/bengali_zakaria/{surah} | PENDING_VERIFICATION | Provider documents re-publication conditions including no modification, publisher/source attribution, version number, transcript information, and updating to the latest version. The current provider page shows a 2026-03-12 V1.0.19 entry, so the Reader's displayed V1.1.1 requires reconciliation before certification. citeturn0search5turn0search4 |
+| SRC-004 | Anis Afifi Multilingual Quran Dataset | Reader Bengali pronunciation (transliteration_bn) | Hugging Face Dataset Viewer/API | PENDING_VERIFICATION | Dataset card and repository metadata document CC BY 4.0 and the `transliteration_bn` field, but they do not by themselves establish the underlying source/provenance of that Bengali transliteration field. Keep this entry pending. citeturn0search1turn0search6 |
 | SRC-005 | Project Master Dataset — Fatiha | Canonical project research record | data/fatiha-master-v1.json | VERIFIED | Pilot master dataset; status is PILOT and individual records carry their own status. |
 
 ## Project Master Dataset
@@ -40,6 +40,7 @@ The Research API currently exposes records from this dataset. Therefore an AI re
 3. Bengali pronunciation underlying-source provenance is not yet fully established.
 4. The project Research API master dataset currently covers the Fatiha pilot, not the whole Quran.
 5. Natural-language ayah routing and source gating must remain fail-closed when no project record exists.
+6. AI research route diagnostics should remain read-only and expose routing/reference/provenance state without writing research data.
 
 ## Required Future Record Shape
 - source_id
@@ -60,3 +61,5 @@ The Research API currently exposes records from this dataset. Therefore an AI re
 
 ## Change History
 - 2026-09-19 — v1.0 created as the central Research Source/Document provenance registry.
+- 2026-09-19 — Provider evidence reviewed: Tanzil release/license, QuranEnc terms/current version entry, and Anis Afifi dataset metadata; unresolved provenance items remain PENDING_VERIFICATION.
+- 2026-09-19 — AI research route diagnostic added in backend/worker-entry.js; repository path verified, live runtime verification pending.
