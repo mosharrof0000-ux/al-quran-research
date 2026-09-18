@@ -129,3 +129,35 @@ No locked page, research dataset, or production architecture was intentionally c
 
 ### Next step
 Resume future work from this checkpoint. Any new material change must follow the Master Instruction, Universal AI Governance Gate, relevant individual instruction, backup/safe-point procedure, verification, and state/log update rules.
+
+
+## WORK-2026-09-18-MINIMAL-CHAT-UI-01
+
+**Status:** IMPLEMENTED ON SAFETY BRANCH — awaiting production verification
+
+### User decision
+ব্যবহারকারী বর্তমান ব্যস্ত/বড় Home UI সরিয়ে একদম simple, ChatGPT-style chat interface চান। মূল দৃশ্যমান কাঠামো: উপরে sidebar/menu access এবং নিচে প্রশ্ন লেখার composer; অপ্রয়োজনীয় UI থাকবে না।
+
+### Safety point
+- Backup branch: `backup/before-minimal-chat-ui-2026-09-18`
+- Working branch: `work/minimal-chat-ui-2026-09-18`
+
+### Changes
+Updated only:
+- `ui/home-v1/home-v1.html`
+- `ui/home-v1/home-v1.css`
+- `ui/home-v1/home-v1.js`
+- `CHATBOX-DESIGN-2026-09-08.instruction.md`
+
+### Preserved behavior
+- Existing question submission route to `dynamic-reader.html`
+- Bengali voice input
+- Sidebar research options
+- Search focuses the question box
+- Existing project/backend paths were not intentionally changed
+
+### Verification status
+Safety-branch file updates completed. Production Live Page verification remains the acceptance check after promotion/deployment.
+
+### Rollback
+If the live result is broken or rejected, restore the previous known-good state using the backup branch before another design iteration.
