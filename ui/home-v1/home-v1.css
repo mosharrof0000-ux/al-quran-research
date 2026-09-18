@@ -63,6 +63,7 @@ body{animation:dayAmbient16m 960s ease-in-out infinite;background-color:#fff}
 .ayah-body{flex:1;min-width:0}
 .ayah-ar{font-family:"Noto Naskh Arabic","Amiri",serif;font-size:25px;line-height:2.15;text-align:right;direction:rtl}
 .ayah-bn-label{margin-top:9px;color:var(--accent);font-size:11px;font-weight:700;direction:ltr;text-align:left}
+.ayah-pron{margin-top:3px;font-family:"Noto Sans Bengali",system-ui,sans-serif;font-size:15px;line-height:1.8;text-align:left;direction:ltr;color:#334155;font-weight:500}
 .ayah-bn{margin-top:3px;font-family:"Noto Sans Bengali",system-ui,sans-serif;font-size:15px;line-height:1.8;text-align:left;direction:ltr;color:#334155}
 .reader-credit{padding:8px 12px;border-top:1px solid var(--line);font-size:10px;color:var(--muted);text-align:center}
 .reader-credit a{color:inherit}
