@@ -20,6 +20,14 @@ async function diagnostic(request,env){
  if(url.pathname!=='/diagnostic' && url.pathname!=='/diagnostic/research')return null;
  if(request.method==='OPTIONS')return new Response(null,{status:204,headers:corsHeaders(origin)});
  if(request.method!=='GET')return json({ok:false,error:'শুধু GET অনুরোধ গ্রহণ করা হয়।'},405,origin);
+ if(url.pathname==='/diagnostic/ai-research'){
+   const message=String(url.searchParams.get('message')||'').trim();
+   if(!message)return json({ok:false,error:'message parameter required'},400,origin);
+   try{
+     const research=await getResearchContext(message);
+     return json({ok:true,service:'ai-research-route-diagnostic',message,research_context_ref:research.ref?research.ref[0]+':'+research.ref[1]:null,research_context_used:research.used,research_provenance:research.provenance||null,fail_closed:Boolean(research.ref&&!research.used)},200,origin);
+   }catch(e){return json({ok:false,error:'AI_RESEARCH_ROUTE_DIAGNOSTIC_FAILED',detail:String(e?.message||e).slice(0,300)},200,origin);}
+ }
  if(url.pathname==='/diagnostic/research'){
    const surah=Number(url.searchParams.get('surah')||1);
    const ayah=Number(url.searchParams.get('ayah')||1);
