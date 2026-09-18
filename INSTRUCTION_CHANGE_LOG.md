@@ -204,3 +204,16 @@ This change is documentation/governance only. No existing website entrypoint, ba
 
 ## Status
 ACTIVE — v1.9
+
+
+## 2026-09-19 — Research Source/Document Registry
+
+### Added
+- `docs/RESEARCH_SOURCE_REGISTRY.md`
+- `docs/RESEARCH_SOURCE_REGISTRY.instruction.md`
+
+### Purpose
+Create a central, auditable source/document provenance map separating Reader sources from project research evidence and explicitly recording unresolved provenance gaps.
+
+### Safety result
+Documentation-only governance change. No research dataset, backend entrypoint, Reader UI, public path, or existing research record was changed.

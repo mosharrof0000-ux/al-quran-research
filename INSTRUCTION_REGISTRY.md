@@ -57,6 +57,7 @@ This registry is the dictionary/index of project instructions. It records which 
 | `CHATBOX-V2.8-STATUS-2026-09-10.instruction.md` | `CHATBOX-V2.8-STATUS-2026-09-10.md` | ACTIVE |
 | `docs/OUR_THINKING_AND_VISION.instruction.md` | `docs/OUR_THINKING_AND_VISION.md` | ACTIVE |
 | `docs/PROJECT_COMMENTS.instruction.md` | `docs/PROJECT_COMMENTS.md` | ACTIVE |
+| `docs/RESEARCH_SOURCE_REGISTRY.instruction.md` | `docs/RESEARCH_SOURCE_REGISTRY.md` | ACTIVE |
 | `README.instruction.md` | `README.md` | ACTIVE |
 
 ## Audit Records
