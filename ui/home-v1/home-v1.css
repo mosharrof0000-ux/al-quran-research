@@ -23,27 +23,28 @@ body.light{background:#fff;color:#1f2933}
 .messages{width:min(760px,calc(100% - 28px));margin:0 auto;flex:1;overflow:auto;padding:20px 0 130px;display:flex;flex-direction:column;gap:12px}.chat-message{max-width:82%;padding:11px 14px;border-radius:16px;white-space:pre-wrap;line-height:1.65;font-size:14px}.chat-message.user{align-self:flex-end;background:#0b7d67;color:#fff;border-bottom-right-radius:5px}.chat-message.ai{align-self:flex-start;background:#f1f3f2;color:#17231f;border:1px solid #dfe5e2;border-bottom-left-radius:5px}.chat-message.pending{opacity:.7}.send:disabled{opacity:.55;cursor:wait}
 @media(max-width:650px){.messages{width:calc(100% - 18px);padding-top:12px}.chat-message{max-width:90%;font-size:13px}}
 
-/* Day ambient color cycle: 16 soft colors, 16 minutes per full cycle. */
+/* Day ambient color cycle: 16 soft colors, 16 minutes per full cycle; 1 minute per color step. */
 html,body{background:#fff}
 body{animation:dayAmbient16m 960s ease-in-out infinite;background-color:#fff}
 .shell{background:transparent}
 .topbar{background:rgba(255,255,255,.86)}
 @keyframes dayAmbient16m{
   0%{background-color:#fff}
-  6.666%{background-color:#f7f4ea}
-  13.333%{background-color:#f4edc9}
-  20%{background-color:#f3dcc7}
-  26.666%{background-color:#f1d8df}
-  33.333%{background-color:#efd5d2}
-  40%{background-color:#e3d9ed}
-  46.666%{background-color:#dcdff0}
-  53.333%{background-color:#d4e7ef}
-  60%{background-color:#d1e8e2}
-  66.666%{background-color:#d8eadb}
-  73.333%{background-color:#dcebcf}
-  80%{background-color:#d8dfc8}
-  86.666%{background-color:#e9dfc9}
-  93.333%{background-color:#e2e4e1}
+  6.25%{background-color:#f7f4ea}
+  12.5%{background-color:#f4edc9}
+  18.75%{background-color:#f3dcc7}
+  25%{background-color:#f1d8df}
+  31.25%{background-color:#efd5d2}
+  37.5%{background-color:#e3d9ed}
+  43.75%{background-color:#dcdff0}
+  50%{background-color:#d4e7ef}
+  56.25%{background-color:#d1e8e2}
+  62.5%{background-color:#d8eadb}
+  68.75%{background-color:#dcebcf}
+  75%{background-color:#d8dfc8}
+  81.25%{background-color:#e9dfc9}
+  87.5%{background-color:#e2e4e1}
+  93.75%{background-color:#d9e1e5}
   100%{background-color:#fff}
 }
 @media(prefers-reduced-motion:reduce){body{animation:none;background-color:#fff}}
