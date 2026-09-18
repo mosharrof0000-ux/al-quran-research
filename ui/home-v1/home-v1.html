@@ -15,6 +15,7 @@
   <button class="icon-btn" id="profileBtn" aria-label="প্রোফাইল">○</button>
 </header>
 
+<section class="quran-reader" id="quranReader" aria-label="কুরআন পাঠ"><div class="reader-head"><strong>📖 কুরআন পাঠ</strong><button id="closeReader">×</button></div><div class="reader-controls"><button id="prevSura">◀</button><select id="suraSelect" aria-label="সূরা"></select><button id="nextSura">▶</button></div><div id="quranStatus" class="reader-status">কুরআন উৎস লোড হচ্ছে…</div><div id="quranText" class="quran-text"></div><div class="reader-credit">আরবি উৎস: Tanzil Project (Uthmani Text, CC BY 3.0)। মূল লেখা অপরিবর্তিত রাখা হয়েছে। <a href="https://tanzil.net/" target="_blank" rel="noopener">tanzil.net</a></div></section>
 <main class="chat">
   <section class="welcome" id="welcome" aria-label="স্বাগতম">
     <div class="logo">ق</div>
@@ -36,7 +37,7 @@
 <div class="toast" id="toast"></div>
 <div class="drawer" id="drawer" aria-label="সাইডবার">
   <div class="drawer-head"><strong>আল-কুরআন রিসার্চ</strong><button id="closeDrawer" aria-label="বন্ধ">×</button></div>
-  <button>📖 কুরআন পাঠ</button>
+  <button id="openReader">📖 কুরআন পাঠ</button>
   <button>🔤 শব্দ ও Root</button>
   <button>🔎 গবেষণা</button>
   <button>⚖ তুলনামূলক অনুবাদ</button>

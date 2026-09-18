@@ -48,3 +48,18 @@ body{animation:dayAmbient16m 960s ease-in-out infinite;background-color:#fff}
   100%{background-color:#fff}
 }
 @media(prefers-reduced-motion:reduce){body{animation:none;background-color:#fff}}
+
+.quran-reader{position:fixed;inset:0;background:#fff;z-index:45;display:none;flex-direction:column}
+.quran-reader.open{display:flex}
+.reader-head{height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 14px;border-bottom:1px solid var(--line)}
+.reader-head button{border:0;background:transparent;font-size:26px}
+.reader-controls{display:flex;gap:8px;align-items:center;padding:10px 12px;border-bottom:1px solid var(--line)}
+.reader-controls button{border:1px solid var(--line);background:var(--soft);border-radius:9px;width:38px;height:36px}
+.reader-controls select{flex:1;height:36px;border:1px solid var(--line);border-radius:9px;background:#fff;padding:0 8px}
+.reader-status{padding:8px 14px;color:var(--muted);font-size:12px}
+.quran-text{flex:1;overflow:auto;padding:10px 16px 24px;direction:rtl}
+.ayah{display:flex;align-items:flex-start;gap:10px;padding:14px 4px;border-bottom:1px solid #eef0ef}
+.ayah-no{direction:ltr;min-width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--soft);color:var(--muted);font-size:11px}
+.ayah-ar{font-family:"Noto Naskh Arabic","Amiri",serif;font-size:25px;line-height:2.15;text-align:right;flex:1}
+.reader-credit{padding:8px 12px;border-top:1px solid var(--line);font-size:10px;color:var(--muted);text-align:center}
+.reader-credit a{color:inherit}
