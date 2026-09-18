@@ -18,6 +18,7 @@ The live home/chat entry interface is intentionally minimal and ChatGPT-like in 
 5. Any live UI change requires backup, targeted diff review, and live-path verification.
 6. The minimal UI must retain a clear path to the research/question workflow and must not remove the underlying research capabilities.
 7. Do not add decorative UI, cards, banners, or large navigation groups unless the user explicitly requests them.
+8. The daytime ambient background may use the approved 16-color soft palette with a continuous, very slow cycle of about 96 seconds; keep the minimal ChatGPT-like layout, readability, and reduced-motion accessibility intact.
 
 ## Verification
 Check affected UI files, endpoint references, interaction behavior, responsive behavior, question submission flow, voice input, drawer/menu behavior, and unrelated-file diff scope.
