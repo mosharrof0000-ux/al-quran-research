@@ -24,12 +24,12 @@ document.getElementById('plusBtn').onclick=()=>toast('গবেষণা অপ�
 document.getElementById('micBtn').onclick=()=>{if(!('webkitSpeechRecognition'in window||'SpeechRecognition'in window)){toast('এই ব্রাউজারে voice input নেই');return}const R=window.SpeechRecognition||window.webkitSpeechRecognition;const r=new R();r.lang='bn-BD';r.onresult=e=>document.getElementById('prompt').value=e.results[0][0].transcript;r.start();toast('শুনছি…')};
 function addMessage(text,type){const box=document.getElementById('messages');const el=document.createElement('div');el.className='chat-message '+type;el.textContent=text;box.appendChild(el);box.scrollTop=box.scrollHeight;return el}
 function setBusy(busy){document.getElementById('sendBtn').disabled=busy;document.getElementById('sendBtn').textContent=busy?'…':'↑'}
-async function sendQuestion(){const prompt=document.getElementById('prompt');const q=prompt.value.trim();if(!q){toast('প্রশ্ন লিখুন বা বলুন');return}sessionStorage.setItem('aqr:lastQuestion',q);document.getElementById('welcome').style.display='none';addMessage(q,'user');const readerJump=parseReaderJump(q);prompt.value='';setBusy(true);const pending=addMessage('উত্তর তৈরি হচ্ছে…','ai pending');try{const response=await fetch(CHAT_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:q,mode:'general'})});let data={};try{data=await response.json()}catch{}if(!response.ok)throw new Error(data.error||'AI সংযোগে সমস্যা হয়েছে।');pending.textContent=data.answer||'AI কোনো উত্তর দেয়নি।';if(readerJump)openReaderAt(readerJump.sura,readerJump.ayah,readerJump.source);if(data.provider)pending.dataset.provider=data.provider}catch(error){pending.textContent='দুঃখিত, AI সংযোগে সমস্যা হয়েছে। আবার চেষ্টা করুন।';toast(String(error.message||error))}finally{pending.classList.remove('pending');setBusy(false)}}
+async function sendQuestion(){const prompt=document.getElementById('prompt');const q=prompt.value.trim();if(!q){toast('প্রশ্ন লিখুন বা বলুন');return}sessionStorage.setItem('aqr:lastQuestion',q);document.getElementById('welcome').style.display='none';addMessage(q,'user');const readerJump=parseReaderJump(q);prompt.value='';if(readerJump)openReaderAt(readerJump.sura,readerJump.ayah,readerJump.source);setBusy(true);const pending=addMessage('উত্তর তৈরি হচ্ছে…','ai pending');try{const response=await fetch(CHAT_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:q,mode:'general'})});let data={};try{data=await response.json()}catch{}if(!response.ok)throw new Error(data.error||'AI সংযোগে সমস্যা হয়েছে।');pending.textContent=data.answer||'AI কোনো উত্তর দেয়নি।';if(data.provider)pending.dataset.provider=data.provider}catch(error){pending.textContent='দুঃখিত, AI সংযোগে সমস্যা হয়েছে। আবার চেষ্টা করুন।';toast(String(error.message||error))}finally{pending.classList.remove('pending');setBusy(false)}}
 document.getElementById('sendBtn').onclick=sendQuestion;
 document.getElementById('prompt').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendQuestion()}});
 
 const SURA_NAMES=["আল-ফাতিহা","আল-বাকারা","আলে ইমরান","আন-নিসা","আল-মায়িদা","আল-আনআম","আল-আরাফ","আল-আনফাল","আত-তাওবা","ইউনুস","হুদ","ইউসুফ","আর-রাদ","ইবরাহিম","আল-হিজর","আন-নাহল","আল-ইসরা","আল-কাহফ","মারইয়াম","ত্ব-হা","আল-আম্বিয়া","আল-হাজ্জ","আল-মুমিনুন","আন-নূর","আল-ফুরকান","আশ-শুআরা","আন-নামল","আল-কাসাস","আল-আনকাবুত","আর-রূম","লুকমান","আস-সাজদাহ","আল-আহযাব","সাবা","ফাতির","ইয়াসিন","আস-সাফফাত","সাদ","আয-যুমার","গাফির","ফুসসিলাত","আশ-শূরা","আয-যুখরুফ","আদ-দুখান","আল-জাসিয়া","আল-আহকাফ","মুহাম্মাদ","আল-ফাতহ","আল-হুজুরাত","কাফ","আয-যারিয়াত","আত-তূর","আন-নাজম","আল-কামার","আর-রহমান","আল-ওয়াকিয়া","আল-হাদিদ","আল-মুজাদিলা","আল-হাশর","আল-মুমতাহিনা","আস-সাফ","আল-জুমুআ","আল-মুনাফিকুন","আত-তাগাবুন","আত-তালাক","আত-তাহরিম","আল-মুলক","আল-কলম","আল-হাক্কাহ","আল-মাআরিজ","নূহ","আল-জিন্ন","আল-মুযযাম্মিল","আল-মুদ্দাসসির","আল-কিয়ামাহ","আল-ইনসান","আল-মুরসালাত","আন-নাবা","আন-নাযিআত","আবাসা","আত-তাকভীর","আল-ইনফিতার","আল-মুতাফফিফিন","আল-ইনশিকাক","আল-বুরুজ","আত-তারিক","আল-আলা","আল-গাশিয়াহ","আল-ফজর","আল-বালাদ","আশ-শামস","আল-লাইল","আদ-দুহা","আশ-শারহ","আত-তিন","আল-আলাক","আল-কদর","আল-বাইয়্যিনাহ","আয-যিলযাল","আল-আদিয়াত","আল-কারিয়াহ","আত-তাকাসুর","আল-আসর","আল-হুমাযাহ","আল-ফিল","কুরাইশ","আল-মাউন","আল-কাওসার","আল-কাফিরুন","আন-নাসর","আল-মাসাদ","আল-ইখলাস","আল-ফালাক","আন-নাস"];
-const QURAN_API='https://quranonlineread.com/api/surah/';
+const QURAN_API='https://quran-json.risan.workers.dev/text/uthmani/chapters/';
 const BENGALI_TRANSLATION_API='https://quranenc.com/api/v1/translation/sura/bengali_zakaria/';
 const BENGALI_PRONUNCIATION_API='https://datasets-server.huggingface.co/rows?dataset=anisafifi%2Fmultilingual-quran&config=default&split=all';
 const SURA_AYAH_COUNTS=[7,286,200,176,120,165,206,75,129,109,123,111,43,52,99,128,111,110,98,135,112,78,118,64,77,227,93,88,69,60,34,30,73,54,45,83,182,88,75,85,54,53,89,59,37,35,38,29,18,45,60,49,62,55,78,96,29,22,24,13,14,11,11,18,12,12,30,52,52,44,28,28,20,56,40,31,50,40,46,42,29,19,36,25,22,17,19,26,30,20,15,21,11,8,8,19,5,8,8,11,11,8,3,9,5,4,7,3,6,3,5,4,5,6];
@@ -37,17 +37,27 @@ function quranSourceOffset(n){return SURA_AYAH_COUNTS.slice(0,n-1).reduce((a,b)=
 const reader=document.getElementById('quranReader'),select=document.getElementById('suraSelect'),qtext=document.getElementById('quranText'),qstatus=document.getElementById('quranStatus');
 SURA_NAMES.forEach((n,i)=>{const o=document.createElement('option');o.value=i+1;o.textContent=(i+1)+' — '+n;select.appendChild(o)});
 function normalizeArabicPayload(payload,n){
-  const verses=payload?.verses||payload?.ayahs||payload?.data?.verses||payload?.data?.ayahs||payload?.data||[];
+  const verses=payload?.surahs?.[0]?.ayahs||payload?.ayahs||payload?.verses||payload?.data?.ayahs||payload?.data?.verses||payload?.data||[];
   if(!Array.isArray(verses))return [];
-  return verses.map((v,i)=>({numberInSurah:Number(v.numberInSurah||v.verse_number||v.aya||i+1),arabic:v.arabic||v.text||v.text_ar||''})).filter(v=>v.numberInSurah>=1&&v.numberInSurah<=SURA_AYAH_COUNTS[n-1]);
+  return verses.map((v,i)=>({numberInSurah:Number(v.number||v.numberInSurah||v.verse_number||v.aya||i+1),arabic:String(v.text||v.arabic||v.text_ar||'')})).filter(v=>v.numberInSurah>=1&&v.numberInSurah<=SURA_AYAH_COUNTS[n-1]);
 }
 function normalizeTranslationPayload(payload){
   const rows=Array.isArray(payload)?payload:(payload?.data||payload?.ayahs||[]);
-  return Array.isArray(rows)?rows.map(x=>({aya:Number(x.aya||x.verse_number),translation:String(x.translation||'')})).filter(x=>x.aya>0):[];
+  return Array.isArray(rows)?rows.map(x=>({aya:Number(x.aya||x.verse_number||x.number),translation:String(x.translation||x.text||'')})).filter(x=>x.aya>0):[];
 }
-function normalizePronunciationPayload(payload){
+function normalizePronunciationPayload(payload,n){
   const rows=Array.isArray(payload?.rows)?payload.rows:[];
-  return rows.map(x=>x.row||{}).map(x=>({verse:Number(x.verse_number||x.aya||0),text:String(x.transliteration_bn||'')})).filter(x=>x.verse>0);
+  return rows.map(x=>x.row||{}).filter(x=>Number(x.chapter_number||x.sura||x.surah||0)===n).map(x=>({verse:Number(x.verse_number||x.aya||x.number||0),text:String(x.transliteration_bn||'')})).filter(x=>x.verse>0);
+}
+async function loadPronunciation(n){
+  const offset=quranSourceOffset(n),total=SURA_AYAH_COUNTS[n-1],parts=[];
+  for(let start=0;start<total;start+=100){
+    const r=await fetch(BENGALI_PRONUNCIATION_API+'&offset='+(offset+start)+'&length='+Math.min(100,total-start),{cache:'no-store'});
+    if(!r.ok)continue;
+    const p=await r.json();
+    parts.push(...normalizePronunciationPayload(p,n));
+  }
+  return parts;
 }
 async function showSura(n){
   n=Number(n); if(!Number.isInteger(n)||n<1||n>114)return;
@@ -55,18 +65,15 @@ async function showSura(n){
     qstatus.textContent='সূরা '+n+' — '+SURA_NAMES[n-1]+' লোড হচ্ছে…';
     qtext.innerHTML='';
     select.value=String(n);
-    const pronOffset=quranSourceOffset(n);
-    const [arabicResponse,bnResponse,pronResponse]=await Promise.all([
+    const [arabicResponse,bnResponse]=await Promise.all([
       fetch(QURAN_API+n+'.json',{cache:'force-cache'}),
-      fetch(BENGALI_TRANSLATION_API+n,{cache:'no-store'}),
-      fetch(BENGALI_PRONUNCIATION_API+'&offset='+pronOffset+'&length='+SURA_AYAH_COUNTS[n-1],{cache:'no-store'})
+      fetch(BENGALI_TRANSLATION_API+n,{cache:'no-store'})
     ]);
     if(!arabicResponse.ok)throw new Error('আরবি উৎস থেকে ডেটা পাওয়া যায়নি ('+arabicResponse.status+')');
     if(!bnResponse.ok)throw new Error('বাংলা অনুবাদ উৎস থেকে ডেটা পাওয়া যায়নি ('+bnResponse.status+')');
-    const [arabicPayload,bnPayload,pronPayload]=await Promise.all([arabicResponse.json(),bnResponse.json(),pronResponse.ok?pronResponse.json():Promise.resolve({rows:[]})]);
+    const [arabicPayload,bnPayload,pronunciationRows]=await Promise.all([arabicResponse.json(),bnResponse.json(),loadPronunciation(n)]);
     const verses=normalizeArabicPayload(arabicPayload,n);
     const translations=normalizeTranslationPayload(bnPayload);
-    const pronunciationRows=normalizePronunciationPayload(pronPayload);
     const translationByAya=new Map(translations.map(x=>[x.aya,x.translation]));
     const pronunciationByAya=new Map(pronunciationRows.map(x=>[x.verse,x.text]));
     if(verses.length!==SURA_AYAH_COUNTS[n-1])throw new Error('সূরা '+n+'-এর পূর্ণ আরবি আয়াত পাওয়া যায়নি; Reader থামানো হয়েছে।');
