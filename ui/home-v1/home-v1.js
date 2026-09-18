@@ -35,7 +35,7 @@ function addMessage(text,type){
    actions.className='message-actions';
    actions.hidden=true;
    const makeBtn=(label,title,handler)=>{const b=document.createElement('button');b.type='button';b.className='message-action';b.textContent=label;b.title=title;b.setAttribute('aria-label',title);b.onclick=handler;actions.appendChild(b);return b};
-   makeBtn('⧉','কপি',()=>copyAiMessage(body.textContent));
+   makeBtn('📋','কপি',()=>copyAiMessage(body.textContent));
    const like=makeBtn('👍','ভালো লেগেছে',()=>{like.classList.toggle('active');dislike.classList.remove('active');toast(like.classList.contains('active')?'পছন্দ সংরক্ষিত':'পছন্দ সরানো হয়েছে')});
    const dislike=makeBtn('👎','ভালো লাগেনি',()=>{dislike.classList.toggle('active');like.classList.remove('active');toast(dislike.classList.contains('active')?'মতামত সংরক্ষিত':'মতামত সরানো হয়েছে')});
    makeBtn('🔊','পড়ে শোনান',()=>speakAiMessage(body.textContent));
