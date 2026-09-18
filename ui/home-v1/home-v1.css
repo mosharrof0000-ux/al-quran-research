@@ -19,3 +19,6 @@ body{overflow:hidden}.shell{width:100%;height:100%;max-width:920px;margin:auto;d
 .drawer>button{width:100%;text-align:left;border:0;background:transparent;border-radius:10px;padding:12px 10px;margin:2px 0;color:var(--text);font-size:14px}.drawer>button:active{background:var(--soft)}
 @media(max-width:600px){.topbar{height:52px;min-height:52px}.brand{font-size:14px}.chat{padding:18px 10px 10px}.welcome h1{font-size:20px}.welcome p{font-size:13px}.composer{border-radius:20px}.composer textarea{font-size:14px}}
 body.light{background:#fff;color:#1f2933}
+/* Chat connection layer */
+.messages{width:min(760px,calc(100% - 28px));margin:0 auto;flex:1;overflow:auto;padding:20px 0 130px;display:flex;flex-direction:column;gap:12px}.chat-message{max-width:82%;padding:11px 14px;border-radius:16px;white-space:pre-wrap;line-height:1.65;font-size:14px}.chat-message.user{align-self:flex-end;background:#0b7d67;color:#fff;border-bottom-right-radius:5px}.chat-message.ai{align-self:flex-start;background:#f1f3f2;color:#17231f;border:1px solid #dfe5e2;border-bottom-left-radius:5px}.chat-message.pending{opacity:.7}.send:disabled{opacity:.55;cursor:wait}
+@media(max-width:650px){.messages{width:calc(100% - 18px);padding-top:12px}.chat-message{max-width:90%;font-size:13px}}
