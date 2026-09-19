@@ -17,7 +17,7 @@ document.getElementById('openQuranHome').onclick=openQuranHome;
 document.getElementById('closeQuranHome').onclick=closeQuranHome;
 document.getElementById('menuBtn').onclick=()=>drawer.classList.add('open');
 document.getElementById('closeDrawer').onclick=()=>drawer.classList.remove('open');
-document.getElementById('themeBtn').onclick=()=>{document.body.classList.toggle('light');toast('থিম পরিবর্তনের জায়গা প্রস্তুত')};
+document.getElementById('themeBtn').onclick=()=>{const night=document.body.classList.toggle('night');document.body.classList.toggle('light',!night);toast(night?'রাতের ১৬ রঙ চালু হয়েছে':'দিনের ১৬ রঙ চালু হয়েছে')};
 document.getElementById('profileBtn').onclick=()=>toast('প্রোফাইল প্যানেল');
 document.getElementById('searchBtn').onclick=()=>document.getElementById('prompt').focus();
 document.getElementById('plusBtn').onclick=()=>toast('গবেষণা অপশন');
