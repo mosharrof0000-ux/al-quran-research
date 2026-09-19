@@ -95,3 +95,50 @@ body{animation:dayAmbient16m 960s ease-in-out infinite;background-color:#fff}
 .message-action:hover{background:rgba(15,118,110,.08);color:#0f766e}.message-action:active{transform:scale(.94)}.message-action.active{background:rgba(15,118,110,.12);color:#0f766e}.message-action:focus-visible{outline:2px solid #8ab9aa;outline-offset:1px}
 .message-more{position:relative}.message-more-menu{position:absolute;left:0;bottom:35px;display:none;min-width:190px;padding:5px;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.12);z-index:20}.message-more-menu.open{display:block}.message-more-menu button{display:block;width:100%;border:0;background:transparent;text-align:left;padding:9px 10px;border-radius:7px;color:var(--text);font:inherit;font-size:12px;cursor:pointer}.message-more-menu button:hover,.message-more-menu button:active{background:var(--soft)}
 @media(max-width:480px){.message-actions{gap:0}.message-action{width:29px;height:29px;font-size:14px}.message-more-menu{min-width:180px}}
+
+
+/* Night ambient color cycle: 16 deep colors, 16 minutes per full cycle. */
+body.night{animation:nightAmbient16m 960s ease-in-out infinite;color:#e7ecea;--bg:#101715;--text:#e7ecea;--muted:#aab8b3;--line:#2b3935;--soft:#1a2522;--accent:#63c7a7}
+body.night .shell{background:transparent}
+body.night .topbar{background:rgba(14,20,18,.82);border-color:#2b3935}
+body.night .icon-btn,body.night .brand{color:#e7ecea}
+body.night .composer{background:#18211f;border-color:#3a4945;box-shadow:0 1px 6px rgba(0,0,0,.28)}
+body.night .composer textarea{color:#e7ecea}
+body.night .composer textarea::placeholder{color:#879691}
+body.night .small-btn{color:#aebbb7}
+body.night .send{background:#d9eee7;color:#10201b}
+body.night .drawer,body.night .quran-reader,body.night .quran-home{background:#121a18;border-color:#2b3935;color:#e7ecea}
+body.night .drawer-head,body.night .reader-head,body.night .reader-controls,body.night .reader-credit{border-color:#2b3935}
+body.night .drawer>button,body.night .drawer-head button,body.night .reader-head button{color:#e7ecea}
+body.night .chat-message.ai{background:#1a2522;color:#e7ecea;border-color:#30403b}
+body.night .chat-message.user{background:#126b59;color:#f2fffa}
+body.night .ayah{border-color:#26342f}
+body.night .ayah-pron,body.night .ayah-bn{color:#cbd7d3}
+body.night .reader-controls button,body.night .reader-controls select,body.night .source-card{background:#18221f;color:#e7ecea;border-color:#33433e}
+body.night .source-number{background:#23312d}
+body.night .source-badge{background:#173a31;color:#75d4b5}
+body.night .message-action{color:#9eaca7}
+body.night .message-action:hover,body.night .message-action:active,body.night .message-action.active{background:rgba(99,199,167,.13);color:#7ad6b8}
+body.night .message-more-menu{background:#18221f;border-color:#33433e;box-shadow:0 8px 24px rgba(0,0,0,.35)}
+body.night .message-more-menu button{color:#e7ecea}
+body.night .message-more-menu button:hover,body.night .message-more-menu button:active{background:#23312d}
+@keyframes nightAmbient16m{
+  0%{background-color:#0f1715}
+  6.25%{background-color:#18201a}
+  12.5%{background-color:#252316}
+  18.75%{background-color:#2a1d17}
+  25%{background-color:#2a1921}
+  31.25%{background-color:#28191a}
+  37.5%{background-color:#211a2a}
+  43.75%{background-color:#191d2d}
+  50%{background-color:#13252c}
+  56.25%{background-color:#102a25}
+  62.5%{background-color:#15291d}
+  68.75%{background-color:#202b18}
+  75%{background-color:#24291b}
+  81.25%{background-color:#2b241a}
+  87.5%{background-color:#202422}
+  93.75%{background-color:#182126}
+  100%{background-color:#0f1715}
+}
+@media(prefers-reduced-motion:reduce){body.night{animation:none;background-color:#101715}}
