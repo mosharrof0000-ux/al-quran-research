@@ -25,12 +25,23 @@
   </section>
   <section class="messages" id="messages" aria-live="polite" aria-label="চ্যাট"></section>
 
-  <section class="composer" aria-label="প্রশ্ন লেখার স্থান">
-    <textarea id="prompt" rows="1" placeholder="আপনার প্রশ্ন লিখুন..." aria-label="আপনার প্রশ্ন"></textarea>
-    <div class="composer-actions">
-      <button id="plusBtn" class="small-btn" aria-label="অতিরিক্ত অপশন">+</button>
-      <button id="micBtn" class="small-btn" aria-label="ভয়েস">♩</button>
-      <button id="sendBtn" class="send" aria-label="পাঠান">↑</button>
+  <section class="composer-wrap" aria-label="স্মার্ট প্রশ্ন লেখার স্থান">
+    <div class="composer-tools" id="composerTools" hidden>
+      <button type="button" data-tool="ayah">📖 আয়াত</button>
+      <button type="button" data-tool="research">🔎 গবেষণা</button>
+      <button type="button" data-tool="word">🔤 শব্দ / Root</button>
+      <button type="button" data-tool="file">📎 ফাইল</button>
+      <button type="button" data-tool="math">🧮 গণনা</button>
+    </div>
+    <div class="composer" aria-label="প্রশ্ন লেখার স্থান">
+      <div class="composer-actions composer-left">
+        <button id="plusBtn" class="small-btn" aria-label="অতিরিক্ত অপশন" aria-expanded="false">+</button>
+      </div>
+      <textarea id="prompt" rows="1" placeholder="আপনার প্রশ্ন লিখুন..." aria-label="আপনার প্রশ্ন"></textarea>
+      <div class="composer-actions composer-right">
+        <button id="micBtn" class="small-btn" aria-label="ভয়েস">♩</button>
+        <button id="sendBtn" class="send" aria-label="পাঠান">↑</button>
+      </div>
     </div>
   </section>
 </main>

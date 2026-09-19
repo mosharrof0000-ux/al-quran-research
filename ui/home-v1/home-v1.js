@@ -20,7 +20,11 @@ document.getElementById('closeDrawer').onclick=()=>drawer.classList.remove('open
 document.getElementById('themeBtn').onclick=()=>{const night=document.body.classList.toggle('night');document.body.classList.toggle('light',!night);toast(night?'রাতের ১৬ রঙ চালু হয়েছে':'দিনের ১৬ রঙ চালু হয়েছে')};
 document.getElementById('profileBtn').onclick=()=>toast('প্রোফাইল প্যানেল');
 document.getElementById('searchBtn').onclick=()=>document.getElementById('prompt').focus();
-document.getElementById('plusBtn').onclick=()=>toast('গবেষণা অপশন');
+const composerTools=document.getElementById('composerTools');
+const plusBtn=document.getElementById('plusBtn');
+function closeComposerTools(){composerTools.hidden=true;plusBtn.setAttribute('aria-expanded','false')}
+plusBtn.onclick=()=>{const open=composerTools.hidden;composerTools.hidden=!open;plusBtn.setAttribute('aria-expanded',String(open))};
+composerTools.querySelectorAll('[data-tool]').forEach(b=>b.onclick=()=>{const labels={ayah:'📖 আয়াত',research:'🔎 গবেষণা',word:'🔤 শব্দ / Root',file:'📎 ফাইল',math:'🧮 গণনা'};document.getElementById('prompt').placeholder=labels[b.dataset.tool]+' নিয়ে প্রশ্ন লিখুন...';document.getElementById('prompt').focus();closeComposerTools()});
 document.getElementById('micBtn').onclick=()=>{if(!('webkitSpeechRecognition'in window||'SpeechRecognition'in window)){toast('এই ব্রাউজারে voice input নেই');return}const R=window.SpeechRecognition||window.webkitSpeechRecognition;const r=new R();r.lang='bn-BD';r.onresult=e=>document.getElementById('prompt').value=e.results[0][0].transcript;r.start();toast('শুনছি…')};
 function addMessage(text,type){
  const box=document.getElementById('messages');
@@ -78,7 +82,10 @@ function loadActionBarDemo(){
 }
 
 document.getElementById('sendBtn').onclick=sendQuestion;
-document.getElementById('prompt').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendQuestion()}});
+const promptBox=document.getElementById('prompt');
+function autoResizePrompt(){promptBox.style.height='auto';const max=140;promptBox.style.height=Math.min(promptBox.scrollHeight,max)+'px';promptBox.style.overflowY=promptBox.scrollHeight>max?'auto':'hidden'}
+promptBox.addEventListener('input',autoResizePrompt);
+promptBox.addEventListener('keydown',e=>{if(e.key==='Escape'){closeComposerTools();return}if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendQuestion()}});
 loadActionBarDemo();
 
 const SURA_NAMES=["আল-ফাতিহা","আল-বাকারা","আলে ইমরান","আন-নিসা","আল-মায়িদা","আল-আনআম","আল-আরাফ","আল-আনফাল","আত-তাওবা","ইউনুস","হুদ","ইউসুফ","আর-রাদ","ইবরাহিম","আল-হিজর","আন-নাহল","আল-ইসরা","আল-কাহফ","মারইয়াম","ত্ব-হা","আল-আম্বিয়া","আল-হাজ্জ","আল-মুমিনুন","আন-নূর","আল-ফুরকান","আশ-শুআরা","আন-নামল","আল-কাসাস","আল-আনকাবুত","আর-রূম","লুকমান","আস-সাজদাহ","আল-আহযাব","সাবা","ফাতির","ইয়াসিন","আস-সাফফাত","সাদ","আয-যুমার","গাফির","ফুসসিলাত","আশ-শূরা","আয-যুখরুফ","আদ-দুখান","আল-জাসিয়া","আল-আহকাফ","মুহাম্মাদ","আল-ফাতহ","আল-হুজুরাত","কাফ","আয-যারিয়াত","আত-তূর","আন-নাজম","আল-কামার","আর-রহমান","আল-ওয়াকিয়া","আল-হাদিদ","আল-মুজাদিলা","আল-হাশর","আল-মুমতাহিনা","আস-সাফ","আল-জুমুআ","আল-মুনাফিকুন","আত-তাগাবুন","আত-তালাক","আত-তাহরিম","আল-মুলক","আল-কলম","আল-হাক্কাহ","আল-মাআরিজ","নূহ","আল-জিন্ন","আল-মুযযাম্মিল","আল-মুদ্দাসসির","আল-কিয়ামাহ","আল-ইনসান","আল-মুরসালাত","আন-নাবা","আন-নাযিআত","আবাসা","আত-তাকভীর","আল-ইনফিতার","আল-মুতাফফিফিন","আল-ইনশিকাক","আল-বুরুজ","আত-তারিক","আল-আলা","আল-গাশিয়াহ","আল-ফজর","আল-বালাদ","আশ-শামস","আল-লাইল","আদ-দুহা","আশ-শারহ","আত-তিন","আল-আলাক","আল-কদর","আল-বাইয়্যিনাহ","আয-যিলযাল","আল-আদিয়াত","আল-কারিয়াহ","আত-তাকাসুর","আল-আসর","আল-হুমাযাহ","আল-ফিল","কুরাইশ","আল-মাউন","আল-কাওসার","আল-কাফিরুন","আন-নাসর","আল-মাসাদ","আল-ইখলাস","আল-ফালাক","আন-নাস"];
@@ -153,3 +160,5 @@ document.getElementById('closeReader').onclick=()=>reader.classList.remove('open
 select.onchange=()=>showSura(Number(select.value));
 document.getElementById('prevSura').onclick=()=>showSura(Math.max(1,Number(select.value)-1));
 document.getElementById('nextSura').onclick=()=>showSura(Math.min(114,Number(select.value)+1));
+
+// Smart Chat Composer v1: adaptive input, left tools, focused tool prompts.
