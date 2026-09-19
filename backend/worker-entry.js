@@ -15,6 +15,23 @@ const ALLOWED_ORIGINS=['https://mosharrof0000-ux.github.io'];
 function corsHeaders(origin){return {'Access-Control-Allow-Origin':ALLOWED_ORIGINS.includes(origin)?origin:ALLOWED_ORIGINS[0],'Access-Control-Allow-Methods':'GET, POST, OPTIONS','Access-Control-Allow-Headers':'Content-Type','Content-Type':'application/json; charset=utf-8','Vary':'Origin'};}
 function json(data,status,origin){return new Response(JSON.stringify(data),{status,headers:corsHeaders(origin)});}
 
+async function readerProxy(request,env){
+ const url=new URL(request.url);const origin=request.headers.get('Origin')||'';
+ const m=url.pathname.match(/^\\/reader\\/(translation|pronunciation)\\/(\\d+)$/);
+ const p=url.pathname==='/reader/pronunciation'?['pronunciation',null]:m?m.slice(1):null;
+ if(!p)return null;
+ if(request.method==='OPTIONS')return new Response(null,{status:204,headers:corsHeaders(origin)});
+ if(request.method!=='GET')return json({ok:false,error:'শুধু GET অনুরোধ গ্রহণ করা হয়।'},405,origin);
+ const n=p[1] ? Number(p[1]) : 0;if(p[0]==='translation'&&(n<1||n>114))return json({ok:false,error:'Invalid surah'},400,origin);
+ try{
+  const target=p[0]==='translation'
+   ? 'https://quranenc.com/api/v1/translation/sura/bengali_zakaria/'+n
+   : 'https://datasets-server.huggingface.co/rows?dataset=anisafifi%2Fmultilingual-quran&config=default&split=train&offset='+encodeURIComponent(url.searchParams.get('offset')||'0')+'&length='+encodeURIComponent(url.searchParams.get('length')||'100');
+  const r=await fetch(target,{headers:{'Accept':'application/json'}});const body=await r.text();
+  return new Response(body,{status:r.status,headers:{...corsHeaders(origin),'Cache-Control':'public, max-age=300'}});
+ }catch(e){return json({ok:false,error:'READER_SOURCE_FETCH_FAILED',detail:String(e?.message||e).slice(0,300)},502,origin)}
+}
+
 async function diagnostic(request,env){
  const url=new URL(request.url);const origin=request.headers.get('Origin')||'';
  if(url.pathname!=='/diagnostic' && url.pathname!=='/diagnostic/research' && url.pathname!=='/diagnostic/ai-research')return null;
@@ -115,4 +132,4 @@ async function directGemini(request,env,origin){
  return null;
 }
 
-export default {async fetch(request,env,ctx){const origin=request.headers.get('Origin')||'';const d=await diagnostic(request,env);if(d)return d;if(request.method==='OPTIONS')return new Response(null,{status:204,headers:{'Access-Control-Allow-Origin':ALLOWED_ORIGINS.includes(origin)?origin:ALLOWED_ORIGINS[0],'Access-Control-Allow-Methods':'GET, POST, OPTIONS','Access-Control-Allow-Headers':'Content-Type','Content-Type':'application/json; charset=utf-8','Vary':'Origin'}});const research=await handleResearchApi(request);if(research)return research;const gemini=await directGemini(request,env,origin);if(gemini)return gemini;const response=await worker.fetch(request.clone(),env,ctx);if(response.status<500)return response;const recovery=await recoverChat(request.clone(),env);if(recovery)return recovery;return response;}};
+export default {async fetch(request,env,ctx){const origin=request.headers.get('Origin')||'';const rp=await readerProxy(request,env);if(rp)return rp;const d=await diagnostic(request,env);if(d)return d;if(request.method==='OPTIONS')return new Response(null,{status:204,headers:{'Access-Control-Allow-Origin':ALLOWED_ORIGINS.includes(origin)?origin:ALLOWED_ORIGINS[0],'Access-Control-Allow-Methods':'GET, POST, OPTIONS','Access-Control-Allow-Headers':'Content-Type','Content-Type':'application/json; charset=utf-8','Vary':'Origin'}});const research=await handleResearchApi(request);if(research)return research;const gemini=await directGemini(request,env,origin);if(gemini)return gemini;const response=await worker.fetch(request.clone(),env,ctx);if(response.status<500)return response;const recovery=await recoverChat(request.clone(),env);if(recovery)return recovery;return response;}};
