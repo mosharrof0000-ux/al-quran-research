@@ -26,6 +26,7 @@ RETIRED = নতুন workflow-এ আর ব্যবহারযোগ্য 
 | SRC-003 | QuranEnc Bengali Zakaria | Reader Bengali translation | https://quranenc.com/api/v1/translation/sura/bengali_zakaria/{surah} | PENDING_VERIFICATION | Provider documents re-publication conditions including no modification, publisher/source attribution, version number, transcript information, and updating to the latest version. The current provider page shows a 2026-03-12 V1.0.19 entry, so the Reader's displayed V1.1.1 requires reconciliation before certification. |
 | SRC-004 | Anis Afifi Multilingual Quran Dataset | Reader Bengali pronunciation (transliteration_bn) | Hugging Face Dataset Viewer/API | PENDING_VERIFICATION | Dataset card and repository metadata document CC BY 4.0 and the `transliteration_bn` field, but they do not by themselves establish the underlying source/provenance of that Bengali transliteration field. Keep this entry pending. |
 | SRC-005 | Project Master Dataset — Fatiha | Canonical project research record | data/fatiha-master-v1.json | VERIFIED | Pilot master dataset; status is PILOT and individual records carry their own status. |
+| SRC-IFB-001 | Islamic Foundation Bangladesh — Al-Quranul Karim | Planned private Reader Source 3 | Official publisher/digital-Quran references; candidate copy recorded in docs/ISLAMIC_FOUNDATION_SOURCE_PRIVATE_LOCK.md | PENDING_VERIFICATION | Exact edition, digital copy identity, and permission to store/serve the text are not yet verified. Candidate third-party copy is a source lead only and is not imported. |
 
 ## Project Master Dataset
 Current canonical Research API dataset: data/fatiha-master-v1.json
@@ -61,5 +62,6 @@ The Research API currently exposes records from this dataset. Therefore an AI re
 
 ## Change History
 - 2026-09-19 — v1.0 created as the central Research Source/Document provenance registry.
+- 2026-09-19 — Added SRC-IFB-001 as a pending-verification private Reader source intake; no source content imported.
 - 2026-09-19 — Provider evidence reviewed: Tanzil release/license, QuranEnc terms/current version entry, and Anis Afifi dataset metadata; unresolved provenance items remain PENDING_VERIFICATION.
 - 2026-09-19 — AI research route diagnostic added in backend/worker-entry.js; repository path verified, live runtime verification pending.
