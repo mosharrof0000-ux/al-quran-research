@@ -142,3 +142,20 @@ body.night .message-more-menu button:hover,body.night .message-more-menu button:
   100%{background-color:#0f1715}
 }
 @media(prefers-reduced-motion:reduce){body.night{animation:none;background-color:#101715}}
+
+/* Smart Chat Composer v1 */
+.composer-wrap{width:100%;max-width:760px;margin:0 auto;position:relative}
+.composer{max-width:none}
+.composer-left{flex:0 0 auto;order:0}
+.composer textarea{order:1;min-height:34px;overflow-y:hidden}
+.composer-right{order:2}
+.composer-tools{display:flex;flex-wrap:wrap;gap:6px;padding:0 4px 7px;justify-content:flex-start}
+.composer-tools[hidden]{display:none}
+.composer-tools button{border:1px solid var(--line);background:#fff;color:var(--text);border-radius:10px;padding:7px 10px;font:inherit;font-size:12px;cursor:pointer}
+.composer-tools button:hover,.composer-tools button:active{background:var(--soft)}
+@media(max-width:600px){
+ .composer-wrap{max-width:none}
+ .composer-tools{gap:5px}
+ .composer-tools button{padding:6px 8px;font-size:11px}
+ .composer textarea{max-height:140px}
+}
