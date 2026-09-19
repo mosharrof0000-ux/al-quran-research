@@ -217,3 +217,17 @@ Create a central, auditable source/document provenance map separating Reader sou
 
 ### Safety result
 Documentation-only governance change. No research dataset, backend entrypoint, Reader UI, public path, or existing research record was changed.
+
+
+## 2026-09-19 — Islamic Foundation Source Private-Lock Intake
+
+### Added
+- `docs/ISLAMIC_FOUNDATION_SOURCE_PRIVATE_LOCK.md`
+- `docs/ISLAMIC_FOUNDATION_SOURCE_PRIVATE_LOCK.instruction.md`
+- Registry entry `SRC-IFB-001`
+
+### Scope
+Source collection/intake and private-lock architecture only. The Islamic Foundation Quran text has not been imported, transformed, published, or exposed in the live Reader.
+
+### Safety result
+No `main` promotion and no live-site change. The source remains `PENDING_VERIFICATION`. The requested PIN is not stored in repository code; a future implementation must use a server-side secret.
