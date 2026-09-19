@@ -1,0 +1,89 @@
+{
+  "fixture_id": "QGWLI-FATIHA-A001-PILOT-001",
+  "status": "PROPOSED_TEST_FIXTURE",
+  "source": {
+    "dataset": "al-quran-research",
+    "dataset_version": "2026-09-04-fatiha-master-v1",
+    "source_file": "data/fatiha-master-v1.json",
+    "source_sha256": "8cfcced4bea37b652c5f2f00e5863b4c61076f30"
+  },
+  "rules": {
+    "tokenization_rule_version": "QGWLI-TOK-v1",
+    "letter_counting_rule_version": "QGWLI-BASE-LETTER-v1",
+    "count_unit": "Arabic base letters",
+    "diacritics_and_marks": "preserved_but_not_counted",
+    "index_base": 1
+  },
+  "scope": {
+    "surah_id": "S001",
+    "ayah_id": "Q001001",
+    "source_ayah_id": "S001-A001",
+    "scope_note": "Only A001 is indexed because A002-A007 currently lack verified token analysis in the canonical pilot dataset."
+  },
+  "words": [
+    {
+      "word_occurrence_id": "WO-Q001001-W001",
+      "global_word_position": "GW-000001",
+      "local_word_position": 1,
+      "source_token_id": "S001-A001-T001",
+      "raw": "بِسْمِ",
+      "base_letters": ["ب","س","م"],
+      "letter_count": 3
+    },
+    {
+      "word_occurrence_id": "WO-Q001001-W002",
+      "global_word_position": "GW-000002",
+      "local_word_position": 2,
+      "source_token_id": "S001-A001-T002",
+      "raw": "اللَّهِ",
+      "base_letters": ["ا","ل","ل","ه"],
+      "letter_count": 4
+    },
+    {
+      "word_occurrence_id": "WO-Q001001-W003",
+      "global_word_position": "GW-000003",
+      "local_word_position": 3,
+      "source_token_id": "S001-A001-T003",
+      "raw": "الرَّحْمَٰنِ",
+      "base_letters": ["ا","ل","ر","ح","م","ا","ن"],
+      "letter_count": 7
+    },
+    {
+      "word_occurrence_id": "WO-Q001001-W004",
+      "global_word_position": "GW-000004",
+      "local_word_position": 4,
+      "source_token_id": "S001-A001-T004",
+      "raw": "الرَّحِيمِ",
+      "base_letters": ["ا","ل","ر","ح","ي","م"],
+      "letter_count": 6
+    }
+  ],
+  "letter_occurrences": [
+    {"letter_occurrence_id":"LO-WO-Q001001-W001-L001","global_letter_position":"GL-000001","word_occurrence_id":"WO-Q001001-W001","local_letter_position":1,"letter_type":"ب"},
+    {"letter_occurrence_id":"LO-WO-Q001001-W001-L002","global_letter_position":"GL-000002","word_occurrence_id":"WO-Q001001-W001","local_letter_position":2,"letter_type":"س"},
+    {"letter_occurrence_id":"LO-WO-Q001001-W001-L003","global_letter_position":"GL-000003","word_occurrence_id":"WO-Q001001-W001","local_letter_position":3,"letter_type":"م"},
+    {"letter_occurrence_id":"LO-WO-Q001001-W002-L001","global_letter_position":"GL-000004","word_occurrence_id":"WO-Q001001-W002","local_letter_position":1,"letter_type":"ا"},
+    {"letter_occurrence_id":"LO-WO-Q001001-W002-L002","global_letter_position":"GL-000005","word_occurrence_id":"WO-Q001001-W002","local_letter_position":2,"letter_type":"ل"},
+    {"letter_occurrence_id":"LO-WO-Q001001-W002-L003","global_letter_position":"GL-000006","word_occurrence_id":"WO-Q001001-W002","local_letter_position":3,"letter_type":"ل"},
+    {"letter_occurrence_id":"LO-WO-Q001001-W002-L004","global_letter_position":"GL-000007","word_occurrence_id":"WO-Q001001-W002","local_letter_position":4,"letter_type":"ه"},
+    {"letter_occurrence_id":"LO-WO-Q001001-W003-L001","global_letter_position":"GL-000008","word_occurrence_id":"WO-Q001001-W003","local_letter_position":1,"letter_type":"ا"},
+    {"letter_occurrence_id":"LO-WO-Q001001-W003-L002","global_letter_position":"GL-000009","word_occurrence_id":"WO-Q001001-W003","local_letter_position":2,"letter_type":"ل"},
+    {"letter_occurrence_id":"LO-WO-Q001001-W003-L003","global_letter_position":"GL-000010","word_occurrence_id":"WO-Q001001-W003","local_letter_position":3,"letter_type":"ر"},
+    {"letter_occurrence_id":"LO-WO-Q001001-W003-L004","global_letter_position":"GL-000011","word_occurrence_id":"WO-Q001001-W003","local_letter_position":4,"letter_type":"ح"},
+    {"letter_occurrence_id":"LO-WO-Q001001-W003-L005","global_letter_position":"GL-000012","word_occurrence_id":"WO-Q001001-W003","local_letter_position":5,"letter_type":"م"},
+    {"letter_occurrence_id":"LO-WO-Q001001-W003-L006","global_letter_position":"GL-000013","word_occurrence_id":"WO-Q001001-W003","local_letter_position":6,"letter_type":"ا"},
+    {"letter_occurrence_id":"LO-WO-Q001001-W003-L007","global_letter_position":"GL-000014","word_occurrence_id":"WO-Q001001-W003","local_letter_position":7,"letter_type":"ن"},
+    {"letter_occurrence_id":"LO-WO-Q001001-W004-L001","global_letter_position":"GL-000015","word_occurrence_id":"WO-Q001001-W004","local_letter_position":1,"letter_type":"ا"},
+    {"letter_occurrence_id":"LO-WO-Q001001-W004-L002","global_letter_position":"GL-000016","word_occurrence_id":"WO-Q001001-W004","local_letter_position":2,"letter_type":"ل"},
+    {"letter_occurrence_id":"LO-WO-Q001001-W004-L003","global_letter_position":"GL-000017","word_occurrence_id":"WO-Q001001-W004","local_letter_position":3,"letter_type":"ر"},
+    {"letter_occurrence_id":"LO-WO-Q001001-W004-L004","global_letter_position":"GL-000018","word_occurrence_id":"WO-Q001001-W004","local_letter_position":4,"letter_type":"ح"},
+    {"letter_occurrence_id":"LO-WO-Q001001-W004-L005","global_letter_position":"GL-000019","word_occurrence_id":"WO-Q001001-W004","local_letter_position":5,"letter_type":"ي"},
+    {"letter_occurrence_id":"LO-WO-Q001001-W004-L006","global_letter_position":"GL-000020","word_occurrence_id":"WO-Q001001-W004","local_letter_position":6,"letter_type":"م"}
+  ],
+  "expected": {
+    "word_count": 4,
+    "letter_count": 20,
+    "global_word_positions": ["GW-000001","GW-000002","GW-000003","GW-000004"],
+    "global_letter_positions": ["GL-000001","GL-000002","GL-000003","GL-000004","GL-000005","GL-000006","GL-000007","GL-000008","GL-000009","GL-000010","GL-000011","GL-000012","GL-000013","GL-000014","GL-000015","GL-000016","GL-000017","GL-000018","GL-000019","GL-000020"]
+  }
+}
