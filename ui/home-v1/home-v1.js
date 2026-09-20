@@ -146,7 +146,7 @@ function normalizeArabicPayload(payload,n){
   return verses.map((v,i)=>({numberInSurah:Number(v.number||v.numberInSurah||v.verse_number||v.aya||i+1),arabic:String(v.text||v.arabic||v.text_ar||'')})).filter(v=>v.numberInSurah>=1&&v.numberInSurah<=SURA_AYAH_COUNTS[n-1]);
 }
 function normalizeTranslationPayload(payload){
-  const rows=Array.isArray(payload)?payload:(payload?.data||payload?.ayahs||[]);
+  const rows=Array.isArray(payload)?payload:(payload?.result||payload?.data||payload?.ayahs||[]);
   return Array.isArray(rows)?rows.map(x=>({aya:Number(x.aya||x.verse_number||x.number),translation:String(x.translation||x.text||'')})).filter(x=>x.aya>0):[];
 }
 function normalizePronunciationPayload(payload,n){
