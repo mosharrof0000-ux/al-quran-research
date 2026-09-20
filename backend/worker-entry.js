@@ -19,7 +19,7 @@ function json(data,status,origin){return new Response(JSON.stringify(data),{stat
 
 async function readerProxy(request,env){
  const url=new URL(request.url);const origin=request.headers.get('Origin')||'';
- const m=url.pathname.match(/^\\/reader\\/(translation|pronunciation)\\/(\\d+)$/);
+ const m=url.pathname.match(/^\/reader\/(translation|pronunciation)\/(\d+)$/);
  const p=url.pathname==='/reader/pronunciation'?['pronunciation',null]:m?m.slice(1):null;
  if(!p)return null;
  if(request.method==='OPTIONS')return new Response(null,{status:204,headers:corsHeaders(origin)});
