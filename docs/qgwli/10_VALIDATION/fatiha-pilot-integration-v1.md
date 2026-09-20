@@ -1,6 +1,6 @@
 # QGWLI Fatiha Pilot — Modular Integration v1
 
-Status: PROPOSED — REVIEW REQUIRED
+Status: MERGED TO MAIN — PILOT VERIFICATION STILL INCOMPLETE
 
 ## Current population
 
@@ -23,10 +23,12 @@ The modular architecture is populated with the Fatiha corpus identity and dedica
 
 ## Deployment gate
 
-PR #49 remains a draft review branch. Cloudflare reported a failed Workers deployment for commit `a072c70`. The GitHub-visible record provides the build ID and log link, but the actual Cloudflare build log is not exposed through the connected GitHub data available here. Therefore the failure cause is **not declared resolved or diagnosed from assumption**.
+PR #49 was merged into `main` at merge commit `ae8a7cca5830c1e89b133d964705882240ad68d5`.
 
-No main-branch or live-site change is authorized by this document.
+GitHub Pages deployment for that merge commit completed successfully on 2026-09-20. This confirms that the merged repository state was accepted by the GitHub Pages deployment workflow; it does not by itself verify every live-site feature.
+
+A previous Cloudflare deployment failure for commit `a072c70` remains a separate infrastructure item. Its root cause is not declared resolved until the relevant Cloudflare build/log evidence is verified.
 
 ## Next gate
 
-Run the QGWLI validator across A002–A007, compare independent recounts, perform deterministic rebuild checks, then review the Cloudflare build failure log. Only after those gates pass should the pilot be considered for approval/merge.
+Next: run the QGWLI validator across A002–A007, compare independent recounts, perform deterministic rebuild checks, and synchronize the final validation status. Separately, verify the current Cloudflare deployment state before declaring the full live stack healthy.
