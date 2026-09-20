@@ -200,7 +200,10 @@ async function showSura(n,source=activeQuranSource){
     }
   }catch(e){qstatus.textContent='সমস্যা: '+e.message; qtext.innerHTML='<div class="reader-error">'+e.message+'</div>'}
 }
-document.getElementById('openReader').onclick=()=>{reader.classList.add('open');showSura(Number(select.value||1))};
+const openReaderBtn=document.getElementById('openReader');
+if(openReaderBtn)openReaderBtn.onclick=()=>{reader.classList.add('open');showSura(Number(select.value||1))};
+if(location.hash==='#quran')openQuranHome();
+window.addEventListener('hashchange',()=>{if(location.hash==='#quran')openQuranHome()});
 document.getElementById('closeReader').onclick=()=>reader.classList.remove('open');
 select.onchange=()=>showSura(Number(select.value));
 document.getElementById('prevSura').onclick=()=>showSura(Math.max(1,Number(select.value)-1));
