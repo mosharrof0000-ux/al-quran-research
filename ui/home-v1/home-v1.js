@@ -11,7 +11,7 @@ let pendingReaderJump=null;
 function renderSources(){sourceList.innerHTML='';SOURCES.forEach((s,i)=>{const b=document.createElement('button');b.className='source-card';b.type='button';b.dataset.source=s.id;b.innerHTML='<div class="source-top"><span class="source-number">'+(i+1)+'</span><span class="source-name">'+s.name+'</span><span class="source-badge">'+s.status+'</span></div><div class="source-meta">'+s.meta+'</div>';b.onclick=()=>selectSource(s.id);sourceList.appendChild(b)})}
 function openQuranHome(){quranHome.classList.add('open');renderSources();drawer.classList.remove('open')}
 function closeQuranHome(){quranHome.classList.remove('open')}
-function selectSource(id){activeQuranSource=id;if(id==='tanzil-uthmani'){closeQuranHome();reader.classList.add('open');showSura(Number(select.value||1));return}toast('ভাষাভিত্তিক কুরআন তৈরির ধাপ পরবর্তী পর্যায়ে শুরু হবে')}
+function selectSource(id){activeQuranSource=id;closeQuranHome();reader.classList.add('open');showSura(Number(select.value||1),id)}
 function parseReaderJump(q){const text=String(q||'').trim();const suraMatch=text.match(/(?:সূরা|সুরা)\s*(?:নং\s*)?(\d{1,3}|[আ-হড়ঢ়য়ংঃৎ]+)(?:\s+নম্বর)?\s*(?:আয়াত|আয়াত|আয়াতের|আয়াতের)\s*(?:নং\s*)?(\d{1,3})/i);if(!suraMatch)return null;const names={বাকারা:2,'আল-বাকারা':2,'আল বাকারাহ':2,'ফাতিহা':1,'আল-ফাতিহা':1};const raw=suraMatch[1];const suraNumber=/^\d+$/.test(raw)?Number(raw):names[raw];const ayah=Number(suraMatch[2]);if(!suraNumber||suraNumber<1||suraNumber>114||!ayah||ayah<1||ayah>SURA_AYAH_COUNTS[suraNumber-1])return null;const lower=text.toLowerCase();const source=/(তানজিল|tanzil)/i.test(lower)?'tanzil-uthmani':activeQuranSource;return {source,sura:suraNumber,ayah}}
 function openReaderAt(sura,ayah,source){if(source!=='tanzil-uthmani'){toast('এই Source-এর Reader এখনো প্রস্তুত হয়নি');return}activeQuranSource=source;pendingReaderJump=ayah;reader.classList.add('open');showSura(sura)}
 document.getElementById('openQuranHome').onclick=openQuranHome;
@@ -158,7 +158,7 @@ async function loadPronunciation(n){
   }
   return parts;
 }
-async function showSura(n){
+async function showSura(n,source=activeQuranSource){
   n=Number(n); if(!Number.isInteger(n)||n<1||n>114)return;
   try{
     qstatus.textContent='সূরা '+n+' — '+SURA_NAMES[n-1]+' লোড হচ্ছে…';
