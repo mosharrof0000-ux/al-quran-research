@@ -159,3 +159,15 @@ body.night .message-more-menu button:hover,body.night .message-more-menu button:
  .composer-tools button{padding:6px 8px;font-size:11px}
  .composer textarea{max-height:140px}
 }
+
+/* Private Research dialog — additive, scoped styles */
+.private-research-dialog{position:fixed;inset:0;z-index:80;background:rgba(0,0,0,.42);display:grid;place-items:center;padding:16px}
+.private-research-dialog[hidden]{display:none}
+.private-research-card{width:min(560px,100%);max-height:88vh;overflow:auto;background:var(--surface,#fff);color:var(--text,#183b2b);border-radius:18px;box-shadow:0 16px 48px rgba(0,0,0,.22)}
+.private-research-body{padding:16px}
+.private-research-body p{margin:0 0 12px}
+.private-source-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px;border:1px solid rgba(0,0,0,.12);border-radius:12px;margin:8px 0}
+.private-source-row button{min-height:40px}
+#privateResearchUnlock{display:flex;gap:8px;align-items:end;margin-top:14px;flex-wrap:wrap}
+#privateResearchUnlock label{width:100%}
+#privateResearchPin{min-height:42px;flex:1;min-width:160px;padding:8px 10px;border:1px solid rgba(0,0,0,.18);border-radius:10px}
