@@ -28,7 +28,7 @@ async function readerProxy(request,env){
  try{
   const target=p[0]==='translation'
    ? 'https://quranenc.com/api/v1/translation/sura/bengali_zakaria/'+n
-   : 'https://datasets-server.huggingface.co/rows?dataset=anisafifi%2Fmultilingual-quran&config=default&split=train&offset='+encodeURIComponent(url.searchParams.get('offset')||'0')+'&length='+encodeURIComponent(url.searchParams.get('length')||'100');
+   : 'https://datasets-server.huggingface.co/rows?dataset=anisafifi%2Fmultilingual-quran&config=default&split=all&offset='+encodeURIComponent(url.searchParams.get('offset')||'0')+'&length='+encodeURIComponent(url.searchParams.get('length')||'100');
   const r=await fetch(target,{headers:{'Accept':'application/json'}});const body=await r.text();
   return new Response(body,{status:r.status,headers:{...corsHeaders(origin),'Cache-Control':'public, max-age=300'}});
  }catch(e){return json({ok:false,error:'READER_SOURCE_FETCH_FAILED',detail:String(e?.message||e).slice(0,300)},502,origin)}
