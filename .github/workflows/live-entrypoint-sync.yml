@@ -72,7 +72,7 @@ jobs:
         shell: bash
         run: |
           git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot].users.noreply.github.com'
+          git config user.email '41898282+github-actions[bot]+41898282@noreply.github.com'
           git add index.html favicon.svg
           if git diff --cached --quiet; then
             echo 'No canonical live-entrypoint changes required.'
