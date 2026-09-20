@@ -11,7 +11,7 @@ let pendingReaderJump=null;
 function renderSources(){sourceList.innerHTML='';SOURCES.forEach((s,i)=>{const b=document.createElement('button');b.className='source-card';b.type='button';b.dataset.source=s.id;b.innerHTML='<div class="source-top"><span class="source-number">'+(i+1)+'</span><span class="source-name">'+s.name+'</span><span class="source-badge">'+s.status+'</span></div><div class="source-meta">'+s.meta+'</div>';b.onclick=()=>selectSource(s.id);sourceList.appendChild(b)})}
 function openQuranHome(){quranHome.classList.add('open');renderSources();drawer.classList.remove('open')}
 function closeQuranHome(){quranHome.classList.remove('open')}
-function selectSource(id){activeQuranSource=id;closeQuranHome();reader.classList.add('open');if(id==='language-quran'){select.value='1';qstatus.textContent='ভাষাভিত্তিক কুরআন — Source ১';qtext.innerHTML='<div class="reader-error">ভাষাভিত্তিক কুরআনের নিজস্ব ডেটাসেট এখনো ইনস্টল হয়নি। Source ১-এর Reader খোলা হয়েছে; ডেটা যুক্ত হলে এখানে প্রদর্শিত হবে।</div>';return}showSura(Number(select.value||1),id)}
+function selectSource(id){activeQuranSource=id;closeQuranHome();reader.classList.add('open');showSura(Number(select.value||1),id)}
 function parseReaderJump(q){const text=String(q||'').trim();const suraMatch=text.match(/(?:সূরা|সুরা)\s*(?:নং\s*)?(\d{1,3}|[আ-হড়ঢ়য়ংঃৎ]+)(?:\s+নম্বর)?\s*(?:আয়াত|আয়াত|আয়াতের|আয়াতের)\s*(?:নং\s*)?(\d{1,3})/i);if(!suraMatch)return null;const names={বাকারা:2,'আল-বাকারা':2,'আল বাকারাহ':2,'ফাতিহা':1,'আল-ফাতিহা':1};const raw=suraMatch[1];const suraNumber=/^\d+$/.test(raw)?Number(raw):names[raw];const ayah=Number(suraMatch[2]);if(!suraNumber||suraNumber<1||suraNumber>114||!ayah||ayah<1||ayah>SURA_AYAH_COUNTS[suraNumber-1])return null;const lower=text.toLowerCase();const source=/(তানজিল|tanzil)/i.test(lower)?'tanzil-uthmani':activeQuranSource;return {source,sura:suraNumber,ayah}}
 function openReaderAt(sura,ayah,source){if(source!=='tanzil-uthmani'){toast('এই Source-এর Reader এখনো প্রস্তুত হয়নি');return}activeQuranSource=source;pendingReaderJump=ayah;reader.classList.add('open');showSura(sura)}
 document.getElementById('openQuranHome').onclick=openQuranHome;
@@ -128,6 +128,11 @@ promptBox.addEventListener('keydown',e=>{if(e.key==='Escape'){closeComposerTools
 loadActionBarDemo();
 
 const SURA_NAMES=["আল-ফাতিহা","আল-বাকারা","আলে ইমরান","আন-নিসা","আল-মায়িদা","আল-আনআম","আল-আরাফ","আল-আনফাল","আত-তাওবা","ইউনুস","হুদ","ইউসুফ","আর-রাদ","ইবরাহিম","আল-হিজর","আন-নাহল","আল-ইসরা","আল-কাহফ","মারইয়াম","ত্ব-হা","আল-আম্বিয়া","আল-হাজ্জ","আল-মুমিনুন","আন-নূর","আল-ফুরকান","আশ-শুআরা","আন-নামল","আল-কাসাস","আল-আনকাবুত","আর-রূম","লুকমান","আস-সাজদাহ","আল-আহযাব","সাবা","ফাতির","ইয়াসিন","আস-সাফফাত","সাদ","আয-যুমার","গাফির","ফুসসিলাত","আশ-শূরা","আয-যুখরুফ","আদ-দুখান","আল-জাসিয়া","আল-আহকাফ","মুহাম্মাদ","আল-ফাতহ","আল-হুজুরাত","কাফ","আয-যারিয়াত","আত-তূর","আন-নাজম","আল-কামার","আর-রহমান","আল-ওয়াকিয়া","আল-হাদিদ","আল-মুজাদিলা","আল-হাশর","আল-মুমতাহিনা","আস-সাফ","আল-জুমুআ","আল-মুনাফিকুন","আত-তাগাবুন","আত-তালাক","আত-তাহরিম","আল-মুলক","আল-কলম","আল-হাক্কাহ","আল-মাআরিজ","নূহ","আল-জিন্ন","আল-মুযযাম্মিল","আল-মুদ্দাসসির","আল-কিয়ামাহ","আল-ইনসান","আল-মুরসালাত","আন-নাবা","আন-নাযিআত","আবাসা","আত-তাকভীর","আল-ইনফিতার","আল-মুতাফফিফিন","আল-ইনশিকাক","আল-বুরুজ","আত-তারিক","আল-আলা","আল-গাশিয়াহ","আল-ফজর","আল-বালাদ","আশ-শামস","আল-লাইল","আদ-দুহা","আশ-শারহ","আত-তিন","আল-আলাক","আল-কদর","আল-বাইয়্যিনাহ","আয-যিলযাল","আল-আদিয়াত","আল-কারিয়াহ","আত-তাকাসুর","আল-আসর","আল-হুমাযাহ","আল-ফিল","কুরাইশ","আল-মাউন","আল-কাওসার","আল-কাফিরুন","আন-নাসর","আল-মাসাদ","আল-ইখলাস","আল-ফালাক","আন-নাস"];
+// Source 1 is the project's language-research edition: a provenance-preserving composite.
+// Base Arabic: Tanzil Uthmani v1.1 (verbatim; attribution required).
+// Bengali meaning: QuranEnc Abu Bakr Zakaria (provider terms/attribution required).
+// Bengali pronunciation: Anis Afifi dataset field transliteration_bn (provenance remains separately recorded).
+// Linguistic analysis: Quranic Arabic Corpus v0.4 (GPL; attribution/link required).
 const QURAN_API='https://quran-json.risan.workers.dev/text/uthmani/chapters/';
 const BENGALI_TRANSLATION_API='https://al-quran-research.mosharrof0000.workers.dev/reader/translation/';
 const BENGALI_PRONUNCIATION_API='https://al-quran-research.mosharrof0000.workers.dev/reader/pronunciation';
@@ -161,7 +166,8 @@ async function loadPronunciation(n){
 async function showSura(n,source=activeQuranSource){
   n=Number(n); if(!Number.isInteger(n)||n<1||n>114)return;
   try{
-    qstatus.textContent='সূরা '+n+' — '+SURA_NAMES[n-1]+' লোড হচ্ছে…';
+    const sourceLabel=source==='language-quran'?'ভাষাভিত্তিক কুরআন — Source ১':'Tanzil Uthmani — Source ২';
+    qstatus.textContent=sourceLabel+' • সূরা '+n+' — '+SURA_NAMES[n-1]+' লোড হচ্ছে…';
     qtext.innerHTML='';
     select.value=String(n);
     const [arabicResponse,bnResponse]=await Promise.all([
@@ -184,7 +190,7 @@ async function showSura(n,source=activeQuranSource){
       el.innerHTML='<span class="ayah-no">'+no+'</span><div class="ayah-body"><div class="ayah-ar">'+v.arabic+'</div><div class="ayah-bn-label">বাংলা উচ্চারণ</div><div class="ayah-pron">'+(pronunciationByAya.get(no)||'উচ্চারণ পাওয়া যায়নি')+'</div><div class="ayah-bn-label">বাংলা অনুবাদ</div><div class="ayah-bn">'+(translationByAya.get(no)||'অনুবাদ পাওয়া যায়নি')+'</div></div>';
       qtext.appendChild(el);
     });
-    qstatus.textContent='সূরা '+n+' — '+SURA_NAMES[n-1]+' | '+verses.length+' আয়াত';
+    qstatus.textContent=sourceLabel+' | সূরা '+n+' — '+SURA_NAMES[n-1]+' | '+verses.length+' আয়াত';
     if(translations.length!==verses.length)toast('বাংলা অনুবাদের কিছু আয়াত পাওয়া যায়নি');
     if(pronunciationRows.length!==verses.length)toast('বাংলা উচ্চারণের কিছু আয়াত পাওয়া যায়নি');
     if(pendingReaderJump){
