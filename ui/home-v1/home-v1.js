@@ -1,4 +1,5 @@
 const CHAT_ENDPOINT='https://al-quran-research.mosharrof0000.workers.dev';
+const PRIVATE_RESEARCH_ENDPOINT=CHAT_ENDPOINT+'/private-research';
 const toastEl=document.getElementById('toast');
 function toast(t){toastEl.textContent=t;toastEl.classList.add('show');clearTimeout(window.__toast);window.__toast=setTimeout(()=>toastEl.classList.remove('show'),1800)}
 const drawer=document.getElementById('drawer');
