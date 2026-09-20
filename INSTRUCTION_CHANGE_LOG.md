@@ -217,3 +217,26 @@ Create a central, auditable source/document provenance map separating Reader sou
 
 ### Safety result
 Documentation-only governance change. No research dataset, backend entrypoint, Reader UI, public path, or existing research record was changed.
+
+
+## 2026-09-20 — Research Intelligence + Private Research Library Safety Branch
+
+### Added
+- `docs/RESEARCH_INTELLIGENCE_ARCHITECTURE.md` + instruction
+- `docs/PRIVATE_RESEARCH_LIBRARY.md` + instruction
+- `backend/research-intelligence-router.js` + instruction
+- `backend/private-research.js` + instruction
+- Home v1 governance instructions for HTML/JS/CSS
+- Private Research tool entry and access dialog in Home v1
+- Worker routing for Private Research endpoints
+- Server-side secret contract: `PRIVATE_RESEARCH_PIN`
+
+### Safety boundary
+- No Islamic Foundation Quran text was imported.
+- `SRC-IFB-001` remains not installed and `PENDING_VERIFICATION`.
+- The PIN is not stored in repository code.
+- Private content is not returned unless a server-side secret exists and the source is explicitly installed.
+- This branch is not a production approval or live deployment.
+
+### Next verification
+Compare branch with `main`, run syntax/build checks, review UI behavior, then obtain explicit user approval before promotion.
