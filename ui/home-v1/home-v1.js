@@ -1,4 +1,5 @@
 const CHAT_ENDPOINT='https://al-quran-research.mosharrof0000.workers.dev';
+const PRIVATE_RESEARCH_ENDPOINT=CHAT_ENDPOINT+'/private-research';
 const toastEl=document.getElementById('toast');
 function toast(t){toastEl.textContent=t;toastEl.classList.add('show');clearTimeout(window.__toast);window.__toast=setTimeout(()=>toastEl.classList.remove('show'),1800)}
 const drawer=document.getElementById('drawer');
@@ -24,7 +25,45 @@ const composerTools=document.getElementById('composerTools');
 const plusBtn=document.getElementById('plusBtn');
 function closeComposerTools(){composerTools.hidden=true;plusBtn.setAttribute('aria-expanded','false')}
 plusBtn.onclick=()=>{const open=composerTools.hidden;composerTools.hidden=!open;plusBtn.setAttribute('aria-expanded',String(open))};
-composerTools.querySelectorAll('[data-tool]').forEach(b=>b.onclick=()=>{const labels={ayah:'📖 আয়াত',research:'🔎 গবেষণা',word:'🔤 শব্দ / Root',file:'📎 ফাইল',math:'🧮 গণনা'};document.getElementById('prompt').placeholder=labels[b.dataset.tool]+' নিয়ে প্রশ্ন লিখুন...';document.getElementById('prompt').focus();closeComposerTools()});
+composerTools.querySelectorAll('[data-tool]').forEach(b=>b.onclick=()=>{const labels={ayah:'📖 আয়াত',research:'🔎 গবেষণা',word:'🔤 শব্দ / Root',file:'📎 ফাইল',math:'🧮 গণনা'};if(b.dataset.tool==='private-research'){closeComposerTools();openPrivateResearch();return}document.getElementById('prompt').placeholder=labels[b.dataset.tool]+' নিয়ে প্রশ্ন লিখুন...';document.getElementById('prompt').focus();closeComposerTools()});
+const privateDialog=document.getElementById('privateResearchDialog');
+const privateStatus=document.getElementById('privateResearchStatus');
+const privateSources=document.getElementById('privateResearchSources');
+const privateUnlock=document.getElementById('privateResearchUnlock');
+const privatePin=document.getElementById('privateResearchPin');
+let selectedPrivateSource=null;
+function openPrivateResearch(){privateDialog.hidden=false;privateStatus.textContent='Private Source তালিকা লোড হচ্ছে…';privateSources.innerHTML='';privateUnlock.hidden=true;selectedPrivateSource=null;loadPrivateResearchSources()}
+function closePrivateResearch(){privateDialog.hidden=true;privatePin.value='';selectedPrivateSource=null}
+async function loadPrivateResearchSources(){
+  try{
+    const r=await fetch(PRIVATE_RESEARCH_ENDPOINT+'/sources',{cache:'no-store'});
+    const data=await r.json();
+    if(!r.ok)throw new Error(data.error||'Private Source তালিকা পাওয়া যায়নি');
+    privateStatus.textContent='গবেষণার জন্য Private Source নির্বাচন করুন।';
+    (data.sources||[]).forEach(s=>{
+      const row=document.createElement('div');row.className='private-source-row';
+      const label=document.createElement('span');label.textContent='🔒 '+s.name_bn+' — '+s.permission_status;
+      const b=document.createElement('button');b.type='button';b.textContent='খুলুন';
+      b.onclick=()=>{selectedPrivateSource=s.source_id;privateUnlock.hidden=false;privatePin.focus();privateStatus.textContent='এই Source-এর server-side PIN দিন।'};
+      row.append(label,b);privateSources.appendChild(row);
+    });
+    if(!(data.sources||[]).length)privateStatus.textContent='কোনো Private Source নিবন্ধিত নেই।';
+  }catch(e){privateStatus.textContent='Private Library সংযোগ পাওয়া যায়নি।'}
+}
+document.getElementById('closePrivateResearch').onclick=closePrivateResearch;
+document.getElementById('privateResearchUnlockBtn').onclick=async()=>{
+  if(!selectedPrivateSource){toast('আগে একটি Source নির্বাচন করুন');return}
+  const pin=privatePin.value.trim();if(!pin){toast('PIN দিন');return}
+  try{
+    const r=await fetch(PRIVATE_RESEARCH_ENDPOINT+'/unlock',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({source_id:selectedPrivateSource,pin})});
+    const data=await r.json();
+    if(!r.ok){toast(data.error==='SOURCE_NOT_INSTALLED'?'এই Private Source এখনো ইনস্টল করা হয়নি।':data.error==='INVALID_PIN'?'PIN সঠিক নয়।':'Private Source খোলা যায়নি।');return}
+    toast('Private Source খোলা হয়েছে');
+    privateStatus.textContent='Access granted — গবেষণা context সক্রিয়।';
+    privateUnlock.hidden=true;privatePin.value='';
+  }catch(e){toast('Private Research সংযোগে সমস্যা হয়েছে।')}
+};
+privatePin.addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('privateResearchUnlockBtn').click()});
 document.getElementById('micBtn').onclick=()=>{if(!('webkitSpeechRecognition'in window||'SpeechRecognition'in window)){toast('এই ব্রাউজারে voice input নেই');return}const R=window.SpeechRecognition||window.webkitSpeechRecognition;const r=new R();r.lang='bn-BD';r.onresult=e=>document.getElementById('prompt').value=e.results[0][0].transcript;r.start();toast('শুনছি…')};
 function addMessage(text,type){
  const box=document.getElementById('messages');

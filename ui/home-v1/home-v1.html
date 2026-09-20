@@ -32,6 +32,7 @@
       <button type="button" data-tool="word">🔤 শব্দ / Root</button>
       <button type="button" data-tool="file">📎 ফাইল</button>
       <button type="button" data-tool="math">🧮 গণনা</button>
+      <button type="button" data-tool="private-research">🔐 Private Research</button>
     </div>
     <div class="composer" aria-label="প্রশ্ন লেখার স্থান">
       <div class="composer-actions composer-left">
@@ -45,6 +46,20 @@
     </div>
   </section>
 </main>
+<div class="private-research-dialog" id="privateResearchDialog" hidden aria-label="Private Research">
+  <div class="private-research-card">
+    <div class="reader-head"><strong>🔐 Private Research</strong><button id="closePrivateResearch" type="button" aria-label="বন্ধ">×</button></div>
+    <div class="private-research-body">
+      <p id="privateResearchStatus">Private Source তালিকা লোড হচ্ছে…</p>
+      <div id="privateResearchSources"></div>
+      <div id="privateResearchUnlock" hidden>
+        <label for="privateResearchPin">PIN</label>
+        <input id="privateResearchPin" type="password" inputmode="numeric" autocomplete="off" maxlength="12" aria-label="Private Research PIN">
+        <button id="privateResearchUnlockBtn" type="button">খুলুন</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <div class="toast" id="toast"></div>
 <div class="drawer" id="drawer" aria-label="সাইডবার">

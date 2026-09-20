@@ -45,6 +45,9 @@ This registry is the dictionary/index of project instructions. It records which 
 | `data/fatiha.json.instruction.md` | `data/fatiha.json` | ACTIVE |
 | `docs/BACKUP_POLICY.instruction.md` | `docs/BACKUP_POLICY.md` | ACTIVE |
 | `backend/BACKEND_AND_LIVE_UI.instruction.md` | Active backend and live website/core UI assets | ACTIVE |
+| `backend/worker-entry.js.instruction.md` | `backend/worker-entry.js` | DRAFT — private research integration |
+| `backend/research-intelligence-router.js.instruction.md` | `backend/research-intelligence-router.js` | DRAFT — safety branch |
+| `backend/private-research.js.instruction.md` | `backend/private-research.js` | DRAFT — safety branch |
 | `.github/workflows/GITHUB_ACTIONS_AND_AUTOMATION.instruction.md` | `.github/workflows/*.yml`, `.github/workflows/*.yaml` | ACTIVE |
 
 ## Individual Important Instructions
@@ -58,7 +61,12 @@ This registry is the dictionary/index of project instructions. It records which 
 | `docs/OUR_THINKING_AND_VISION.instruction.md` | `docs/OUR_THINKING_AND_VISION.md` | ACTIVE |
 | `docs/PROJECT_COMMENTS.instruction.md` | `docs/PROJECT_COMMENTS.md` | ACTIVE |
 | `docs/RESEARCH_SOURCE_REGISTRY.instruction.md` | `docs/RESEARCH_SOURCE_REGISTRY.md` | ACTIVE |
+| `docs/RESEARCH_INTELLIGENCE_ARCHITECTURE.instruction.md` | `docs/RESEARCH_INTELLIGENCE_ARCHITECTURE.md` | DRAFT — safety branch |
+| `docs/PRIVATE_RESEARCH_LIBRARY.instruction.md` | `docs/PRIVATE_RESEARCH_LIBRARY.md` | DRAFT — safety branch |
 | `README.instruction.md` | `README.md` | ACTIVE |
+| `ui/home-v1/home-v1.html.instruction.md` | `ui/home-v1/home-v1.html` | DRAFT — safety branch |
+| `ui/home-v1/home-v1.js.instruction.md` | `ui/home-v1/home-v1.js` | DRAFT — safety branch |
+| `ui/home-v1/home-v1.css.instruction.md` | `ui/home-v1/home-v1.css` | DRAFT — safety branch |
 
 ## Audit Records
 
@@ -110,5 +118,12 @@ Safety-branch governance work is not production publication. Before promotion to
 ## Migration Rule
 Instructions formerly stored under `docs/instructions/` were migrated by copy → verify → registry update → old-path removal. No governed target file, website path, backend path, data file, or research record was moved as part of this instruction migration.
 
+## 2026-09-20 Safety-branch additions
+- Research Intelligence Architecture
+- Private Research Library
+- Research Intelligence Router
+- Server-side Private Research access contract
+- Home v1 Private Research chat tool
+
 ## Status
-ACTIVE — v1.9. Canonical live connection map is registered on `main`. Universal startup governance remains in REVIEW on the safety branch and is not promoted to `main`.
+ACTIVE — v1.9 on main; safety-branch additions are DRAFT until review/promotion. Canonical live connection map is registered on `main`. Universal startup governance remains in REVIEW on the safety branch and is not promoted to `main`.
