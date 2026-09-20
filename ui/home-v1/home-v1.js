@@ -136,6 +136,8 @@ const SURA_NAMES=["আল-ফাতিহা","আল-বাকারা","আ�
 const QURAN_API='https://quran-json.risan.workers.dev/text/uthmani/chapters/';
 const BENGALI_TRANSLATION_API='https://al-quran-research.mosharrof0000.workers.dev/reader/translation/';
 const BENGALI_PRONUNCIATION_API='https://al-quran-research.mosharrof0000.workers.dev/reader/pronunciation';
+const DIRECT_BENGALI_TRANSLATION_API='https://quranenc.com/api/v1/translation/sura/bengali_zakaria/';
+const DIRECT_BENGALI_PRONUNCIATION_API='https://datasets-server.huggingface.co/rows?dataset=anisafifi%2Fmultilingual-quran&config=default&split=train';
 const SURA_AYAH_COUNTS=[7,286,200,176,120,165,206,75,129,109,123,111,43,52,99,128,111,110,98,135,112,78,118,64,77,227,93,88,69,60,34,30,73,54,45,83,182,88,75,85,54,53,89,59,37,35,38,29,18,45,60,49,62,55,78,96,29,22,24,13,14,11,11,18,12,12,30,52,52,44,28,28,20,56,40,31,50,40,46,42,29,19,36,25,22,17,19,26,30,20,15,21,11,8,8,19,5,8,8,11,11,8,3,9,5,4,7,3,6,3,5,4,5,6];
 function quranSourceOffset(n){return SURA_AYAH_COUNTS.slice(0,n-1).reduce((a,b)=>a+b,0)}
 const reader=document.getElementById('quranReader'),select=document.getElementById('suraSelect'),qtext=document.getElementById('quranText'),qstatus=document.getElementById('quranStatus');
@@ -153,13 +155,18 @@ function normalizePronunciationPayload(payload,n){
   const rows=Array.isArray(payload?.rows)?payload.rows:[];
   return rows.map(x=>x.row||{}).filter(x=>Number(x.chapter_number||x.sura||x.surah||0)===n).map(x=>({verse:Number(x.verse_number||x.aya||x.number||0),text:String(x.transliteration_bn||'')})).filter(x=>x.verse>0);
 }
+async function fetchJsonWithFallback(primaryUrl,fallbackUrl,options={}){
+  try{const r=await fetch(primaryUrl,options);if(r.ok)return await r.json()}catch(e){}
+  const r=await fetch(fallbackUrl,options);if(!r.ok)throw new Error('Source endpoint unavailable ('+r.status+')');return await r.json();
+}
 async function loadPronunciation(n){
   const offset=quranSourceOffset(n),total=SURA_AYAH_COUNTS[n-1],parts=[];
   for(let start=0;start<total;start+=100){
-    const r=await fetch(BENGALI_PRONUNCIATION_API+'?offset='+(offset+start)+'&length='+Math.min(100,total-start),{cache:'no-store'});
-    if(!r.ok)continue;
-    const p=await r.json();
-    parts.push(...normalizePronunciationPayload(p,n));
+    const query='?offset='+(offset+start)+'&length='+Math.min(100,total-start);
+    try{
+      const p=await fetchJsonWithFallback(BENGALI_PRONUNCIATION_API+query,DIRECT_BENGALI_PRONUNCIATION_API+query,{cache:'no-store'});
+      parts.push(...normalizePronunciationPayload(p,n));
+    }catch(e){}
   }
   return parts;
 }
@@ -172,7 +179,7 @@ async function showSura(n,source=activeQuranSource){
     select.value=String(n);
     const [arabicResponse,bnResponse]=await Promise.all([
       fetch(QURAN_API+n+'.json',{cache:'force-cache'}),
-      fetch(BENGALI_TRANSLATION_API+n,{cache:'no-store'})
+      (async()=>{try{const r=await fetch(BENGALI_TRANSLATION_API+n,{cache:'no-store'});if(r.ok)return r; }catch(e){} return fetch(DIRECT_BENGALI_TRANSLATION_API+n,{cache:'no-store'});})()
     ]);
     if(!arabicResponse.ok)throw new Error('আরবি উৎস থেকে ডেটা পাওয়া যায়নি ('+arabicResponse.status+')');
     if(!bnResponse.ok)throw new Error('বাংলা অনুবাদ উৎস থেকে ডেটা পাওয়া যায়নি ('+bnResponse.status+')');
