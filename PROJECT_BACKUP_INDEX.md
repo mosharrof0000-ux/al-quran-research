@@ -167,3 +167,13 @@ BACKUP-2026-09-21-PRE-MODE-ICON-ASSETS
 - Purpose: preserve main before storing the new general Qur'an mode icon family.
 - Working branch: `feat/mode-icon-assets-2026-09-21`
 - Status: safe point created before asset integration work.
+
+
+## BACKUP-2026-09-21-PRE-NORMAL-MODE-ICON-ASSET-SET
+
+Date: 2026-09-21
+Purpose: rollback point immediately before creating the Normal Qur'an Mode icon asset family.
+Restore branch: backup/pre-normal-mode-icon-set-2026-09-21
+Working branch: feat/normal-quran-mode-icon-set-v1-2026-09-21-r2
+Protected scope: existing custom icon engine, live UI, research/database files, and main state before this asset-family work.
+Status: VERIFIED BACKUP BRANCH CREATED
