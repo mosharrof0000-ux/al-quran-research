@@ -7,6 +7,12 @@ const API='https://api.github.com';
 const DEFAULT_REPO='mosharrof0000-ux/al-quran-research';
 const MAX_FILE=120000;
 const MAX_TURNS=8;
+const AGENT_NAMES={
+  ui:'শামীম', icons:'শাহীন', reader:'সুমন', backend:'রাকিব', testing:'নাঈম', data:'ইমরান', docs:'সাদিক', research:'ফারহান', system:'মাহিন'
+};
+function taskId(){return 'AGT-'+new Date().toISOString().slice(0,10).replaceAll('-','')+'-'+crypto.randomUUID().slice(0,8).toUpperCase();}
+function agentId(name){return 'AG-'+String(name||'Agent').normalize('NFKC').replace(/[^A-Za-z0-9]+/g,'').toUpperCase().slice(0,12)+'-'+crypto.randomUUID().slice(0,6).toUpperCase();}
+function pickAgentName(taskType){const t=String(taskType||'system').toLowerCase();for(const k of Object.keys(AGENT_NAMES))if(t.includes(k))return AGENT_NAMES[k];return AGENT_NAMES.system;}
 
 function cors(origin){return {'Access-Control-Allow-Origin':ALLOWED_ORIGINS.includes(origin)?origin:ALLOWED_ORIGINS[0],'Access-Control-Allow-Methods':'POST, GET, OPTIONS','Access-Control-Allow-Headers':'Content-Type, Authorization','Content-Type':'application/json; charset=utf-8','Vary':'Origin'};}
 function json(data,status,origin){return new Response(JSON.stringify(data),{status,headers:cors(origin)});}
@@ -34,7 +40,9 @@ async function readFile(env,args){
  const data=await gh(env,'/repos/'+repo(env)+'/contents/'+path.split('/').map(encodeURIComponent).join('/')+'?ref='+encodeURIComponent(branch));
  if(data.type!=='file')throw new Error('এটি file নয়।');
  if(Number(data.size||0)>MAX_FILE)throw new Error('ফাইলটি engine-এর সীমার চেয়ে বড়।');
- const bin=atob(String(data.content||'').replace(/\n/g,''));\n const bytes=Uint8Array.from(bin,c=>c.charCodeAt(0));\n const decoded=new TextDecoder().decode(bytes);
+ const bin=atob(String(data.content||'').replace(/\n/g,''));
+ const bytes=Uint8Array.from(bin,c=>c.charCodeAt(0));
+ const decoded=new TextDecoder().decode(bytes);
  return {path,branch,sha:data.sha,size:data.size,content:decoded};
 }
 async function listDirectory(env,args){
@@ -57,6 +65,16 @@ async function createBranch(env,args){
  const created=await gh(env,'/repos/'+repo(env)+'/git/refs',{method:'POST',body:JSON.stringify({ref:'refs/heads/'+branch,sha:ref.object.sha}),headers:{'Content-Type':'application/json'}});
  return {branch,base,sha:created.object.sha};
 }
+async function recordLedger(env,args){
+ const branch=String(args.branch||'');
+ if(!isAgentBranch(branch))throw new Error('Ledger record must use an agent/* branch.');
+ const path='docs/AGENT_WORK_LEDGER.md';
+ const current=await readFile(env,{path,branch});
+ const entry=String(args.entry||'').trim();
+ if(!entry)throw new Error('ledger entry required');
+ const next=current.content+'\n\n'+entry+'\n';
+ return writeFile(env,{path,branch,content:next,message:String(args.message||'Project Agent ledger update')});
+}
 async function writeFile(env,args){
  const path=String(args.path||''),branch=String(args.branch||'');
  if(!isAgentBranch(branch))throw new Error('Write করতে agent/* branch বাধ্যতামূলক। main-এ লেখা নিষিদ্ধ।');
@@ -73,7 +91,8 @@ const TOOLS=[
  {name:'project_list_directory',description:'List files in a project directory.',parameters:{type:'object',properties:{path:{type:'string'},branch:{type:'string'}},required:['path']}},
  {name:'project_search_code',description:'Search repository code for a term or identifier.',parameters:{type:'object',properties:{query:{type:'string'}},required:['query']}},
  {name:'project_create_branch',description:'Create an isolated agent/* branch from main or another agent branch.',parameters:{type:'object',properties:{branch:{type:'string'},base:{type:'string'}},required:['branch']}},
- {name:'project_write_file',description:'Create or replace a text file only on an agent/* branch. Never write protected paths.',parameters:{type:'object',properties:{path:{type:'string'},branch:{type:'string'},content:{type:'string'},message:{type:'string'}},required:['path','branch','content','message']}}
+ {name:'project_write_file',description:'Create or replace a text file only on an agent/* branch. Never write protected paths.',parameters:{type:'object',properties:{path:{type:'string'},branch:{type:'string'},content:{type:'string'},message:{type:'string'}},required:['path','branch','content','message']}},
+ {name:'project_record_task',description:'Append a visible task/work record to the Project Agent ledger. Never store secrets or hidden reasoning.',parameters:{type:'object',properties:{branch:{type:'string'},entry:{type:'string'},message:{type:'string'}},required:['branch','entry']}}
 ];
 async function executeTool(env,name,args){
  if(name==='project_read_file')return readFile(env,args);
@@ -81,12 +100,13 @@ async function executeTool(env,name,args){
  if(name==='project_search_code')return searchCode(env,args);
  if(name==='project_create_branch')return createBranch(env,args);
  if(name==='project_write_file')return writeFile(env,args);
+ if(name==='project_record_task')return recordLedger(env,args);
  throw new Error('Unknown tool: '+name);
 }
-async function gemini(env,history){
+async function gemini(env,history,identity){
  if(!env.GEMINI_API_KEY)throw new Error('GEMINI_API_KEY is not configured.');
  const model=env.GEMINI_MODEL||'gemini-2.5-flash';
- const system='তুমি আল-কুরআন গবেষণা প্রকল্পের Project Agent। তুমি প্রকল্পের ফাইল পড়তে, বিশ্লেষণ করতে এবং নিরাপদ agent/* branch-এ text file তৈরি/সংশোধন করতে পারো। কখনো main-এ লিখবে না। .github/workflows, database, migrations, validation, quran_research.db এবং schema.sql পরিবর্তন করবে না। প্রথমে প্রয়োজনীয় ফাইল পড়বে; অনুমান করে code rewrite করবে না। পরিবর্তনের আগে বর্তমান content ও প্রকল্পের নিয়ম বুঝবে। কাজ শেষে কী পড়েছ, কী পরিবর্তন করেছ, কোন branch-এ করেছ এবং কী user approval/deployment-এর অপেক্ষায় আছে তা বাংলায় বলবে। তুমি merge বা production deploy করতে পারো না এবং এমন দাবি করবে না।';
+ const system='তুমি আল-কুরআন গবেষণা প্রকল্পের Project Agent। তোমার বর্তমান পরিচয়: Agent Name='+identity.agentName+', Agent ID='+identity.agentId+', Task ID='+identity.taskId+', Task Type='+identity.taskType+'. এই identity কাজের সব দৃশ্যমান history/handoff record-এ বজায় রাখবে। তুমি প্রকল্পের ফাইল পড়তে, বিশ্লেষণ করতে এবং নিরাপদ agent/* branch-এ text file তৈরি/সংশোধন করতে পারো। কখনো main-এ লিখবে না। .github/workflows, database, migrations, validation, quran_research.db এবং schema.sql পরিবর্তন করবে না। প্রথমে প্রয়োজনীয় ফাইল পড়বে; অনুমান করে code rewrite করবে না। পরিবর্তনের আগে বর্তমান content ও প্রকল্পের নিয়ম বুঝবে। কাজ শেষে কী পড়েছ, কী পরিবর্তন করেছ, কোন branch-এ করেছ এবং কী user approval/deployment-এর অপেক্ষায় আছে তা বাংলায় বলবে। তুমি merge বা production deploy করতে পারো না এবং এমন দাবি করবে না।';
  let contents=history.slice();
  for(let turn=0;turn<MAX_TURNS;turn++){
   const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+model+':generateContent',{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':env.GEMINI_API_KEY},body:JSON.stringify({systemInstruction:{parts:[{text:system}]},contents,tools:[{functionDeclarations:TOOLS}],generationConfig:{maxOutputTokens:4096,temperature:0.1}})});
@@ -114,9 +134,12 @@ export default {async fetch(request,env){
  if(!env.AGENT_ACCESS_TOKEN||auth!=='Bearer '+env.AGENT_ACCESS_TOKEN)return json({ok:false,error:'Unauthorized'},401,origin);
  try{
   const body=await request.json();const message=String(body?.message||'').trim();
+  const taskType=String(body?.task_type||'system');
+  const agentName=String(body?.agent_name||pickAgentName(taskType));
+  const identity={taskId:String(body?.task_id||taskId()),agentName,agentId:String(body?.agent_id||agentId(agentName)),taskType};
   if(!message)return json({ok:false,error:'message required'},400,origin);
   if(message.length>10000)return json({ok:false,error:'message too large'},413,origin);
-  const result=await gemini(env,[{role:'user',parts:[{text:message}]}]);
-  return json({ok:true,answer:result.answer,provider:result.model,agent_version:env.AGENT_VERSION||'1.0.0',isolated:true,merge:false,deploy:false},200,origin);
+  const result=await gemini(env,[{role:'user',parts:[{text:message}]}],identity);
+  return json({ok:true,answer:result.answer,provider:result.model,agent_version:env.AGENT_VERSION||'1.0.0',isolated:true,merge:false,deploy:false,identity},200,origin);
  }catch(e){return json({ok:false,error:'PROJECT_AGENT_FAILED',detail:String(e?.message||e).slice(0,600)},500,origin);}
 }};
