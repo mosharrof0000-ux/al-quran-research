@@ -181,3 +181,16 @@ body.night .font-panel{background:#18221f;border-color:#33433e;color:#e7ecea}bod
 html{--aqr-chat-bn-font:system-ui,"Noto Sans Bengali",sans-serif;--aqr-chat-ar-font:"Noto Naskh Arabic","Amiri",serif;--aqr-chat-size:15px;--aqr-chat-line:1.7}
 .chat-message,.composer textarea{font-family:var(--aqr-chat-bn-font);font-size:var(--aqr-chat-size);line-height:var(--aqr-chat-line)}
 .ayah-ar{font-family:var(--aqr-chat-ar-font)}
+
+/* AI transparent streaming response v1 */
+.chat-message.ai{background:transparent;border:0;box-shadow:none;color:#17231f;backdrop-filter:none;-webkit-backdrop-filter:none}
+.chat-message.ai .message-body{line-height:1.6}
+.chat-message.ai .message-body h1,.chat-message.ai .message-body h2,.chat-message.ai .message-body h3{margin:10px 0 5px;line-height:1.35}
+.chat-message.ai .message-body p{margin:0 0 9px}
+.chat-message.ai .message-body ul,.chat-message.ai .message-body ol{margin:6px 0 10px;padding-left:22px}
+.chat-message.ai .message-body li{margin:3px 0}
+.chat-message.ai .message-body blockquote{margin:8px 0;padding-left:12px;border-left:3px solid currentColor;opacity:.9}
+.chat-message.ai .message-body code{font-family:ui-monospace,monospace;font-size:.92em}
+.ai-stream-cursor{display:inline-block;width:.55em;margin-left:2px;animation:aiCursorBlink .85s step-end infinite;vertical-align:-.08em}
+@keyframes aiCursorBlink{50%{opacity:0}}
+body.night .chat-message.ai{background:transparent;border:0;color:#f1f5f3}
