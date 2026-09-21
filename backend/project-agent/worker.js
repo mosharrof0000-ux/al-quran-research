@@ -92,7 +92,7 @@ async function loadTask(env,taskId,branch){
   if(!taskId||!isAgentBranch(branch))return null;
   try{return JSON.parse((await readFile(env,{path:'docs/agent-work/runtime/'+taskId+'.json',branch})).content);}catch{return null;}
 }
-function normalizeCommand(message){return String(message||'').trim().toLowerCase().replace(/[\\s\\u200b]+/g,' ').replace(/[.!?。！？]+$/,'');}
+function normalizeCommand(message){return String(message||'').trim().toLowerCase().replace(/[\s\u200b]+/g,' ').replace(/[.!?。！？]+$/,'');}
 async function fingerprint(message){
   const data=new TextEncoder().encode(normalizeCommand(message));
   const digest=await crypto.subtle.digest('SHA-256',data);
