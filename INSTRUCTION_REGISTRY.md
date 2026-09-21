@@ -68,6 +68,17 @@ This registry is the dictionary/index of project instructions. It records which 
 | `ui/home-v1/home-v1.js.instruction.md` | `ui/home-v1/home-v1.js` | DRAFT — safety branch |
 | `ui/home-v1/home-v1.css.instruction.md` | `ui/home-v1/home-v1.css` | DRAFT — safety branch |
 
+## Project Agent Governance
+
+| Instruction | Governs | Status |
+|---|---|---|
+| `docs/AGENT_IDENTITY_REGISTRY.md` | Bengali Agent identity and unique task identity policy | ACTIVE |
+| `docs/AGENT_WORK_LEDGER.md` | Visible Agent task audit history | ACTIVE |
+| `docs/AGENT_HANDOFF_PROTOCOL.md` | Incomplete/inherited Agent work continuity | ACTIVE |
+| `backend/project-agent/worker.instruction.md` | Isolated Project Agent Worker | ACTIVE |
+| `backend/project-agent/wrangler.instruction.md` | Isolated Project Agent deployment config | ACTIVE |
+| `.github/workflows/agent-project-engine-deploy.instruction.md` | Isolated Agent deployment workflow | ACTIVE |
+
 ## Audit Records
 
 | Record | Purpose | Status |
@@ -126,4 +137,4 @@ Instructions formerly stored under `docs/instructions/` were migrated by copy �
 - Home v1 Private Research chat tool
 
 ## Status
-ACTIVE — v1.9 on main; safety-branch additions are DRAFT until review/promotion. Canonical live connection map is registered on `main`. Universal startup governance remains in REVIEW on the safety branch and is not promoted to `main`.
+ACTIVE — v2.0 on main; Project Agent identity additions are on the Shahin safety branch until review/promotion. safety-branch additions are DRAFT until review/promotion. Canonical live connection map is registered on `main`. Universal startup governance remains in REVIEW on the safety branch and is not promoted to `main`.
