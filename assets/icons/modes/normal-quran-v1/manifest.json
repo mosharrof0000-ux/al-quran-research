@@ -1,0 +1,41 @@
+{
+  "id": "normal-quran-v1",
+  "name_bn": "সাধারণ কোরআন মোড — আইকন সেট v1",
+  "version": "1.0.0",
+  "status": "REFERENCE_READY_NOT_LIVE",
+  "style": {
+    "stroke": "currentColor",
+    "fill": "none",
+    "stroke_width": 2,
+    "linecap": "round",
+    "linejoin": "round",
+    "monochrome": true,
+    "viewBox": "0 0 64 64"
+  },
+  "usage": {
+    "reader": true,
+    "research": false,
+    "ai_response": false,
+    "global_navigation": "only where semantic role matches",
+    "mode_switch": "Normal Quran Mode only"
+  },
+  "icons": {
+    "quran": "quran.svg",
+    "surah": "surah.svg",
+    "ayah": "ayah.svg",
+    "tafseer": "tafseer.svg",
+    "bookmark": "bookmark.svg",
+    "audio": "audio.svg",
+    "home": "home.svg",
+    "search": "search.svg",
+    "favorite": "favorite.svg",
+    "share": "share.svg"
+  },
+  "rules": [
+    "Do not replace the existing Master Icon Engine until this set passes isolated visual review.",
+    "Do not use this set as the Sufi Mode icon set.",
+    "Do not change database, Quran text, translations, or research data.",
+    "Keep SVG assets independent so they can be versioned or replaced without changing reader data.",
+    "All icons are intended to inherit color through currentColor."
+  ]
+}
