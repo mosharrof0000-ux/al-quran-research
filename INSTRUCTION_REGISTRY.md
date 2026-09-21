@@ -125,5 +125,15 @@ Instructions formerly stored under `docs/instructions/` were migrated by copy �
 - Server-side Private Research access contract
 - Home v1 Private Research chat tool
 
+## Project Agent Governance — 2026-09-21 safety branch
+
+| Instruction | Governs | Status |
+|---|---|---|
+| `docs/AGENT_IDENTITY_REGISTRY.instruction.md` | `docs/AGENT_IDENTITY_REGISTRY.md` | ACTIVE — safety branch |
+| `docs/AGENT_WORK_LEDGER.instruction.md` | `docs/AGENT_WORK_LEDGER.md` | ACTIVE — safety branch |
+| `docs/AGENT_HANDOFF_PROTOCOL.instruction.md` | `docs/AGENT_HANDOFF_PROTOCOL.md` | ACTIVE — safety branch |
+
+These records establish unique Bengali agent identities, persistent task history, and predecessor/successor handoff for the Project Agent system. They are not production-approved until the normal promotion gate is completed.
+
 ## Status
 ACTIVE — v1.9 on main; safety-branch additions are DRAFT until review/promotion. Canonical live connection map is registered on `main`. Universal startup governance remains in REVIEW on the safety branch and is not promoted to `main`.
