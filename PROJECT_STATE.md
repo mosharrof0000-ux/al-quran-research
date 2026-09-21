@@ -309,3 +309,7 @@ Source-level integration verified। Canonical live page-এ browser/AI end-to-e
 The generated icon-sheet is recorded as a design reference only. It defines the general Qur'an reading-mode icon family and establishes a future separate Sufi-mode icon family. No live UI/database change is implied by this record. Canonical custom icon engine remains the technical source.
 
 Reference: `docs/design/MODE_ICON_DESIGN_REFERENCE_2026-09-21.md`
+
+
+## 25. Normal Quran Mode Icon Set v1 (2026-09-21)
+A separate reference/pilot asset family has been created at assets/icons/modes/normal-quran-v1/. It contains ten Quranic/Islamic minimalist icons for ordinary Reader mode: Quran, Surah, Ayah, Tafseer/Knowledge, Bookmark, Audio/Tilawat, Home, Search, Favorite, and Share. The registry and mode contract are documented in docs/design/NORMAL_QURAN_ICON_MODE_V1.md. This set is stored but is not yet wired into the live Reader or existing global Icon Engine. A separate Sufi-mode icon family is required for future Sufi Reader mode.
