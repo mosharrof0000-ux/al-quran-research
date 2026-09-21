@@ -135,3 +135,9 @@ ACTIVE — v1.9 on main; safety-branch additions are DRAFT until review/promotio
 | `docs/AGENT_HANDOFF_PROTOCOL.instruction.md` | `docs/AGENT_HANDOFF_PROTOCOL.md` | ACTIVE — safety branch |
 
 These records define human-readable Bengali Agent identity, per-task work history, successor takeover, and incomplete-work handoff. They are not production-active until the safety branch is reviewed and promoted.
+
+
+## Project Agent Engine hardening (2026-09-21)
+| `docs/PROJECT_AGENT_ENGINE_V1.instruction.md` | `docs/PROJECT_AGENT_ENGINE_V1.md` | ACTIVE — safety branch |
+| `backend/project-agent/worker.js.instruction.md` | `backend/project-agent/worker.js` | ACTIVE — safety branch |
+| `backend/project-agent/wrangler.toml.instruction.md` | `backend/project-agent/wrangler.toml` | ACTIVE — safety branch |
