@@ -160,3 +160,18 @@ A single canonical automatic writer now controls these live-entrypoint integrati
 **Status:** VERIFIED RESTORE BRANCH CREATED
 
 **Note:** এই restore point source-level বর্তমান অবস্থাকে সংরক্ষণ করে; live browser end-to-end verification এখনও pending।
+
+
+## BACKUP-2026-09-21-PRE-MODE-ICON-ASSETS
+
+**Date:** 2026-09-21
+
+**Purpose:** Restore point before creating the Normal Quran Mode icon asset family.
+
+**Restore branch:** `backup/pre-mode-icon-assets-2026-09-21`
+
+**Scope protected:** current main project state before mode-specific icon assets were added.
+
+**Status:** VERIFIED BACKUP BRANCH CREATED
+
+**Note:** The new icon SVGs are isolated on a feature branch and are not live-integrated. Restore branch remains available if the asset experiment is rejected.
