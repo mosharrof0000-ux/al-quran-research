@@ -140,8 +140,9 @@ async function executeTool(env,name,args){
 async function gemini(env,history,context){
   if(!env.GEMINI_API_KEY)throw new Error('GEMINI_API_KEY is not configured.');
   const model=env.GEMINI_MODEL||'gemini-2.5-flash';
-  const system='তুমি আল-কুরআন গবেষণা প্রকল্পের Project Agent। প্রথমে প্রকল্পের প্রয়োজনীয় ফাইল পড়বে। কখনো main-এ লিখবে না; শুধু নির্ধারিত agent/* branch-এ লিখবে। .github/workflows, database, migrations, validation, quran_research.db এবং schema.sql পরিবর্তন করবে না। কাজের আগে বিদ্যমান কাজ, task state এবং বর্তমান branch বুঝবে। একই task পুনরায় এলে নতুন পরিবর্তন না করে আগের state থেকে resume করবে। কাজ ইতিমধ্যে সম্পন্ন হলে DUPLICATE হিসেবে চিহ্নিত করবে। অনুমান করে code rewrite করবে না। শেষে কী পড়েছ, কী পরিবর্তন করেছ, branch/commit এবং approval/deployment অবস্থা বাংলায় জানাবে। Merge বা production deploy করতে পারো না।';
+  const system='তুমি আল-কুরআন গবেষণা প্রকল্পের Project Agent। প্রথমে প্রকল্পের প্রয়োজনীয় ফাইল পড়বে। কখনো main-এ লিখবে না; শুধু নির্ধারিত agent/* branch-এ লিখবে। .github/workflows, database, migrations, validation, quran_research.db এবং schema.sql পরিবর্তন করবে না। কাজের আগে বিদ্যমান কাজ, task state এবং বর্তমান branch বুঝবে। একই task পুনরায় এলে নতুন পরিবর্তন না করে আগের state থেকে resume করবে। কাজ ইতিমধ্যে সম্পন্ন হলে DUPLICATE হিসেবে চিহ্নিত করবে। কোনো tool error পেলে কারণ বুঝে নিরাপদভাবে arguments/path/branch ঠিক করে সীমিত retry করবে; একই ভুল অনন্তবার করবে না। destructive বা অস্পষ্ট পরিবর্তন অনুমান করে করবে না। শেষে কী পড়েছ, কী পরিবর্তন করেছ, branch/commit এবং approval/deployment অবস্থা বাংলায় জানাবে। Merge বা production deploy করতে পারো না।';
   let contents=history.slice();
+  const repairBudget=new Map();
   for(let turn=0;turn<MAX_TURNS;turn++){
     const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+model+':generateContent',{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':env.GEMINI_API_KEY},body:JSON.stringify({systemInstruction:{parts:[{text:system}]},contents:[{role:'user',parts:[{text:context}]},...contents],tools:[{functionDeclarations:TOOLS}],generationConfig:{maxOutputTokens:4096,temperature:0.1}})});
     const data=await r.json(); if(!r.ok)throw new Error('Gemini HTTP '+r.status+': '+String(data?.error?.message||'').slice(0,400));
@@ -151,8 +152,19 @@ async function gemini(env,history,context){
     contents.push(modelContent);
     const responses=[];
     for(const part of calls){
-      const fc=part.functionCall; let result;
-      try{result=await executeTool(env,fc.name,fc.args||{});}catch(e){result={ok:false,error:String(e?.message||e)};}
+      const fc=part.functionCall;
+      const key=fc.name+':'+JSON.stringify(fc.args||{});
+      let result;
+      try{result=await executeTool(env,fc.name,fc.args||{}); repairBudget.delete(key);}
+      catch(e){
+        const attempts=Number(repairBudget.get(key)||0);
+        if(attempts<2){
+          repairBudget.set(key,attempts+1);
+          result={ok:false,error:String(e?.message||e),repair_attempt:attempts+1,repair_instruction:'এই tool call ব্যর্থ হয়েছে। কারণটি বিশ্লেষণ করে নিরাপদভাবে arguments/path/branch ঠিক করে পুনরায় চেষ্টা করো। একই ভুল পুনরাবৃত্তি করো না।'};
+        }else{
+          result={ok:false,error:String(e?.message||e),repair_attempts_exhausted:true,repair_instruction:'এই operation বারবার ব্যর্থ হয়েছে। আর retry না করে কাজটিকে BLOCKED হিসেবে রিপোর্ট করো এবং কী যাচাই করা দরকার তা জানাও.'};
+        }
+      }
       responses.push({functionResponse:{name:fc.name,response:{result}}});
     }
     contents.push({role:'user',parts:responses});
