@@ -213,3 +213,40 @@ A generated icon-sheet image has been recorded as the visual reference for the f
 
 Reference record: `docs/design/MODE_ICON_DESIGN_REFERENCE_2026-09-21.md`
 Reference SHA-256: `170c83ecf42c84ca4c09686fccb32311c2272fe2d15dd4eb4b9be6ebce14c4d1`
+
+
+## WORK-2026-09-21-GENERAL-MODE-ICON-SET-01
+
+**Status:** DESIGNED AND STORED — LIVE INTEGRATION PENDING
+
+### User decision
+The user requested the General Quran Reading Mode icons to be created now, stored in the project, and the intended mode-based usage documented. A future Sufi Mode must use a separate icon family.
+
+### Safety point
+- Backup branch: `backup/pre-general-mode-icon-set-2026-09-21`
+- Working branch: `feat/general-quran-mode-icons-v1-2026-09-21`
+- No live reader UI or database change was made by this work.
+
+### Stored assets
+Directory: `assets/icons/mode-general-v1/`
+- quran.svg
+- surah.svg
+- ayah.svg
+- tafseer.svg
+- bookmark.svg
+- tilawat.svg
+- home.svg
+- search.svg
+- favorite.svg
+- share.svg
+- README.md
+- manifest.json
+
+### Usage contract
+General Quran Reading Mode uses this family. Future Sufi Mode must use a separate directory/family and must not overwrite these assets. Runtime mode selection can later select the corresponding asset family.
+
+### Design contract
+SVG, fill=none, stroke=currentColor, 2px target stroke, round caps/joins, lightweight/scalable, Quranic/Islamic motif per icon.
+
+### Verification
+Source files were created in an isolated branch and the Quran icon curve geometry was corrected before review. Live reader integration has intentionally not been performed yet.
