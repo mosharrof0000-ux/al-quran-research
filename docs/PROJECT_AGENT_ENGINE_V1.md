@@ -1,7 +1,18 @@
-# Project Agent Engine v1 — Isolated
+# Project Agent Engine v2 — Isolated Autonomous Core
 
 ## উদ্দেশ্য
-বর্তমান Gemini chat Worker-কে না ছুঁয়ে একটি আলাদা Project Agent Engine তৈরি করা হয়েছে। Engine-এর কাজ হবে প্রকল্পের ফাইল পড়া, code/context বিশ্লেষণ করা এবং নিরাপদ agent/* branch-এ text-file পরিবর্তন করা।
+বর্তমান production Gemini chat Worker-কে না ছুঁয়ে আলাদা Project Agent Engine তৈরি করা হয়েছে। Engine প্রকল্পের governance/context পড়বে, কাজের ধরন শনাক্ত করবে, বাংলা human-like Agent identity দেবে, আলাদা task branch তৈরি করবে, Gemini-কে controlled tools দেবে এবং observable work metadata ফেরত দেবে।
+
+## v2 শক্তিশালীকরণ
+- Work-type based Agent Name: শামীম, শাহীন, সুমন, রাকিব, নাঈম, তানভীর, ফারহান, আরিফ
+- unique Agent ID, Task ID, Session ID
+- প্রতি task-এর isolated agent/* branch
+- parent_task_id দিয়ে continuation/takeover chain
+- task branch metadata response-এ ফেরত
+- Agent Work Ledger এবং Handoff Protocol
+- structured Cloudflare observability/logging
+- Gemini tool loop 8 থেকে 10 turns
+- existing protected paths অপরিবর্তিত
 
 ## Isolation rule
 - আলাদা Cloudflare Worker: al-quran-research-project-agent
@@ -13,8 +24,18 @@
 - .github/workflows, database, migrations, validation, quran_research.db এবং schema.sql agent write থেকে protected
 - user approval ছাড়া main-এ promotion নয়
 
+## Identity / continuity
+প্রতিটি কাজের observable chain:
+Task ID → Agent Name/ID → Session ID → Work Type → Branch → Files → Commits → Tests → Review → Deployment State → Live Verification → Notification → Handoff
+
+অসম্পূর্ণ কাজের ক্ষেত্রে INCOMPLETE/HANDOFF record বাধ্যতামূলক। Successor নতুন identity নেবে; original worker-এর ইতিহাস থাকবে।
+
+বিস্তারিত:
+- docs/AGENT_IDENTITY_REGISTRY.md
+- docs/AGENT_WORK_LEDGER.md
+- docs/AGENT_HANDOFF_PROTOCOL.md
+
 ## Gemini tool layer
-Gemini function calling ব্যবহার করে পাঁচটি tool:
 1. project_read_file
 2. project_list_directory
 3. project_search_code
@@ -24,18 +45,17 @@ Gemini function calling ব্যবহার করে পাঁচটি tool:
 Gemini নিজে GitHub পরিবর্তন করে না; Worker tool call গ্রহণ করে GitHub API-তে নিরাপদভাবে কাজ সম্পন্ন করে।
 
 ## Required secrets
-Cloudflare Worker secrets হিসেবে আলাদাভাবে দিতে হবে:
 - GEMINI_API_KEY
 - GITHUB_TOKEN
 - AGENT_ACCESS_TOKEN
 
-GITHUB_TOKEN-এর জন্য repository Contents write permission প্রয়োজন। Workflow path পরিবর্তনের permission intentionally দেওয়া হয়নি।
-
-## First rollout
-প্রথমে engine-কে আলাদাভাবে deploy/test করতে হবে। সফল হলে পরে website-এর Gemini UI-তে একটি আলাদা Project Agent mode যুক্ত করা যাবে। Existing production chat, reader ও data pipeline এই engine-এর ব্যর্থতায় বন্ধ হবে না।
+## Observability
+Worker Logs এবং invocation logging enabled রাখা হয়েছে যাতে task শুরু/শেষ/ব্যর্থতার structured event দেখা যায়। Cloudflare Workers Logs/Observability বর্তমান debugging এবং production diagnosis-এর জন্য ব্যবহৃত হবে।
 
 ## Promotion gate
 Agent branch → review → validation → explicit approval → main promotion → deployment verification.
 
 ## Current implementation status
-Code and configuration are isolated in backend/project-agent/. This branch is a safety branch and has not been promoted to main.
+v2 core is implemented on isolated branch agent/shamim-agent-core-003 and has not been promoted to main. Production deployment has not been claimed.
+
+Status: REVIEW — v2
