@@ -7,14 +7,17 @@
 <link rel="stylesheet" href="gemini-icon-v1.css?v=1.0.0">
 </head>
 <body>
-<header class="chat-topbar"><div class="chat-topbar-left"><button class="icon-btn" aria-label="Menu">☰</button><button class="icon-btn" aria-label="Search">⌕</button></div><div class="chat-topbar-center"><span class="chat-logo">☪</span><span class="chat-brand">আল-কুরআন রিসার্চ</span></div><div class="chat-topbar-right"><button class="icon-btn" aria-label="Theme">◐</button><button class="icon-btn" aria-label="Notification">♢</button><button class="icon-btn" aria-label="Profile">○</button><button id="fontBtn" class="icon-btn" aria-label="ফন্ট কাস্টমাইজ">Aa</button></div></header>
 <div class="shell">
-<header class="topbar">
-  <button class="icon-btn" id="menuBtn" aria-label="মেনু"><span class="hamb"><i></i><i></i><i></i></span></button>
-  <button class="icon-btn" id="searchBtn" aria-label="অনুসন্ধান">⌕</button>
+<header class="topbar" aria-label="আল-কুরআন রিসার্চ হেডার">
+  <div class="topbar-left">
+    <button class="icon-btn" id="menuBtn" aria-label="মেনু"><span class="hamb"><i></i><i></i><i></i></span></button>
+    <button class="icon-btn" id="searchBtn" aria-label="অনুসন্ধান">⌕</button>
+  </div>
   <div class="brand">আল-কুরআন রিসার্চ</div>
-  <button class="icon-btn" id="themeBtn" aria-label="থিম">☾</button>
-  <button class="icon-btn" id="profileBtn" aria-label="প্রোফাইল">○</button>
+  <div class="topbar-right">
+    <button class="icon-btn" id="themeBtn" aria-label="থিম">☾</button>
+    <button class="icon-btn" id="fontBtn" aria-label="ফন্ট কাস্টমাইজ">Aa</button>
+  </div>
 </header>
 
 <section class="quran-home" id="quranHome" aria-label="আল-কুরআন হোম"><div class="reader-head"><strong>📖 আল-কুরআন হোম</strong><button id="closeQuranHome" aria-label="বন্ধ">×</button></div><div class="quran-home-body"><h1>📚 কুরআনসমূহ</h1><p>একটি কুরআন নির্বাচন করে পাঠ ও গবেষণা শুরু করুন।</p><div class="source-list" id="sourceList"></div></div></section>
