@@ -14,7 +14,8 @@ const pageUrl = process.argv[2] || 'https://mosharrof0000-ux.github.io/al-quran-
 const scripts = [
   ['browser', 'scripts/project-agent-browser-check.mjs'],
   ['console', 'scripts/project-agent-console-check.mjs'],
-  ['network_api', 'scripts/project-agent-network-api-check.mjs']
+  ['network_api', 'scripts/project-agent-network-api-check.mjs'],
+  ['time_policy', 'scripts/project-agent-time-policy-check.mjs']
 ];
 
 function run(name, file) {
