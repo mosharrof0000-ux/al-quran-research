@@ -1,16 +1,19 @@
-# Instruction — backend/project-agent/worker.js
+# Instruction — Project Agent Worker
 
-## Purpose
-Isolated Project Agent runtime. It may read project context and write only to agent/* branches.
+## Identity
+Path: backend/project-agent/worker.js
+Role: isolated autonomous Project Agent runtime.
 
-## Safety
-- Never write main.
-- Never modify protected .github/workflows, database, migrations, validation, quran_research.db or schema.sql.
-- Do not claim merge/deploy/live success.
-- Preserve Agent Name, Agent ID, Task ID and audit reporting.
+## Required behavior
+- Inspect before edit.
+- Use human-like Agent Name + unique Agent ID + Task ID + Session ID.
+- Work only on agent/* branches.
+- Preserve task history and handoff record.
+- Never merge or deploy.
+- Never write .github/workflows, database, migrations, validation, quran_research.db or schema.sql.
+- Never claim live verification without evidence.
 
 ## Verification
-Changes require syntax/runtime validation before promotion. The production chat Worker remains isolated.
+Syntax/runtime checks must be performed before promotion. Any behavior change requires this instruction to remain aligned with the worker.
 
-## Status
-ACTIVE on safety branch; promotion requires review.
+Status: ACTIVE — v1.1 candidate on safety branch.
