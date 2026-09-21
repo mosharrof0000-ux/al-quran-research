@@ -203,3 +203,13 @@ Merge-এর পরে `home-v1.html`-এ literal \\n সমস্যা ধর�
 
 ### Preservation / follow-up
 Master custom icon engine-এর exact source এবং বর্তমান compact integration implementation আলাদা করে audit করতে হবে; project-এর মূল icon asset overwrite না করে canonical engine source সংরক্ষণ করা প্রয়োজন।
+
+
+## WORK-2026-09-21-MODE-ICON-DESIGN-REFERENCE-01
+
+Status: REFERENCE RECORDED — NO LIVE UI CHANGE
+
+A generated icon-sheet image has been recorded as the visual reference for the future mode-aware icon system. General Qur'an reading mode will use the referenced minimalist Islamic icon family. A separate Sufi mode will have a separately designed icon family; it will not overwrite the general family. Future integration must follow Backup → Design → Review → Approve → Integrate → Verify → Live.
+
+Reference record: `docs/design/MODE_ICON_DESIGN_REFERENCE_2026-09-21.md`
+Reference SHA-256: `170c83ecf42c84ca4c09686fccb32311c2272fe2d15dd4eb4b9be6ebce14c4d1`
