@@ -234,11 +234,11 @@ export default {async fetch(request,env){
     const resumeCount=Number(prior?.resume_count||0)+(prior?1:0);
     const window=newActiveWindow(env);
     const parentTaskId=String(body?.parent_task_id||prior?.task_id||'');
-    await persistTask(env,identity,{parent_task_id:parentTaskId||null,state:prior?'RESUMING':'RECEIVED',resume_count:resumeCount,last_commit:prior?.last_commit||null,started_at:window.started_at,deadline_at:window.deadline_at,max_active_ms:maxActiveMs(env),max_same_failures:sameFailureLimit(env),timeout_policy:'TIME_LIMIT_REACHED -> CHECKPOINTED -> WAITING_FOR_RECOVERY'});
+    await persistTask(env,identity,{parent_task_id:parentTaskId||null,state:prior?'RESUMING':'RECEIVED',resume_count:resumeCount,last_commit:prior?.last_commit||null,started_at:window.started_at,deadline_at:window.deadline_at,max_active_ms:activeWindowMs(env),max_same_failures:sameFailureLimit(env),timeout_policy:'TIME_LIMIT_REACHED -> CHECKPOINTED -> WAITING_FOR_RECOVERY'});
     const context='TASK CONTEXT\\n'+JSON.stringify({identity,previous_state:prior||null,rule:'If previous state is incomplete, resume from last verified step. Do not repeat already committed changes.'})+'\\nUSER COMMAND\\n'+message;
     let result;
     try{
-      result=await gemini(env,[{role:'user',parts:[{text:message}]}],context,Date.parse(window.deadline_at),maxSameFailures(env));
+      result=await gemini(env,[{role:'user',parts:[{text:message}]}],context,Date.parse(window.deadline_at),sameFailureLimit(env));
     }catch(e){
       if(e?.code==='ACTIVE_TIME_LIMIT_REACHED'){
         await persistTask(env,identity,{state:'WAITING_FOR_RECOVERY',timeout_state:'TIME_LIMIT_REACHED',resume_count:resumeCount,last_commit:prior?.last_commit||null,started_at:window.started_at,deadline_at:window.deadline_at,error:'Active execution window exceeded; checkpoint preserved for a later resume.',resumable:true});
@@ -252,7 +252,7 @@ export default {async fetch(request,env){
     const verified=verification.status==='VERIFIED';
     const finalState={...identity,parent_task_id:parentTaskId||null,state:verified?'HANDOFF_COMPLETE':'READY_FOR_REVIEW',verification_status:verification.status,verification_reasons:verification.reasons,resume_count:resumeCount,last_commit:null,answer:result.answer,provider:result.model,notification:verified?'COMPLETED':'READY_FOR_REVIEW',resume_available:!verified};
     const persisted=await persistTask(env,identity,finalState);
-    return json({ok:verified,duplicate:false,resumed:Boolean(prior),answer:result.answer,provider:result.model,verification,agent_version:env.AGENT_VERSION||'1.3.0',isolated:true,merge:false,deploy:false,time_policy:{max_active_ms:maxActiveMs(env),max_same_failures:maxSameFailures(env),active_window_started_at:window.started_at,active_window_deadline_at:window.deadline_at},identity:{...identity,task_state:verified?'HANDOFF_COMPLETE':'READY_FOR_REVIEW',resume_count:resumeCount,persisted:Boolean(persisted?.commit_sha),last_commit:persisted?.commit_sha||null},notification:verified?'COMPLETED':'READY_FOR_REVIEW',resume_available:!verified},verified?200:409,origin);
+    return json({ok:verified,duplicate:false,resumed:Boolean(prior),answer:result.answer,provider:result.model,verification,agent_version:env.AGENT_VERSION||'1.3.0',isolated:true,merge:false,deploy:false,time_policy:{max_active_ms:activeWindowMs(env),max_same_failures:sameFailureLimit(env),active_window_started_at:window.started_at,active_window_deadline_at:window.deadline_at},identity:{...identity,task_state:verified?'HANDOFF_COMPLETE':'READY_FOR_REVIEW',resume_count:resumeCount,persisted:Boolean(persisted?.commit_sha),last_commit:persisted?.commit_sha||null},notification:verified?'COMPLETED':'READY_FOR_REVIEW',resume_available:!verified},verified?200:409,origin);
   }catch(e){
     const timedOut=e?.code==='ACTIVE_TIME_LIMIT_REACHED';
     return json({ok:false,error:timedOut?'TIME_LIMIT_REACHED':'PROJECT_AGENT_FAILED',detail:String(e?.message||e).slice(0,600),resumable:timedOut,identity:identity?{...identity,task_state:timedOut?'WAITING_FOR_RECOVERY':'BLOCKED'}:null},timedOut?408:500,origin);
