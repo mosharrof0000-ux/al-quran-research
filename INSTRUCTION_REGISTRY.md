@@ -127,3 +127,16 @@ Instructions formerly stored under `docs/instructions/` were migrated by copy �
 
 ## Status
 ACTIVE — v1.9 on main; safety-branch additions are DRAFT until review/promotion. Canonical live connection map is registered on `main`. Universal startup governance remains in REVIEW on the safety branch and is not promoted to `main`.
+
+
+## 2026-09-21 Project Agent strengthening — safety branch
+
+| Instruction | Governs | Status |
+|---|---|---|
+| `docs/AGENT_IDENTITY_REGISTRY.instruction.md` | `docs/AGENT_IDENTITY_REGISTRY.md` | ACTIVE — safety branch |
+| `docs/AGENT_WORK_LEDGER.instruction.md` | `docs/AGENT_WORK_LEDGER.md` | ACTIVE — safety branch |
+| `docs/AGENT_HANDOFF_PROTOCOL.instruction.md` | `docs/AGENT_HANDOFF_PROTOCOL.md` | ACTIVE — safety branch |
+| `docs/PROJECT_AGENT_ENGINE_V1.instruction.md` | `docs/PROJECT_AGENT_ENGINE_V1.md` | ACTIVE — safety branch |
+| `backend/project-agent/worker.js.instruction.md` | `backend/project-agent/worker.js` | ACTIVE — safety branch |
+| `backend/project-agent/wrangler.toml.instruction.md` | `backend/project-agent/wrangler.toml` | ACTIVE — safety branch |
+| `.github/workflows/agent-project-engine-deploy.yml.instruction.md` | `.github/workflows/agent-project-engine-deploy.yml` | ACTIVE — safety branch |
