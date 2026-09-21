@@ -22,15 +22,18 @@ function json(data,status,origin){return new Response(JSON.stringify(data),{stat
 function repo(env){return env.PROJECT_REPO||DEFAULT_REPO;}
 function isAgentBranch(b){return /^agent\/[A-Za-z0-9._/-]+$/.test(String(b||''))&&!String(b).includes('..');}
 function slug(s){return String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,55)||'task';}
-function chooseName(message){const m=String(message||'').toLowerCase();for(const [key,name] of NAME_MAP){if(m.includes(key))return name;}return 'শামীম';}
+function chooseWorkType(message){const m=String(message||'').toLowerCase();for(const [key] of NAME_MAP){if(m.includes(key))return key;}return 'general';}
+const NAME_POOL=['শামীম','শাহীন','সুমন','সজীব','রাকিব','নাঈম','আরিফ','তানভীর','ইমরান','রিফাত'];
+function chooseName(message,taskId=''){const m=String(message||'').toLowerCase();for(const [key,name] of NAME_MAP){if(m.includes(key))return name;}let n=0;for(const ch of String(taskId)){n=(n+ch.charCodeAt(0))%NAME_POOL.length;}return NAME_POOL[n];}
 function identity(body){
  const message=String(body?.message||'');
  const taskId=String(body?.task_id||('TASK-'+Date.now()));
- const agentName=String(body?.agent_name||chooseName(message));
+ const workType=String(body?.work_type||chooseWorkType(message));
+ const agentName=String(body?.agent_name||chooseName(message,taskId));
  const agentId=String(body?.agent_id||slug(agentName)+'-'+taskId.slice(-6));
  const sessionId=String(body?.session_id||('SESSION-'+Date.now()));
  const branch=String(body?.branch||('agent/'+slug(agentName)+'-'+slug(taskId)));
- return {taskId,agentName,agentId,sessionId,branch,parentTaskId:String(body?.parent_task_id||''),message};
+ return {taskId,agentName,agentId,sessionId,branch,parentTaskId:String(body?.parent_task_id||''),workType,message};
 }
 function safePath(path,write=false){
  const p=String(path||'').replace(/^\/+/, '');
@@ -131,7 +134,7 @@ async function gemini(env,task){
 }
 async function saveTaskRecord(env,task,result){
  const path='docs/agent-work/'+slug(task.taskId)+'.md';
- const text=['# Agent Work Record','', '- Task ID: '+task.taskId,'- Parent Task ID: '+(task.parentTaskId||'NONE'),'- Agent Name: '+task.agentName,'- Agent ID: '+task.agentId,'- Session ID: '+task.sessionId,'- Branch: '+task.branch,'- Status: '+(result.status||'WORKING'),'','## Request',task.message,'','## Agent Report',result.answer||'','', '## Verification State','Agent branch only; merge/deploy not performed.','', '## Handoff','If incomplete, successor must create a new Agent ID and preserve this record.'].join('\n');
+ const text=['# Agent Work Record','', '- Task ID: '+task.taskId,'- Parent Task ID: '+(task.parentTaskId||'NONE'),'- Agent Name: '+task.agentName,'- Agent ID: '+task.agentId,'- Session ID: '+task.sessionId,'- Work Type: '+task.workType,'- Branch: '+task.branch,'- Status: '+(result.status||'WORKING'),'','## Request',task.message,'','## Agent Report',result.answer||'','', '## Verification State','Agent branch only; merge/deploy not performed.','', '## Handoff','If incomplete, successor must create a new Agent ID and preserve this record.'].join('\n');
  return writeFile(env,{path,branch:task.branch,content:text,message:'Save task handoff record '+task.taskId});
 }
 export default {async fetch(request,env){
@@ -146,8 +149,16 @@ export default {async fetch(request,env){
   if(task.message.length>10000)return json({ok:false,error:'message too large'},413,origin);
   if(!isAgentBranch(task.branch))return json({ok:false,error:'Invalid agent branch'},400,origin);
   let base='main';try{await branchStatus(env,{branch:task.branch})}catch{await createBranch(env,{branch:task.branch,base});}
-  const result=await gemini(env,task);
+  let result;
+  try{
+   result=await gemini(env,task);
+   result.status='COMPLETED';
+  }catch(e){
+   result={status:'BLOCKED',answer:'Agent task failed before verification: '+String(e?.message||e),turns:0};
+   try{await saveTaskRecord(env,task,result)}catch{}
+   return json({ok:false,error:'PROJECT_AGENT_FAILED',detail:String(e?.message||e).slice(0,700),handoff_required:true,task:{task_id:task.taskId,agent_name:task.agentName,agent_id:task.agentId,session_id:task.sessionId,work_type:task.workType,branch:task.branch,parent_task_id:task.parentTaskId}},500,origin);
+  }
   try{await saveTaskRecord(env,task,result)}catch(e){result.handoff_warning=String(e?.message||e);}
-  return json({ok:true,answer:result.answer,provider:result.model,agent_version:env.AGENT_VERSION||'1.1.0',isolated:true,merge:false,deploy:false,task:{task_id:task.taskId,agent_name:task.agentName,agent_id:task.agentId,session_id:task.sessionId,branch:task.branch,parent_task_id:task.parentTaskId},turns:result.turns},200,origin);
- }catch(e){return json({ok:false,error:'PROJECT_AGENT_FAILED',detail:String(e?.message||e).slice(0,700)},500,origin);}
+  return json({ok:true,answer:result.answer,provider:result.model,agent_version:env.AGENT_VERSION||'1.1.0',isolated:true,merge:false,deploy:false,task:{task_id:task.taskId,agent_name:task.agentName,agent_id:task.agentId,session_id:task.sessionId,work_type:task.workType,branch:task.branch,parent_task_id:task.parentTaskId},turns:result.turns},200,origin);
+ }catch(e){return json({ok:false,error:'PROJECT_AGENT_FAILED',detail:String(e?.message||e).slice(0,700),handoff_required:true},500,origin);}
 }};
