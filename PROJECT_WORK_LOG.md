@@ -248,7 +248,7 @@ Backup → Review → Approve → Integrate → Verify → Live.
 `assets/icons/modes/general-quran-v1/`-এ ১০টি SVG যাচাই করা হয়েছে: quran, surah, ayah, tafseer, bookmark, audio, home, search, favorite, share। প্রতিটি SVG-তে `fill="none"` ও `stroke="currentColor"` রয়েছে এবং lightweight line-art structure বজায় আছে।
 
 ### Reference
-`docs/design/MODE_ICON_DESIGN_REFERENCE-2026-09-21.md` reference record হিসেবে সংরক্ষিত। Reference SHA-256: `170c83ecf42c84ca4c09686fccb32311c2272fe2d15dd4eb4b9be6ebce14c4d1`।
+`docs/design/MODE_ICON_DESIGN_REFERENCE_2026-09-21.md` reference record হিসেবে সংরক্ষিত। Reference SHA-256: `170c83ecf42c84ca4c09686fccb32311c2272fe2d15dd4eb4b9be6ebce14c4d1`।
 
 ### Mode usage rule
 - `general-quran` mode → `assets/icons/modes/general-quran-v1/`
