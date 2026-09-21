@@ -203,10 +203,10 @@ The project shall maintain a separate, modular **Front Font & Text Engine** for 
 The governing design reference is the project's stored `front/font.txt` instruction set. Its requirements must be preserved as versioned project knowledge and reflected in the Font Engine registry/specification.
 
 ### 17.2 Scope
-The engine may govern, through approved registries: Bengali/Arabic/English/display fonts; font size, weight, line height and spacing; text colors and highlights; themes; text animation/motion; accessibility/reduced-motion behavior; and future presentation modules.
+The engine may govern, through approved registries: any supported language/script plus optional Bengali/Arabic/English/display font groups; font size, weight, line height and spacing; text colors and highlights; themes; text animation/motion; accessibility/reduced-motion behavior; and future presentation modules.
 
 ### 17.3 Future-extension rule
-The architecture must remain registry-driven and modular so new fonts, font versions, animations, themes, layout/presentation rules, voice/motion/accessibility modules and other visual features can be added without rewriting Quran data, research logic, or core APIs.
+The architecture must remain registry-driven and modular so new fonts, font versions, languages/scripts, directions, locale rules, animations, themes, layout/presentation rules, voice/motion/accessibility modules and other visual features can be added without rewriting Quran data, research logic, or core APIs.
 
 ### 17.4 Content safety
 Typography and animation are presentation-only. The engine must never silently rewrite Quran Arabic text, Unicode/harakat, ayah numbers, translations, research records, database values, source provenance, or API data.
