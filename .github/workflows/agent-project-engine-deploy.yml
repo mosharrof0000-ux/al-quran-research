@@ -1,4 +1,5 @@
 name: Deploy Isolated Project Agent Engine
+# Autonomous AI activation gate: deployment -> runtime -> E2E -> verification
 
 on:
   push:
