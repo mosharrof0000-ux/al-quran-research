@@ -89,7 +89,6 @@ function activeWindowMs(env){const n=Number(env.AGENT_MAX_ACTIVE_MS||DEFAULT_ACT
 function sameFailureLimit(env){const n=Number(env.AGENT_MAX_SAME_FAILURES||DEFAULT_SAME_FAILURE_LIMIT);return Number.isFinite(n)&&n>0?n:DEFAULT_SAME_FAILURE_LIMIT;}
 function nowIso(){return new Date().toISOString();}
 function taskFailureKey(error){return String(error||'unknown').toLowerCase().replace(/\d+/g,'#').replace(/\s+/g,' ').slice(0,240);}
-function ensureActiveWindow(task){const deadline=Date.parse(String(task?.deadline_at||''));if(Number.isFinite(deadline)&&Date.now()>=deadline){const e=new Error('ACTIVE_TIME_LIMIT_REACHED');e.code='TIME_LIMIT_REACHED';throw e;}}
 async function persistTask(env,task,patch={}){
   const branch=task.branch||'';
   if(!isAgentBranch(branch))return {persisted:false,error:'task branch missing'};
