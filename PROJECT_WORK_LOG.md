@@ -235,3 +235,28 @@ Reference SHA-256: `170c83ecf42c84ca4c09686fccb32311c2272fe2d15dd4eb4b9be6ebce14
 
 ### Integration gate
 Backup → Review → Approve → Integrate → Verify → Live.
+
+
+## WORK-2026-09-21-NORMAL-QURAN-MODE-ICON-ASSET-VERIFICATION-01
+
+**Status:** VERIFIED AND STORED — NOT LIVE-INTEGRATED
+
+### User decision
+ব্যবহারকারী reference image অনুযায়ী সাধারণ কোরআন পড়ার জন্য ১০টি minimalist Islamic/Qur'anic icon project-এ স্থায়ীভাবে সংরক্ষণ এবং ব্যবহারবিধি নথিভুক্ত করতে বলেছেন। ভবিষ্যতের Sufi mode-এর জন্য সম্পূর্ণ আলাদা icon family থাকবে।
+
+### Verified assets
+`assets/icons/modes/general-quran-v1/`-এ ১০টি SVG যাচাই করা হয়েছে: quran, surah, ayah, tafseer, bookmark, audio, home, search, favorite, share। প্রতিটি SVG-তে `fill="none"` ও `stroke="currentColor"` রয়েছে এবং lightweight line-art structure বজায় আছে।
+
+### Reference
+`docs/design/MODE_ICON_DESIGN_REFERENCE_2026-09-21.md` reference record হিসেবে সংরক্ষিত। Reference SHA-256: `170c83ecf42c84ca4c09686fccb32311c2272fe2d15dd4eb4b9be6ebce14c4d1`।
+
+### Mode usage rule
+- `general-quran` mode → `assets/icons/modes/general-quran-v1/`
+- `sufi` mode → আলাদা Sufi icon family; General family overwrite/reuse করা যাবে না।
+- Runtime mode switch icon family নির্বাচন করবে; live integration আলাদা approval gate-এর অধীন।
+
+### Safety
+Backup branch: `backup/pre-mode-icon-assets-2026-09-21`। এই verification কাজ কোনো database/backend/live UI পরিবর্তন করেনি।
+
+### Integration gate
+Backup → Review → Approve → Integrate → Verify → Live.
