@@ -283,3 +283,27 @@ Verification: all ten SVG asset files were present on the working branch and use
 - Technical contract: SVG, 64x64, fill=none, stroke=currentColor, nominal 1.9–2px line art, round caps/joins.
 - Verification: all ten SVG assets are present on main; audio uses the existing canonical filename audio-tilawat.svg; manifest maps the reader role to that file.
 - Live integration: NOT performed. Existing reader/icon engine behavior remains unchanged pending isolated visual review and approval.
+
+
+## WORK-2026-09-21-NORMAL-MODE-ICON-ASSETS-02
+
+**Status:** STORED ON MAIN — LIVE READER INTEGRATION PENDING
+
+### User decision
+The 10-icon generated reference is now converted into a dedicated **Normal Quran Reading Mode** SVG asset family. A separate Sufi icon family will be created later and must remain isolated.
+
+### Safety
+- Backup branch: `backup/pre-mode-icon-assets-2026-09-21`
+- Asset PR: #82
+- Asset merge commit: `a2d4685101fef099ae309ca3387ad3e8a22478a6`
+- No database/backend/live Reader behavior was changed.
+
+### Stored assets
+`assets/icon-engine/modes/normal-v1/`
+contains 10 SVG icons, `manifest.json`, and `README.md`. The mode usage registry is `docs/design/MODE_ICON_USAGE_REGISTRY_NORMAL_V1.md`.
+
+### Usage record
+Normal Reader mode resolves to this family. Sufi mode must resolve to a separate family. Missing icons may use a semantic canonical-engine fallback, but assets must not be copied between modes.
+
+### Acceptance status
+Assets are stored on main. Runtime integration remains a separate gate: isolated visual review → mobile/desktop verification → approval → mode switch integration → live verification.
