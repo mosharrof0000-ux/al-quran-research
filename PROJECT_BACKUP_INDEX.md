@@ -138,3 +138,25 @@ A single canonical automatic writer now controls these live-entrypoint integrati
 
 **State record:** `PROJECT_STATE.md` Version 0.3 — VERIFIED / STABLE CHECKPOINT
 **Work record:** `PROJECT_WORK_LOG.md` — `WORK-2026-09-11-STABLE-CHECKPOINT-01`
+
+
+## BACKUP-2026-09-21-PRE-GEMINI-CUSTOM-ICON-DOCUMENTATION
+
+**Date:** 2026-09-21
+
+**Purpose:** Gemini custom-icon integration-এর বর্তমান main state নথিভুক্ত/সংশোধনের আগে rollback point
+
+**Restore branch:** `backup/pre-gemini-custom-icon-documentation-2026-09-21`
+
+**Pre-documentation main commit:** `386b2b417b32d64526b9974b23fd738b688e0364`
+
+**Scope protected:**
+- Gemini custom icon integration
+- `assets/icon-engine/aqr-icon-engine.js`
+- `ui/home-v1/home-v1.html`
+- `ui/home-v1/home-v1.js`
+- `ui/home-v1/gemini-icon-v1.css`
+
+**Status:** VERIFIED RESTORE BRANCH CREATED
+
+**Note:** এই restore point source-level বর্তমান অবস্থাকে সংরক্ষণ করে; live browser end-to-end verification এখনও pending।
