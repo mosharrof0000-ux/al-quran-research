@@ -15,7 +15,7 @@ asset_root: assets/icons/modes/normal-quran-v1/
 | Home | home | home.svg |
 | Search | search | search.svg |
 | Favorite | favorite | favorite.svg |
-| Share | share.svg | share.svg |
+| Share | share | share.svg |
 
 ## Mode contract
 - Normal Quran Reader uses this registry.
