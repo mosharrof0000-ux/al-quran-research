@@ -1,0 +1,1 @@
+Instruction for AGENT_IDENTITY_REGISTRY.md. Preserve historical identities; updates are additive/versioned; verify Task/Agent/Session/branch consistency.
