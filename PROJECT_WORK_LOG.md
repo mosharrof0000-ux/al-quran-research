@@ -213,3 +213,40 @@ A generated icon-sheet image has been recorded as the visual reference for the f
 
 Reference record: `docs/design/MODE_ICON_DESIGN_REFERENCE_2026-09-21.md`
 Reference SHA-256: `170c83ecf42c84ca4c09686fccb32311c2272fe2d15dd4eb4b9be6ebce14c4d1`
+
+
+## WORK-2026-09-21-NORMAL-MODE-ICON-ASSETS-01
+
+**Status:** CREATED AND STORED — NOT YET WIRED INTO LIVE UI
+
+### User decision
+The generated 10-icon sheet is the visual reference for the **Normal Quran Reading Mode**. The user also requires a separate future **Sufi Mode** icon family. Mode families must remain isolated.
+
+### Safety point
+- Backup branch: `backup/pre-mode-icon-assets-2026-09-21`
+- Working branch: `feat/mode-icon-assets-v1-2026-09-21`
+- No Reader UI, database, or backend behavior was changed by this asset preparation.
+
+### Assets created
+Stored under `assets/icon-engine/modes/normal-v1/`:
+- quran-rehal.svg
+- surah-mihrab.svg
+- ayah-rub-el-hizb.svg
+- tafsir-lantern.svg
+- bookmark-minaret.svg
+- audio-tilawat.svg
+- home-mihrab.svg
+- search-star.svg
+- favorite-geometric.svg
+- share-arch.svg
+- manifest.json
+- README.md
+
+### Usage rule
+These are the **Normal Quran Reading Mode** reference/production-oriented assets. They use SVG `fill=none`, `stroke=currentColor`, 1.8px stroke, 64x64 viewBox, round caps/joins. They must be switched as a family at runtime when Normal mode is active. A future Sufi family must live in a separate folder and must not overwrite these assets.
+
+### Verification status
+- SVG assets created and stored in the isolated branch.
+- Manifest and usage documentation created.
+- Live Reader integration has NOT been performed.
+- Isolated visual/mobile verification remains before production integration.
