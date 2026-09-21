@@ -129,6 +129,11 @@ Safety-branch governance work is not production publication. Before promotion to
 ## Migration Rule
 Instructions formerly stored under `docs/instructions/` were migrated by copy → verify → registry update → old-path removal. No governed target file, website path, backend path, data file, or research record was moved as part of this instruction migration.
 
+## Project Agent runtime governance — 2026-09-21 safety branch
+- `backend/project-agent/worker.js.instruction.md` — isolated Worker runtime
+- `backend/project-agent/wrangler.toml.instruction.md` — isolated deployment configuration
+- `docs/PROJECT_AGENT_ENGINE_V1.instruction.md` — engine architecture contract
+
 ## Project Agent governance — 2026-09-21 safety branch
 - `docs/AGENT_IDENTITY_REGISTRY.md` — Bengali Agent identity and naming rules
 - `docs/AGENT_WORK_LEDGER.md` — persistent visible task history
