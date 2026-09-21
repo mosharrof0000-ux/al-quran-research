@@ -1,0 +1,23 @@
+{
+  "mode": "normal-quran-reading",
+  "version": "1.0.0",
+  "status": "asset-only",
+  "viewBox": "0 0 64 64",
+  "stroke": "currentColor",
+  "fill": "none",
+  "strokeWidth": 1.8,
+  "icons": [
+    "quran",
+    "surah",
+    "ayah",
+    "tafseer",
+    "bookmark",
+    "audio-tilawat",
+    "home",
+    "search",
+    "favorite",
+    "share"
+  ],
+  "assetPath": "assets/icons/modes/normal-v1/",
+  "futureSufiMode": "sufi-v1-separate-family"
+}
