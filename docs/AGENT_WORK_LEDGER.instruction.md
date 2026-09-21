@@ -1,0 +1,1 @@
+Instruction for AGENT_WORK_LEDGER.md. Preserve audit history; no secrets or hidden reasoning; record completed/incomplete/verification/handoff state.
