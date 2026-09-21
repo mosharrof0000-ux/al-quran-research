@@ -1,0 +1,84 @@
+{
+  "name": "Al-Quran Research — Dynamic Typography Registry",
+  "version": "1.1.0",
+  "status": "isolated-demo",
+  "source_instruction": "front/font.txt",
+  "principles": [
+    "modular",
+    "non-destructive",
+    "reversible",
+    "future-ready"
+  ],
+  "fonts": {
+    "default": {
+      "default": "system-default",
+      "category": "generic",
+      "fallback": [
+        "system-ui",
+        "sans-serif"
+      ]
+    },
+    "bengali": {
+      "default": "system-bengali",
+      "category": "bengali",
+      "fallback": [
+        "Noto Sans Bengali",
+        "Hind Siliguri",
+        "sans-serif"
+      ]
+    },
+    "arabic": {
+      "default": "system-arabic",
+      "category": "quranic",
+      "fallback": [
+        "Noto Naskh Arabic",
+        "Amiri",
+        "serif"
+      ]
+    },
+    "english": {
+      "default": "system-english",
+      "category": "english",
+      "fallback": [
+        "Inter",
+        "system-ui",
+        "sans-serif"
+      ]
+    },
+    "display": {
+      "default": "system-display",
+      "category": "display",
+      "fallback": [
+        "Hind Siliguri",
+        "sans-serif"
+      ]
+    }
+  },
+  "future_fields": [
+    "license",
+    "weight",
+    "style",
+    "recommendedUse",
+    "file",
+    "unicodeRange",
+    "preload",
+    "version",
+    "language",
+    "script",
+    "direction",
+    "locale",
+    "variableAxes",
+    "features",
+    "fontFamily",
+    "source"
+  ],
+  "language_model": {
+    "mode": "open",
+    "principle": "language/script agnostic",
+    "selection": "registry-driven",
+    "defaultFallback": [
+      "system-ui",
+      "sans-serif"
+    ]
+  }
+}
