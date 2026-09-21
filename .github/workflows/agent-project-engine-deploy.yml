@@ -52,7 +52,7 @@ jobs:
           curl -fsS --retry 5 --retry-all-errors --retry-delay 2             -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN"             "$API" | tee /tmp/script.json
           jq -e '.success == true and .result.id == "al-quran-research-project-agent"' /tmp/script.json >/dev/null
           curl -fsS --retry 5 --retry-all-errors --retry-delay 2             -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN"             "$DEPLOYMENTS" | tee /tmp/deployments.json
-          jq -e '.success == true and (.result.deployments | length) > 0' /tmp/deployments.json >/dev/null
+          jq -e '.success == true and ((.result.deployments // .result) | type) == "array" and ((.result.deployments // .result) | length) > 0' /tmp/deployments.json >/dev/null
 
       - name: Smoke test isolated health endpoint
         run: |
