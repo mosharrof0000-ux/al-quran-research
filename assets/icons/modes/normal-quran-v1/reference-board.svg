@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<rect width="720" height="360" rx="18" fill="white" stroke="#d9e1dd"/>
+<g font-family="sans-serif" font-size="12" fill="currentColor" stroke="none" text-anchor="middle">
+<text x="72" y="30">Quran</text><text x="216" y="30">Surah</text><text x="360" y="30">Ayah</text><text x="504" y="30">Tafseer</text><text x="648" y="30">Bookmark</text>
+<text x="72" y="202">Audio</text><text x="216" y="202">Home</text><text x="360" y="202">Search</text><text x="504" y="202">Favorite</text><text x="648" y="202">Share</text></g>
+<g transform="translate(40 45) scale(1.0)"><path d="M32 18v28"/><path d="M31 19c-7-7-16-7-23-3v25c7-4 16-4 24 3"/><path d="M33 19c7-7 16-7 23-3v25c-7-4-16-4-24 3"/><path d="M10 44l22 8 22-8"/><path d="M17 49l-6 7h14l7-4 7 4h14l-6-7"/></g>
+<g transform="translate(184 45)"><path d="M10 54h44"/><path d="M15 54V29c0-10 7-18 17-23 10 5 17 13 17 23v25"/><path d="M22 54V31c0-6 4-11 10-14 6 3 10 8 10 14v23"/><circle cx="32" cy="28" r="2"/></g>
+<g transform="translate(328 45)"><path d="M32 7l6 7 9-1-1 9 7 6-7 6 1 9-9-1-6 7-6-7-9 1 1-9-7-6 7-6-1-9 9 1z"/><path d="M32 13l4 5 7-1-1 7 5 4-5 4 1 7-7-1-4 5-4-5-7 1 1-7-5-4 5-4-1-7 7 1z"/><circle cx="32" cy="32" r="2"/></g>
+<g transform="translate(472 45)"><path d="M32 9v5M18 15l4 4M46 15l-4 4M13 29h6M51 29h-6"/><path d="M32 14c-7 0-12 5-12 11v18h24V25c0-6-5-11-12-11z"/><path d="M23 25h18M24 31h16M24 37h16"/><path d="M26 43l6 6 6-6"/></g>
+<g transform="translate(616 45)"><path d="M20 54V18c0-5 3-9 7-11 2 4 8 4 10 0 4 2 7 6 7 11v36l-12-8z"/><path d="M27 11c1-4 3-6 5-8 2 2 4 4 5 8"/></g>
+<g transform="translate(40 217)"><path d="M17 28v8c0 4-3 7-7 7V21c4 0 7 3 7 7z"/><path d="M17 24a23 23 0 0 1 0 16M23 20a29 29 0 0 1 0 24M29 25v14M35 18v28M41 25v14M47 20a29 29 0 0 0 0 24M53 24a23 23 0 0 0 0 16"/></g>
+<g transform="translate(184 217)"><path d="M10 54h44"/><path d="M15 54V32c0-8 7-15 17-20 10 5 17 12 17 20v22"/><path d="M24 54V39c0-5 3-9 8-12 5 3 8 7 8 12v15"/></g>
+<g transform="translate(328 217)"><circle cx="28" cy="28" r="18"/><path d="M41 41l13 13"/><path d="M28 17l4 5 7-1-1 7 5 4-5 4 1 7-7-1-4 5-4-5-7 1 1-7-5-4 5-4-1-7 7 1z"/></g>
+<g transform="translate(472 217)"><path d="M32 53S11 41 11 25c0-8 6-13 13-13 4 0 7 2 8 5 2-3 5-5 9-5 7 0 12 5 12 13 0 16-21 28-21 28z"/><path d="M25 31c3-5 7-7 12-9"/></g>
+<g transform="translate(616 217)"><path d="M12 49c2-15 10-25 20-25s18 10 20 25"/><circle cx="32" cy="13" r="6"/><circle cx="12" cy="50" r="6"/><circle cx="52" cy="50" r="6"/></g>
+</svg>
