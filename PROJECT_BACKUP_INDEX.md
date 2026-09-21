@@ -160,3 +160,20 @@ A single canonical automatic writer now controls these live-entrypoint integrati
 **Status:** VERIFIED RESTORE BRANCH CREATED
 
 **Note:** এই restore point source-level বর্তমান অবস্থাকে সংরক্ষণ করে; live browser end-to-end verification এখনও pending।
+
+
+## BACKUP-2026-09-21-PRE-NORMAL-MODE-ICON-ASSET-SET
+
+**Date:** 2026-09-21
+
+**Purpose:** Normal Qur'an Mode icon asset creation-এর আগের main state-এর rollback point
+
+**Restore branch:** `backup/pre-normal-mode-icon-set-2026-09-21`
+
+**Protected scope:** Existing custom icon engine, live UI, research/database files, and current main state before new Normal Mode asset family creation.
+
+**Working branch:** `feat/normal-quran-mode-icon-set-v1-2026-09-21`
+
+**Status:** VERIFIED BACKUP BRANCH CREATED
+
+**Note:** New Normal Mode SVG assets are isolated until review/approval. No live UI integration is included in this restore point.
