@@ -1,0 +1,1 @@
+Instruction for AGENT_HANDOFF_PROTOCOL.md. Handoff is mandatory for blocked/paused/transferred work; never erase predecessor attribution.
