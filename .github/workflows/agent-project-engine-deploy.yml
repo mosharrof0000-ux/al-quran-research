@@ -15,7 +15,7 @@ permissions:
 jobs:
   deploy-agent-engine:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - name: Checkout isolated branch
         uses: actions/checkout@v6
@@ -33,19 +33,21 @@ jobs:
           URL='https://al-quran-research-project-agent.mosharrof0000.workers.dev'
           ORIGIN='https://mosharrof0000-ux.github.io'
 
-          echo "Checking isolated engine health..."
-          for attempt in 1 2 3 4 5 6 7 8 9 10; do
-            if BODY="$(curl -fsS --connect-timeout 8 --max-time 20 -H "Origin: $ORIGIN" "$URL/")"; then
-              echo "$BODY"
-              echo "$BODY" | grep -q '"isolated":true'
-              echo "$BODY" | grep -q '"merge":false'
-              echo "$BODY" | grep -q '"deploy":false'
-              exit 0
+          echo "Waiting for isolated Worker DNS/edge propagation..."
+          for attempt in $(seq 1 30); do
+            echo "Attempt $attempt/30"
+            if getent hosts al-quran-research-project-agent.mosharrof0000.workers.dev >/dev/null 2>&1; then
+              if BODY="$(curl -fsS --connect-timeout 8 --max-time 20 -H "Origin: $ORIGIN" "$URL/")"; then
+                echo "$BODY"
+                echo "$BODY" | grep -q '"isolated":true'
+                echo "$BODY" | grep -q '"merge":false'
+                echo "$BODY" | grep -q '"deploy":false'
+                exit 0
+              fi
             fi
-            echo "Health endpoint not ready; retry $attempt/10..."
-            sleep 6
+            sleep 10
           done
-          echo "Isolated health endpoint did not become reachable."
+          echo "Isolated health endpoint did not become reachable after propagation wait."
           exit 1
 
       - name: End-to-end authenticated Agent runtime and resume proof
