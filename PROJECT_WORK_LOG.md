@@ -274,3 +274,12 @@ Created assets: assets/icons/modes/normal-v1/ — 10 SVG icons, icon-manifest.js
 Usage record: docs/design/MODE_ICON_USAGE_2026-09-21.md.
 
 Verification: all ten SVG asset files were present on the working branch and use fill=none, stroke=currentColor, 1.8px line-art. No live UI/database/backend integration was made. Runtime mode switching remains a later integration step.
+
+
+### WORK-2026-09-21-NORMAL-QURAN-ICON-REFERENCE-FINAL
+- User requested the 10-icon reference be created now, stored in the project, and its mode usage documented.
+- Stored/verified assets: assets/icons/modes/normal-quran-v1/ (quran, surah, ayah, tafseer, bookmark, audio-tilawat, home, search, favorite, share), plus icon-manifest.json and reference-board.svg.
+- Normal mode contract: these assets are for ordinary Quran reading only. Future Sufi mode must use a separate versioned asset family.
+- Technical contract: SVG, 64x64, fill=none, stroke=currentColor, nominal 1.9–2px line art, round caps/joins.
+- Verification: all ten SVG assets are present on main; audio uses the existing canonical filename audio-tilawat.svg; manifest maps the reader role to that file.
+- Live integration: NOT performed. Existing reader/icon engine behavior remains unchanged pending isolated visual review and approval.
