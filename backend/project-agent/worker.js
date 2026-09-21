@@ -8,6 +8,9 @@ const DEFAULT_REPO='mosharrof0000-ux/al-quran-research';
 const MAX_FILE=120000;
 const MAX_TURNS=12;
 const MAX_MESSAGE=10000;
+const MAX_TASK_ID=80;
+const MAX_SESSION_ID=120;
+function idValue(v,max){const s=String(v||'').trim();return s&&s.length<=max?s:null;}
 
 function cors(origin){return {'Access-Control-Allow-Origin':ALLOWED_ORIGINS.includes(origin)?origin:ALLOWED_ORIGINS[0],'Access-Control-Allow-Methods':'POST, GET, OPTIONS','Access-Control-Allow-Headers':'Content-Type, Authorization','Content-Type':'application/json; charset=utf-8','Vary':'Origin'};}
 function json(data,status,origin){return new Response(JSON.stringify(data),{status,headers:cors(origin)});}
@@ -115,9 +118,12 @@ export default {async fetch(request,env){
  if(!env.AGENT_ACCESS_TOKEN||auth!=='Bearer '+env.AGENT_ACCESS_TOKEN)return json({ok:false,error:'Unauthorized'},401,origin);
  try{
   const body=await request.json();const message=String(body?.message||'').trim();
+  const task_id=idValue(body?.task_id,MAX_TASK_ID)||('TASK-'+crypto.randomUUID());
+  const session_id=idValue(body?.session_id,MAX_SESSION_ID)||crypto.randomUUID();
+  const requested_agent=idValue(body?.agent_name,80)||'সুমন';
   if(!message)return json({ok:false,error:'message required'},400,origin);
   if(message.length>MAX_MESSAGE)return json({ok:false,error:'message too large'},413,origin);
   const result=await gemini(env,[{role:'user',parts:[{text:message}]}]);
-  return json({ok:true,answer:result.answer,provider:result.model,agent_version:env.AGENT_VERSION||'1.0.0',isolated:true,merge:false,deploy:false},200,origin);
- }catch(e){return json({ok:false,error:'PROJECT_AGENT_FAILED',detail:String(e?.message||e).slice(0,600)},500,origin);}
+  return json({ok:true,answer:result.answer,provider:result.model,agent_version:env.AGENT_VERSION||'1.0.0',isolated:true,merge:false,deploy:false,task_id,session_id,agent_name:requested_agent,status:'READY_FOR_REVIEW',handoff_required:true},200,origin);
+ }catch(e){return json({ok:false,error:'PROJECT_AGENT_FAILED',detail:String(e?.message||e).slice(0,600),task_id,session_id,agent_name:requested_agent,status:'BLOCKED',handoff_required:true},500,origin);}
 }};
