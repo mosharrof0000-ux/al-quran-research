@@ -39,3 +39,18 @@ Agent branch → review → validation → explicit approval → main promotion 
 
 ## Current implementation status
 Code and configuration are isolated in backend/project-agent/. This branch is a safety branch and has not been promoted to main.
+
+
+## Strengthening record — Agent Core v2
+
+এই branch-এ v2 hardening যোগ হয়েছে:
+- বাংলা human-like Agent Identity + unique Task/Session ID
+- task type অনুযায়ী agent identity mapping
+- persistent task ledger/handoff record
+- preflight project-root inspection
+- 12-turn tool/repair loop
+- explicit source/runtime/final verification instructions
+- successor/inherited-task tracking
+- GET health endpoint-এ identity_registry/task_ledger/handoff/self_repair capability প্রকাশ
+
+এই পরিবর্তন এখনও main বা production-এ promote করা হয়নি।
