@@ -7,6 +7,7 @@ const API='https://api.github.com';
 const DEFAULT_REPO='mosharrof0000-ux/al-quran-research';
 const MAX_FILE=120000;
 const MAX_TURNS=8;
+const VERIFIER_MODEL='gemini-2.5-flash';
 
 function cors(origin){
   return {'Access-Control-Allow-Origin':ALLOWED_ORIGINS.includes(origin)?origin:ALLOWED_ORIGINS[0],
@@ -137,6 +138,26 @@ async function executeTool(env,name,args){
   if(name==='project_write_file')return writeFile(env,args);
   throw new Error('Unknown tool: '+name);
 }
+async function independentVerify(env,identity,answer){
+  if(!env.GEMINI_API_KEY)throw new Error('GEMINI_API_KEY is not configured.');
+  if(!isAgentBranch(identity.branch))return {status:'FAILED',reasons:['agent branch invalid']};
+  const ref=await gh(env,'/repos/'+repo(env)+'/git/ref/heads/'+encodeURIComponent(identity.branch));
+  const compare=await gh(env,'/repos/'+repo(env)+'/compare/main...'+encodeURIComponent(identity.branch));
+  const files=(compare.files||[]).map(x=>x.filename);
+  const blocked=['.github/','database/','migrations/','validation/','quran_research.db','schema.sql'];
+  const protectedTouched=files.filter(p=>blocked.some(x=>p===x||p.startsWith(x)));
+  const journal=await loadTask(env,identity.task_id,identity.branch);
+  const evidence={identity:{task_id:identity.task_id,agent_id:identity.agent_id,branch:identity.branch},branch_sha:ref.object?.sha||null,files,protected_touched:protectedTouched,journal_state:journal?.state||null,answer:String(answer||'').slice(0,6000)};
+  const prompt='তুমি Independent Verification Agent। Primary agent-এর সিদ্ধান্ত বিশ্বাস করবে না। Evidence স্বাধীনভাবে পরীক্ষা করো। যাচাই করো: task identity, agent/* branch, protected path, task journal এবং কাজের প্রমাণ। শুধু JSON দাও: {"status":"VERIFIED"|"FAILED"|"REQUIRES_REVIEW","reasons":["..."]}. অনিশ্চয়তা থাকলে VERIFIED দেবে না।';
+  const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+VERIFIER_MODEL+':generateContent',{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':env.GEMINI_API_KEY},body:JSON.stringify({systemInstruction:{parts:[{text:prompt}]},contents:[{role:'user',parts:[{text:JSON.stringify(evidence)}]}],generationConfig:{maxOutputTokens:1200,temperature:0}})});
+  const data=await r.json(); if(!r.ok)throw new Error('Verifier Gemini HTTP '+r.status+': '+String(data?.error?.message||'').slice(0,400));
+  const raw=(data?.candidates?.[0]?.content?.parts||[]).map(p=>p.text||'').join('').trim();
+  let parsed; try{parsed=JSON.parse(raw.replace(/^```json\s*|\s*```$/g,''));}catch{parsed={status:'REQUIRES_REVIEW',reasons:['Verifier returned non-JSON output.']};}
+  if(protectedTouched.length)parsed={status:'FAILED',reasons:['Protected path touched: '+protectedTouched.join(', ')]};
+  if(!journal)parsed={status:'REQUIRES_REVIEW',reasons:['Task journal missing on isolated branch.']};
+  if(!['VERIFIED','FAILED','REQUIRES_REVIEW'].includes(parsed.status))parsed.status='REQUIRES_REVIEW';
+  return {status:parsed.status,reasons:Array.isArray(parsed.reasons)?parsed.reasons.slice(0,8):[],files,branch_sha:ref.object?.sha||null};
+}
 async function gemini(env,history,context){
   if(!env.GEMINI_API_KEY)throw new Error('GEMINI_API_KEY is not configured.');
   const model=env.GEMINI_MODEL||'gemini-2.5-flash';
@@ -174,7 +195,7 @@ async function gemini(env,history,context){
 export default {async fetch(request,env){
   const origin=request.headers.get('Origin')||'';
   if(request.method==='OPTIONS')return new Response(null,{status:204,headers:cors(origin)});
-  if(request.method==='GET')return json({ok:true,service:'al-quran-research-project-agent',version:env.AGENT_VERSION||'1.1.0',isolated:true,write_scope:'agent/* only',merge:false,deploy:false},200,origin);
+  if(request.method==='GET')return json({ok:true,service:'al-quran-research-project-agent',version:env.AGENT_VERSION||'1.2.0',isolated:true,write_scope:'agent/* only',merge:false,deploy:false},200,origin);
   if(request.method!=='POST')return json({ok:false,error:'POST/GET only'},405,origin);
   const auth=request.headers.get('Authorization')||'';
   if(!env.AGENT_ACCESS_TOKEN||auth!=='Bearer '+env.AGENT_ACCESS_TOKEN)return json({ok:false,error:'Unauthorized'},401,origin);
@@ -200,9 +221,11 @@ export default {async fetch(request,env){
       await persistTask(env,identity,{state:'BLOCKED',error:String(e?.message||e).slice(0,600),resume_count:resumeCount});
       throw e;
     }
-    const finalState={state:'HANDOFF_COMPLETE',resume_count:resumeCount,last_commit:null,answer:result.answer,provider:result.model};
+    const verification=await independentVerify(env,identity,result.answer);
+    const verified=verification.status==='VERIFIED';
+    const finalState={state:verified?'HANDOFF_COMPLETE':'READY_FOR_REVIEW',verification_status:verification.status,verification_reasons:verification.reasons,resume_count:resumeCount,last_commit:null,answer:result.answer,provider:result.model};
     const persisted=await persistTask(env,identity,finalState);
-    return json({ok:true,duplicate:false,resumed:Boolean(prior),answer:result.answer,provider:result.model,agent_version:env.AGENT_VERSION||'1.1.0',isolated:true,merge:false,deploy:false,identity:{...identity,task_state:'HANDOFF_COMPLETE',resume_count:resumeCount,persisted:Boolean(persisted?.commit_sha),last_commit:persisted?.commit_sha||null}},200,origin);
+    return json({ok:verified,duplicate:false,resumed:Boolean(prior),answer:result.answer,provider:result.model,verification,agent_version:env.AGENT_VERSION||'1.2.0',isolated:true,merge:false,deploy:false,identity:{...identity,task_state:verified?'HANDOFF_COMPLETE':'READY_FOR_REVIEW',resume_count:resumeCount,persisted:Boolean(persisted?.commit_sha),last_commit:persisted?.commit_sha||null}},verified?200:409,origin);
   }catch(e){
     return json({ok:false,error:'PROJECT_AGENT_FAILED',detail:String(e?.message||e).slice(0,600),identity:identity?{...identity,task_state:'BLOCKED'}:null},500,origin);
   }
