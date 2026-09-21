@@ -1,4 +1,4 @@
-# Instruction Registry — v1.9
+# Instruction Registry — v2.0
 
 This registry is the dictionary/index of project instructions. It records which instructions govern which project assets.
 
@@ -67,6 +67,16 @@ This registry is the dictionary/index of project instructions. It records which 
 | `ui/home-v1/home-v1.html.instruction.md` | `ui/home-v1/home-v1.html` | DRAFT — safety branch |
 | `ui/home-v1/home-v1.js.instruction.md` | `ui/home-v1/home-v1.js` | DRAFT — safety branch |
 | `ui/home-v1/home-v1.css.instruction.md` | `ui/home-v1/home-v1.css` | DRAFT — safety branch |
+
+## Agent Identity / Work Continuity
+
+| Instruction | Governs | Status |
+|---|---|---|
+| `docs/AGENT_IDENTITY_REGISTRY.instruction.md` | `docs/AGENT_IDENTITY_REGISTRY.md` | ACTIVE |
+| `docs/AGENT_WORK_LEDGER.instruction.md` | `docs/AGENT_WORK_LEDGER.md` | ACTIVE |
+| `docs/AGENT_HANDOFF_PROTOCOL.instruction.md` | `docs/AGENT_HANDOFF_PROTOCOL.md` | ACTIVE |
+
+Agent tasks must retain a Bengali Agent Name, unique Agent ID, Task ID, branch, commit, verification state, and predecessor/successor handoff history.
 
 ## Audit Records
 
