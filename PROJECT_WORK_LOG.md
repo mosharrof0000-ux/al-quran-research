@@ -235,3 +235,12 @@ Reference SHA-256: `170c83ecf42c84ca4c09686fccb32311c2272fe2d15dd4eb4b9be6ebce14
 
 ### Integration gate
 Backup → Review → Approve → Integrate → Verify → Live.
+
+
+## WORK-2026-09-21-NORMAL-QURAN-ICON-REFERENCE-RECONCILIATION-01
+- Status: VERIFIED / NORMALIZED.
+- The project already contains the canonical 10-icon family at `assets/icons/modes/general-quran-v1/` with manifest and mode-aware usage rules.
+- A duplicate temporary namespace created during this session was removed before any live UI integration.
+- Canonical mode ID: `general-quran`; future Sufi mode remains a separate namespace.
+- The supplied design reference remains the visual reference; existing project documentation records its SHA-256 and integration gate.
+- No live reader, database, Quran text, or routing changes were made by this reconciliation.
