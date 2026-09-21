@@ -10,8 +10,6 @@ const MAX_TURNS=8;
 const DEFAULT_ACTIVE_WINDOW_MS=2*60*60*1000;
 const DEFAULT_SAME_FAILURE_LIMIT=3;
 const VERIFIER_MODEL='gemini-2.5-flash';
-const DEFAULT_MAX_ACTIVE_MS=2*60*60*1000;
-const DEFAULT_MAX_SAME_FAILURES=3;
 
 function cors(origin){
   return {'Access-Control-Allow-Origin':ALLOWED_ORIGINS.includes(origin)?origin:ALLOWED_ORIGINS[0],
@@ -228,12 +226,11 @@ async function gemini(env,history,context,deadlineMs,maxFailures){
 export default {async fetch(request,env){
   const origin=request.headers.get('Origin')||'';
   if(request.method==='OPTIONS')return new Response(null,{status:204,headers:cors(origin)});
-  if(request.method==='GET')return json({ok:true,service:'al-quran-research-project-agent',version:env.AGENT_VERSION||'1.2.0',isolated:true,write_scope:'agent/* only',merge:false,deploy:false},200,origin);
+  if(request.method==='GET')return json({ok:true,service:'al-quran-research-project-agent',version:env.AGENT_VERSION||'1.3.0',isolated:true,write_scope:'agent/* only',merge:false,deploy:false},200,origin);
   if(request.method!=='POST')return json({ok:false,error:'POST/GET only'},405,origin);
   const auth=request.headers.get('Authorization')||'';
   if(!env.AGENT_ACCESS_TOKEN||auth!=='Bearer '+env.AGENT_ACCESS_TOKEN)return json({ok:false,error:'Unauthorized'},401,origin);
   let identity=null;
-  let activeTask=null;
   try{
     const body=await request.json();
     const message=String(body?.message||'').trim();
@@ -243,7 +240,7 @@ export default {async fetch(request,env){
     await createBranch(env,{branch:identity.branch,base:'main'});
     let prior=await loadTask(env,identity.task_id,identity.branch);
     if(prior && prior.state==='HANDOFF_COMPLETE'){
-      return json({ok:true,duplicate:true,resumed:false,answer:'এই কাজটি ইতিমধ্যে সম্পন্ন হয়েছে; একই Task আবার প্রয়োগ করা হয়নি।',provider:'task-registry',agent_version:env.AGENT_VERSION||'1.1.0',isolated:true,merge:false,deploy:false,identity:{...identity,task_state:'DUPLICATE',resume_count:Number(prior.resume_count||0),last_commit:prior.last_commit||null}},200,origin);
+      return json({ok:true,duplicate:true,resumed:false,answer:'এই কাজটি ইতিমধ্যে সম্পন্ন হয়েছে; একই Task আবার প্রয়োগ করা হয়নি।',provider:'task-registry',agent_version:env.AGENT_VERSION||'1.3.0',isolated:true,merge:false,deploy:false,identity:{...identity,task_state:'DUPLICATE',resume_count:Number(prior.resume_count||0),last_commit:prior.last_commit||null}},200,origin);
     }
     const resumeCount=Number(prior?.resume_count||0)+(prior?1:0);
     const window=newActiveWindow(env);
@@ -261,12 +258,11 @@ export default {async fetch(request,env){
       throw e;
     }
     checkTimeLimit(Date.parse(window.deadline_at));
-    ensureActiveWindow(task);
     const verification=await independentVerify(env,identity,result.answer);
     const verified=verification.status==='VERIFIED';
-    const finalState={...task,state:verified?'HANDOFF_COMPLETE':'READY_FOR_REVIEW',verification_status:verification.status,verification_reasons:verification.reasons,resume_count:resumeCount,last_commit:null,answer:result.answer,provider:result.model,notification:verified?'COMPLETED':'READY_FOR_REVIEW',resume_available:!verified};
+    const finalState={...identity,state:verified?'HANDOFF_COMPLETE':'READY_FOR_REVIEW',verification_status:verification.status,verification_reasons:verification.reasons,resume_count:resumeCount,last_commit:null,answer:result.answer,provider:result.model,notification:verified?'COMPLETED':'READY_FOR_REVIEW',resume_available:!verified};
     const persisted=await persistTask(env,identity,finalState);
-    return json({ok:verified,duplicate:false,resumed:Boolean(prior),answer:result.answer,provider:result.model,verification,agent_version:env.AGENT_VERSION||'1.2.0',isolated:true,merge:false,deploy:false,time_policy:{max_active_ms:maxActiveMs(env),max_same_failures:maxSameFailures(env),active_window_started_at:window.started_at,active_window_deadline_at:window.deadline_at},identity:{...identity,task_state:verified?'HANDOFF_COMPLETE':'READY_FOR_REVIEW',resume_count:resumeCount,persisted:Boolean(persisted?.commit_sha),last_commit:persisted?.commit_sha||null},notification:verified?'COMPLETED':'READY_FOR_REVIEW',resume_available:!verified},verified?200:409,origin);
+    return json({ok:verified,duplicate:false,resumed:Boolean(prior),answer:result.answer,provider:result.model,verification,agent_version:env.AGENT_VERSION||'1.3.0',isolated:true,merge:false,deploy:false,time_policy:{max_active_ms:maxActiveMs(env),max_same_failures:maxSameFailures(env),active_window_started_at:window.started_at,active_window_deadline_at:window.deadline_at},identity:{...identity,task_state:verified?'HANDOFF_COMPLETE':'READY_FOR_REVIEW',resume_count:resumeCount,persisted:Boolean(persisted?.commit_sha),last_commit:persisted?.commit_sha||null},notification:verified?'COMPLETED':'READY_FOR_REVIEW',resume_available:!verified},verified?200:409,origin);
   }catch(e){
     const timedOut=e?.code==='ACTIVE_TIME_LIMIT_REACHED';
     return json({ok:false,error:timedOut?'TIME_LIMIT_REACHED':'PROJECT_AGENT_FAILED',detail:String(e?.message||e).slice(0,600),resumable:timedOut,identity:identity?{...identity,task_state:timedOut?'WAITING_FOR_RECOVERY':'BLOCKED'}:null},timedOut?408:500,origin);
