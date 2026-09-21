@@ -7,6 +7,29 @@ const API='https://api.github.com';
 const DEFAULT_REPO='mosharrof0000-ux/al-quran-research';
 const MAX_FILE=120000;
 const MAX_TURNS=8;
+const AGENT_NAMES=[
+  {keys:['icon','visual','design','css','ui'],name:'শাহীন'},
+  {keys:['chat','voice','composer','message'],name:'শামীম'},
+  {keys:['reader','quran','ayah','data','translation'],name:'সুমন'},
+  {keys:['notification','release','version'],name:'রাকিব'},
+  {keys:['browser','test','qa','console','network'],name:'নাঈম'},
+  {keys:['database','schema','migration'],name:'ফারুক'},
+  {keys:['backend','worker','api','connection'],name:'আরিফ'}
+];
+function chooseAgentName(workType,message){
+ const s=(String(workType||'')+' '+String(message||'')).toLowerCase();
+ const hit=AGENT_NAMES.find(x=>x.keys.some(k=>s.includes(k)));
+ return hit?.name||'রায়হান';
+}
+function taskIdentity(body){
+ const now=Date.now();
+ const workType=String(body?.work_type||'general').trim().slice(0,80);
+ const taskId=String(body?.task_id||('TASK-'+new Date(now).toISOString().replace(/[-:TZ.]/g,'').slice(0,14)+'-'+Math.random().toString(36).slice(2,7))).slice(0,80);
+ const sessionId=String(body?.session_id||('SESSION-'+now)).slice(0,80);
+ const agentName=chooseAgentName(workType,body?.message);
+ const agentId=('agent-'+agentName+'-'+now).slice(0,100);
+ return {task_id:taskId,session_id:sessionId,agent_name_bn:agentName,agent_id:agentId,work_type:workType};
+}
 
 function cors(origin){return {'Access-Control-Allow-Origin':ALLOWED_ORIGINS.includes(origin)?origin:ALLOWED_ORIGINS[0],'Access-Control-Allow-Methods':'POST, GET, OPTIONS','Access-Control-Allow-Headers':'Content-Type, Authorization','Content-Type':'application/json; charset=utf-8','Vary':'Origin'};}
 function json(data,status,origin){return new Response(JSON.stringify(data),{status,headers:cors(origin)});}
@@ -83,10 +106,10 @@ async function executeTool(env,name,args){
  if(name==='project_write_file')return writeFile(env,args);
  throw new Error('Unknown tool: '+name);
 }
-async function gemini(env,history){
+async function gemini(env,history,identity){
  if(!env.GEMINI_API_KEY)throw new Error('GEMINI_API_KEY is not configured.');
  const model=env.GEMINI_MODEL||'gemini-2.5-flash';
- const system='তুমি আল-কুরআন গবেষণা প্রকল্পের Project Agent। তুমি প্রকল্পের ফাইল পড়তে, বিশ্লেষণ করতে এবং নিরাপদ agent/* branch-এ text file তৈরি/সংশোধন করতে পারো। কখনো main-এ লিখবে না। .github/workflows, database, migrations, validation, quran_research.db এবং schema.sql পরিবর্তন করবে না। প্রথমে প্রয়োজনীয় ফাইল পড়বে; অনুমান করে code rewrite করবে না। পরিবর্তনের আগে বর্তমান content ও প্রকল্পের নিয়ম বুঝবে। কাজ শেষে কী পড়েছ, কী পরিবর্তন করেছ, কোন branch-এ করেছ এবং কী user approval/deployment-এর অপেক্ষায় আছে তা বাংলায় বলবে। তুমি merge বা production deploy করতে পারো না এবং এমন দাবি করবে না।';
+ const system='তুমি আল-কুরআন গবেষণা প্রকল্পের Project Agent। তুমি প্রকল্পের ফাইল পড়তে, বিশ্লেষণ করতে এবং নিরাপদ agent/* branch-এ text file তৈরি/সংশোধন করতে পারো। কখনো main-এ লিখবে না। .github/workflows, database, migrations, validation, quran_research.db এবং schema.sql পরিবর্তন করবে না। প্রথমে প্রয়োজনীয় ফাইল পড়বে; অনুমান করে code rewrite করবে না। পরিবর্তনের আগে বর্তমান content ও প্রকল্পের নিয়ম বুঝবে। প্রতিটি কাজের শুরুতে AI_ENTRY_PROTOCOL.md, UNIVERSAL_AI_GOVERNANCE_GATE.md, MASTER_INSTRUCTION.md, INSTRUCTION_REGISTRY.md এবং প্রাসঙ্গিক state/instruction পড়বে। কাজের identity হবে Task ID='+identity.task_id+', Agent Name='+identity.agent_name_bn+', Agent ID='+identity.agent_id+', Session ID='+identity.session_id+'। কাজ শেষে কী পড়েছ, কী পরিবর্তন করেছ, কোন branch-এ করেছ এবং কী user approval/deployment-এর অপেক্ষায় আছে তা বাংলায় বলবে। অসম্পূর্ণ হলে handoff record বাধ্যতামূলক করবে। তুমি merge বা production deploy করতে পারো না এবং এমন দাবি করবে না।';
  let contents=history.slice();
  for(let turn=0;turn<MAX_TURNS;turn++){
   const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+model+':generateContent',{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':env.GEMINI_API_KEY},body:JSON.stringify({systemInstruction:{parts:[{text:system}]},contents,tools:[{functionDeclarations:TOOLS}],generationConfig:{maxOutputTokens:4096,temperature:0.1}})});
@@ -108,7 +131,7 @@ async function gemini(env,history){
 export default {async fetch(request,env){
  const origin=request.headers.get('Origin')||'';
  if(request.method==='OPTIONS')return new Response(null,{status:204,headers:cors(origin)});
- if(request.method==='GET')return json({ok:true,service:'al-quran-research-project-agent',version:env.AGENT_VERSION||'1.0.0',isolated:true,write_scope:'agent/* only',merge:false,deploy:false},200,origin);
+ if(request.method==='GET')return json({ok:true,service:'al-quran-research-project-agent',version:env.AGENT_VERSION||'1.1.0',isolated:true,write_scope:'agent/* only',merge:false,deploy:false},200,origin);
  if(request.method!=='POST')return json({ok:false,error:'POST/GET only'},405,origin);
  const auth=request.headers.get('Authorization')||'';
  if(!env.AGENT_ACCESS_TOKEN||auth!=='Bearer '+env.AGENT_ACCESS_TOKEN)return json({ok:false,error:'Unauthorized'},401,origin);
@@ -116,7 +139,9 @@ export default {async fetch(request,env){
   const body=await request.json();const message=String(body?.message||'').trim();
   if(!message)return json({ok:false,error:'message required'},400,origin);
   if(message.length>10000)return json({ok:false,error:'message too large'},413,origin);
-  const result=await gemini(env,[{role:'user',parts:[{text:message}]}]);
-  return json({ok:true,answer:result.answer,provider:result.model,agent_version:env.AGENT_VERSION||'1.0.0',isolated:true,merge:false,deploy:false},200,origin);
+  const identity=taskIdentity(body);
+  const enriched='Task identity: '+JSON.stringify(identity)+'\nUser command:\n'+message;
+  const result=await gemini(env,[{role:'user',parts:[{text:enriched}]}],identity);
+  return json({ok:true,answer:result.answer,provider:result.model,agent_version:env.AGENT_VERSION||'1.1.0',isolated:true,merge:false,deploy:false,task:identity,status:'WORKING'},200,origin);
  }catch(e){return json({ok:false,error:'PROJECT_AGENT_FAILED',detail:String(e?.message||e).slice(0,600)},500,origin);}
 }};
