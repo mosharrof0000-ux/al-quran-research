@@ -24,7 +24,6 @@ jobs:
         uses: cloudflare/wrangler-action@v4
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: backend/project-agent
           command: deploy --name al-quran-research-project-agent
 
@@ -49,9 +48,9 @@ jobs:
           URL='https://al-quran-research-project-agent.workers.dev'
           ORIGIN='https://mosharrof0000-ux.github.io'
           test -n "$AGENT_ACCESS_TOKEN"
-          BODY="$(curl -fsS --retry 5 --retry-all-errors --retry-delay 3 --connect-timeout 8 --max-time 90 \\
-            -H "Origin: $ORIGIN" -H "Authorization: Bearer $AGENT_ACCESS_TOKEN" \\
-            -H 'Content-Type: application/json' \\
+          BODY="$(curl -fsS --retry 5 --retry-all-errors --retry-delay 3 --connect-timeout 8 --max-time 90 \
+            -H "Origin: $ORIGIN" -H "Authorization: Bearer $AGENT_ACCESS_TOKEN" \
+            -H 'Content-Type: application/json' \
             --data '{"message":"Runtime proof: inspect the project agent rules and create a small handoff proof file in the assigned agent branch. Do not modify main or protected paths."}' "$URL/")"
           echo "$BODY" | jq -e '.ok == true and .isolated == true and .merge == false and .deploy == false' >/dev/null
           BRANCH="$(echo "$BODY" | jq -r '.identity.branch')"
