@@ -182,3 +182,12 @@ BACKUP-2026-09-21-PRE-MODE-ICON-ASSETS
 **Scope:** General Quran Mode icon assets and their documentation only. No database/backend/live Reader code change.
 
 **Status:** VERIFIED RESTORE PATH
+
+
+## BACKUP-2026-09-21-PRE-NORMAL-MODE-ICON-ASSET-SET
+
+Date: 2026-09-21
+Purpose: rollback point immediately before creating the Normal Qur'an Mode icon asset family.
+Restore branch: backup/pre-normal-mode-icon-set-2026-09-21
+Protected scope: existing custom icon engine, live UI, research/database files, and main state before this asset-family work.
+Status: VERIFIED BACKUP BRANCH CREATED
