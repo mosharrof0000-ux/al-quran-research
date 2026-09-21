@@ -7,6 +7,8 @@ const API='https://api.github.com';
 const DEFAULT_REPO='mosharrof0000-ux/al-quran-research';
 const MAX_FILE=120000;
 const MAX_TURNS=8;
+const DEFAULT_ACTIVE_WINDOW_MS=2*60*60*1000;
+const DEFAULT_SAME_FAILURE_LIMIT=3;
 const VERIFIER_MODEL='gemini-2.5-flash';
 const DEFAULT_MAX_ACTIVE_MS=2*60*60*1000;
 const DEFAULT_MAX_SAME_FAILURES=3;
@@ -85,6 +87,11 @@ async function writeFile(env,args){
   const data=await gh(env,'/repos/'+repo(env)+'/contents/'+encPath(path),{method:'PUT',body:JSON.stringify(payload),headers:{'Content-Type':'application/json'}});
   return {path,branch,created:!existing?.sha,commit_sha:data.commit?.sha||null,blob_sha:data.content?.sha||null};
 }
+function activeWindowMs(env){const n=Number(env.AGENT_MAX_ACTIVE_MS||DEFAULT_ACTIVE_WINDOW_MS);return Number.isFinite(n)&&n>0?n:DEFAULT_ACTIVE_WINDOW_MS;}
+function sameFailureLimit(env){const n=Number(env.AGENT_MAX_SAME_FAILURES||DEFAULT_SAME_FAILURE_LIMIT);return Number.isFinite(n)&&n>0?n:DEFAULT_SAME_FAILURE_LIMIT;}
+function nowIso(){return new Date().toISOString();}
+function taskFailureKey(error){return String(error||'unknown').toLowerCase().replace(/\d+/g,'#').replace(/\s+/g,' ').slice(0,240);}
+function ensureActiveWindow(task){const deadline=Date.parse(String(task?.deadline_at||''));if(Number.isFinite(deadline)&&Date.now()>=deadline){const e=new Error('ACTIVE_TIME_LIMIT_REACHED');e.code='TIME_LIMIT_REACHED';throw e;}}
 async function persistTask(env,task,patch={}){
   const branch=task.branch||'';
   if(!isAgentBranch(branch))return {persisted:false,error:'task branch missing'};
@@ -186,6 +193,9 @@ async function gemini(env,history,context,deadlineMs,maxFailures){
   let contents=history.slice();
   const repairBudget=new Map();
   for(let turn=0;turn<MAX_TURNS;turn++){
+    ensureActiveWindow(task);
+    task.last_activity_at=nowIso();
+    if(checkpoint) await checkpoint({last_activity_at:task.last_activity_at});
     checkTimeLimit(deadlineMs);
     const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+model+':generateContent',{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':env.GEMINI_API_KEY},body:JSON.stringify({systemInstruction:{parts:[{text:system}]},contents:[{role:'user',parts:[{text:context}]},...contents],tools:[{functionDeclarations:TOOLS}],generationConfig:{maxOutputTokens:4096,temperature:0.1}})});
     const data=await r.json(); if(!r.ok)throw new Error('Gemini HTTP '+r.status+': '+String(data?.error?.message||'').slice(0,400));
@@ -250,11 +260,12 @@ export default {async fetch(request,env){
       throw e;
     }
     checkTimeLimit(Date.parse(window.deadline_at));
+    ensureActiveWindow(task);
     const verification=await independentVerify(env,identity,result.answer);
     const verified=verification.status==='VERIFIED';
-    const finalState={state:verified?'HANDOFF_COMPLETE':'READY_FOR_REVIEW',verification_status:verification.status,verification_reasons:verification.reasons,resume_count:resumeCount,last_commit:null,answer:result.answer,provider:result.model};
+    const finalState={...task,state:verified?'HANDOFF_COMPLETE':'READY_FOR_REVIEW',verification_status:verification.status,verification_reasons:verification.reasons,resume_count:resumeCount,last_commit:null,answer:result.answer,provider:result.model,notification:verified?'COMPLETED':'READY_FOR_REVIEW',resume_available:!verified};
     const persisted=await persistTask(env,identity,finalState);
-    return json({ok:verified,duplicate:false,resumed:Boolean(prior),answer:result.answer,provider:result.model,verification,agent_version:env.AGENT_VERSION||'1.2.0',isolated:true,merge:false,deploy:false,time_policy:{max_active_ms:maxActiveMs(env),max_same_failures:maxSameFailures(env),active_window_started_at:window.started_at,active_window_deadline_at:window.deadline_at},identity:{...identity,task_state:verified?'HANDOFF_COMPLETE':'READY_FOR_REVIEW',resume_count:resumeCount,persisted:Boolean(persisted?.commit_sha),last_commit:persisted?.commit_sha||null}},verified?200:409,origin);
+    return json({ok:verified,duplicate:false,resumed:Boolean(prior),answer:result.answer,provider:result.model,verification,agent_version:env.AGENT_VERSION||'1.2.0',isolated:true,merge:false,deploy:false,time_policy:{max_active_ms:maxActiveMs(env),max_same_failures:maxSameFailures(env),active_window_started_at:window.started_at,active_window_deadline_at:window.deadline_at},identity:{...identity,task_state:verified?'HANDOFF_COMPLETE':'READY_FOR_REVIEW',resume_count:resumeCount,persisted:Boolean(persisted?.commit_sha),last_commit:persisted?.commit_sha||null},notification:verified?'COMPLETED':'READY_FOR_REVIEW',resume_available:!verified},verified?200:409,origin);
   }catch(e){
     const timedOut=e?.code==='ACTIVE_TIME_LIMIT_REACHED';
     return json({ok:false,error:timedOut?'TIME_LIMIT_REACHED':'PROJECT_AGENT_FAILED',detail:String(e?.message||e).slice(0,600),resumable:timedOut,identity:identity?{...identity,task_state:timedOut?'WAITING_FOR_RECOVERY':'BLOCKED'}:null},timedOut?408:500,origin);
