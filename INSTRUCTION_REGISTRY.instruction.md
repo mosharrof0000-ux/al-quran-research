@@ -19,3 +19,7 @@ Check that registered instruction paths exist, target files exist, statuses are 
 
 ## Update Trigger
 Any instruction creation, migration, supersession, archive, scope change, or governance-architecture change.
+
+
+## 2026-09-21 Governance Extension
+Registry now includes Project Agent identity, work ledger, and handoff instructions. Any future Agent Mode implementation must keep these records synchronized.
