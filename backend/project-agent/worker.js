@@ -102,7 +102,7 @@ async function loadTask(env,taskId,branch){
 }
 function newActiveWindow(env){
   const started=Date.now();
-  return {started_at:new Date(started).toISOString(),deadline_at:new Date(started+maxActiveMs(env)).toISOString()};
+  return {started_at:new Date(started).toISOString(),deadline_at:new Date(started+activeWindowMs(env)).toISOString()};
 }
 function checkTimeLimit(deadlineMs){
   if(Date.now()>deadlineMs){
@@ -234,7 +234,7 @@ export default {async fetch(request,env){
     const resumeCount=Number(prior?.resume_count||0)+(prior?1:0);
     const window=newActiveWindow(env);
     const parentTaskId=String(body?.parent_task_id||prior?.task_id||'');
-    await persistTask(env,identity,{parent_task_id:parentTaskId||null,state:prior?'RESUMING':'RECEIVED',resume_count:resumeCount,last_commit:prior?.last_commit||null,started_at:window.started_at,deadline_at:window.deadline_at,max_active_ms:maxActiveMs(env),max_same_failures:maxSameFailures(env),timeout_policy:'TIME_LIMIT_REACHED -> CHECKPOINTED -> WAITING_FOR_RECOVERY'});
+    await persistTask(env,identity,{parent_task_id:parentTaskId||null,state:prior?'RESUMING':'RECEIVED',resume_count:resumeCount,last_commit:prior?.last_commit||null,started_at:window.started_at,deadline_at:window.deadline_at,max_active_ms:maxActiveMs(env),max_same_failures:sameFailureLimit(env),timeout_policy:'TIME_LIMIT_REACHED -> CHECKPOINTED -> WAITING_FOR_RECOVERY'});
     const context='TASK CONTEXT\\n'+JSON.stringify({identity,previous_state:prior||null,rule:'If previous state is incomplete, resume from last verified step. Do not repeat already committed changes.'})+'\\nUSER COMMAND\\n'+message;
     let result;
     try{
