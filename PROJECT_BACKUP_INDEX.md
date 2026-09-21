@@ -160,3 +160,16 @@ A single canonical automatic writer now controls these live-entrypoint integrati
 **Status:** VERIFIED RESTORE BRANCH CREATED
 
 **Note:** এই restore point source-level বর্তমান অবস্থাকে সংরক্ষণ করে; live browser end-to-end verification এখনও pending।
+
+
+## BACKUP-2026-09-21-PRE-GENERAL-MODE-ICON-SET
+
+**Date:** 2026-09-21
+
+**Purpose:** Restore point before storing the new General Quran Reading Mode icon family.
+
+**Restore branch:** `backup/pre-general-mode-icon-set-2026-09-21`
+
+**Protected meaning:** Main project state before the new mode-specific SVG assets were added. No live reader or database changes were included in this icon-set step.
+
+**Status:** VERIFIED PRE-CHANGE BACKUP BRANCH
