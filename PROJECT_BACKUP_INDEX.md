@@ -191,3 +191,9 @@ Purpose: rollback point immediately before creating the Normal Qur'an Mode icon 
 Restore branch: backup/pre-normal-mode-icon-set-2026-09-21
 Protected scope: existing custom icon engine, live UI, research/database files, and main state before this asset-family work.
 Status: VERIFIED BACKUP BRANCH CREATED
+
+
+### BACKUP-2026-09-21-PRE-NORMAL-QURAN-ICON-REFERENCE-FINAL
+- Restore branch: backup/pre-normal-quran-icons-2026-09-21-v1
+- Scope: pre-change main state before final manifest/reference-board storage.
+- Live Reader/database/backend behavior: unchanged by this icon-reference storage step.
