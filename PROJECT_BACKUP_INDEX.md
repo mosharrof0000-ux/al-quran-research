@@ -167,3 +167,9 @@ BACKUP-2026-09-21-PRE-MODE-ICON-ASSETS
 - Purpose: preserve main before storing the new general Qur'an mode icon family.
 - Working branch: `feat/mode-icon-assets-2026-09-21`
 - Status: safe point created before asset integration work.
+
+
+BACKUP-2026-09-21-PRE-ICON-MODE-RECONCILIATION
+- Restore point: `backup/pre-standard-islamic-reader-icons-2026-09-21`
+- Purpose: preserve the main state before icon-mode asset reconciliation.
+- Result: duplicate temporary namespace removed; canonical `general-quran-v1` retained. No live UI/database changes.
