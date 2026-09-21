@@ -7,6 +7,8 @@ const API='https://api.github.com';
 const DEFAULT_REPO='mosharrof0000-ux/al-quran-research';
 const MAX_FILE=120000;
 const MAX_TURNS=8;
+const MAX_TASK_ID=80;
+const MAX_AGENT_NAME=80;
 
 function cors(origin){return {'Access-Control-Allow-Origin':ALLOWED_ORIGINS.includes(origin)?origin:ALLOWED_ORIGINS[0],'Access-Control-Allow-Methods':'POST, GET, OPTIONS','Access-Control-Allow-Headers':'Content-Type, Authorization','Content-Type':'application/json; charset=utf-8','Vary':'Origin'};}
 function json(data,status,origin){return new Response(JSON.stringify(data),{status,headers:cors(origin)});}
@@ -68,6 +70,8 @@ async function writeFile(env,args){
  const data=await gh(env,'/repos/'+repo(env)+'/contents/'+path.split('/').map(encodeURIComponent).join('/'),{method:'PUT',body:JSON.stringify(payload),headers:{'Content-Type':'application/json'}});
  return {path,branch,created:!existing?.sha,commit_sha:data.commit?.sha||null,blob_sha:data.content?.sha||null};
 }
+function cleanMeta(value,max){return String(value||'').trim().slice(0,max);}
+function taskMeta(body){return {task_id:cleanMeta(body?.task_id,MAX_TASK_ID)||null,agent_name:cleanMeta(body?.agent_name,MAX_AGENT_NAME)||null,agent_id:cleanMeta(body?.agent_id,MAX_TASK_ID)||null,session_id:cleanMeta(body?.session_id,MAX_TASK_ID)||null,parent_task_id:cleanMeta(body?.parent_task_id,MAX_TASK_ID)||null,work_type:cleanMeta(body?.work_type,MAX_AGENT_NAME)||null};}
 const TOOLS=[
  {name:'project_read_file',description:'Read a text file from the Quran Research repository before analyzing or editing it.',parameters:{type:'object',properties:{path:{type:'string'},branch:{type:'string'}},required:['path']}},
  {name:'project_list_directory',description:'List files in a project directory.',parameters:{type:'object',properties:{path:{type:'string'},branch:{type:'string'}},required:['path']}},
@@ -83,10 +87,11 @@ async function executeTool(env,name,args){
  if(name==='project_write_file')return writeFile(env,args);
  throw new Error('Unknown tool: '+name);
 }
-async function gemini(env,history){
+async function gemini(env,history,meta){
  if(!env.GEMINI_API_KEY)throw new Error('GEMINI_API_KEY is not configured.');
  const model=env.GEMINI_MODEL||'gemini-2.5-flash';
- const system='তুমি আল-কুরআন গবেষণা প্রকল্পের Project Agent। তুমি প্রকল্পের ফাইল পড়তে, বিশ্লেষণ করতে এবং নিরাপদ agent/* branch-এ text file তৈরি/সংশোধন করতে পারো। কখনো main-এ লিখবে না। .github/workflows, database, migrations, validation, quran_research.db এবং schema.sql পরিবর্তন করবে না। প্রথমে প্রয়োজনীয় ফাইল পড়বে; অনুমান করে code rewrite করবে না। পরিবর্তনের আগে বর্তমান content ও প্রকল্পের নিয়ম বুঝবে। কাজ শেষে কী পড়েছ, কী পরিবর্তন করেছ, কোন branch-এ করেছ এবং কী user approval/deployment-এর অপেক্ষায় আছে তা বাংলায় বলবে। তুমি merge বা production deploy করতে পারো না এবং এমন দাবি করবে না।';
+ const identity=JSON.stringify(meta||{});
+ const system='তুমি আল-কুরআন গবেষণা প্রকল্পের Project Agent। তুমি প্রকল্পের ফাইল পড়তে, বিশ্লেষণ করতে এবং নিরাপদ agent/* branch-এ text file তৈরি/সংশোধন করতে পারো। কখনো main-এ লিখবে না। .github/workflows, database, migrations, validation, quran_research.db এবং schema.sql পরিবর্তন করবে না। প্রথমে প্রয়োজনীয় ফাইল পড়বে; অনুমান করে code rewrite করবে না। পরিবর্তনের আগে বর্তমান content ও প্রকল্পের নিয়ম বুঝবে। প্রতিটি কাজের Task ID, Agent Name/ID, Session ID, Work Type এবং Parent Task থাকলে তা বজায় রাখবে। কাজ শুরুতে প্রয়োজন হলে একটি agent/* branch তৈরি করবে এবং কাজের ইতিহাস project documentation-এ রাখবে। কাজ থামলে বা অসম্পূর্ণ থাকলে handoff record তৈরি করবে। বর্তমান task metadata: '+identity+'. কাজ শেষে কী পড়েছ, কী পরিবর্তন করেছ, কোন branch-এ করেছ এবং কী user approval/deployment-এর অপেক্ষায় আছে তা বাংলায় বলবে। তুমি merge বা production deploy করতে পারো না এবং এমন দাবি করবে না।';
  let contents=history.slice();
  for(let turn=0;turn<MAX_TURNS;turn++){
   const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+model+':generateContent',{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':env.GEMINI_API_KEY},body:JSON.stringify({systemInstruction:{parts:[{text:system}]},contents,tools:[{functionDeclarations:TOOLS}],generationConfig:{maxOutputTokens:4096,temperature:0.1}})});
@@ -116,7 +121,8 @@ export default {async fetch(request,env){
   const body=await request.json();const message=String(body?.message||'').trim();
   if(!message)return json({ok:false,error:'message required'},400,origin);
   if(message.length>10000)return json({ok:false,error:'message too large'},413,origin);
-  const result=await gemini(env,[{role:'user',parts:[{text:message}]}]);
-  return json({ok:true,answer:result.answer,provider:result.model,agent_version:env.AGENT_VERSION||'1.0.0',isolated:true,merge:false,deploy:false},200,origin);
+  const meta=taskMeta(body);
+  const result=await gemini(env,[{role:'user',parts:[{text:message}]}],meta);
+  return json({ok:true,answer:result.answer,provider:result.model,agent_version:env.AGENT_VERSION||'1.0.0',isolated:true,merge:false,deploy:false,task:meta},200,origin);
  }catch(e){return json({ok:false,error:'PROJECT_AGENT_FAILED',detail:String(e?.message||e).slice(0,600)},500,origin);}
 }};
