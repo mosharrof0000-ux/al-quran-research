@@ -7,6 +7,23 @@ const API='https://api.github.com';
 const DEFAULT_REPO='mosharrof0000-ux/al-quran-research';
 const MAX_FILE=120000;
 const MAX_TURNS=8;
+const AGENT_NAMES=[
+ ['icon','শাহীন'],['আইকন','শাহীন'],['chat','শামীম'],['চ্যাট','শামীম'],
+ ['reader','সুমন'],['কুরআন পাঠ','সুমন'],['research','রাকিব'],['গবেষণা','রাকিব'],
+ ['test','নাঈম'],['পরীক্ষা','নাঈম'],['verify','নাঈম'],['verification','নাঈম'],
+ ['database','তানভীর'],['ডেটা','তানভীর'],['data','তানভীর'],['backend','ফারহান'],
+ ['worker','ফারহান'],['workflow','ইমরান'],['security','সাজিদ']
+];
+function makeIdentity(message){
+ const lower=String(message||'').toLowerCase();
+ const match=AGENT_NAMES.find(([key])=>lower.includes(key));
+ const name=match?match[1]:'আরিফ';
+ const stamp=new Date().toISOString().replace(/[-:TZ.]/g,'').slice(0,14);
+ const suffix=Math.random().toString(36).slice(2,6).toUpperCase();
+ const taskId='TASK-'+stamp+'-'+suffix;
+ const agentId='AGENT-'+name+'-'+stamp+'-'+suffix;
+ return {agent_name_bn:name,agent_id:agentId,task_id:taskId};
+}
 
 function cors(origin){return {'Access-Control-Allow-Origin':ALLOWED_ORIGINS.includes(origin)?origin:ALLOWED_ORIGINS[0],'Access-Control-Allow-Methods':'POST, GET, OPTIONS','Access-Control-Allow-Headers':'Content-Type, Authorization','Content-Type':'application/json; charset=utf-8','Vary':'Origin'};}
 function json(data,status,origin){return new Response(JSON.stringify(data),{status,headers:cors(origin)});}
@@ -83,10 +100,10 @@ async function executeTool(env,name,args){
  if(name==='project_write_file')return writeFile(env,args);
  throw new Error('Unknown tool: '+name);
 }
-async function gemini(env,history){
+async function gemini(env,history,identity){
  if(!env.GEMINI_API_KEY)throw new Error('GEMINI_API_KEY is not configured.');
  const model=env.GEMINI_MODEL||'gemini-2.5-flash';
- const system='তুমি আল-কুরআন গবেষণা প্রকল্পের Project Agent। তুমি প্রকল্পের ফাইল পড়তে, বিশ্লেষণ করতে এবং নিরাপদ agent/* branch-এ text file তৈরি/সংশোধন করতে পারো। কখনো main-এ লিখবে না। .github/workflows, database, migrations, validation, quran_research.db এবং schema.sql পরিবর্তন করবে না। প্রথমে প্রয়োজনীয় ফাইল পড়বে; অনুমান করে code rewrite করবে না। পরিবর্তনের আগে বর্তমান content ও প্রকল্পের নিয়ম বুঝবে। কাজ শেষে কী পড়েছ, কী পরিবর্তন করেছ, কোন branch-এ করেছ এবং কী user approval/deployment-এর অপেক্ষায় আছে তা বাংলায় বলবে। তুমি merge বা production deploy করতে পারো না এবং এমন দাবি করবে না।';
+ const system='তুমি আল-কুরআন গবেষণা প্রকল্পের Project Agent। প্রতিটি কাজের পরিচয় হিসেবে Task ID, Agent Name এবং Agent ID ব্যবহার করবে। এই task-এর পরিচয় হলো '+JSON.stringify(identity)+'। তুমি প্রকল্পের ফাইল পড়তে, বিশ্লেষণ করতে এবং নিরাপদ agent/* branch-এ text file তৈরি/সংশোধন করতে পারো। কখনো main-এ লিখবে না। .github/workflows, database, migrations, validation, quran_research.db এবং schema.sql পরিবর্তন করবে না। প্রথমে প্রয়োজনীয় ফাইল পড়বে; অনুমান করে code rewrite করবে না। পরিবর্তনের আগে বর্তমান content ও প্রকল্পের নিয়ম বুঝবে। কাজ শেষে কী পড়েছ, কী পরিবর্তন করেছ, কোন branch-এ করেছ এবং কী user approval/deployment-এর অপেক্ষায় আছে তা বাংলায় বলবে। তুমি merge বা production deploy করতে পারো না এবং এমন দাবি করবে না।';
  let contents=history.slice();
  for(let turn=0;turn<MAX_TURNS;turn++){
   const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+model+':generateContent',{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':env.GEMINI_API_KEY},body:JSON.stringify({systemInstruction:{parts:[{text:system}]},contents,tools:[{functionDeclarations:TOOLS}],generationConfig:{maxOutputTokens:4096,temperature:0.1}})});
@@ -116,7 +133,8 @@ export default {async fetch(request,env){
   const body=await request.json();const message=String(body?.message||'').trim();
   if(!message)return json({ok:false,error:'message required'},400,origin);
   if(message.length>10000)return json({ok:false,error:'message too large'},413,origin);
-  const result=await gemini(env,[{role:'user',parts:[{text:message}]}]);
-  return json({ok:true,answer:result.answer,provider:result.model,agent_version:env.AGENT_VERSION||'1.0.0',isolated:true,merge:false,deploy:false},200,origin);
+  const identity=makeIdentity(message);
+  const result=await gemini(env,[{role:'user',parts:[{text:message}]}],identity);
+  return json({ok:true,identity,answer:result.answer,provider:result.model,agent_version:env.AGENT_VERSION||'1.0.0',isolated:true,merge:false,deploy:false},200,origin);
  }catch(e){return json({ok:false,error:'PROJECT_AGENT_FAILED',detail:String(e?.message||e).slice(0,600)},500,origin);}
 }};
