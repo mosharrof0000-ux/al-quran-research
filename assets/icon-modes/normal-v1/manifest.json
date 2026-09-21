@@ -1,0 +1,33 @@
+{
+  "mode_id": "normal-quran",
+  "version": "1.0.0",
+  "status": "STORED_REFERENCE_NOT_CONNECTED",
+  "style": {
+    "stroke": "currentColor",
+    "fill": "none",
+    "stroke_width": 1.8,
+    "stroke_linecap": "round",
+    "stroke_linejoin": "round",
+    "monochrome": true
+  },
+  "purpose": "Default Quran reading mode icon set. Distinct from future Sufi mode assets.",
+  "source_reference": "User-approved visual direction on 2026-09-21.",
+  "icons": [
+    "quran",
+    "surah",
+    "ayah",
+    "tafseer",
+    "bookmark",
+    "audio",
+    "home",
+    "search",
+    "favorite",
+    "share"
+  ],
+  "paths": "assets/icon-modes/normal-v1/",
+  "integration_rule": "Do not wire into live UI until reviewed. Mode-specific assets remain isolated.",
+  "future_modes": [
+    "sufi-quran"
+  ],
+  "accessibility": "Each SVG includes role=img and aria-label; currentColor allows theme inheritance."
+}
