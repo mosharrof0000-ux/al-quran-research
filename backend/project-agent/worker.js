@@ -21,15 +21,15 @@ function cors(origin){return {'Access-Control-Allow-Origin':ALLOWED_ORIGINS.incl
 function json(data,status,origin){return new Response(JSON.stringify(data),{status,headers:cors(origin)});}
 function repo(env){return env.PROJECT_REPO||DEFAULT_REPO;}
 function isAgentBranch(b){return /^agent\/[A-Za-z0-9._/-]+$/.test(String(b||''))&&!String(b).includes('..');}
-function slug(s){return String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,55)||'task';}
+const NAME_SLUG={শাহীন:'shaheen',সুমন:'suman',নাঈম:'naim',রাকিব:'rakib',সজীব:'sajib',আরিফ:'arif',তানভীর:'tanvir',শামীম:'shamim'};\nfunction slug(s){return String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,55)||'task';}\nfunction identitySlug(name){return NAME_SLUG[name]||slug(name);}
 function chooseName(message){const m=String(message||'').toLowerCase();for(const [key,name] of NAME_MAP){if(m.includes(key))return name;}return 'শামীম';}
 function identity(body){
  const message=String(body?.message||'');
  const taskId=String(body?.task_id||('TASK-'+Date.now()));
  const agentName=String(body?.agent_name||chooseName(message));
- const agentId=String(body?.agent_id||slug(agentName)+'-'+taskId.slice(-8));
+ const agentId=String(body?.agent_id||identitySlug(agentName).toUpperCase()+'-AGENT-'+taskId.slice(-8));
  const sessionId=String(body?.session_id||('SESSION-'+Date.now()));
- const branch=String(body?.branch||('agent/'+slug(agentName)+'-'+slug(taskId)));
+ const branch=String(body?.branch||('agent/'+identitySlug(agentName)+'-'+slug(taskId)));
  return {taskId,agentName,agentId,sessionId,branch,parentTaskId:String(body?.parent_task_id||''),message};
 }
 function safePath(path,write=false){
