@@ -135,7 +135,7 @@ async function gemini(env,history,identity){
  let contents=history.slice();
  for(let turn=0;turn<MAX_TURNS;turn++){
   const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),GEMINI_TIMEOUT_MS);
-  let r;try{r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+model+':generateContent',{signal:controller.signal,{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':env.GEMINI_API_KEY},body:JSON.stringify({systemInstruction:{parts:[{text:system}]},contents,tools:[{functionDeclarations:TOOLS}],generationConfig:{maxOutputTokens:4096,temperature:0.1}})});}catch(e){clearTimeout(timer);throw new Error(e?.name==='AbortError'?'Gemini timeout — সীমিত সময়ের মধ্যে উত্তর আসেনি।':String(e?.message||e));}finally{clearTimeout(timer)}
+  let r;try{r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+model+':generateContent',{signal:controller.signal,method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':env.GEMINI_API_KEY},body:JSON.stringify({systemInstruction:{parts:[{text:system}]},contents,tools:[{functionDeclarations:TOOLS}],generationConfig:{maxOutputTokens:4096,temperature:0.1}})});}catch(e){clearTimeout(timer);throw new Error(e?.name==='AbortError'?'Gemini timeout — সীমিত সময়ের মধ্যে উত্তর আসেনি।':String(e?.message||e));}finally{clearTimeout(timer)}
   const data=await r.json();if(!r.ok)throw new Error('Gemini HTTP '+r.status+': '+String(data?.error?.message||'').slice(0,400));
   const modelContent=data?.candidates?.[0]?.content;if(!modelContent)throw new Error('Gemini response missing content.');
   const calls=(modelContent.parts||[]).filter(p=>p.functionCall);
