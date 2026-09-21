@@ -160,3 +160,10 @@ A single canonical automatic writer now controls these live-entrypoint integrati
 **Status:** VERIFIED RESTORE BRANCH CREATED
 
 **Note:** এই restore point source-level বর্তমান অবস্থাকে সংরক্ষণ করে; live browser end-to-end verification এখনও pending।
+
+
+### BACKUP-2026-09-21-PRE-NORMAL-QURAN-ICON-MODE-V1
+- Branch: backup/pre-normal-quran-icons-2026-09-21-v1
+- Purpose: restore point before storing the new Normal Quran Mode icon family.
+- Base: main
+- Scope: no live behavior changed; reference/pilot assets only.
