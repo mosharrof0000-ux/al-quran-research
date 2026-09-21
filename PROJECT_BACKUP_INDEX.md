@@ -191,3 +191,16 @@ Purpose: rollback point immediately before creating the Normal Qur'an Mode icon 
 Restore branch: backup/pre-normal-mode-icon-set-2026-09-21
 Protected scope: existing custom icon engine, live UI, research/database files, and main state before this asset-family work.
 Status: VERIFIED BACKUP BRANCH CREATED
+
+
+## BACKUP-2026-09-21-PRE-MODE-ICON-ASSETS
+
+**Date:** 2026-09-21
+
+**Purpose:** Restore point before creating/storing the Normal Quran Mode icon family.
+
+**Restore branch:** `backup/pre-mode-icon-assets-2026-09-21`
+
+**Status:** VERIFIED BACKUP BRANCH CREATED
+
+**Protected meaning:** Current project state before the mode-specific icon asset work. The new asset family is isolated under its own mode folder and does not modify database/backend files.
