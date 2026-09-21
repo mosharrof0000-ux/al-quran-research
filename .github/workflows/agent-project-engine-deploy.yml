@@ -15,7 +15,7 @@ permissions:
 jobs:
   deploy-agent-engine:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - name: Checkout isolated branch
         uses: actions/checkout@v6
@@ -30,25 +30,33 @@ jobs:
       - name: Smoke test isolated health endpoint
         run: |
           set -euo pipefail
-          URL='https://al-quran-research-project-agent.workers.dev'
+          URL='https://al-quran-research-project-agent.mosharrof0000.workers.dev'
           ORIGIN='https://mosharrof0000-ux.github.io'
 
           echo "Checking isolated engine health..."
-          BODY="$(curl -fsS --connect-timeout 8 --max-time 20 -H "Origin: $ORIGIN" "$URL/")"
-          echo "$BODY"
-          echo "$BODY" | grep -q '"isolated":true'
-          echo "$BODY" | grep -q '"merge":false'
-          echo "$BODY" | grep -q '"deploy":false'
+          for attempt in 1 2 3 4 5 6 7 8 9 10; do
+            if BODY="$(curl -fsS --connect-timeout 8 --max-time 20 -H "Origin: $ORIGIN" "$URL/")"; then
+              echo "$BODY"
+              echo "$BODY" | grep -q '"isolated":true'
+              echo "$BODY" | grep -q '"merge":false'
+              echo "$BODY" | grep -q '"deploy":false'
+              exit 0
+            fi
+            echo "Health endpoint not ready; retry $attempt/10..."
+            sleep 6
+          done
+          echo "Isolated health endpoint did not become reachable."
+          exit 1
 
       - name: End-to-end authenticated Agent runtime and resume proof
         env:
           AGENT_ACCESS_TOKEN: ${{ secrets.AGENT_ACCESS_TOKEN }}
         run: |
           set -euo pipefail
-          URL='https://al-quran-research-project-agent.workers.dev'
+          URL='https://al-quran-research-project-agent.mosharrof0000.workers.dev'
           ORIGIN='https://mosharrof0000-ux.github.io'
           test -n "$AGENT_ACCESS_TOKEN"
-          BODY="$(curl -fsS --retry 5 --retry-all-errors --retry-delay 3 --connect-timeout 8 --max-time 90 \
+          BODY="$(curl -fsS --retry 5 --retry-all-errors --retry-delay 3 --connect-timeout 8 --max-time 120 \
             -H "Origin: $ORIGIN" -H "Authorization: Bearer $AGENT_ACCESS_TOKEN" \
             -H 'Content-Type: application/json' \
             --data '{"message":"Runtime proof: inspect the project agent rules and create a small handoff proof file in the assigned agent branch. Do not modify main or protected paths."}' "$URL/")"
@@ -62,4 +70,4 @@ jobs:
       - name: Verify production Worker is not targeted
         run: |
           set -euo pipefail
-          test 'https://al-quran-research-project-agent.workers.dev' != 'https://al-quran-research.mosharrof0000.workers.dev'
+          test 'https://al-quran-research-project-agent.mosharrof0000.workers.dev' != 'https://al-quran-research.mosharrof0000.workers.dev'
