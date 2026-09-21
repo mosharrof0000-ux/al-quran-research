@@ -1,18 +1,26 @@
-# Agent Work Ledger — v1.0
+# Agent Work Ledger — v1.1
 
 ## Purpose
-Project Agent-এর দৃশ্যমান audit trail: কে, কোন কাজ, কোন branch, কী পরিবর্তন, কী পরীক্ষা, কী বাকি এবং কে পরবর্তী দায়িত্ব নিল।
+Project Agent-এর দৃশ্যমান audit trail: কে, কোন কাজ, কোন branch, কী পরিবর্তন, কী পরীক্ষা, কী বাকি এবং কে পরবর্তী দায়িত্ব নিল। Hidden AI chain-of-thought এখানে রাখা যাবে না।
 
 ## Lifecycle
 RECEIVED → INSPECTING → PLANNED → WORKING → TESTING → REPAIRING → VALIDATED → READY_FOR_REVIEW → APPROVED → DEPLOYING → LIVE_VERIFIED → NOTIFIED → HANDOFF_COMPLETE
 
-Failure states: BLOCKED / ROLLED_BACK / INCOMPLETE.
+Failure states: BLOCKED / ROLLED_BACK / INCOMPLETE / HANDOFF_REQUIRED.
 
 ## Required record
-Task ID, Agent Name, Agent ID, Session ID, Requester, Task Type, User Request, Parent Task ID, Branch, Changed Files, Commit(s), Verification, Deployment state, Live state, Remaining work, Successor Agent, Handoff status, Timestamp.
+Task ID, Agent Name, Agent ID, Session ID, Requester, Task Type, User Request, Parent Task ID, Predecessor Agent, Branch, Changed Files, Commit(s), Tests, Verification, Deployment state, Live state, Notification, Remaining work, Successor Agent, Handoff status, Timestamp.
 
-## History
-Completed and incomplete work must remain. Successor never overwrites original history. Only visible work, decisions, evidence and results are stored; hidden AI chain-of-thought is not stored.
+## Active task
+### AGT-20260921-001
+- Agent: শাহীন / SHAHEEN-AGENT-IDENTITY-001
+- Task: Project Agent system শক্তিশালী করা; identity, work history ও takeover continuity স্থায়ী করা
+- Parent: PR-63 / isolated Project Agent Engine v1
+- Branch: agent/shaheen-agent-identity-001
+- Status: WORKING
+- Main: untouched
+- Completed in this task: identity registry strengthened; ledger/handoff governance confirmed
+- Remaining: Worker runtime metadata integration; validation; review; explicit promotion decision
 
-## Status
-ACTIVE — v1.0
+## History rule
+Completed/incomplete records remain. Successor never overwrites predecessor history.
