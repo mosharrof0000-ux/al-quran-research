@@ -39,3 +39,14 @@ Agent branch → review → validation → explicit approval → main promotion 
 
 ## Current implementation status
 Code and configuration are isolated in backend/project-agent/. This branch is a safety branch and has not been promoted to main.
+
+
+## v1.1 hardening — শাহীন
+- Task identity: Task ID + Agent Name + Work Type + suggested branch are attached to each request.
+- Bengali work-role mapping is used for new tasks.
+- Request-size and file-size limits are enforced.
+- Agent branch naming is isolated; main/protected paths remain blocked.
+- Runtime health now reports Agent identity and version.
+- Gemini tool loop increased to 10 turns for deeper inspection while retaining bounded execution.
+- Handoff/identity records are documented in `docs/AGENT_IDENTITY_REGISTRY.md` and `docs/AGENT_HANDOFF_PROTOCOL.md`.
+- This branch remains unmerged and production deployment remains disabled.
