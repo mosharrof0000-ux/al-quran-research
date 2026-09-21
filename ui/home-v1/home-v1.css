@@ -177,3 +177,7 @@ body.night .message-more-menu button:hover,body.night .message-more-menu button:
 .font-panel[hidden]{display:none}.font-panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}.font-panel-head button{border:0;background:transparent;font-size:24px;color:var(--text)}
 .font-panel label{display:block;margin:10px 0;color:var(--text);font-size:12px;font-weight:600}.font-panel select,.font-panel input{display:block;width:100%;margin-top:5px}.font-panel select{height:36px;border:1px solid var(--line);border-radius:9px;background:#fff;padding:0 8px;color:var(--text)}.font-panel input{accent-color:#0f766e}.font-panel label span{float:right;color:var(--muted);font-weight:500}.font-reset{width:100%;margin-top:5px;border:1px solid var(--line);background:var(--soft);color:var(--text);border-radius:9px;padding:9px}
 body.night .font-panel{background:#18221f;border-color:#33433e;color:#e7ecea}body.night .font-panel select,body.night .font-panel input{background:#18221f;color:#e7ecea;border-color:#33433e}body.night .font-reset{background:#23312d;color:#e7ecea;border-color:#33433e}
+
+html{--aqr-chat-bn-font:system-ui,"Noto Sans Bengali",sans-serif;--aqr-chat-ar-font:"Noto Naskh Arabic","Amiri",serif;--aqr-chat-size:15px;--aqr-chat-line:1.7}
+.chat-message,.composer textarea{font-family:var(--aqr-chat-bn-font);font-size:var(--aqr-chat-size);line-height:var(--aqr-chat-line)}
+.ayah-ar{font-family:var(--aqr-chat-ar-font)}
