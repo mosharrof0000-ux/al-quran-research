@@ -235,3 +235,17 @@ document.getElementById('prevSura').onclick=()=>showSura(Math.max(1,Number(selec
 document.getElementById('nextSura').onclick=()=>showSura(Math.min(114,Number(select.value)+1));
 
 // Smart Chat Composer v1: adaptive input, left tools, focused tool prompts.
+
+/* Chat Font Customizer v1 */
+(function(){
+ const panel=document.getElementById('fontPanel'), open=document.getElementById('fontBtn'), close=document.getElementById('closeFontPanel');
+ const bn=document.getElementById('bnFontSelect'), ar=document.getElementById('arFontSelect'), size=document.getElementById('fontSizeRange'), line=document.getElementById('lineHeightRange');
+ const sizeOut=document.getElementById('fontSizeValue'), lineOut=document.getElementById('lineHeightValue'), reset=document.getElementById('fontReset');
+ if(!panel||!open)return;
+ const bnFonts={system:'system-ui,"Noto Sans Bengali",sans-serif',hind:'"Hind Siliguri",system-ui,sans-serif',meghaloy:'"Hasan Meghaloy","Hind Siliguri",sans-serif',munam:'"Hasan Munam","Hind Siliguri",sans-serif',hera:'"Hasan Hera","Hind Siliguri",sans-serif',mokhmoli:'"Hasan Mokhmoli","Hind Siliguri",sans-serif'};
+ const arFonts={default:'"Noto Naskh Arabic","Amiri",serif',alquds:'"Al Quds","Noto Naskh Arabic",serif'};
+ function apply(){document.documentElement.style.setProperty('--aqr-chat-bn-font',bnFonts[bn.value]||bnFonts.system);document.documentElement.style.setProperty('--aqr-chat-ar-font',arFonts[ar.value]||arFonts.default);document.documentElement.style.setProperty('--aqr-chat-size',size.value+'px');document.documentElement.style.setProperty('--aqr-chat-line',line.value);sizeOut.textContent=size.value+'px';lineOut.textContent=line.value;localStorage.setItem('aqr-font-settings',JSON.stringify({bn:bn.value,ar:ar.value,size:size.value,line:line.value}));}
+ function load(){try{const x=JSON.parse(localStorage.getItem('aqr-font-settings')||'{}');if(x.bn)bn.value=x.bn;if(x.ar)ar.value=x.ar;if(x.size)size.value=x.size;if(x.line)line.value=x.line}catch(e){}apply()}
+ open.onclick=()=>{panel.hidden=!panel.hidden}; close.onclick=()=>panel.hidden=true;
+ [bn,ar,size,line].forEach(x=>x.addEventListener('input',apply)); reset.onclick=()=>{bn.value='system';ar.value='default';size.value=15;line.value=1.7;apply()}; load();
+})();
