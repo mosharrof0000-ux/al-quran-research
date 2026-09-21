@@ -6,7 +6,8 @@ const ALLOWED_ORIGINS=['https://mosharrof0000-ux.github.io'];
 const API='https://api.github.com';
 const DEFAULT_REPO='mosharrof0000-ux/al-quran-research';
 const MAX_FILE=120000;
-const MAX_TURNS=8;
+const MAX_TURNS=12;
+const MAX_CONTEXT_FILE=60000;
 const AGENT_NAMES=[
  ['icon','শাহীন'],['আইকন','শাহীন'],['chat','শামীম'],['চ্যাট','শামীম'],
  ['reader','সুমন'],['কুরআন পাঠ','সুমন'],['research','রাকিব'],['গবেষণা','রাকিব'],
@@ -64,6 +65,21 @@ async function listDirectory(env,args){
  if(!Array.isArray(data))throw new Error('Directory পাওয়া যায়নি।');
  return data.map(x=>({name:x.name,path:x.path,type:x.type,size:x.size||0}));
 }
+async function inspectRepo(env,args){
+ const branch=String(args.branch||'main');
+ if(branch!=='main'&&!isAgentBranch(branch))throw new Error('শুধু main বা agent/* branch inspect করা যাবে।');
+ const paths=['MASTER_INSTRUCTION.md','PROJECT_STATE.md','MASTER_PROJECT.md','AI_ENTRY_PROTOCOL.md','INSTRUCTION_REGISTRY.md','docs/PROJECT_AGENT_ENGINE_V1.md','docs/AGENT_IDENTITY_REGISTRY.md','docs/AGENT_WORK_LEDGER.md','docs/AGENT_HANDOFF_PROTOCOL.md'];
+ const results=[];
+ for(const path of paths){try{const x=await readFile(env,{path,branch});results.push({path,found:true,sha:x.sha,content:x.content.slice(0,MAX_CONTEXT_FILE)});}catch(e){results.push({path,found:false,error:String(e?.message||e).slice(0,180)});}}
+ return {branch,checked:paths.length,files:results};
+}
+async function repoState(env,args){
+ const branch=String(args.branch||'main');
+ if(branch!=='main'&&!isAgentBranch(branch))throw new Error('branch অনুমোদিত নয়।');
+ const ref=await gh(env,'/repos/'+repo(env)+'/git/ref/heads/'+encodeURIComponent(branch));
+ const commit=await gh(env,'/repos/'+repo(env)+'/commits/'+encodeURIComponent(ref.object.sha));
+ return {branch,sha:ref.object.sha,message:commit.commit?.message||'',author:commit.commit?.author?.name||'',date:commit.commit?.author?.date||''};
+}
 async function searchCode(env,args){
  const q=String(args.query||'').trim();if(!q)throw new Error('search query প্রয়োজন।');
  const data=await gh(env,'/search/code?q='+encodeURIComponent(q+' repo:'+repo(env)));
@@ -86,9 +102,13 @@ async function writeFile(env,args){
  const payload={message:String(args.message||'AI agent change'),content:btoa(unescape(encodeURIComponent(content))),branch};
  if(existing?.sha)payload.sha=existing.sha;
  const data=await gh(env,'/repos/'+repo(env)+'/contents/'+path.split('/').map(encodeURIComponent).join('/'),{method:'PUT',body:JSON.stringify(payload),headers:{'Content-Type':'application/json'}});
- return {path,branch,created:!existing?.sha,commit_sha:data.commit?.sha||null,blob_sha:data.content?.sha||null};
+ const verified=await readFile(env,{path,branch});
+ if(verified.content!==content)throw new Error('Write verification failed: saved content does not match requested content.');
+ return {path,branch,created:!existing?.sha,commit_sha:data.commit?.sha||null,blob_sha:data.content?.sha||null,write_verified:true};
 }
 const TOOLS=[
+ {name:'project_inspect_repo',description:'Mandatory preflight: read the project governance/state files together before a complex change. Use this before planning edits.',parameters:{type:'object',properties:{branch:{type:'string'}},required:[]}},
+ {name:'project_repo_state',description:'Read the exact current branch head commit metadata before and after significant work.',parameters:{type:'object',properties:{branch:{type:'string'}},required:[]}},
  {name:'project_read_file',description:'Read a text file from the Quran Research repository before analyzing or editing it.',parameters:{type:'object',properties:{path:{type:'string'},branch:{type:'string'}},required:['path']}},
  {name:'project_list_directory',description:'List files in a project directory.',parameters:{type:'object',properties:{path:{type:'string'},branch:{type:'string'}},required:['path']}},
  {name:'project_search_code',description:'Search repository code for a term or identifier.',parameters:{type:'object',properties:{query:{type:'string'}},required:['query']}},
@@ -96,6 +116,8 @@ const TOOLS=[
  {name:'project_write_file',description:'Create or replace a text file only on an agent/* branch. Never write protected paths.',parameters:{type:'object',properties:{path:{type:'string'},branch:{type:'string'},content:{type:'string'},message:{type:'string'}},required:['path','branch','content','message']}}
 ];
 async function executeTool(env,name,args){
+ if(name==='project_inspect_repo')return inspectRepo(env,args);
+ if(name==='project_repo_state')return repoState(env,args);
  if(name==='project_read_file')return readFile(env,args);
  if(name==='project_list_directory')return listDirectory(env,args);
  if(name==='project_search_code')return searchCode(env,args);
@@ -106,7 +128,7 @@ async function executeTool(env,name,args){
 async function gemini(env,history,identity){
  if(!env.GEMINI_API_KEY)throw new Error('GEMINI_API_KEY is not configured.');
  const model=env.GEMINI_MODEL||'gemini-2.5-flash';
- const system='তুমি আল-কুরআন গবেষণা প্রকল্পের Project Agent। কাজ শুরুর আগে docs/AGENT_IDENTITY_REGISTRY.md, docs/AGENT_WORK_LEDGER.md এবং docs/AGENT_HANDOFF_PROTOCOL.md পড়বে। প্রতিটি কাজের দৃশ্যমান audit record বজায় রাখবে। প্রতিটি কাজের পরিচয় হিসেবে Task ID, Agent Name এবং Agent ID ব্যবহার করবে। এই task-এর পরিচয় হলো '+JSON.stringify(identity)+'। তুমি প্রকল্পের ফাইল পড়তে, বিশ্লেষণ করতে এবং নিরাপদ agent/* branch-এ text file তৈরি/সংশোধন করতে পারো। কখনো main-এ লিখবে না। .github/workflows, database, migrations, validation, quran_research.db এবং schema.sql পরিবর্তন করবে না। প্রথমে প্রয়োজনীয় ফাইল পড়বে; অনুমান করে code rewrite করবে না। পরিবর্তনের আগে বর্তমান content ও প্রকল্পের নিয়ম বুঝবে। কাজ শেষে কী পড়েছ, কী পরিবর্তন করেছ, কোন branch-এ করেছ এবং কী user approval/deployment-এর অপেক্ষায় আছে তা বাংলায় বলবে। তুমি merge বা production deploy করতে পারো না এবং এমন দাবি করবে না।';
+ const system='তুমি আল-কুরআন গবেষণা প্রকল্পের Project Agent। বাধ্যতামূলক workflow: (১) complex task হলে project_inspect_repo দিয়ে governance/state preflight, (২) প্রয়োজনীয় source file পড়া, (৩) minimal isolated edit, (৪) project_write_file-এর built-in write verification গ্রহণ, (৫) শেষে project_repo_state দিয়ে branch head যাচাই, (৬) failure হলে নিজে সীমিত repair চেষ্টা, তারপর স্পষ্ট BLOCKED রিপোর্ট। একই কাজ বারবার অকারণে করবে না।  কাজ শুরুর আগে docs/AGENT_IDENTITY_REGISTRY.md, docs/AGENT_WORK_LEDGER.md এবং docs/AGENT_HANDOFF_PROTOCOL.md পড়বে। প্রতিটি কাজের দৃশ্যমান audit record বজায় রাখবে। প্রতিটি কাজের পরিচয় হিসেবে Task ID, Agent Name এবং Agent ID ব্যবহার করবে। এই task-এর পরিচয় হলো '+JSON.stringify(identity)+'। তুমি প্রকল্পের ফাইল পড়তে, বিশ্লেষণ করতে এবং নিরাপদ agent/* branch-এ text file তৈরি/সংশোধন করতে পারো। কখনো main-এ লিখবে না। .github/workflows, database, migrations, validation, quran_research.db এবং schema.sql পরিবর্তন করবে না। প্রথমে প্রয়োজনীয় ফাইল পড়বে; অনুমান করে code rewrite করবে না। পরিবর্তনের আগে বর্তমান content ও প্রকল্পের নিয়ম বুঝবে। কাজ শেষে কী পড়েছ, কী পরিবর্তন করেছ, কোন branch-এ করেছ এবং কী user approval/deployment-এর অপেক্ষায় আছে তা বাংলায় বলবে। তুমি merge বা production deploy করতে পারো না এবং এমন দাবি করবে না।';
  let contents=history.slice();
  for(let turn=0;turn<MAX_TURNS;turn++){
   const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+model+':generateContent',{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':env.GEMINI_API_KEY},body:JSON.stringify({systemInstruction:{parts:[{text:system}]},contents,tools:[{functionDeclarations:TOOLS}],generationConfig:{maxOutputTokens:4096,temperature:0.1}})});
