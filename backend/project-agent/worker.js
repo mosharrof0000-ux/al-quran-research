@@ -1,0 +1,228 @@
+/* Al-Quran Research — Project Agent Engine v1.1 (isolated)
+   Identity: শামীম / AGENT-BN-SHAMIM-001
+   Task: TASK-2026-09-21-AGENT-001
+   Safety: agent/* writes only; no merge/deploy.
+*/
+const API = 'https://api.github.com';
+const DEFAULT_REPO = 'mosharrof0000-ux/al-quran-research';
+const ALLOWED_ORIGINS = ['https://mosharrof0000-ux.github.io'];
+const MAX_FILE = 120000;
+const MAX_MESSAGE = 10000;
+const MAX_TURNS = 10;
+
+function cors(origin) {
+  return {
+    'Access-Control-Allow-Origin': ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0],
+    'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Content-Type': 'application/json; charset=utf-8',
+    'Vary': 'Origin'
+  };
+}
+function json(data, status, origin) {
+  return new Response(JSON.stringify(data), { status, headers: cors(origin) });
+}
+function repo(env) { return env.PROJECT_REPO || DEFAULT_REPO; }
+function isAgentBranch(branch) {
+  const b = String(branch || '');
+  return /^agent\/[A-Za-z0-9._/-]+$/.test(b) && !b.includes('..');
+}
+function safePath(path, write = false) {
+  const p = String(path || '').replace(/^\/+/, '');
+  if (!p || p.includes('..') || p.startsWith('.git/')) return false;
+  if (write) {
+    const blocked = ['.github/', 'database/', 'migrations/', 'validation/'];
+    if (blocked.some(x => p.startsWith(x))) return false;
+    if (['quran_research.db', 'schema.sql'].includes(p)) return false;
+  }
+  return true;
+}
+async function gh(env, path, init = {}) {
+  if (!env.GITHUB_TOKEN) throw new Error('GITHUB_TOKEN is not configured.');
+  const res = await fetch(API + path, {
+    ...init,
+    headers: {
+      Accept: 'application/vnd.github+json',
+      Authorization: 'Bearer ' + env.GITHUB_TOKEN,
+      'X-GitHub-Api-Version': '2026-03-10',
+      'User-Agent': 'al-quran-research-project-agent',
+      ...(init.headers || {})
+    }
+  });
+  const body = await res.text();
+  let data;
+  try { data = JSON.parse(body); } catch { data = { raw: body }; }
+  if (!res.ok) throw new Error('GitHub HTTP ' + res.status + ': ' + String(data?.message || body).slice(0, 500));
+  return data;
+}
+function encodePath(path) {
+  return path.split('/').map(encodeURIComponent).join('/');
+}
+async function readFile(env, args) {
+  const path = String(args.path || '');
+  const branch = String(args.branch || 'main');
+  if (!safePath(path)) throw new Error('এই path অনুমোদিত নয়।');
+  const data = await gh(env, '/repos/' + repo(env) + '/contents/' + encodePath(path) + '?ref=' + encodeURIComponent(branch));
+  if (data.type !== 'file') throw new Error('এটি file নয়।');
+  if (Number(data.size || 0) > MAX_FILE) throw new Error('ফাইলটি engine-এর সীমার চেয়ে বড়।');
+  const raw = String(data.content || '').replace(/\s/g, '');
+  const bytes = Uint8Array.from(atob(raw), c => c.charCodeAt(0));
+  return { path, branch, sha: data.sha, size: data.size, content: new TextDecoder().decode(bytes) };
+}
+async function listDirectory(env, args) {
+  const path = String(args.path || '');
+  const branch = String(args.branch || 'main');
+  if (!safePath(path)) throw new Error('এই path অনুমোদিত নয়।');
+  const suffix = path ? '/' + encodePath(path) : '';
+  const data = await gh(env, '/repos/' + repo(env) + '/contents' + suffix + '?ref=' + encodeURIComponent(branch));
+  if (!Array.isArray(data)) throw new Error('Directory পাওয়া যায়নি।');
+  return data.map(x => ({ name: x.name, path: x.path, type: x.type, size: x.size || 0 }));
+}
+async function searchCode(env, args) {
+  const q = String(args.query || '').trim();
+  if (!q) throw new Error('search query প্রয়োজন।');
+  const data = await gh(env, '/search/code?q=' + encodeURIComponent(q + ' repo:' + repo(env)));
+  return (data.items || []).slice(0, 20).map(x => ({ path: x.path, html_url: x.html_url }));
+}
+async function createBranch(env, args) {
+  const branch = String(args.branch || '');
+  const base = String(args.base || 'main');
+  if (!isAgentBranch(branch)) throw new Error('শুধু agent/* branch তৈরি করা যাবে।');
+  if (base !== 'main' && !isAgentBranch(base)) throw new Error('base branch অনুমোদিত নয়।');
+  const ref = await gh(env, '/repos/' + repo(env) + '/git/ref/heads/' + encodeURIComponent(base));
+  const created = await gh(env, '/repos/' + repo(env) + '/git/refs', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ ref: 'refs/heads/' + branch, sha: ref.object.sha })
+  });
+  return { branch, base, sha: created.object.sha };
+}
+async function writeFile(env, args) {
+  const path = String(args.path || '');
+  const branch = String(args.branch || '');
+  const content = String(args.content || '');
+  if (!isAgentBranch(branch)) throw new Error('main-এ লেখা নিষিদ্ধ; agent/* branch বাধ্যতামূলক।');
+  if (!safePath(path, true)) throw new Error('protected path-এ agent write করতে পারবে না।');
+  if (content.length > MAX_FILE) throw new Error('ফাইলটি engine-এর সীমার চেয়ে বড়।');
+  let existing = null;
+  try { existing = await gh(env, '/repos/' + repo(env) + '/contents/' + encodePath(path) + '?ref=' + encodeURIComponent(branch)); } catch {}
+  const payload = {
+    message: String(args.message || 'Project Agent change'),
+    content: btoa(unescape(encodeURIComponent(content))),
+    branch
+  };
+  if (existing?.sha) payload.sha = existing.sha;
+  const data = await gh(env, '/repos/' + repo(env) + '/contents/' + encodePath(path), {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  return { path, branch, created: !existing?.sha, commit_sha: data.commit?.sha || null, blob_sha: data.content?.sha || null };
+}
+const TOOLS = [
+  { name: 'project_read_file', description: 'প্রথমে প্রয়োজনীয় project instruction/state/source file পড়ো।', parameters: { type: 'object', properties: { path: { type: 'string' }, branch: { type: 'string' } }, required: ['path'] } },
+  { name: 'project_list_directory', description: 'Project directory-এর structure inspect করো।', parameters: { type: 'object', properties: { path: { type: 'string' }, branch: { type: 'string' } }, required: ['path'] } },
+  { name: 'project_search_code', description: 'Identifier, function, error বা feature-এর code location খুঁজে বের করো।', parameters: { type: 'object', properties: { query: { type: 'string' } }, required: ['query'] } },
+  { name: 'project_create_branch', description: 'নতুন isolated agent/* branch তৈরি করো।', parameters: { type: 'object', properties: { branch: { type: 'string' }, base: { type: 'string' } }, required: ['branch'] } },
+  { name: 'project_write_file', description: 'শুধু agent/* branch-এ text file create/update করো।', parameters: { type: 'object', properties: { path: { type: 'string' }, branch: { type: 'string' }, content: { type: 'string' }, message: { type: 'string' } }, required: ['path', 'branch', 'content', 'message'] } }
+];
+async function executeTool(env, name, args) {
+  if (name === 'project_read_file') return readFile(env, args);
+  if (name === 'project_list_directory') return listDirectory(env, args);
+  if (name === 'project_search_code') return searchCode(env, args);
+  if (name === 'project_create_branch') return createBranch(env, args);
+  if (name === 'project_write_file') return writeFile(env, args);
+  throw new Error('Unknown tool: ' + name);
+}
+async function runGemini(env, history, meta) {
+  if (!env.GEMINI_API_KEY) throw new Error('GEMINI_API_KEY is not configured.');
+  const model = env.GEMINI_MODEL || 'gemini-2.5-flash';
+  const system = [
+    'তুমি আল-কুরআন গবেষণা প্রকল্পের Autonomous Project Agent।',
+    'পরিচয়: ' + meta.agent_name + ' / ' + meta.agent_id + '। Task: ' + meta.task_id + '।',
+    'প্রথমে relevant instruction, state, handoff এবং source files inspect করবে; অনুমান করে rewrite করবে না।',
+    'প্রতিটি কাজের আগে scope, dependencies, risk এবং expected verification নির্ধারণ করবে।',
+    'শুধু agent/* branch-এ write করবে; main, merge এবং production deploy করতে পারবে না।',
+    '.github/workflows, database, migrations, validation, quran_research.db এবং schema.sql protected।',
+    'একটি change-এর পর test evidence ছাড়া কাজ complete বলবে না। ব্যর্থ হলে root cause খুঁজে repair/retest করবে।',
+    'শেষ রিপোর্টে identity, task, files read/changed, branch, commit, tests, remaining work এবং approval/deployment status স্পষ্ট করবে।',
+    'অসম্পূর্ণ হলে INCOMPLETE_HANDOFF status এবং next-agent instructions দেবে।'
+  ].join('\n');
+  const contents = history.slice();
+  for (let turn = 0; turn < MAX_TURNS; turn++) {
+    const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + model + ':generateContent', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-goog-api-key': env.GEMINI_API_KEY },
+      body: JSON.stringify({
+        systemInstruction: { parts: [{ text: system }] },
+        contents,
+        tools: [{ functionDeclarations: TOOLS }],
+        generationConfig: { maxOutputTokens: 4096, temperature: 0.1 }
+      })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error('Gemini HTTP ' + res.status + ': ' + String(data?.error?.message || '').slice(0, 500));
+    const modelContent = data?.candidates?.[0]?.content;
+    if (!modelContent) throw new Error('Gemini response missing content.');
+    const calls = (modelContent.parts || []).filter(p => p.functionCall);
+    if (!calls.length) return { answer: (modelContent.parts || []).map(p => p.text || '').join('').trim(), model, turns: turn + 1 };
+    contents.push(modelContent);
+    const responses = [];
+    for (const part of calls) {
+      const fc = part.functionCall;
+      let result;
+      try { result = await executeTool(env, fc.name, fc.args || {}); }
+      catch (e) { result = { ok: false, error: String(e?.message || e) }; }
+      responses.push({ functionResponse: { name: fc.name, response: { result } } });
+    }
+    contents.push({ role: 'user', parts: responses });
+  }
+  throw new Error('Agent tool loop limit reached.');
+}
+export default {
+  async fetch(request, env) {
+    const origin = request.headers.get('Origin') || '';
+    if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors(origin) });
+    if (request.method === 'GET') return json({
+      ok: true,
+      service: 'al-quran-research-project-agent',
+      version: env.AGENT_VERSION || '1.1.0',
+      isolated: true,
+      agent_name: 'শামীম',
+      agent_id: 'AGENT-BN-SHAMIM-001',
+      write_scope: 'agent/* only',
+      merge: false,
+      deploy: false
+    }, 200, origin);
+    if (request.method !== 'POST') return json({ ok: false, error: 'POST/GET only' }, 405, origin);
+    const auth = request.headers.get('Authorization') || '';
+    if (!env.AGENT_ACCESS_TOKEN || auth !== 'Bearer ' + env.AGENT_ACCESS_TOKEN) return json({ ok: false, error: 'Unauthorized' }, 401, origin);
+    try {
+      const body = await request.json();
+      const message = String(body?.message || '').trim();
+      if (!message) return json({ ok: false, error: 'message required' }, 400, origin);
+      if (message.length > MAX_MESSAGE) return json({ ok: false, error: 'message too large' }, 413, origin);
+      const meta = {
+        task_id: String(body?.task_id || 'TASK-' + Date.now()),
+        agent_name: String(body?.agent_name || 'শামীম'),
+        agent_id: String(body?.agent_id || 'AGENT-BN-SHAMIM-001')
+      };
+      const result = await runGemini(env, [{ role: 'user', parts: [{ text: message }] }], meta);
+      return json({
+        ok: true,
+        answer: result.answer,
+        provider: result.model,
+        turns: result.turns,
+        agent_version: env.AGENT_VERSION || '1.1.0',
+        task_id: meta.task_id,
+        agent_name: meta.agent_name,
+        agent_id: meta.agent_id,
+        isolated: true,
+        merge: false,
+        deploy: false
+      }, 200, origin);
+    } catch (e) {
+      return json({ ok: false, error: 'PROJECT_AGENT_FAILED', detail: String(e?.message || e).slice(0, 700) }, 500, origin);
+    }
+  }
+};
