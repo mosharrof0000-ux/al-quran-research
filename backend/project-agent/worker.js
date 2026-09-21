@@ -1,0 +1,156 @@
+/* Al-Quran Research — Isolated Project Agent Engine v1.1
+   Identity-aware, task-traceable, isolated Project Agent.
+   It can read project files and write only to agent/* branches.
+   It cannot merge or deploy.
+*/
+const ALLOWED_ORIGINS=['https://mosharrof0000-ux.github.io'];
+const API='https://api.github.com';
+const DEFAULT_REPO='mosharrof0000-ux/al-quran-research';
+const MAX_FILE=120000;
+const MAX_TURNS=10;
+
+function cors(origin){return {'Access-Control-Allow-Origin':ALLOWED_ORIGINS.includes(origin)?origin:ALLOWED_ORIGINS[0],'Access-Control-Allow-Methods':'POST, GET, OPTIONS','Access-Control-Allow-Headers':'Content-Type, Authorization','Content-Type':'application/json; charset=utf-8','Vary':'Origin'};}
+function json(data,status,origin){return new Response(JSON.stringify(data),{status,headers:cors(origin)});}
+function repo(env){return env.PROJECT_REPO||DEFAULT_REPO;}
+function isAgentBranch(b){return /^agent\/[A-Za-z0-9._/-]+$/.test(String(b||''))&&!String(b).includes('..');}
+function safePath(path,write=false){
+ const p=String(path||'').replace(/^\/+,'');
+ if(!p||p.includes('..')||p.startsWith('.git/'))return false;
+ if(write){
+  const blocked=['.github/','database/','migrations/','validation/'];
+  if(blocked.some(x=>p.startsWith(x))||['quran_research.db','schema.sql'].includes(p))return false;
+ }
+ return true;
+}
+async function gh(env,path,init={}){
+ if(!env.GITHUB_TOKEN)throw new Error('GITHUB_TOKEN is not configured.');
+ const r=await fetch(API+path,{...init,headers:{'Accept':'application/vnd.github+json','Authorization':'Bearer '+env.GITHUB_TOKEN,'X-GitHub-Api-Version':'2026-03-10','User-Agent':'al-quran-research-project-agent',...(init.headers||{})}});
+ const text=await r.text();let data;try{data=JSON.parse(text)}catch{data={raw:text}}
+ if(!r.ok)throw new Error('GitHub HTTP '+r.status+': '+String(data?.message||text).slice(0,500));
+ return data;
+}
+async function readFile(env,args){
+ const path=String(args.path||''),branch=String(args.branch||'main');
+ if(!safePath(path))throw new Error('এই path অনুমোদিত নয়।');
+ const data=await gh(env,'/repos/'+repo(env)+'/contents/'+path.split('/').map(encodeURIComponent).join('/')+'?ref='+encodeURIComponent(branch));
+ if(data.type!=='file')throw new Error('এটি file নয়।');
+ if(Number(data.size||0)>MAX_FILE)throw new Error('ফাইলটি engine-এর সীমার চেয়ে বড়।');
+ const bin=atob(String(data.content||'').replace(/\n/g,''));
+ const bytes=Uint8Array.from(bin,c=>c.charCodeAt(0));
+ const decoded=new TextDecoder().decode(bytes);
+ return {path,branch,sha:data.sha,size:data.size,content:decoded};
+}
+async function listDirectory(env,args){
+ const path=String(args.path||''),branch=String(args.branch||'main');
+ if(!safePath(path))throw new Error('এই path অনুমোদিত নয়।');
+ const data=await gh(env,'/repos/'+repo(env)+'/contents/'+path.split('/').map(encodeURIComponent).join('/')+'?ref='+encodeURIComponent(branch));
+ if(!Array.isArray(data))throw new Error('Directory পাওয়া যায়নি।');
+ return data.map(x=>({name:x.name,path:x.path,type:x.type,size:x.size||0}));
+}
+async function searchCode(env,args){
+ const q=String(args.query||'').trim();if(!q)throw new Error('search query প্রয়োজন।');
+ const data=await gh(env,'/search/code?q='+encodeURIComponent(q+' repo:'+repo(env)));
+ return (data.items||[]).slice(0,20).map(x=>({path:x.path,html_url:x.html_url}));
+}
+async function createBranch(env,args){
+ const branch=String(args.branch||''),base=String(args.base||env.AGENT_BASE_BRANCH||'main');
+ if(!isAgentBranch(branch))throw new Error('শুধু agent/* branch তৈরি করা যাবে।');
+ if(base!=='main'&&!isAgentBranch(base))throw new Error('base branch অনুমোদিত নয়।');
+ const ref=await gh(env,'/repos/'+repo(env)+'/git/ref/heads/'+encodeURIComponent(base));
+ const created=await gh(env,'/repos/'+repo(env)+'/git/refs',{method:'POST',body:JSON.stringify({ref:'refs/heads/'+branch,sha:ref.object.sha}),headers:{'Content-Type':'application/json'}});
+ return {branch,base,sha:created.object.sha};
+}
+async function writeFile(env,args){
+ const path=String(args.path||''),branch=String(args.branch||'');
+ if(!isAgentBranch(branch))throw new Error('Write করতে agent/* branch বাধ্যতামূলক। main-এ লেখা নিষিদ্ধ।');
+ if(!safePath(path,true))throw new Error('এই protected path-এ agent write করতে পারবে না।');
+ const content=String(args.content||'');if(content.length>MAX_FILE)throw new Error('ফাইলটি engine-এর সীমার চেয়ে বড়।');
+ let existing=null;try{existing=await gh(env,'/repos/'+repo(env)+'/contents/'+path.split('/').map(encodeURIComponent).join('/')+'?ref='+encodeURIComponent(branch))}catch{}
+ const payload={message:String(args.message||'AI agent change'),content:btoa(unescape(encodeURIComponent(content))),branch};
+ if(existing?.sha)payload.sha=existing.sha;
+ const data=await gh(env,'/repos/'+repo(env)+'/contents/'+path.split('/').map(encodeURIComponent).join('/'),{method:'PUT',body:JSON.stringify(payload),headers:{'Content-Type':'application/json'}});
+ return {path,branch,created:!existing?.sha,commit_sha:data.commit?.sha||null,blob_sha:data.content?.sha||null};
+}
+function taskIdentity(message){
+ const s=String(message||'').toLowerCase();
+ let bn='সোহেল',slug='sohel',role='general';
+ if(/icon|আইকন|svg/.test(s)){bn='শাহীন';slug='shaheen';role='icon';}
+ else if(/reader|কুরআন|আয়াত|সূরা|quran/.test(s)){bn='সুমন';slug='sumon';role='reader';}
+ else if(/chat|চ্যাট|voice|ভয়েস|ai/.test(s)){bn='শামীম';slug='shamim';role='ai';}
+ else if(/font|text|টাইপ|ফন্ট/.test(s)){bn='রাকিব';slug='rakib';role='typography';}
+ else if(/test|verify|browser|পরীক্ষা|যাচাই/.test(s)){bn='নাঈম';slug='naim';role='verification';}
+ else if(/data|database|ডেটা|ডাটাবেজ/.test(s)){bn='আরিফ';slug='arif';role='data';}
+ else if(/agent|system|engine|সিস্টেম/.test(s)){bn='ইমরান';slug='imran';role='agent-core';}
+ const now=new Date();
+ const stamp=now.toISOString().replace(/[-:TZ.]/g,'').slice(0,14);
+ const rand=Math.random().toString(36).slice(2,7);
+ const taskId='TASK-'+stamp+'-'+rand.toUpperCase();
+ return {taskId,agentName:bn+'-'+stamp.slice(8)+'-'+rand,baseName:bn,slug,role,branch:'agent/'+slug+'-'+role+'-'+stamp+'-'+rand};
+}
+function ledgerText(meta,message){
+ return '# Agent Work Record — '+meta.taskId+'\n\n'+
+ '## Identity\n- Agent Name: '+meta.agentName+'\n- Agent Base Name: '+meta.baseName+'\n- Role: '+meta.role+'\n- Task ID: '+meta.taskId+'\n- Branch: '+meta.branch+'\n- Base Branch: '+(meta.baseBranch||'')+'\n- Created: '+new Date().toISOString()+'\n\n'+
+ '## Request\n'+message+'\n\n'+
+ '## Status\nRECEIVED → INSPECTING\n\n'+
+ '## Rules\n- main পরিবর্তন নিষিদ্ধ\n- protected paths পরিবর্তন নিষিদ্ধ\n- কাজ অসম্পূর্ণ হলে handoff record বাধ্যতামূলক\n- merge/deploy এই engine-এর ক্ষমতার বাইরে\n\n'+
+ '## Handoff\nঅন্য Agent নিলে এই Task ID, বর্তমান branch, completed/remaining কাজ এবং verification ফল অনুসরণ করতে হবে।\n';
+}
+const TOOLS=[
+ {name:'project_read_file',description:'Read a text file before analyzing or editing it.',parameters:{type:'object',properties:{path:{type:'string'},branch:{type:'string'}},required:['path']}},
+ {name:'project_list_directory',description:'List files in a project directory.',parameters:{type:'object',properties:{path:{type:'string'},branch:{type:'string'}},required:['path']}},
+ {name:'project_search_code',description:'Search repository code for a term or identifier.',parameters:{type:'object',properties:{query:{type:'string'}},required:['query']}},
+ {name:'project_create_branch',description:'Create an isolated agent/* branch. The current task branch is already created; use this only for a separate child task.',parameters:{type:'object',properties:{branch:{type:'string'},base:{type:'string'}},required:['branch']}},
+ {name:'project_write_file',description:'Create or replace a text file only on the current agent/* branch. Never write protected paths.',parameters:{type:'object',properties:{path:{type:'string'},branch:{type:'string'},content:{type:'string'},message:{type:'string'}},required:['path','branch','content','message']}}
+];
+async function executeTool(env,name,args){
+ if(name==='project_read_file')return readFile(env,args);
+ if(name==='project_list_directory')return listDirectory(env,args);
+ if(name==='project_search_code')return searchCode(env,args);
+ if(name==='project_create_branch')return createBranch(env,args);
+ if(name==='project_write_file')return writeFile(env,args);
+ throw new Error('Unknown tool: '+name);
+}
+async function gemini(env,history,meta){
+ if(!env.GEMINI_API_KEY)throw new Error('GEMINI_API_KEY is not configured.');
+ const model=env.GEMINI_MODEL||'gemini-2.5-flash';
+ const system='তুমি আল-কুরআন গবেষণা প্রকল্পের Project Agent। বর্তমান পরিচয়: '+meta.agentName+'। Task ID: '+meta.taskId+'। Role: '+meta.role+'। Current branch: '+meta.branch+'। Base branch: '+meta.baseBranch+'। এই branch-এই কাজ করবে। প্রথমে governance ও প্রয়োজনীয় project files পড়বে। অনুমান করে rewrite করবে না। main-এ লিখবে না। .github/workflows, database, migrations, validation, quran_research.db এবং schema.sql পরিবর্তন করবে না। প্রয়োজনমতো inspect → plan → minimal edit → verify করবে। কাজ অসম্পূর্ণ হলে স্পষ্ট remaining কাজ এবং successor handoff লিখবে। কাজ শেষে কী পড়েছ, কী বদলেছ, branch, commit, verification, remaining, approval/deployment status বাংলায় জানাবে। merge/deploy দাবি করবে না।';
+ let contents=history.slice();
+ for(let turn=0;turn<MAX_TURNS;turn++){
+  const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+model+':generateContent',{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':env.GEMINI_API_KEY},body:JSON.stringify({systemInstruction:{parts:[{text:system}]},contents,tools:[{functionDeclarations:TOOLS}],generationConfig:{maxOutputTokens:4096,temperature:0.1}})});
+  const data=await r.json();if(!r.ok)throw new Error('Gemini HTTP '+r.status+': '+String(data?.error?.message||'').slice(0,400));
+  const modelContent=data?.candidates?.[0]?.content;if(!modelContent)throw new Error('Gemini response missing content.');
+  const calls=(modelContent.parts||[]).filter(p=>p.functionCall);
+  if(!calls.length)return {answer:(modelContent.parts||[]).map(p=>p.text||'').join('').trim(),model,turns:turn+1};
+  contents.push(modelContent);
+  const responses=[];
+  for(const part of calls){
+   const fc=part.functionCall;let result;
+   try{result=await executeTool(env,fc.name,fc.args||{})}catch(e){result={ok:false,error:String(e?.message||e)}}
+   responses.push({functionResponse:{name:fc.name,response:{result}}});
+  }
+  contents.push({role:'user',parts:responses});
+ }
+ throw new Error('Agent tool loop limit reached.');
+}
+export default {async fetch(request,env){
+ const origin=request.headers.get('Origin')||'';
+ if(request.method==='OPTIONS')return new Response(null,{status:204,headers:cors(origin)});
+ if(request.method==='GET')return json({ok:true,service:'al-quran-research-project-agent',version:env.AGENT_VERSION||'1.1.0',identity_registry:true,task_ledger:true,isolated:true,write_scope:'agent/* only',merge:false,deploy:false},200,origin);
+ if(request.method!=='POST')return json({ok:false,error:'POST/GET only'},405,origin);
+ const auth=request.headers.get('Authorization')||'';
+ if(!env.AGENT_ACCESS_TOKEN||auth!=='Bearer '+env.AGENT_ACCESS_TOKEN)return json({ok:false,error:'Unauthorized'},401,origin);
+ try{
+  const body=await request.json();const message=String(body?.message||'').trim();
+  if(!message)return json({ok:false,error:'message required'},400,origin);
+  if(message.length>10000)return json({ok:false,error:'message too large'},413,origin);
+  const meta=taskIdentity(message);meta.baseBranch=env.AGENT_BASE_BRANCH||'agent/project-engine-v1-isolated';
+  const branchResult=await createBranch(env,{branch:meta.branch,base:meta.baseBranch});
+  const ledgerPath='docs/agent-work-ledger/'+meta.taskId+'.md';
+  const instructionPath=ledgerPath+'.instruction.md';
+  const instruction='# Instruction — '+meta.taskId+'\n\nThis task record is an auditable Agent Work Ledger artifact. Preserve its identity, status, branch, handoff and verification history. Update it when task state changes. Governed by MASTER_INSTRUCTION.md, AI_ENTRY_PROTOCOL.md and PROJECT_AGENT_ENGINE_V1.md. Do not delete historical entries.\n';
+  await writeFile(env,{path:ledgerPath,branch:meta.branch,content:ledgerText(meta,message),message:'Record '+meta.taskId+' agent identity and task intake'});
+  await writeFile(env,{path:instructionPath,branch:meta.branch,content:instruction,message:'Add instruction for '+meta.taskId+' work record'});
+  const result=await gemini(env,[{role:'user',parts:[{text:message}]}],meta);
+  return json({ok:true,answer:result.answer,provider:result.model,agent_version:env.AGENT_VERSION||'1.1.0',task:meta,branch_created:branchResult,ledger:ledgerPath,isolated:true,merge:false,deploy:false},200,origin);
+ }catch(e){return json({ok:false,error:'PROJECT_AGENT_FAILED',detail:String(e?.message||e).slice(0,600)},500,origin);}
+}};
