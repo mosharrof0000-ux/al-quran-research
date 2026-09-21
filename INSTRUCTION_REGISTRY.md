@@ -1,4 +1,4 @@
-# Instruction Registry — v1.9
+# Instruction Registry — v2.0
 
 This registry is the dictionary/index of project instructions. It records which instructions govern which project assets.
 
@@ -49,6 +49,16 @@ This registry is the dictionary/index of project instructions. It records which 
 | `backend/research-intelligence-router.js.instruction.md` | `backend/research-intelligence-router.js` | DRAFT — safety branch |
 | `backend/private-research.js.instruction.md` | `backend/private-research.js` | DRAFT — safety branch |
 | `.github/workflows/GITHUB_ACTIONS_AND_AUTOMATION.instruction.md` | `.github/workflows/*.yml`, `.github/workflows/*.yaml` | ACTIVE |
+
+## Project Agent Governance
+
+| Instruction | Governs | Status |
+|---|---|---|
+| `docs/AGENT_IDENTITY_REGISTRY.instruction.md` | `docs/AGENT_IDENTITY_REGISTRY.md` | ACTIVE — safety branch |
+| `docs/AGENT_WORK_LEDGER.instruction.md` | `docs/AGENT_WORK_LEDGER.md` | ACTIVE — safety branch |
+| `docs/AGENT_HANDOFF_PROTOCOL.instruction.md` | `docs/AGENT_HANDOFF_PROTOCOL.md` | ACTIVE — safety branch |
+
+The Project Agent identity/work/handoff layer is isolated from production and records visible audit metadata only. It does not store secrets or hidden chain-of-thought.
 
 ## Individual Important Instructions
 
@@ -118,6 +128,13 @@ Safety-branch governance work is not production publication. Before promotion to
 ## Migration Rule
 Instructions formerly stored under `docs/instructions/` were migrated by copy → verify → registry update → old-path removal. No governed target file, website path, backend path, data file, or research record was moved as part of this instruction migration.
 
+## 2026-09-21 Project Agent identity/work governance
+- Bengali human-readable Agent Identity Registry
+- Project Agent Work Ledger
+- Project Agent Handoff Protocol
+- Unique Task ID + Agent ID + branch ownership mapping
+- Successor-chain rule for incomplete work
+
 ## 2026-09-20 Safety-branch additions
 - Research Intelligence Architecture
 - Private Research Library
@@ -126,4 +143,4 @@ Instructions formerly stored under `docs/instructions/` were migrated by copy �
 - Home v1 Private Research chat tool
 
 ## Status
-ACTIVE — v1.9 on main; safety-branch additions are DRAFT until review/promotion. Canonical live connection map is registered on `main`. Universal startup governance remains in REVIEW on the safety branch and is not promoted to `main`.
+ACTIVE — v2.0 on this safety branch; Project Agent identity/work/handoff additions remain safety-branch changes until review and explicit promotion. Canonical live connection map is registered on `main`. Universal startup governance remains in REVIEW on the safety branch and is not promoted to `main`.
