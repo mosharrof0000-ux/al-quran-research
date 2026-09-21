@@ -134,8 +134,12 @@ async function gemini(env,task){
 }
 async function saveTaskRecord(env,task,result){
  const path='docs/agent-work/'+slug(task.taskId)+'.md';
- const text=['# Agent Work Record','', '- Task ID: '+task.taskId,'- Parent Task ID: '+(task.parentTaskId||'NONE'),'- Agent Name: '+task.agentName,'- Agent ID: '+task.agentId,'- Session ID: '+task.sessionId,'- Work Type: '+task.workType,'- Branch: '+task.branch,'- Status: '+(result.status||'WORKING'),'','## Request',task.message,'','## Agent Report',result.answer||'','', '## Verification State','Agent branch only; merge/deploy not performed.','', '## Handoff','If incomplete, successor must create a new Agent ID and preserve this record.'].join('\n');
- return writeFile(env,{path,branch:task.branch,content:text,message:'Save task handoff record '+task.taskId});
+ const instructionPath=path+'.instruction.md';
+ const text=['# Agent Work Record','','- Task ID: '+task.taskId,'- Parent Task ID: '+(task.parentTaskId||'NONE'),'- Agent Name: '+task.agentName,'- Agent ID: '+task.agentId,'- Session ID: '+task.sessionId,'- Work Type: '+task.workType,'- Branch: '+task.branch,'- Status: '+(result.status||'WORKING'),'','## Request',task.message,'','## Agent Report',result.answer||'','', '## Verification State','Agent branch only; merge/deploy not performed.','', '## Handoff','If incomplete, successor must create a new Agent ID and preserve this record.'].join('\\n');
+ const instruction=['# Task Record Instruction','','This instruction governs '+path+'.','- Purpose: persistent human-readable record of one Project Agent task.','- Preserve Task ID, Agent identity, branch, status, report and handoff continuity.','- Do not silently delete or overwrite historical task meaning.','- Update when task status or handoff state changes.','- Governed by MASTER_INSTRUCTION.md and the Agent Handoff Protocol.'].join('\\n');
+ const a=await writeFile(env,{path,branch:task.branch,content:text,message:'Save task handoff record '+task.taskId});
+ await writeFile(env,{path:instructionPath,branch:task.branch,content:instruction,message:'Add task record instruction '+task.taskId});
+ return a;
 }
 export default {async fetch(request,env){
  const origin=request.headers.get('Origin')||'';
