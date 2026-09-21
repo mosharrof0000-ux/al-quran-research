@@ -213,3 +213,29 @@ A generated icon-sheet image has been recorded as the visual reference for the f
 
 Reference record: `docs/design/MODE_ICON_DESIGN_REFERENCE_2026-09-21.md`
 Reference SHA-256: `170c83ecf42c84ca4c09686fccb32311c2272fe2d15dd4eb4b9be6ebce14c4d1`
+
+
+## WORK-2026-09-21-NORMAL-MODE-ICON-ASSET-SET-01
+
+Status: CREATED AND STORED — ASSET-ONLY; NOT YET LIVE-WIRED
+
+### User decision
+ব্যবহারকারী supplied/generated icon-sheet-কে সাধারণ কোরআন Reader-এর visual reference হিসেবে অনুমোদন করেছেন এবং এখনই icon set তৈরি করে project-এ সংরক্ষণ ও ব্যবহারবিধি নথিভুক্ত করতে বলেছেন। ভবিষ্যতে Sufi Mode-এর জন্য আলাদা icon family থাকবে।
+
+### Safety point
+- Backup branch: `backup/pre-normal-mode-icon-set-2026-09-21`
+- Working branch: `feat/normal-quran-mode-icon-set-v1-2026-09-21`
+
+### Created assets
+`assets/icons/modes/normal-v1/`-এ ১০টি production-ready SVG এবং `icon-manifest.json` তৈরি করা হয়েছে।
+
+### Usage documentation
+- `assets/icons/modes/normal-v1/README.md`
+- `docs/design/MODE_ICON_USAGE_2026-09-21.md`
+- Existing visual reference: `docs/design/MODE_ICON_DESIGN_REFERENCE_2026-09-21.md`
+
+### Mode rule
+Normal Qur'an Mode → `normal-v1` icon family। Sufi Mode → ভবিষ্যতের পৃথক `sufi-v1` family। এক মোডের asset অন্য মোড দিয়ে overwrite করা যাবে না।
+
+### Verification status
+SVG assets are text-based, self-contained, monochrome and scalable. They have not yet been connected to the live Reader/Icon Engine. Live UI integration is intentionally deferred until review/approval and runtime mode resolver work.
