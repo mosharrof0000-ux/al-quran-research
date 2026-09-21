@@ -302,3 +302,10 @@ Source-level integration verified। Canonical live page-এ browser/AI end-to-e
 ### Important implementation note
 বর্তমান সংযোগ prompt-controlled marker পদ্ধতির; এটি Gemini native function-calling integration নয়। এছাড়া custom icon engine-এর canonical Master ZIP source-এর সঙ্গে বর্তমান `assets/icon-engine/aqr-icon-engine.js` implementation পুনরায় audit করা প্রয়োজন।
 
+
+
+## 25. Mode-aware icon design reference — 2026-09-21
+
+The generated icon-sheet is recorded as a design reference only. It defines the general Qur'an reading-mode icon family and establishes a future separate Sufi-mode icon family. No live UI/database change is implied by this record. Canonical custom icon engine remains the technical source.
+
+Reference: `docs/design/MODE_ICON_DESIGN_REFERENCE_2026-09-21.md`
