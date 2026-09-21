@@ -68,6 +68,9 @@
     if (!element) return;
     const m = meta || {};
     if (m.language) element.dataset.aqrLanguage = m.language;
+    if (m.script) element.dataset.aqrScript = m.script;
+    if (m.direction) element.dataset.aqrDirection = m.direction;
+    if (m.fontFamily) element.style.setProperty('--aqr-font-family', m.fontFamily);
     if (m.contentType) element.dataset.aqrContentType = m.contentType;
     if (m.importance) element.dataset.aqrImportance = m.importance;
     if (m.animation) animate(element, m.animation, m);
