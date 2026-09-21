@@ -26,11 +26,18 @@ RECEIVED → INSPECTING → PLANNED → WORKING → TESTING → REPAIRING → VA
 Failure: BLOCKED / ROLLED_BACK.
 
 ## Current task
+Task ID: AI-RUNTIME-HARDENING-001
+Parent Task: AI-STRENGTHENING-001
+Agent: সজীব (SAJIB-AGENT-RUNTIME-001)
+Branch: agent/sajib-agent-runtime-hardening-001
+Status: READY_FOR_REVIEW
+Scope: Project Agent runtime audit, branch comparison, failure handoff and safety hardening.
+
+## Previous task retained
 Task ID: AI-STRENGTHENING-001
 Agent: শামীম (SHAMIM-001)
 Branch: agent/shamim-ai-strengthening-003
-Status: WORKING
-Scope: Project Agent identity, work history, stronger inspection/tool loop and safe handoff.
+Status: predecessor / retained history.
 
 
 ## 2026-09-21 — AI strengthening update
