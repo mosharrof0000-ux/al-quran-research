@@ -277,3 +277,28 @@ Update Reason: Universal AI governance control set `cf6a49812e14ab7a04d0aafb2ce9
 
 Status: VERIFIED — STABLE CHECKPOINT
 Verification: `PROJECT_STATE.md` ও এর instruction পর্যালোচনা করা হয়েছে; deployment/check results এবং ব্যবহারকারীর live-site verification-এর সঙ্গে state মিলিয়ে আপডেট করা হয়েছে।
+
+## ২৪. সর্বশেষ কাজ — Gemini Custom Icon Integration
+
+### Recorded date
+2026-09-21
+
+### Status
+**IMPLEMENTED ON MAIN — LIVE VISUAL VERIFICATION PENDING**
+
+Gemini AI response-এর সঙ্গে project custom icon rendering সংযোগ করা হয়েছে। Frontend controlled marker শনাক্ত করে marker-টি visible text থেকে সরিয়ে custom SVG icon render করে।
+
+### Main commits
+- `d0c5834f6859c91898d5495a15578fe1703ab36f` — initial integration merge
+- `df4d58e331a2bf8449a1ca47b6f3d30360c24a36` — HTML literal line-break fix
+- `386b2b417b32d64526b9974b23fd738b688e0364` — icon-engine script line-break fix
+
+### Safety point
+`backup/pre-gemini-custom-icon-documentation-2026-09-21` → pre-documentation main state `386b2b417b32d64526b9974b23fd738b688e0364`
+
+### Verification limitation
+Source-level integration verified। Canonical live page-এ browser/AI end-to-end visual verification এখনও করা হয়নি। অতএব feature-টিকে LIVE VERIFIED বলা যাবে না।
+
+### Important implementation note
+বর্তমান সংযোগ prompt-controlled marker পদ্ধতির; এটি Gemini native function-calling integration নয়। এছাড়া custom icon engine-এর canonical Master ZIP source-এর সঙ্গে বর্তমান `assets/icon-engine/aqr-icon-engine.js` implementation পুনরায় audit করা প্রয়োজন।
+
