@@ -68,6 +68,12 @@ async function writeFile(env,args){
  const data=await gh(env,'/repos/'+repo(env)+'/contents/'+path.split('/').map(encodeURIComponent).join('/'),{method:'PUT',body:JSON.stringify(payload),headers:{'Content-Type':'application/json'}});
  return {path,branch,created:!existing?.sha,commit_sha:data.commit?.sha||null,blob_sha:data.content?.sha||null};
 }
+const AGENT_NAMES={
+  chat_ui:['শামীম','রাকিব'], icon_visual:['শাহীন','তানভীর'], reader_data:['সুমন','মাহিন'], notification:['রাকিব','নাঈম'], browser_qa:['নাঈম','আরিফ'], architecture_security:['আরিফ','সাইফ'], data_mapping:['মাহিন','সুমন'], general:['শামীম','সুমন','শাহীন','নাঈম','আরিফ']
+};
+function slug(s){return String(s||'general').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'general';}
+function classifyWork(message){const m=String(message||'').toLowerCase(); if(/আইকন|icon|visual|css|style/.test(m))return 'icon_visual'; if(/reader|কুরআন পাঠ|আয়াত|ডেটা|data/.test(m))return 'reader_data'; if(/notification|নোটিফিকেশন|update|আপডেট/.test(m))return 'notification'; if(/browser|test|পরীক্ষা|qa/.test(m))return 'browser_qa'; if(/security|নিরাপত্তা|architecture|স্থাপত্য/.test(m))return 'architecture_security'; if(/mapping|ম্যাপিং/.test(m))return 'data_mapping'; if(/chat|চ্যাট|ui|interface/.test(m))return 'chat_ui'; return 'general';}
+function identityFor(message){const work=classifyWork(message),names=AGENT_NAMES[work]||AGENT_NAMES.general; const n=names[0]; const id='AG-'+slug(n)+'-'+work+'-'+Date.now().toString(36); const task='TASK-'+new Date().toISOString().replace(/[-:.TZ]/g,'').slice(0,14)+'-'+Math.random().toString(36).slice(2,7).toUpperCase(); return {task_id:task,agent_name_bn:n,agent_id:id,work_type:work,session_id:'SESSION-'+crypto.randomUUID()};}
 const TOOLS=[
  {name:'project_read_file',description:'Read a text file from the Quran Research repository before analyzing or editing it.',parameters:{type:'object',properties:{path:{type:'string'},branch:{type:'string'}},required:['path']}},
  {name:'project_list_directory',description:'List files in a project directory.',parameters:{type:'object',properties:{path:{type:'string'},branch:{type:'string'}},required:['path']}},
@@ -116,7 +122,9 @@ export default {async fetch(request,env){
   const body=await request.json();const message=String(body?.message||'').trim();
   if(!message)return json({ok:false,error:'message required'},400,origin);
   if(message.length>10000)return json({ok:false,error:'message too large'},413,origin);
-  const result=await gemini(env,[{role:'user',parts:[{text:message}]}]);
-  return json({ok:true,answer:result.answer,provider:result.model,agent_version:env.AGENT_VERSION||'1.0.0',isolated:true,merge:false,deploy:false},200,origin);
+  const identity=identityFor(message);
+  const enriched='Task identity: '+JSON.stringify(identity)+'\nUser command: '+message;
+  const result=await gemini(env,[{role:'user',parts:[{text:enriched}]}]);
+  return json({ok:true,answer:result.answer,provider:result.model,agent_version:env.AGENT_VERSION||'1.0.0',isolated:true,merge:false,deploy:false,identity},200,origin);
  }catch(e){return json({ok:false,error:'PROJECT_AGENT_FAILED',detail:String(e?.message||e).slice(0,600)},500,origin);}
 }};
