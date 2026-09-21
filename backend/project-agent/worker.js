@@ -136,6 +136,6 @@ export default {async fetch(request,env){
   const identity=identityFor(message);
   const enriched='Task identity: '+JSON.stringify(identity)+'\nUser command: '+message;
   const result=await gemini(env,[{role:'user',parts:[{text:enriched}]}]);
-  return json({ok:true,answer:result.answer,provider:result.model,agent_version:env.AGENT_VERSION||'1.0.0',isolated:true,merge:false,deploy:false,identity},200,origin);
+  return json({ok:true,answer:result.answer,provider:result.model,agent_version:env.AGENT_VERSION||'1.0.0',isolated:true,merge:false,deploy:false,identity:{...identity,branch,task_state:'HANDOFF_COMPLETE',resume_count:Number(prior?.resume_count||0)+(prior?1:0)},200,origin);
  }catch(e){return json({ok:false,error:'PROJECT_AGENT_FAILED',detail:String(e?.message||e).slice(0,600)},500,origin);}
 }};
