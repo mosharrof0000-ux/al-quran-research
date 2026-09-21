@@ -14,12 +14,22 @@
 - user approval ছাড়া main-এ promotion নয়
 
 ## Gemini tool layer
-Gemini function calling ব্যবহার করে পাঁচটি tool:
+Gemini function calling ব্যবহার করে project inspection + safe editing toolset:
 1. project_read_file
 2. project_list_directory
 3. project_search_code
-4. project_create_branch
-5. project_write_file
+4. project_fetch_pull_request
+5. project_search_pull_requests
+6. project_fetch_commit
+7. project_compare_refs
+8. project_create_branch
+9. project_write_file
+
+Agent identity is assigned from work type, with a Bengali human-readable name, unique Task ID and Session ID. The response also carries a branch hint and optional parent task ID so work can form a traceable continuation chain.
+
+The engine must inspect relevant repository context before editing. Takeover work must inspect predecessor PR/commit/branch evidence before continuing.
+
+Gemini নিজে GitHub পরিবর্তন করে না; Worker tool call গ্রহণ করে GitHub API-তে নিরাপদভাবে কাজ সম্পন্ন করে.
 
 Gemini নিজে GitHub পরিবর্তন করে না; Worker tool call গ্রহণ করে GitHub API-তে নিরাপদভাবে কাজ সম্পন্ন করে।
 
