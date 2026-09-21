@@ -83,41 +83,51 @@ document.getElementById('privateResearchUnlockBtn').onclick=async()=>{
 };
 privatePin.addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('privateResearchUnlockBtn').click()});
 document.getElementById('micBtn').onclick=()=>{if(!('webkitSpeechRecognition'in window||'SpeechRecognition'in window)){toast('এই ব্রাউজারে voice input নেই');return}const R=window.SpeechRecognition||window.webkitSpeechRecognition;const r=new R();r.lang='bn-BD';r.onresult=e=>document.getElementById('prompt').value=e.results[0][0].transcript;r.start();toast('শুনছি…')};
+function escapeHtml(s){return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function markdownToSafeHtml(text){
+ const escaped=escapeHtml(text); const lines=escaped.split(/\n/); let html='',inList=false;
+ for(const line of lines){
+   if(/^###\s+/.test(line)){if(inList){html+='</ul>';inList=false}html+='<h3>'+line.replace(/^###\s+/,'')+'</h3>';continue}
+   if(/^##\s+/.test(line)){if(inList){html+='</ul>';inList=false}html+='<h2>'+line.replace(/^##\s+/,'')+'</h2>';continue}
+   if(/^#\s+/.test(line)){if(inList){html+='</ul>';inList=false}html+='<h1>'+line.replace(/^#\s+/,'')+'</h1>';continue}
+   if(/^[-*]\s+/.test(line)){if(!inList){html+='<ul>';inList=true}html+='<li>'+line.replace(/^[-*]\s+/,'')+'</li>';continue}
+   if(/^\d+[.)]\s+/.test(line)){if(inList){html+='</ul>';inList=false}html+='<p><strong>'+line.match(/^\d+[.)]/)[0]+'</strong> '+line.replace(/^\d+[.)]\s+/,'')+'</p>';continue}
+   if(/^>\s+/.test(line)){if(inList){html+='</ul>';inList=false}html+='<blockquote>'+line.replace(/^>\s+/,'')+'</blockquote>';continue}
+   if(!line.trim()){if(inList){html+='</ul>';inList=false}continue}
+   if(inList){html+='</ul>';inList=false}
+   html+='<p>'+line.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\*(.+?)\*/g,'<em>$1</em>')+'</p>';
+ }
+ if(inList)html+='</ul>'; return html;
+}
 function addMessage(text,type){
- const box=document.getElementById('messages');
- const el=document.createElement('div');
- el.className='chat-message '+type;
- const body=document.createElement('div');
- body.className='message-body';
- body.textContent=text;
- el.appendChild(body);
+ const box=document.getElementById('messages'),el=document.createElement('div');el.className='chat-message '+type;
+ const body=document.createElement('div');body.className='message-body';body.textContent=text;el.appendChild(body);
  if(type.includes('ai')){
-   const actions=document.createElement('div');
-   actions.className='message-actions';
-   actions.hidden=true;
+   const actions=document.createElement('div');actions.className='message-actions';actions.hidden=true;
    const makeBtn=(label,title,handler)=>{const b=document.createElement('button');b.type='button';b.className='message-action';b.textContent=label;b.title=title;b.setAttribute('aria-label',title);b.onclick=handler;actions.appendChild(b);return b};
    makeBtn('📋','কপি',()=>copyAiMessage(body.textContent));
    const like=makeBtn('👍','ভালো লেগেছে',()=>{like.classList.toggle('active');dislike.classList.remove('active');toast(like.classList.contains('active')?'পছন্দ সংরক্ষিত':'পছন্দ সরানো হয়েছে')});
    const dislike=makeBtn('👎','ভালো লাগেনি',()=>{dislike.classList.toggle('active');like.classList.remove('active');toast(dislike.classList.contains('active')?'মতামত সংরক্ষিত':'মতামত সরানো হয়েছে')});
-   makeBtn('🔊','পড়ে শোনান',()=>speakAiMessage(body.textContent));
-   makeBtn('↗','শেয়ার',()=>shareAiMessage(body.textContent));
-   const moreWrap=document.createElement('div');moreWrap.className='message-more';
-   const moreMenu=document.createElement('div');moreMenu.className='message-more-menu';
-   const more=makeBtn('⋯','আরও অপশন',()=>moreMenu.classList.toggle('open'));
-   moreWrap.appendChild(more);
+   makeBtn('🔊','পড়ে শোনান',()=>speakAiMessage(body.textContent));makeBtn('↗','শেয়ার',()=>shareAiMessage(body.textContent));
+   const moreWrap=document.createElement('div');moreWrap.className='message-more';const moreMenu=document.createElement('div');moreMenu.className='message-more-menu';
+   const more=makeBtn('⋯','আরও অপশন',()=>moreMenu.classList.toggle('open'));moreWrap.appendChild(more);
    const addMore=(label,handler)=>{const b=document.createElement('button');b.type='button';b.textContent=label;b.onclick=()=>{moreMenu.classList.remove('open');handler()};moreMenu.appendChild(b)};
    addMore('↻ আবার উত্তর চাই',()=>{const last=sessionStorage.getItem('aqr:lastQuestion');if(last){document.getElementById('prompt').value=last;sendQuestion()}});
-   addMore('🔊 পড়ে শোনান',()=>speakAiMessage(body.textContent));
-   addMore('⧉ উত্তর কপি করুন',()=>copyAiMessage(body.textContent));
-   addMore('↗ উত্তর শেয়ার করুন',()=>shareAiMessage(body.textContent));
-   addMore('⚑ মতামত/রিপোর্ট',()=>toast('মতামত/রিপোর্ট অপশন প্রস্তুত করা হয়েছে'));
-   moreWrap.appendChild(moreMenu);actions.appendChild(moreWrap);
-   el.__actions=actions;
-   el.__body=body;
-   el.appendChild(actions);
+   addMore('🔊 পড়ে শোনান',()=>speakAiMessage(body.textContent));addMore('⧉ উত্তর কপি করুন',()=>copyAiMessage(body.textContent));addMore('↗ উত্তর শেয়ার করুন',()=>shareAiMessage(body.textContent));addMore('⚑ মতামত/রিপোর্ট',()=>toast('মতামত/রিপোর্ট অপশন প্রস্তুত করা হয়েছে'));
+   moreWrap.appendChild(moreMenu);actions.appendChild(moreWrap);el.__actions=actions;el.__body=body;el.appendChild(actions);
  }
  box.appendChild(el);box.scrollTop=box.scrollHeight;return el
 }
+async function streamAiResponse(body,text){
+ const raw=String(text||'');body.innerHTML='';let partial='';
+ for(const token of raw.split(/(\s+)/)){
+   partial+=token;body.innerHTML=markdownToSafeHtml(partial);
+   const cursor=document.createElement('span');cursor.className='ai-stream-cursor';cursor.textContent='▋';body.appendChild(cursor);
+   boxScrollForStreaming(body);await new Promise(r=>setTimeout(r,/\s+/.test(token)?28:24));
+ }
+ body.innerHTML=markdownToSafeHtml(raw);
+}
+function boxScrollForStreaming(body){const box=document.getElementById('messages');if(box)box.scrollTop=box.scrollHeight}
 async function copyAiMessage(text){
  try{await navigator.clipboard.writeText(text);toast('উত্তর কপি হয়েছে')}catch(e){const ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();toast('উত্তর কপি হয়েছে')}
 }
@@ -130,7 +140,12 @@ async function shareAiMessage(text){
  await copyAiMessage(text);toast('শেয়ার সুবিধা না থাকায় উত্তরটি কপি করা হয়েছে')
 }
 function setBusy(busy){document.getElementById('sendBtn').disabled=busy;document.getElementById('sendBtn').textContent=busy?'…':'↑'}
-async function sendQuestion(){const prompt=document.getElementById('prompt');const q=prompt.value.trim();if(!q){toast('প্রশ্ন লিখুন বা বলুন');return}sessionStorage.setItem('aqr:lastQuestion',q);document.getElementById('welcome').style.display='none';addMessage(q,'user');const readerJump=parseReaderJump(q);prompt.value='';if(readerJump)openReaderAt(readerJump.sura,readerJump.ayah,readerJump.source);setBusy(true);const pending=addMessage('উত্তর তৈরি হচ্ছে…','ai pending');try{const response=await fetch(CHAT_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:q+'\\n\\n[UI নির্দেশনা: এই উত্তরের শেষে একটি UI আইকন নির্বাচন করুন এবং শুধু এই ফরম্যাটে দিন: [[AQR_ICON:quran]] বা [[AQR_ICON:ayah]] বা [[AQR_ICON:research]] বা [[AQR_ICON:analysis]] বা [[AQR_ICON:translation]] বা [[AQR_ICON:tafsir]] বা [[AQR_ICON:document]] বা [[AQR_ICON:info]] বা [[AQR_ICON:verified]]. এই ট্যাগটি উত্তরটির শেষে রাখুন; অন্য কোনো আইকন লাইব্রেরি ব্যবহার করবেন না।]',mode:'general'})});let data={};try{data=await response.json()}catch{}if(!response.ok)throw new Error(data.error||'AI সংযোগে সমস্যা হয়েছে।');const selectedIcon=renderGeminiAnswer(pending.querySelector('.message-body'),data.answer||'AI কোনো উত্তর দেয়নি。',q);pending.dataset.icon=selectedIcon;if(data.provider)pending.dataset.provider=data.provider;if(pending.__actions)pending.__actions.hidden=false}catch(error){pending.querySelector('.message-body').textContent='দুঃখিত, AI সংযোগে সমস্যা হয়েছে। আবার চেষ্টা করুন।';if(pending.__actions)pending.__actions.hidden=false;toast(String(error.message||error))}finally{pending.classList.remove('pending');setBusy(false)}}
+async function sendQuestion(){const prompt=document.getElementById('prompt');const q=prompt.value.trim();if(!q){toast('প্রশ্ন লিখুন বা বলুন');return}sessionStorage.setItem('aqr:lastQuestion',q);document.getElementById('welcome').style.display='none';addMessage(q,'user');const readerJump=parseReaderJump(q);prompt.value='';if(readerJump)openReaderAt(readerJump.sura,readerJump.ayah,readerJump.source);setBusy(true);const pending=addMessage('উত্তর তৈরি হচ্ছে…','ai pending');try{const response=await fetch(CHAT_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:q+'\\n\\n[UI নির্দেশনা: এই উত্তরের শেষে একটি UI আইকন নির্বাচন করুন এবং শুধু এই ফরম্যাটে দিন: [[AQR_ICON:quran]] বা [[AQR_ICON:ayah]] বা [[AQR_ICON:research]] বা [[AQR_ICON:analysis]] বা [[AQR_ICON:translation]] বা [[AQR_ICON:tafsir]] বা [[AQR_ICON:document]] বা [[AQR_ICON:info]] বা [[AQR_ICON:verified]]. এই ট্যাগটি উত্তরটির শেষে রাখুন; অন্য কোনো আইকন লাইব্রেরি ব্যবহার করবেন না।]',mode:'general'})});let data={};try{data=await response.json()}catch{}if(!response.ok)throw new Error(data.error||'AI সংযোগে সমস্যা হয়েছে।');const rawAnswer=String(data.answer||'AI কোনো উত্তর দেয়নি。');
+const iconMatch=rawAnswer.match(/\[\[AQR_ICON:(quran|ayah|research|analysis|translation|tafsir|document|info|verified|success|user|settings|bookmark|reference|warning)\]\]/i);
+const selectedIcon=iconMatch?iconMatch[1].toLowerCase():iconNameFromQuestion(q);
+const cleanAnswer=rawAnswer.replace(/\[\[AQR_ICON:[^\]]+\]\]/gi,'').trim();
+await streamAiResponse(pending.querySelector('.message-body'),cleanAnswer);
+renderAiIcon(pending.querySelector('.message-body'),selectedIcon);pending.dataset.icon=selectedIcon;if(data.provider)pending.dataset.provider=data.provider;if(pending.__actions)pending.__actions.hidden=false}catch(error){pending.querySelector('.message-body').textContent='দুঃখিত, AI সংযোগে সমস্যা হয়েছে। আবার চেষ্টা করুন।';if(pending.__actions)pending.__actions.hidden=false;toast(String(error.message||error))}finally{pending.classList.remove('pending');setBusy(false)}}
 function loadActionBarDemo(){
  if(location.hash!=='#actionbar-demo')return;
  document.getElementById('welcome').style.display='none';
