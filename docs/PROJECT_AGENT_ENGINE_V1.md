@@ -1,4 +1,4 @@
-# Project Agent Engine v1 — Isolated
+# Project Agent Engine v1.1 — Isolated
 
 ## উদ্দেশ্য
 বর্তমান Gemini chat Worker-কে না ছুঁয়ে একটি আলাদা Project Agent Engine তৈরি করা হয়েছে। Engine-এর কাজ হবে প্রকল্পের ফাইল পড়া, code/context বিশ্লেষণ করা এবং নিরাপদ agent/* branch-এ text-file পরিবর্তন করা।
@@ -12,6 +12,9 @@
 - production deploy নিষিদ্ধ
 - .github/workflows, database, migrations, validation, quran_research.db এবং schema.sql agent write থেকে protected
 - user approval ছাড়া main-এ promotion নয়
+
+## Agent identity and continuity
+প্রতিটি request-এর জন্য Agent Name, Agent ID, Task ID, Session ID, Task Type এবং optional Parent Task ID তৈরি হয়। Bengali human-like name কাজের ধরন অনুযায়ী নির্ধারিত হয়। Takeover হলে successor নতুন Agent ID পায় এবং predecessor history অক্ষুণ্ণ থাকে।
 
 ## Gemini tool layer
 Gemini function calling ব্যবহার করে পাঁচটি tool:
