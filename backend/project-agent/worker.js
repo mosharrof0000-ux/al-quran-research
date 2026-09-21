@@ -10,6 +10,7 @@ const MAX_TURNS=8;
 const DEFAULT_ACTIVE_WINDOW_MS=2*60*60*1000;
 const DEFAULT_SAME_FAILURE_LIMIT=3;
 const VERIFIER_MODEL='gemini-2.5-flash';
+const DEFAULT_AGENT_VERSION='1.3.0';
 
 function cors(origin){
   return {'Access-Control-Allow-Origin':ALLOWED_ORIGINS.includes(origin)?origin:ALLOWED_ORIGINS[0],
@@ -92,7 +93,7 @@ function taskFailureKey(error){return String(error||'unknown').toLowerCase().rep
 async function persistTask(env,task,patch={}){
   const branch=task.branch||'';
   if(!isAgentBranch(branch))return {persisted:false,error:'task branch missing'};
-  const record={...task,...patch,updated_at:new Date().toISOString()};
+  const record={...task,...patch,updated_at:new Date().toISOString(),history_event:{state:patch.state||task.state||null,at:new Date().toISOString()}};
   return writeFile(env,{path:'docs/agent-work/runtime/'+task.task_id+'.json',branch,content:JSON.stringify(record,null,2)+'\n',message:'Persist Project Agent task state '+task.task_id});
 }
 async function loadTask(env,taskId,branch){
@@ -243,7 +244,8 @@ export default {async fetch(request,env){
     }
     const resumeCount=Number(prior?.resume_count||0)+(prior?1:0);
     const window=newActiveWindow(env);
-    await persistTask(env,identity,{state:prior?'RESUMING':'RECEIVED',resume_count:resumeCount,last_commit:prior?.last_commit||null,started_at:window.started_at,deadline_at:window.deadline_at,max_active_ms:maxActiveMs(env),max_same_failures:maxSameFailures(env),timeout_policy:'TIME_LIMIT_REACHED -> CHECKPOINTED -> WAITING_FOR_RECOVERY'});
+    const parentTaskId=String(body?.parent_task_id||prior?.task_id||'');
+    await persistTask(env,identity,{parent_task_id:parentTaskId||null,state:prior?'RESUMING':'RECEIVED',resume_count:resumeCount,last_commit:prior?.last_commit||null,started_at:window.started_at,deadline_at:window.deadline_at,max_active_ms:maxActiveMs(env),max_same_failures:maxSameFailures(env),timeout_policy:'TIME_LIMIT_REACHED -> CHECKPOINTED -> WAITING_FOR_RECOVERY'});
     const context='TASK CONTEXT\\n'+JSON.stringify({identity,previous_state:prior||null,rule:'If previous state is incomplete, resume from last verified step. Do not repeat already committed changes.'})+'\\nUSER COMMAND\\n'+message;
     let result;
     try{
@@ -259,7 +261,7 @@ export default {async fetch(request,env){
     checkTimeLimit(Date.parse(window.deadline_at));
     const verification=await independentVerify(env,identity,result.answer);
     const verified=verification.status==='VERIFIED';
-    const finalState={...identity,state:verified?'HANDOFF_COMPLETE':'READY_FOR_REVIEW',verification_status:verification.status,verification_reasons:verification.reasons,resume_count:resumeCount,last_commit:null,answer:result.answer,provider:result.model,notification:verified?'COMPLETED':'READY_FOR_REVIEW',resume_available:!verified};
+    const finalState={...identity,parent_task_id:parentTaskId||null,state:verified?'HANDOFF_COMPLETE':'READY_FOR_REVIEW',verification_status:verification.status,verification_reasons:verification.reasons,resume_count:resumeCount,last_commit:null,answer:result.answer,provider:result.model,notification:verified?'COMPLETED':'READY_FOR_REVIEW',resume_available:!verified};
     const persisted=await persistTask(env,identity,finalState);
     return json({ok:verified,duplicate:false,resumed:Boolean(prior),answer:result.answer,provider:result.model,verification,agent_version:env.AGENT_VERSION||'1.3.0',isolated:true,merge:false,deploy:false,time_policy:{max_active_ms:maxActiveMs(env),max_same_failures:maxSameFailures(env),active_window_started_at:window.started_at,active_window_deadline_at:window.deadline_at},identity:{...identity,task_state:verified?'HANDOFF_COMPLETE':'READY_FOR_REVIEW',resume_count:resumeCount,persisted:Boolean(persisted?.commit_sha),last_commit:persisted?.commit_sha||null},notification:verified?'COMPLETED':'READY_FOR_REVIEW',resume_available:!verified},verified?200:409,origin);
   }catch(e){
