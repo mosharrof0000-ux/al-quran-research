@@ -5,7 +5,9 @@
 const ALLOWED_ORIGINS=['https://mosharrof0000-ux.github.io'];
 const API='https://api.github.com';
 const DEFAULT_REPO='mosharrof0000-ux/al-quran-research';
-const MAX_FILE=120000, MAX_TURNS=12, MAX_CONTEXT_CHARS=60000;
+const MAX_FILE=120000, MAX_TURNS=16, MAX_CONTEXT_CHARS=90000, MAX_HISTORY_FILES=80, MAX_WRITE_FILES_PER_TASK=30;
+const PROTECTED_PATHS=['.github/','database/','migrations/','validation/'];
+const TASK_STATES=['RECEIVED','INSPECTING','PLANNED','WORKING','TESTING','REPAIRING','VALIDATED','READY_FOR_REVIEW','BLOCKED','ROLLED_BACK','HANDOFF_REQUIRED'];
 
 const NAME_MAP=[
   ['icon','শাহীন'],['svg','শাহীন'],['font','শাহীন'],
@@ -28,19 +30,21 @@ function chooseName(message,taskId=''){const m=String(message||'').toLowerCase()
 function identity(body){
  const message=String(body?.message||'');
  const taskId=String(body?.task_id||('TASK-'+Date.now()));
+ const requestedState=String(body?.status||'RECEIVED');
+ const status=TASK_STATES.includes(requestedState)?requestedState:'RECEIVED';
  const workType=String(body?.work_type||chooseWorkType(message));
  const agentName=String(body?.agent_name||chooseName(message,taskId));
  const agentId=String(body?.agent_id||slug(agentName)+'-'+taskId.slice(-6));
  const sessionId=String(body?.session_id||('SESSION-'+Date.now()));
  const branch=String(body?.branch||('agent/'+slug(agentName)+'-'+slug(taskId)));
- return {taskId,agentName,agentId,sessionId,branch,parentTaskId:String(body?.parent_task_id||''),workType,message};
+ return {taskId,agentName,agentId,sessionId,branch,parentTaskId:String(body?.parent_task_id||''),workType,message,status};
 }
 function safePath(path,write=false){
  const p=String(path||'').replace(/^\/+/, '');
  if(!p||p.includes('..')||p.startsWith('.git/'))return false;
  if(write){
   const blocked=['.github/','database/','migrations/','validation/'];
-  if(blocked.some(x=>p.startsWith(x))||['quran_research.db','schema.sql'].includes(p))return false;
+  if(blocked.some(x=>p.startsWith(x))||PROTECTED_PATHS.some(x=>p.startsWith(x))||['quran_research.db','schema.sql'].includes(p))return false;
  }
  return true;
 }
@@ -93,7 +97,8 @@ async function writeFile(env,{path,branch,content,message}){
  const data=await gh(env,'/repos/'+repo(env)+'/contents/'+path.split('/').map(encodeURIComponent).join('/'),{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
  return {path,branch,created:!existing?.sha,commit_sha:data.commit?.sha||null};
 }
-async function history(env,branch){try{return (await listDirectory(env,{path:'docs/agent-work',branch})).filter(x=>x.type==='file').slice(-50)}catch{return []}}
+async function history(env,branch){try{return (await listDirectory(env,{path:'docs/agent-work',branch})).filter(x=>x.type==='file').slice(-MAX_HISTORY_FILES)}catch{return []}}
+function assertWriteBudget(task, count){if(count>=MAX_WRITE_FILES_PER_TASK)throw new Error('Task write budget exceeded.');}
 const TOOLS=[
  {name:'project_get_branch_status',description:'Inspect a branch and latest commit.',parameters:{type:'object',properties:{branch:{type:'string'}},required:['branch']}},
  {name:'project_search_work_history',description:'Find prior agent work records and handoffs under docs/agent-work.',parameters:{type:'object',properties:{branch:{type:'string'}},required:['branch']}},
@@ -135,7 +140,7 @@ async function gemini(env,task){
 async function saveTaskRecord(env,task,result){
  const path='docs/agent-work/'+slug(task.taskId)+'.md';
  const instructionPath=path+'.instruction.md';
- const text=['# Agent Work Record','','- Task ID: '+task.taskId,'- Parent Task ID: '+(task.parentTaskId||'NONE'),'- Agent Name: '+task.agentName,'- Agent ID: '+task.agentId,'- Session ID: '+task.sessionId,'- Work Type: '+task.workType,'- Branch: '+task.branch,'- Status: '+(result.status||'WORKING'),'','## Request',task.message,'','## Agent Report',result.answer||'','', '## Verification State','Agent branch only; merge/deploy not performed.','', '## Handoff','If incomplete, successor must create a new Agent ID and preserve this record.'].join('\\n');
+ const text=['# Agent Work Record','','- Task ID: '+task.taskId,'- Parent Task ID: '+(task.parentTaskId||'NONE'),'- Agent Name: '+task.agentName,'- Agent ID: '+task.agentId,'- Session ID: '+task.sessionId,'- Work Type: '+task.workType,'- Branch: '+task.branch,'- Status: '+(result.status||task.status||'WORKING'),'- Started State: '+task.status,'- Protected paths: '+PROTECTED_PATHS.join(', '),'','## Request',task.message,'','## Agent Report',result.answer||'','', '## Verification State','Agent branch only; merge/deploy not performed.','', '## Handoff','If incomplete, successor must create a new Agent ID and preserve this record.'].join('\\n');
  const instruction=['# Task Record Instruction','','This instruction governs '+path+'.','- Purpose: persistent human-readable record of one Project Agent task.','- Preserve Task ID, Agent identity, branch, status, report and handoff continuity.','- Do not silently delete or overwrite historical task meaning.','- Update when task status or handoff state changes.','- Governed by MASTER_INSTRUCTION.md and the Agent Handoff Protocol.'].join('\\n');
  const a=await writeFile(env,{path,branch:task.branch,content:text,message:'Save task handoff record '+task.taskId});
  await writeFile(env,{path:instructionPath,branch:task.branch,content:instruction,message:'Add task record instruction '+task.taskId});
@@ -144,7 +149,7 @@ async function saveTaskRecord(env,task,result){
 export default {async fetch(request,env){
  const origin=request.headers.get('Origin')||'';
  if(request.method==='OPTIONS')return new Response(null,{status:204,headers:cors(origin)});
- if(request.method==='GET')return json({ok:true,service:'al-quran-research-project-agent',version:env.AGENT_VERSION||'1.1.0',capabilities:['inspect','search','isolated-write','identity','handoff-history'],write_scope:'agent/* only',merge:false,deploy:false},200,origin);
+ if(request.method==='GET')return json({ok:true,service:'al-quran-research-project-agent',version:env.AGENT_VERSION||'1.2.0',capabilities:['inspect','search','isolated-write','identity','handoff-history','task-state','write-budget','protected-paths'],write_scope:'agent/* only',merge:false,deploy:false},200,origin);
  if(request.method!=='POST')return json({ok:false,error:'POST/GET only'},405,origin);
  const auth=request.headers.get('Authorization')||'';if(!env.AGENT_ACCESS_TOKEN||auth!=='Bearer '+env.AGENT_ACCESS_TOKEN)return json({ok:false,error:'Unauthorized'},401,origin);
  try{
@@ -156,13 +161,13 @@ export default {async fetch(request,env){
   let result;
   try{
    result=await gemini(env,task);
-   result.status='COMPLETED';
+   result.status='VALIDATED';
   }catch(e){
    result={status:'BLOCKED',answer:'Agent task failed before verification: '+String(e?.message||e),turns:0};
    try{await saveTaskRecord(env,task,result)}catch{}
    return json({ok:false,error:'PROJECT_AGENT_FAILED',detail:String(e?.message||e).slice(0,700),handoff_required:true,task:{task_id:task.taskId,agent_name:task.agentName,agent_id:task.agentId,session_id:task.sessionId,work_type:task.workType,branch:task.branch,parent_task_id:task.parentTaskId}},500,origin);
   }
-  try{await saveTaskRecord(env,task,result)}catch(e){result.handoff_warning=String(e?.message||e);}
+  try{await saveTaskRecord(env,task,result)}catch(e){result.handoff_warning=String(e?.message||e);result.status='HANDOFF_REQUIRED';}
   return json({ok:true,answer:result.answer,provider:result.model,agent_version:env.AGENT_VERSION||'1.1.0',isolated:true,merge:false,deploy:false,task:{task_id:task.taskId,agent_name:task.agentName,agent_id:task.agentId,session_id:task.sessionId,work_type:task.workType,branch:task.branch,parent_task_id:task.parentTaskId},turns:result.turns},200,origin);
  }catch(e){return json({ok:false,error:'PROJECT_AGENT_FAILED',detail:String(e?.message||e).slice(0,700),handoff_required:true},500,origin);}
 }};
