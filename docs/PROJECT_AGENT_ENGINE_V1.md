@@ -39,3 +39,7 @@ Agent branch → review → validation → explicit approval → main promotion 
 
 ## Current implementation status
 Code and configuration are isolated in backend/project-agent/. This branch is a safety branch and has not been promoted to main.
+
+
+## Identity / Handoff Governance
+Every task receives Agent Name + Agent ID + Task ID + Session ID + isolated branch. Incomplete/paused/blocked work requires a Handoff Record. Successor work retains the Parent Task ID. See `docs/AGENT_IDENTITY_REGISTRY.md`, `docs/AGENT_HANDOFF_PROTOCOL.md`, and `docs/AGENT_WORK_LEDGER.md`.
