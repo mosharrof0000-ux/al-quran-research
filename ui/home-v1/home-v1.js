@@ -20,6 +20,7 @@ document.getElementById('menuBtn').onclick=()=>drawer.classList.add('open');
 document.getElementById('closeDrawer').onclick=()=>drawer.classList.remove('open');
 document.getElementById('themeBtn').onclick=()=>{const night=document.body.classList.toggle('night');document.body.classList.toggle('light',!night);toast(night?'রাতের ১৬ রঙ চালু হয়েছে':'দিনের ১৬ রঙ চালু হয়েছে')};
 document.getElementById('profileBtn').onclick=()=>toast('প্রোফাইল প্যানেল');
+document.getElementById('notificationBtn').onclick=()=>toast('নোটিফিকেশন প্যানেল');
 document.getElementById('searchBtn').onclick=()=>document.getElementById('prompt').focus();
 const composerTools=document.getElementById('composerTools');
 const plusBtn=document.getElementById('plusBtn');
