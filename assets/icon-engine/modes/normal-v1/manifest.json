@@ -1,0 +1,28 @@
+{
+  "name": "Al-Quran Research — Normal Quran Reading Mode Icons",
+  "version": "1.0.0",
+  "mode_id": "quran-normal",
+  "status": "REFERENCE_ASSETS_ONLY",
+  "style": {
+    "stroke": "currentColor",
+    "stroke_width": 1.8,
+    "fill": "none",
+    "viewBox": "0 0 64 64",
+    "linecap": "round",
+    "linejoin": "round"
+  },
+  "icons": [
+    "quran-rehal",
+    "surah-mihrab",
+    "ayah-rub-el-hizb",
+    "tafsir-lantern",
+    "bookmark-minaret",
+    "audio-tilawat",
+    "home-mihrab",
+    "search-star",
+    "favorite-geometric",
+    "share-arch"
+  ],
+  "usage": "Normal Quran Reader mode only. Sufi mode uses a separate asset family. Not wired into live UI until isolated review and approval.",
+  "reference": "docs/design/MODE_ICON_DESIGN_REFERENCE_2026-09-21.md"
+}
