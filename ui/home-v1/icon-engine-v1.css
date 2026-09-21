@@ -2,7 +2,7 @@
 .topbar{
   height:30px;
   min-height:30px;
-  grid-template-columns:36px 36px 1fr 36px 36px;
+  grid-template-columns:36px 36px 1fr 36px 36px 36px;
   padding:0 6px;
 }
 .icon-btn{width:30px;height:30px;border-radius:7px;font-size:18px}
@@ -10,7 +10,7 @@
 .brand aqr-icon{width:18px;height:18px}
 .brand aqr-icon svg{width:100%;height:100%}
 @media(max-width:600px){
-  .topbar{height:30px;min-height:30px;grid-template-columns:34px 34px 1fr 34px 34px;padding:0 4px}
+  .topbar{height:30px;min-height:30px;grid-template-columns:34px 34px 1fr 34px 34px 34px;padding:0 4px}
   .brand{font-size:13px;gap:4px}
   .brand aqr-icon{width:17px;height:17px}
 }
