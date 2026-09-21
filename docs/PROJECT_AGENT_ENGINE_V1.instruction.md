@@ -1,0 +1,1 @@
+Instruction for PROJECT_AGENT_ENGINE_V1.md. Document capabilities, safety boundaries, identity/handoff and promotion gates; keep aligned with runtime.
