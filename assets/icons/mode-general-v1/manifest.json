@@ -1,0 +1,12 @@
+{
+  "name": "Al-Quran Research — General Quran Reading Mode Icons",
+  "version": "1.0.0",
+  "mode": "general-quran",
+  "format": "svg",
+  "fill": "none",
+  "stroke": "currentColor",
+  "strokeWidth": 2,
+  "icons": ["quran","surah","ayah","tafseer","bookmark","tilawat","home","search","favorite","share"],
+  "sufiModeIsolation": true,
+  "status": "DESIGNED_AND_STORED — NOT_YET_LIVE_INTEGRATED"
+}
