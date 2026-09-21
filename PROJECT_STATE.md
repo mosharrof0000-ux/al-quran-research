@@ -318,3 +318,7 @@ Status: STORED — NOT YET LIVE-INTEGRATED
 A 10-icon production SVG family was created from the approved mode icon reference. Assets are stored under `assets/icons/modes/general-quran-v1/`. The family is reserved for general Qur'an reading mode. Sufi mode will use a separate icon family. No live UI/database change is implied by this asset set.
 
 Integration must remain mode-aware and follow Backup → Review → Approve → Integrate → Verify → Live.
+
+
+## 27. Icon Mode Canonicalization — 2026-09-21
+The Normal/General Quran icon reference has been reconciled to the existing canonical namespace `assets/icons/modes/general-quran-v1/`. The temporary duplicate `normal-quran-v1` namespace was removed. The canonical family remains stored but NOT LIVE-INTEGRATED. Future Sufi icons must use a separate `sufi-v1` namespace.
