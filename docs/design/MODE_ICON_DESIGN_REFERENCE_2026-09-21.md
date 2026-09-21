@@ -36,3 +36,11 @@ Backup → Design → Review → Approve → Integrate → Verify → Live.
 
 Reference image SHA-256:
 `170c83ecf42c84ca4c09686fccb32311c2272fe2d15dd4eb4b9be6ebce14c4d1`
+
+
+## 2026-09-21 — General Mode SVG Set Stored
+The first production-ready General Quran Reading Mode SVG set has now been created and stored at `assets/icons/mode-general-v1/`.
+
+Stored assets: quran, surah, ayah, tafseer, bookmark, tilawat, home, search, favorite, share, plus README and manifest.
+
+Status: **DESIGNED_AND_STORED — NOT_YET_LIVE_INTEGRATED**.
