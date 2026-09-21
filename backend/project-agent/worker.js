@@ -68,6 +68,17 @@ async function writeFile(env,args){
  const data=await gh(env,'/repos/'+repo(env)+'/contents/'+path.split('/').map(encodeURIComponent).join('/'),{method:'PUT',body:JSON.stringify(payload),headers:{'Content-Type':'application/json'}});
  return {path,branch,created:!existing?.sha,commit_sha:data.commit?.sha||null,blob_sha:data.content?.sha||null};
 }
+async function persistTask(env,task,patch={}){
+  const path='docs/agent-work/runtime/'+task.task_id+'.json';
+  const branch=task.branch||task.branch_name||'';
+  if(!isAgentBranch(branch))return {persisted:false,error:'task branch missing'};
+  const record={...task,...patch,updated_at:new Date().toISOString()};
+  return writeFile(env,{path,branch,content:JSON.stringify(record,null,2)+'\\n',message:'Persist Project Agent task state '+task.task_id});
+}
+async function loadTask(env,task_id,branch){
+  if(!task_id||!isAgentBranch(branch))return null;
+  try{return JSON.parse((await readFile(env,{path:'docs/agent-work/runtime/'+task_id+'.json',branch})).content)}catch{return null}
+}
 const AGENT_NAMES={
   chat_ui:['শামীম','রাকিব'], icon_visual:['শাহীন','তানভীর'], reader_data:['সুমন','মাহিন'], notification:['রাকিব','নাঈম'], browser_qa:['নাঈম','আরিফ'], architecture_security:['আরিফ','সাইফ'], data_mapping:['মাহিন','সুমন'], general:['শামীম','সুমন','শাহীন','নাঈম','আরিফ']
 };
