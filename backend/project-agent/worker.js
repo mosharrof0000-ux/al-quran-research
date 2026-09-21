@@ -38,7 +38,8 @@ async function readFile(env,args){
  const data=await gh(env,'/repos/'+repo(env)+'/contents/'+path.split('/').map(encodeURIComponent).join('/')+'?ref='+encodeURIComponent(branch));
  if(data.type!=='file')throw new Error('এটি file নয়।');
  if(Number(data.size||0)>MAX_FILE)throw new Error('ফাইলটি engine-এর সীমার চেয়ে বড়।');
- const bin=atob(String(data.content||'').replace(/\n/g,''));\n const bytes=Uint8Array.from(bin,c=>c.charCodeAt(0));
+ const bin=atob(String(data.content||'').replace(/\n/g,''));
+ const bytes=Uint8Array.from(bin,c=>c.charCodeAt(0));
  const decoded=new TextDecoder().decode(bytes);
  return {path,branch,sha:data.sha,size:data.size,content:decoded};
 }
