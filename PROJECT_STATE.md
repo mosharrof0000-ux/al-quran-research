@@ -325,3 +325,14 @@ Integration must remain mode-aware and follow Backup → Review → Approve → 
 The existing General Quran Mode v1 icon family was re-checked against the approved reference direction. All 10 named SVG assets are present under `assets/icons/modes/general-quran-v1/` and use fill="none" + stroke="currentColor". They remain stored design assets and are not automatically connected to the live Reader.
 
 Mode contract: `general-quran` uses this family; `sufi` must use a separate family. The reference is documented at `docs/design/MODE_ICON_DESIGN_REFERENCE_2026-09-21.md`.
+
+
+## 26. Normal Qur'an Mode Icon Asset Set — 2026-09-21
+
+Status: CREATED AND STORED ON MAIN — ASSET-ONLY; NOT LIVE-WIRED
+
+The approved visual reference has been converted into a dedicated Normal Qur'an Reading Mode family at assets/icons/modes/normal-v1/. It contains ten semantic SVG icons, a manifest, and README. Usage and Normal-vs-Sufi separation are documented in docs/design/MODE_ICON_USAGE_2026-09-21.md.
+
+Safety: backup/pre-normal-mode-icon-set-2026-09-21 was created before the asset work. Future Sufi Mode must use a separate icon family and must not overwrite Normal Mode assets.
+
+Live integration remains pending review and runtime mode-resolver implementation.
