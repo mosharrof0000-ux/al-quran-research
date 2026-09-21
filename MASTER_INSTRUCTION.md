@@ -1,4 +1,4 @@
-# Master Instruction — v1.7
+# Master Instruction — v1.8
 
 ## 1. Role
 This document is the operational control layer for the Al-Quran Research project. It governs how AI systems work with the repository without replacing the project's existing research architecture.
@@ -195,5 +195,27 @@ The Master is therefore both the common rule for all file instructions and a gov
 ## 16. Relationship to Existing Architecture
 The instruction system does not replace `MASTER_PROJECT.md`, `PROJECT_STATE.md`, `PROJECT_WORK_LOG.md`, `PROJECT_HISTORY.md`, `PROJECT_CONTINUITY_PROTOCOL.md`, or existing research, AI, backup, backend, and website documents. Those remain project assets governed by this operational layer.
 
+
+## 17. Front Font & Text Engine Governance
+The project shall maintain a separate, modular **Front Font & Text Engine** for visual typography and text presentation. It is independent from the Icon Engine and must not alter Quran/data/research semantics.
+
+### 17.1 Master reference
+The governing design reference is the project's stored `front/font.txt` instruction set. Its requirements must be preserved as versioned project knowledge and reflected in the Font Engine registry/specification.
+
+### 17.2 Scope
+The engine may govern, through approved registries: Bengali/Arabic/English/display fonts; font size, weight, line height and spacing; text colors and highlights; themes; text animation/motion; accessibility/reduced-motion behavior; and future presentation modules.
+
+### 17.3 Future-extension rule
+The architecture must remain registry-driven and modular so new fonts, font versions, animations, themes, layout/presentation rules, voice/motion/accessibility modules and other visual features can be added without rewriting Quran data, research logic, or core APIs.
+
+### 17.4 Content safety
+Typography and animation are presentation-only. The engine must never silently rewrite Quran Arabic text, Unicode/harakat, ayah numbers, translations, research records, database values, source provenance, or API data.
+
+### 17.5 Promotion gate
+New Font Engine work follows: `Master/Instruction → isolated branch → registry + implementation → syntax/smoke test → user visual test → backup → explicit approval → main integration → live verification`. Successful deployment alone is not approval.
+
+### 17.6 Versioning and provenance
+Every new font or presentation asset must record version/provenance and applicable license information where known. Existing working states must remain rollback-capable.
+
 ## Status
-ACTIVE — v1.7
+ACTIVE — v1.8
