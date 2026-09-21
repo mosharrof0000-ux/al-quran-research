@@ -2,10 +2,10 @@
 :root{--bg:#fff;--text:#1f2933;--muted:#6b7280;--line:#e5e7eb;--soft:#f7f7f8;--accent:#0f766e}
 html,body{margin:0;width:100%;height:100%;background:var(--bg);color:var(--text);font-family:system-ui,'Noto Sans Bengali',sans-serif}
 body{overflow:hidden}.shell{width:100%;height:100%;max-width:920px;margin:auto;display:flex;flex-direction:column;background:var(--bg)}
-.topbar{height:56px;min-height:56px;display:grid;grid-template-columns:40px 40px 1fr 40px 40px;align-items:center;padding:0 8px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.96)}
+.topbar{position:fixed;top:0;left:0;width:100%;z-index:1000;height:56px;min-height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 8px;border-bottom:1px solid rgba(255,255,255,.45);background:rgba(255,255,255,.25);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);box-shadow:0 2px 12px rgba(0,0,0,.06)}
 .icon-btn{width:36px;height:36px;border:0;border-radius:9px;background:transparent;color:var(--text);display:grid;place-items:center;font-size:21px}
 .icon-btn:active{background:var(--soft)}.hamb{display:grid;gap:3px}.hamb i{display:block;width:15px;height:1.5px;background:currentColor;border-radius:2px}
-.brand{text-align:center;font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brand{position:absolute;left:50%;transform:translateX(-50%);max-width:55%;text-align:center;font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none}
 .chat{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:flex-end;padding:24px 14px 16px}
 .welcome{text-align:center;margin:auto auto 26px;max-width:560px}.logo{width:48px;height:48px;margin:0 auto 14px;border:1px solid var(--line);border-radius:14px;display:grid;place-items:center;font-family:serif;font-size:25px;background:var(--soft)}
 .welcome h1{margin:0 0 7px;font-size:22px;font-weight:600}.welcome p{margin:0;color:var(--muted);font-size:14px}
@@ -17,7 +17,7 @@ body{overflow:hidden}.shell{width:100%;height:100%;max-width:920px;margin:auto;d
 .drawer{position:fixed;inset:0 auto 0 0;width:min(300px,84vw);background:#fff;border-right:1px solid var(--line);box-shadow:8px 0 24px rgba(0,0,0,.10);z-index:50;transform:translateX(-105%);transition:transform .22s ease;padding:14px}.drawer.open{transform:translateX(0)}
 .drawer-head{height:44px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);margin-bottom:10px}.drawer-head button{border:0;background:transparent;font-size:25px;color:var(--text)}
 .drawer>button{width:100%;text-align:left;border:0;background:transparent;border-radius:10px;padding:12px 10px;margin:2px 0;color:var(--text);font-size:14px}.drawer>button:active{background:var(--soft)}
-@media(max-width:600px){.topbar{height:52px;min-height:52px}.brand{font-size:14px}.chat{padding:18px 10px 10px}.welcome h1{font-size:20px}.welcome p{font-size:13px}.composer{border-radius:20px}.composer textarea{font-size:14px}}
+@media(max-width:600px){.topbar{height:52px;min-height:52px;padding:0 6px}.brand{font-size:14px;max-width:50%}.chat{padding:18px 10px 10px}.welcome h1{font-size:20px}.welcome p{font-size:13px}.composer{border-radius:20px}.composer textarea{font-size:14px}}
 body.light{background:#fff;color:#1f2933}
 /* Chat connection layer */
 .messages{width:min(760px,calc(100% - 28px));margin:0 auto;flex:1;overflow:auto;padding:20px 0 130px;display:flex;flex-direction:column;gap:12px}.chat-message{max-width:82%;padding:11px 14px;border-radius:16px;white-space:pre-wrap;line-height:1.65;font-size:14px}.chat-message.user{align-self:flex-end;background:#0b7d67;color:#fff;border-bottom-right-radius:5px}.chat-message.ai{align-self:flex-start;background:#f1f3f2;color:#17231f;border:1px solid #dfe5e2;border-bottom-left-radius:5px}.chat-message.pending{opacity:.7}.send:disabled{opacity:.55;cursor:wait}
@@ -27,7 +27,7 @@ body.light{background:#fff;color:#1f2933}
 html,body{background:#fff}
 body{animation:dayAmbient16m 960s ease-in-out infinite;background-color:#fff}
 .shell{background:transparent}
-.topbar{background:rgba(255,255,255,.86)}
+.topbar{background:rgba(255,255,255,.25);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
 @keyframes dayAmbient16m{
   0%{background-color:#fff}
   6.25%{background-color:#f7f4ea}
@@ -195,16 +195,11 @@ html{--aqr-chat-bn-font:system-ui,"Noto Sans Bengali",sans-serif;--aqr-chat-ar-f
 @keyframes aiCursorBlink{50%{opacity:0}}
 body.night .chat-message.ai{background:transparent;border:0;color:#f1f5f3}
 
-<!-- Glassmorphism Chat Header v1 -->
-.chat-topbar{position:sticky;top:0;z-index:1000;width:100%;min-height:48px;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;padding:6px 12px;background:rgba(255,255,255,.62);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.45);box-shadow:0 2px 12px rgba(0,0,0,.06);isolation:isolate}.chat-topbar-left,.chat-topbar-center,.chat-topbar-right{display:flex;align-items:center}.chat-topbar-left,.chat-topbar-right{gap:4px}.chat-topbar-center{position:absolute;left:50%;transform:translateX(-50%);gap:7px;white-space:nowrap}.chat-logo{font-size:19px;line-height:1}.chat-brand{font-size:14px;font-weight:600;white-space:nowrap}.chat-topbar .icon-btn{width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;padding:0;border:0;border-radius:9px;background:transparent;color:inherit;cursor:pointer;transition:background .2s ease,transform .2s ease}.chat-topbar .icon-btn:hover{background:rgba(0,0,0,.06)}.chat-topbar .icon-btn:active{transform:scale(.94)}body.night .chat-topbar{background:rgba(20,27,25,.62);border-bottom-color:rgba(255,255,255,.08);box-shadow:0 2px 14px rgba(0,0,0,.2)}body.night .chat-topbar .icon-btn:hover{background:rgba(255,255,255,.08)}@media(max-width:600px){.chat-topbar{min-height:44px;padding:5px 8px}.chat-brand{font-size:13px}.chat-topbar .icon-btn{width:30px;height:30px}}@media(prefers-reduced-motion:reduce){.chat-topbar .icon-btn{transition:none}}
-/* Single production chat header — frosted glass */
-.topbar{position:sticky;top:0;z-index:1000;height:48px;min-height:48px;width:100%;display:flex;align-items:center;justify-content:space-between;padding:0 8px;background:rgba(255,255,255,.25);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.45);box-shadow:0 2px 12px rgba(0,0,0,.06);isolation:isolate}
+
+/* Single frosted-glass header: preserve the existing 16-color ambient background. */
+.topbar{position:fixed;top:0;left:0;width:100%;z-index:1000;display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.25);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
 .topbar-left,.topbar-right{display:flex;align-items:center;gap:2px;flex:0 0 auto}
-.topbar .brand{position:absolute;left:50%;transform:translateX(-50%);max-width:55%;text-align:center;font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none}
-.topbar .icon-btn{width:34px;height:34px;border:0;border-radius:9px;background:transparent;color:var(--text);display:grid;place-items:center;font-size:20px;cursor:pointer}
-.topbar .icon-btn:active{background:rgba(0,0,0,.06)}
-body.night .topbar{background:rgba(16,23,21,.28);border-bottom-color:rgba(255,255,255,.10);box-shadow:0 2px 14px rgba(0,0,0,.18)}
-body.night .topbar .icon-btn:active{background:rgba(255,255,255,.08)}
-.chat{position:relative;z-index:1}
-@media(max-width:600px){.topbar{height:44px;min-height:44px;padding:0 6px}.topbar .brand{font-size:14px;max-width:50%}.topbar .icon-btn{width:32px;height:32px}}
-@media(prefers-reduced-motion:reduce){.topbar .icon-btn{transition:none}}
+.topbar .brand{position:absolute;left:50%;transform:translateX(-50%);max-width:55%;pointer-events:none}
+.chat{padding-top:80px}
+body.night .topbar{background:rgba(14,20,18,.28);border-bottom-color:rgba(255,255,255,.10);box-shadow:0 2px 14px rgba(0,0,0,.18)}
+@media(max-width:600px){.topbar{height:52px;min-height:52px}.chat{padding-top:70px}.topbar .brand{max-width:50%}}
