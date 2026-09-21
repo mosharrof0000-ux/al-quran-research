@@ -5,4 +5,13 @@ workers_dev = true
 
 [vars]
 PROJECT_REPO = "mosharrof0000-ux/al-quran-research"
-AGENT_VERSION = "1.0.0"
+AGENT_VERSION = "2.0.0"
+AGENT_BASE_BRANCH = "main"
+
+[observability]
+enabled = true
+head_sampling_rate = 1
+
+[observability.logs]
+invocation_logs = true
+head_sampling_rate = 1
