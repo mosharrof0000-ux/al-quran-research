@@ -260,3 +260,17 @@ Backup branch: `backup/pre-mode-icon-assets-2026-09-21`। এই verification �
 
 ### Integration gate
 Backup → Review → Approve → Integrate → Verify → Live.
+
+
+## WORK-2026-09-21-NORMAL-MODE-ICON-ASSET-SET-01
+
+Status: CREATED AND STORED ON MAIN — ASSET-ONLY; NOT LIVE-WIRED
+
+The user approved the generated icon-sheet as the Normal Qur'an Reader visual reference and requested the icon set be created, stored in the project, and its usage documented. A separate Sufi icon family will be created later and will not overwrite the Normal family.
+
+Safety point: backup/pre-normal-mode-icon-set-2026-09-21 was created before this asset work.
+
+Created assets: assets/icons/modes/normal-v1/ — 10 SVG icons, icon-manifest.json, README.md.
+Usage record: docs/design/MODE_ICON_USAGE_2026-09-21.md.
+
+Verification: all ten SVG asset files were present on the working branch and use fill=none, stroke=currentColor, 1.8px line-art. No live UI/database/backend integration was made. Runtime mode switching remains a later integration step.
