@@ -7,6 +7,9 @@ const API='https://api.github.com';
 const DEFAULT_REPO='mosharrof0000-ux/al-quran-research';
 const MAX_FILE=120000;
 const MAX_TURNS=8;
+const AGENT_NAMES={ui:'শামীম',chat:'শামীম',icon:'শাহীন',visual:'শাহীন',reader:'সুমন',quran:'সুমন',data:'তানভীর',database:'তানভীর',test:'নাঈম',browser:'নাঈম',release:'রাকিব',notification:'রাকিব',security:'ফারহান',default:'সাজ্জাদ'};
+function classifyWork(message){const m=String(message||'').toLowerCase();if(/icon|আইকন|visual|ডিজাইন/.test(m))return 'icon';if(/reader|কুরআন|আয়াত|সূরা|quran/.test(m))return 'reader';if(/test|browser|পরীক্ষা|যাচাই/.test(m))return 'test';if(/notification|নোটিফিকেশন|সংস্করণ|release/.test(m))return 'notification';if(/database|ডাটাবেজ|data|ডেটা/.test(m))return 'data';if(/security|নিরাপত্তা/.test(m))return 'security';if(/chat|চ্যাট|ai|এআই/.test(m))return 'chat';if(/ui|header|css|layout|ইন্টারফেস/.test(m))return 'ui';return 'default';}
+function makeTask(message){const type=classifyWork(message);const now=new Date();const stamp=now.toISOString().replace(/[-:.TZ]/g,'').slice(0,14);const agentId='AG-'+stamp+'-'+crypto.randomUUID().slice(0,8);return {task_id:'TASK-'+stamp,agent_name_bn:AGENT_NAMES[type],agent_id:agentId,work_type:type,status:'RECEIVED',started_at:now.toISOString(),request:String(message).slice(0,10000)};}
 
 function cors(origin){return {'Access-Control-Allow-Origin':ALLOWED_ORIGINS.includes(origin)?origin:ALLOWED_ORIGINS[0],'Access-Control-Allow-Methods':'POST, GET, OPTIONS','Access-Control-Allow-Headers':'Content-Type, Authorization','Content-Type':'application/json; charset=utf-8','Vary':'Origin'};}
 function json(data,status,origin){return new Response(JSON.stringify(data),{status,headers:cors(origin)});}
@@ -69,6 +72,7 @@ async function writeFile(env,args){
  return {path,branch,created:!existing?.sha,commit_sha:data.commit?.sha||null,blob_sha:data.content?.sha||null};
 }
 const TOOLS=[
+ {name:'project_task_identity',description:'Create a new unique task identity from the user request. Use it at the start of every new task and report the identity.',parameters:{type:'object',properties:{message:{type:'string'}},required:['message']}},
  {name:'project_read_file',description:'Read a text file from the Quran Research repository before analyzing or editing it.',parameters:{type:'object',properties:{path:{type:'string'},branch:{type:'string'}},required:['path']}},
  {name:'project_list_directory',description:'List files in a project directory.',parameters:{type:'object',properties:{path:{type:'string'},branch:{type:'string'}},required:['path']}},
  {name:'project_search_code',description:'Search repository code for a term or identifier.',parameters:{type:'object',properties:{query:{type:'string'}},required:['query']}},
@@ -76,6 +80,7 @@ const TOOLS=[
  {name:'project_write_file',description:'Create or replace a text file only on an agent/* branch. Never write protected paths.',parameters:{type:'object',properties:{path:{type:'string'},branch:{type:'string'},content:{type:'string'},message:{type:'string'}},required:['path','branch','content','message']}}
 ];
 async function executeTool(env,name,args){
+ if(name==='project_task_identity')return makeTask(args.message);
  if(name==='project_read_file')return readFile(env,args);
  if(name==='project_list_directory')return listDirectory(env,args);
  if(name==='project_search_code')return searchCode(env,args);
@@ -86,7 +91,7 @@ async function executeTool(env,name,args){
 async function gemini(env,history){
  if(!env.GEMINI_API_KEY)throw new Error('GEMINI_API_KEY is not configured.');
  const model=env.GEMINI_MODEL||'gemini-2.5-flash';
- const system='তুমি আল-কুরআন গবেষণা প্রকল্পের Project Agent। তুমি প্রকল্পের ফাইল পড়তে, বিশ্লেষণ করতে এবং নিরাপদ agent/* branch-এ text file তৈরি/সংশোধন করতে পারো। কখনো main-এ লিখবে না। .github/workflows, database, migrations, validation, quran_research.db এবং schema.sql পরিবর্তন করবে না। প্রথমে প্রয়োজনীয় ফাইল পড়বে; অনুমান করে code rewrite করবে না। পরিবর্তনের আগে বর্তমান content ও প্রকল্পের নিয়ম বুঝবে। কাজ শেষে কী পড়েছ, কী পরিবর্তন করেছ, কোন branch-এ করেছ এবং কী user approval/deployment-এর অপেক্ষায় আছে তা বাংলায় বলবে। তুমি merge বা production deploy করতে পারো না এবং এমন দাবি করবে না।';
+ const system='তুমি আল-কুরআন গবেষণা প্রকল্পের Project Agent। প্রতিটি নতুন user task-এর শুরুতেই project_task_identity ব্যবহার করবে এবং Task ID, Bengali Agent Name, Agent ID, Work Type ও status রিপোর্ট করবে। একই কাজ অন্য Agent নিলে original Agent-এর history অক্ষুণ্ণ রেখে successor identity ব্যবহার করবে। কাজ অসম্পূর্ণ হলে HANDOFF_REQUIRED record তৈরি/লিখবে। তুমি প্রকল্পের ফাইল পড়তে, বিশ্লেষণ করতে এবং নিরাপদ agent/* branch-এ text file তৈরি/সংশোধন করতে পারো। কখনো main-এ লিখবে না। .github/workflows, database, migrations, validation, quran_research.db এবং schema.sql পরিবর্তন করবে না। প্রথমে প্রয়োজনীয় ফাইল পড়বে; অনুমান করে code rewrite করবে না। পরিবর্তনের আগে বর্তমান content ও প্রকল্পের নিয়ম বুঝবে। কাজ শেষে কী পড়েছ, কী পরিবর্তন করেছ, কোন branch-এ করেছ এবং কী user approval/deployment-এর অপেক্ষায় আছে তা বাংলায় বলবে। তুমি merge বা production deploy করতে পারো না এবং এমন দাবি করবে না।';
  let contents=history.slice();
  for(let turn=0;turn<MAX_TURNS;turn++){
   const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+model+':generateContent',{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':env.GEMINI_API_KEY},body:JSON.stringify({systemInstruction:{parts:[{text:system}]},contents,tools:[{functionDeclarations:TOOLS}],generationConfig:{maxOutputTokens:4096,temperature:0.1}})});
