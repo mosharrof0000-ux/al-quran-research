@@ -1,0 +1,8 @@
+name = "al-quran-research-project-agent"
+main = "worker.js"
+compatibility_date = "2026-09-20"
+workers_dev = true
+
+[vars]
+PROJECT_REPO = "mosharrof0000-ux/al-quran-research"
+AGENT_VERSION = "1.0.0"
