@@ -213,3 +213,19 @@ A generated icon-sheet image has been recorded as the visual reference for the f
 
 Reference record: `docs/design/MODE_ICON_DESIGN_REFERENCE_2026-09-21.md`
 Reference SHA-256: `170c83ecf42c84ca4c09686fccb32311c2272fe2d15dd4eb4b9be6ebce14c4d1`
+
+
+## WORK-2026-09-21-NORMAL-QURAN-ICON-MODE-V1
+
+- Status: ISOLATED DESIGN ASSET CREATED — NOT LIVE.
+- Purpose: Store the approved visual direction for the Normal Quran Reader icon mode before production integration.
+- Reference: 10-icon design sheet generated in this conversation on 2026-09-21.
+- Asset location: `assets/icons/modes/normal-quran-v1/`.
+- Icons: Quran, Surah, Ayah, Tafseer, Bookmark, Audio/Tilawat, Home, Search, Favorite, Share.
+- Design contract: minimalist thin line-art; `fill="none"`; `stroke="currentColor"`; approximately 2px stroke; 64x64 viewBox; Islamic/Quranic motifs.
+- Mode rule: these assets belong only to Normal Quran Mode. Sufi Mode must use a separate asset set and manifest.
+- Safety: no Quran database, translation, pronunciation, research data, or existing Master Icon Engine was changed.
+- Integration rule: Backup → isolated integration → visual/mobile review → approve → main/live.
+- Review targets: 16/20/24/32/48px rendering, light/night backgrounds, mobile, currentColor inheritance.
+- Working branch: `design/normal-quran-icons-v1-2026-09-21`.
+- Backup branch: `backup/pre-normal-quran-icons-v1-2026-09-21`.
