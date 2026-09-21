@@ -6,12 +6,18 @@ const ALLOWED_ORIGINS=['https://mosharrof0000-ux.github.io'];
 const API='https://api.github.com';
 const DEFAULT_REPO='mosharrof0000-ux/al-quran-research';
 const MAX_FILE=120000;
-const MAX_TURNS=8;
+const MAX_TURNS=12;
+const MAX_CONTEXT_CHARS=60000;
+const AGENT_NAME='শামীম';
+const AGENT_ID='SHAMIM-001';
+const TASK_ID='AI-STRENGTHENING-001';
 
 function cors(origin){return {'Access-Control-Allow-Origin':ALLOWED_ORIGINS.includes(origin)?origin:ALLOWED_ORIGINS[0],'Access-Control-Allow-Methods':'POST, GET, OPTIONS','Access-Control-Allow-Headers':'Content-Type, Authorization','Content-Type':'application/json; charset=utf-8','Vary':'Origin'};}
 function json(data,status,origin){return new Response(JSON.stringify(data),{status,headers:cors(origin)});}
 function repo(env){return env.PROJECT_REPO||DEFAULT_REPO;}
-function isAgentBranch(b){return /^agent\/[A-Za-z0-9._/-]+$/.test(String(b||''))&&!String(b).includes('..');}
+function isAgentBranch(b){return /^agent\\/[A-Za-z0-9._/-]+$/.test(String(b||''))&&!String(b).includes('..');}
+function taskMeta(){return {agent_name:AGENT_NAME,agent_id:AGENT_ID,task_id:TASK_ID};}
+function trimHistory(history){let total=0;const out=[];for(let i=history.length-1;i>=0;i--){const s=JSON.stringify(history[i]);if(total+s.length>MAX_CONTEXT_CHARS)break;out.unshift(history[i]);total+=s.length;}return out;}
 function safePath(path,write=false){
  const p=String(path||'').replace(/^\/+/,'');
  if(!p||p.includes('..')||p.startsWith('.git/'))return false;
@@ -86,14 +92,14 @@ async function executeTool(env,name,args){
 async function gemini(env,history){
  if(!env.GEMINI_API_KEY)throw new Error('GEMINI_API_KEY is not configured.');
  const model=env.GEMINI_MODEL||'gemini-2.5-flash';
- const system='তুমি আল-কুরআন গবেষণা প্রকল্পের Project Agent। তুমি প্রকল্পের ফাইল পড়তে, বিশ্লেষণ করতে এবং নিরাপদ agent/* branch-এ text file তৈরি/সংশোধন করতে পারো। কখনো main-এ লিখবে না। .github/workflows, database, migrations, validation, quran_research.db এবং schema.sql পরিবর্তন করবে না। প্রথমে প্রয়োজনীয় ফাইল পড়বে; অনুমান করে code rewrite করবে না। পরিবর্তনের আগে বর্তমান content ও প্রকল্পের নিয়ম বুঝবে। কাজ শেষে কী পড়েছ, কী পরিবর্তন করেছ, কোন branch-এ করেছ এবং কী user approval/deployment-এর অপেক্ষায় আছে তা বাংলায় বলবে। তুমি merge বা production deploy করতে পারো না এবং এমন দাবি করবে না।';
- let contents=history.slice();
+ const system='তুমি আল-কুরআন গবেষণা প্রকল্পের Project Agent। তোমার স্থায়ী পরিচয়: Agent Name='+AGENT_NAME+', Agent ID='+AGENT_ID+', Task ID='+TASK_ID+'. প্রথমে governance/state/target context পড়বে; তারপর root cause নির্ধারণ করবে; অনুমানভিত্তিক rewrite করবে না। নিরাপদ agent/* branch ছাড়া কোথাও লিখবে না। .github/workflows, database, migrations, validation, quran_research.db এবং schema.sql protected। কাজের প্রতিটি ধাপে minimal safe change, dependency awareness, verification এবং handoff-ready history বজায় রাখবে। নতুন non-instruction file তৈরি করলে sibling instruction-এর প্রয়োজন যাচাই করবে। কাজ শেষে পড়া files, পরিবর্তন, branch, commit, verification, remaining work, blockers এবং promotion/live approval state বাংলায় স্পষ্ট করবে। merge/deploy করতে পারো না এবং এমন দাবি করবে না।';
+ let contents=trimHistory(history.slice());
  for(let turn=0;turn<MAX_TURNS;turn++){
   const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+model+':generateContent',{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':env.GEMINI_API_KEY},body:JSON.stringify({systemInstruction:{parts:[{text:system}]},contents,tools:[{functionDeclarations:TOOLS}],generationConfig:{maxOutputTokens:4096,temperature:0.1}})});
   const data=await r.json();if(!r.ok)throw new Error('Gemini HTTP '+r.status+': '+String(data?.error?.message||'').slice(0,400));
   const modelContent=data?.candidates?.[0]?.content;if(!modelContent)throw new Error('Gemini response missing content.');
   const calls=(modelContent.parts||[]).filter(p=>p.functionCall);
-  if(!calls.length)return {answer:(modelContent.parts||[]).map(p=>p.text||'').join('').trim(),model,turns:turn+1};
+  if(!calls.length)return {answer:(modelContent.parts||[]).map(p=>p.text||'').join('').trim(),model,turns:turn+1,task:taskMeta()};
   contents.push(modelContent);
   const responses=[];
   for(const part of calls){
@@ -117,6 +123,6 @@ export default {async fetch(request,env){
   if(!message)return json({ok:false,error:'message required'},400,origin);
   if(message.length>10000)return json({ok:false,error:'message too large'},413,origin);
   const result=await gemini(env,[{role:'user',parts:[{text:message}]}]);
-  return json({ok:true,answer:result.answer,provider:result.model,agent_version:env.AGENT_VERSION||'1.0.0',isolated:true,merge:false,deploy:false},200,origin);
+  return json({ok:true,answer:result.answer,provider:result.model,agent_version:env.AGENT_VERSION||'1.0.0',isolated:true,merge:false,deploy:false,task:taskMeta()},200,origin);
  }catch(e){return json({ok:false,error:'PROJECT_AGENT_FAILED',detail:String(e?.message||e).slice(0,600)},500,origin);}
 }};
