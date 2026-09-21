@@ -6,7 +6,8 @@ const ALLOWED_ORIGINS=['https://mosharrof0000-ux.github.io'];
 const API='https://api.github.com';
 const DEFAULT_REPO='mosharrof0000-ux/al-quran-research';
 const MAX_FILE=120000;
-const MAX_TURNS=8;
+const MAX_TURNS=12;
+const MAX_MESSAGE=10000;
 
 function cors(origin){return {'Access-Control-Allow-Origin':ALLOWED_ORIGINS.includes(origin)?origin:ALLOWED_ORIGINS[0],'Access-Control-Allow-Methods':'POST, GET, OPTIONS','Access-Control-Allow-Headers':'Content-Type, Authorization','Content-Type':'application/json; charset=utf-8','Vary':'Origin'};}
 function json(data,status,origin){return new Response(JSON.stringify(data),{status,headers:cors(origin)});}
@@ -115,7 +116,7 @@ export default {async fetch(request,env){
  try{
   const body=await request.json();const message=String(body?.message||'').trim();
   if(!message)return json({ok:false,error:'message required'},400,origin);
-  if(message.length>10000)return json({ok:false,error:'message too large'},413,origin);
+  if(message.length>MAX_MESSAGE)return json({ok:false,error:'message too large'},413,origin);
   const result=await gemini(env,[{role:'user',parts:[{text:message}]}]);
   return json({ok:true,answer:result.answer,provider:result.model,agent_version:env.AGENT_VERSION||'1.0.0',isolated:true,merge:false,deploy:false},200,origin);
  }catch(e){return json({ok:false,error:'PROJECT_AGENT_FAILED',detail:String(e?.message||e).slice(0,600)},500,origin);}
