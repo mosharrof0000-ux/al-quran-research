@@ -41,6 +41,25 @@ jobs:
           echo "$BODY" | grep -q '"merge":false'
           echo "$BODY" | grep -q '"deploy":false'
 
+      - name: End-to-end authenticated Agent runtime and resume proof
+        env:
+          AGENT_ACCESS_TOKEN: ${{ secrets.AGENT_ACCESS_TOKEN }}
+        run: |
+          set -euo pipefail
+          URL='https://al-quran-research-project-agent.workers.dev'
+          ORIGIN='https://mosharrof0000-ux.github.io'
+          test -n "$AGENT_ACCESS_TOKEN"
+          BODY="$(curl -fsS --retry 5 --retry-all-errors --retry-delay 3 --connect-timeout 8 --max-time 90 \\
+            -H "Origin: $ORIGIN" -H "Authorization: Bearer $AGENT_ACCESS_TOKEN" \\
+            -H 'Content-Type: application/json' \\
+            --data '{"message":"Runtime proof: inspect the project agent rules and create a small handoff proof file in the assigned agent branch. Do not modify main or protected paths."}' "$URL/")"
+          echo "$BODY" | jq -e '.ok == true and .isolated == true and .merge == false and .deploy == false' >/dev/null
+          BRANCH="$(echo "$BODY" | jq -r '.identity.branch')"
+          TASK="$(echo "$BODY" | jq -r '.identity.task_id')"
+          test -n "$BRANCH"; test -n "$TASK"
+          echo "Runtime task=$TASK branch=$BRANCH"
+          echo "$BODY" | jq .
+
       - name: Verify production Worker is not targeted
         run: |
           set -euo pipefail
