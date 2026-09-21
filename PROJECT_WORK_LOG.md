@@ -235,3 +235,12 @@ Reference SHA-256: `170c83ecf42c84ca4c09686fccb32311c2272fe2d15dd4eb4b9be6ebce14
 
 ### Integration gate
 Backup → Review → Approve → Integrate → Verify → Live.
+
+
+## WORK-2026-09-21-NORMAL-QURAN-ICON-MODE-01
+- Status: CREATED / STORED ON MAIN — asset package and usage documentation recorded; live reader integration pending review.
+- User decision: the supplied 10-icon image is the reference for the Normal Quran Reading Mode. A separate Sufi Mode icon language will be created later and must remain isolated.
+- Safety: backup branch `backup/pre-standard-islamic-reader-icons-2026-09-21` created before asset storage.
+- Assets: `assets/icons/modes/normal-quran-v1/` contains 10 SVGs: Quran, Surah, Ayah, Tafseer, Bookmark, Tilawat, Home, Search, Favorite, Share.
+- Documentation: `docs/design/NORMAL_QURAN_ICON_MODE_V1.md`, `ICON_MODE_REGISTRY.md`, `ICON_REFERENCE_2026-09-21.md`, and backup record.
+- Integration rule: storage only; do not replace the existing master icon engine or live UI until isolated reader demo review and approval.
