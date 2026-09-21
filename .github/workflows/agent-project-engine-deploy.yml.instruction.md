@@ -1,0 +1,1 @@
+Instruction for the isolated Project Agent deployment workflow. It may deploy only the separate Project Agent Worker. Production chat Worker must remain untouched. Syntax and health smoke tests are mandatory.
