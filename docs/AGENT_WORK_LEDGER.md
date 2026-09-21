@@ -12,6 +12,7 @@
 - Branch: agent/sumon-ai-system-001
 - Base: agent/project-engine-v1-isolated
 - Status: WORKING
+- Latest commit: f25f24a84dffa2ea419944b94cbe20c0dc8581d5
 - Started: 2026-09-21
 
 ### Request
@@ -25,6 +26,10 @@ Project system এবং AI-কে শক্তিশালী করা; Projec
 5. Preserve production isolation.
 
 ### Completed in this task
+- Project Agent Worker now carries Agent Name, Agent ID, Task ID and Task Type in each run context.
+- Added automatic human-readable name selection by task type.
+- Added visible ledger-record tool support.
+- Fixed the worker file decoding line so the runtime source contains real JavaScript newlines rather than escaped newline text.
 - Dedicated identity registry introduced.
 - Work ledger introduced.
 - Agent architecture work continues on isolated branch.
