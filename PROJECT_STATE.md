@@ -325,3 +325,7 @@ Integration must remain mode-aware and follow Backup → Review → Approve → 
 The existing General Quran Mode v1 icon family was re-checked against the approved reference direction. All 10 named SVG assets are present under `assets/icons/modes/general-quran-v1/` and use fill="none" + stroke="currentColor". They remain stored design assets and are not automatically connected to the live Reader.
 
 Mode contract: `general-quran` uses this family; `sufi` must use a separate family. The reference is documented at `docs/design/MODE_ICON_DESIGN_REFERENCE_2026-09-21.md`.
+
+
+## 27. Icon Mode Canonicalization — 2026-09-21
+The Normal/General Quran icon reference is canonicalized to `assets/icons/modes/general-quran-v1/`. The temporary duplicate `normal-quran-v1` namespace was removed. The canonical family remains stored but NOT LIVE-INTEGRATED. Future Sufi icons must use a separate `sufi-v1` namespace.
