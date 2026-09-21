@@ -2,7 +2,7 @@
 
 ## FRONT-FONT-2026-09-21-INIT-01
 - Created isolated branch: `agent/front-font-engine-v1-isolated`
-- Purpose: future-ready Dynamic Typography & Visual Presentation presentation layer.
+- Purpose: future-ready, language/script-agnostic Dynamic Typography & Visual Presentation presentation layer.
 - Master reference: project ZIP `front/font.txt`.
 - Production/main branch unchanged.
 - No Quran/data/research logic changed.
