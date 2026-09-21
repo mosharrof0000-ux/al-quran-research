@@ -1,4 +1,4 @@
-/* Al-Quran Research — Isolated Project Agent Engine v1
+/* Al-Quran Research — Isolated Project Agent Engine v1.1
    Separate Worker. It can read project files and write only to agent/* branches.
    It cannot merge or deploy.
 */
