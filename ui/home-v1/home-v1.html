@@ -26,7 +26,16 @@
   </section>
   <section class="messages" id="messages" aria-live="polite" aria-label="চ্যাট"></section>
 
-  <section class="composer-wrap" aria-label="স্মার্ট প্রশ্ন লেখার স্থান">
+  <aside class="font-panel" id="fontPanel" hidden aria-label="ফন্ট কাস্টমাইজ">
+  <div class="font-panel-head"><strong>ফন্ট কাস্টমাইজ</strong><button id="closeFontPanel" type="button" aria-label="বন্ধ">×</button></div>
+  <label>বাংলা ফন্ট<select id="bnFontSelect"><option value="system">ডিফল্ট</option><option value="hind">Hind Siliguri</option><option value="meghaloy">Hasan Meghaloy</option><option value="munam">Hasan Munam</option><option value="hera">Hasan Hera</option><option value="mokhmoli">Hasan Mokhmoli</option></select></label>
+  <label>আরবি ফন্ট<select id="arFontSelect"><option value="default">ডিফল্ট</option><option value="alquds">Al Quds</option></select></label>
+  <label>ফন্ট সাইজ<input id="fontSizeRange" type="range" min="13" max="24" value="15"><span id="fontSizeValue">15px</span></label>
+  <label>লাইন স্পেসিং<input id="lineHeightRange" type="range" min="1.4" max="2.4" step="0.1" value="1.7"><span id="lineHeightValue">1.7</span></label>
+  <button id="fontReset" type="button" class="font-reset">ডিফল্টে ফিরুন</button>
+</aside>
+
+<section class="composer-wrap" aria-label="স্মার্ট প্রশ্ন লেখার স্থান">
     <div class="composer-tools" id="composerTools" hidden>
       <button type="button" data-tool="ayah">📖 আয়াত</button>
       <button type="button" data-tool="research">🔎 গবেষণা</button>
