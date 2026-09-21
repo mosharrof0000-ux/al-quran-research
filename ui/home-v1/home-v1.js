@@ -153,6 +153,7 @@ function loadActionBarDemo(){
  if(demo.__actions)demo.__actions.hidden=false;
 }
 
+document.addEventListener('click',e=>{document.querySelectorAll('.message-more-menu.open').forEach(m=>{if(!m.parentElement.contains(e.target))m.classList.remove('open')})});
 document.getElementById('sendBtn').onclick=sendQuestion;
 const promptBox=document.getElementById('prompt');
 function autoResizePrompt(){promptBox.style.height='auto';const max=140;promptBox.style.height=Math.min(promptBox.scrollHeight,max)+'px';promptBox.style.overflowY=promptBox.scrollHeight>max?'auto':'hidden'}
