@@ -161,3 +161,45 @@ Safety-branch file updates completed. Production Live Page verification remains 
 
 ### Rollback
 If the live result is broken or rejected, restore the previous known-good state using the backup branch before another design iteration.
+
+
+## WORK-2026-09-21-GEMINI-CUSTOM-ICON-INTEGRATION-01
+
+**Status:** IMPLEMENTED ON MAIN — documentation recorded; live visual verification pending
+
+### User decision
+ব্যবহারকারী চেয়েছেন Gemini AI যেন আল-কুরআন Research Project-এর নিজস্ব custom icon system ব্যবহার করে আয়াত/গবেষণা-উত্তর উপস্থাপন করতে পারে।
+
+### Safety point
+- Pre-documentation backup branch: `backup/pre-gemini-custom-icon-documentation-2026-09-21`
+- Pre-documentation main commit: `386b2b417b32d64526b9974b23fd738b688e0364`
+
+### Changes made
+PR #66-এর মাধ্যমে main-এ সংযুক্ত:
+- `assets/icon-engine/aqr-icon-engine.js`
+- `ui/home-v1/home-v1.html`
+- `ui/home-v1/home-v1.js`
+- `ui/home-v1/gemini-icon-v1.css`
+
+### Integration behavior
+Gemini-কে controlled icon marker ব্যবহারের নির্দেশ দেওয়া হয়েছে:
+`[[AQR_ICON:quran]]`, `ayah`, `research`, `analysis`, `translation`, `tafsir`, `document`, `info`, `verified` ইত্যাদি।
+Frontend marker-টি দৃশ্যমান উত্তরের বাইরে সরিয়ে project icon engine-এর SVG icon হিসেবে render করে।
+
+### Important technical note
+এটি বর্তমানে Gemini function-calling নয়; prompt-controlled marker → frontend renderer পদ্ধতি।
+একটি AI response-এ semantic icon নির্বাচন ও প্রদর্শনের integration করা হয়েছে।
+
+### Corrections after merge
+Merge-এর পরে `home-v1.html`-এ literal \\n সমস্যা ধরা পড়ে এবং দুই দফায় ঠিক করা হয়েছে:
+- `df4d58e331a2bf8449a1ca47b6f3d30360c24a36`
+- `386b2b417b32d64526b9974b23fd738b688e0364`
+
+### Verification
+- Main source files inspected after fixes.
+- Current main commit: `386b2b417b32d64526b9974b23fd738b688e0364`.
+- Live browser rendering/AI marker appearance এখনও প্রত্যক্ষভাবে verified নয়।
+- তাই এই entry live feature fully verified বলে দাবি করছে না।
+
+### Preservation / follow-up
+Master custom icon engine-এর exact source এবং বর্তমান compact integration implementation আলাদা করে audit করতে হবে; project-এর মূল icon asset overwrite না করে canonical engine source সংরক্ষণ করা প্রয়োজন।
