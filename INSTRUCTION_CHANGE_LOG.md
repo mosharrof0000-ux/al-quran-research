@@ -240,3 +240,24 @@ Documentation-only governance change. No research dataset, backend entrypoint, R
 
 ### Next verification
 Compare branch with `main`, run syntax/build checks, review UI behavior, then obtain explicit user approval before promotion.
+
+
+## 2026-09-21 — Project Agent Identity, Work Ledger and Handoff Layer
+
+### Agent
+- Agent Name: সুমন
+- Agent ID: AG-SUMON-001
+- Task ID: AGT-20260921-001
+- Branch: agent/sumon-ai-system-001
+
+### Added
+- `docs/AGENT_IDENTITY_REGISTRY.md` + instruction
+- `docs/AGENT_WORK_LEDGER.md` + instruction
+- `docs/AGENT_HANDOFF_PROTOCOL.md` + instruction
+- Registry coverage for all new governance artifacts
+
+### Purpose
+Every new Agent task receives a human-readable Bengali identity, unique Task/Agent IDs, isolated branch ownership, visible work history, and explicit successor/handoff rules. Incomplete work must remain visibly incomplete and may only be continued under a new successor identity.
+
+### Safety result
+Work remains on an isolated agent branch. No main promotion, production deployment, live website modification, research dataset modification, or protected-path change was authorized by this task.
