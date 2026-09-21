@@ -1,0 +1,19 @@
+name: Deploy Project Agent Engine
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'backend/project-agent/**'
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: backend/project-agent
+          command: deploy
