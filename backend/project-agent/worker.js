@@ -14,15 +14,16 @@ const AGENT_NAMES=[
  ['database','তানভীর'],['ডেটা','তানভীর'],['data','তানভীর'],['backend','ফারহান'],
  ['worker','ফারহান'],['workflow','ইমরান'],['security','সাজিদ']
 ];
-function makeIdentity(message){
+function makeIdentity(message,sessionId,parentTaskId){
  const lower=String(message||'').toLowerCase();
  const match=AGENT_NAMES.find(([key])=>lower.includes(key));
  const name=match?match[1]:'আরিফ';
  const stamp=new Date().toISOString().replace(/[-:TZ.]/g,'').slice(0,14);
- const suffix=Math.random().toString(36).slice(2,6).toUpperCase();
+ const suffix=crypto.randomUUID().replace(/-/g,'').slice(0,8).toUpperCase();
  const taskId='TASK-'+stamp+'-'+suffix;
  const agentId='AGENT-'+name+'-'+stamp+'-'+suffix;
- return {agent_name_bn:name,agent_id:agentId,task_id:taskId};
+ const taskType=match?match[0]:'general';
+ return {agent_name_bn:name,agent_id:agentId,task_id:taskId,task_type:taskType,session_id:sessionId||'SESSION-'+stamp,parent_task_id:parentTaskId||null};
 }
 
 function cors(origin){return {'Access-Control-Allow-Origin':ALLOWED_ORIGINS.includes(origin)?origin:ALLOWED_ORIGINS[0],'Access-Control-Allow-Methods':'POST, GET, OPTIONS','Access-Control-Allow-Headers':'Content-Type, Authorization','Content-Type':'application/json; charset=utf-8','Vary':'Origin'};}
@@ -51,7 +52,9 @@ async function readFile(env,args){
  const data=await gh(env,'/repos/'+repo(env)+'/contents/'+path.split('/').map(encodeURIComponent).join('/')+'?ref='+encodeURIComponent(branch));
  if(data.type!=='file')throw new Error('এটি file নয়।');
  if(Number(data.size||0)>MAX_FILE)throw new Error('ফাইলটি engine-এর সীমার চেয়ে বড়।');
- const bin=atob(String(data.content||'').replace(/\n/g,''));\n const bytes=Uint8Array.from(bin,c=>c.charCodeAt(0));\n const decoded=new TextDecoder().decode(bytes);
+ const bin=atob(String(data.content||'').replace(/\n/g,''));
+ const bytes=Uint8Array.from(bin,c=>c.charCodeAt(0));
+ const decoded=new TextDecoder().decode(bytes);
  return {path,branch,sha:data.sha,size:data.size,content:decoded};
 }
 async function listDirectory(env,args){
@@ -103,7 +106,7 @@ async function executeTool(env,name,args){
 async function gemini(env,history,identity){
  if(!env.GEMINI_API_KEY)throw new Error('GEMINI_API_KEY is not configured.');
  const model=env.GEMINI_MODEL||'gemini-2.5-flash';
- const system='তুমি আল-কুরআন গবেষণা প্রকল্পের Project Agent। প্রতিটি কাজের পরিচয় হিসেবে Task ID, Agent Name এবং Agent ID ব্যবহার করবে। এই task-এর পরিচয় হলো '+JSON.stringify(identity)+'। তুমি প্রকল্পের ফাইল পড়তে, বিশ্লেষণ করতে এবং নিরাপদ agent/* branch-এ text file তৈরি/সংশোধন করতে পারো। কখনো main-এ লিখবে না। .github/workflows, database, migrations, validation, quran_research.db এবং schema.sql পরিবর্তন করবে না। প্রথমে প্রয়োজনীয় ফাইল পড়বে; অনুমান করে code rewrite করবে না। পরিবর্তনের আগে বর্তমান content ও প্রকল্পের নিয়ম বুঝবে। কাজ শেষে কী পড়েছ, কী পরিবর্তন করেছ, কোন branch-এ করেছ এবং কী user approval/deployment-এর অপেক্ষায় আছে তা বাংলায় বলবে। তুমি merge বা production deploy করতে পারো না এবং এমন দাবি করবে না।';
+ const system='তুমি আল-কুরআন গবেষণা প্রকল্পের Project Agent। কাজ শুরুর আগে docs/AGENT_IDENTITY_REGISTRY.md, docs/AGENT_WORK_LEDGER.md এবং docs/AGENT_HANDOFF_PROTOCOL.md পড়বে। প্রতিটি কাজের দৃশ্যমান audit record বজায় রাখবে। প্রতিটি কাজের পরিচয় হিসেবে Task ID, Agent Name এবং Agent ID ব্যবহার করবে। এই task-এর পরিচয় হলো '+JSON.stringify(identity)+'। তুমি প্রকল্পের ফাইল পড়তে, বিশ্লেষণ করতে এবং নিরাপদ agent/* branch-এ text file তৈরি/সংশোধন করতে পারো। কখনো main-এ লিখবে না। .github/workflows, database, migrations, validation, quran_research.db এবং schema.sql পরিবর্তন করবে না। প্রথমে প্রয়োজনীয় ফাইল পড়বে; অনুমান করে code rewrite করবে না। পরিবর্তনের আগে বর্তমান content ও প্রকল্পের নিয়ম বুঝবে। কাজ শেষে কী পড়েছ, কী পরিবর্তন করেছ, কোন branch-এ করেছ এবং কী user approval/deployment-এর অপেক্ষায় আছে তা বাংলায় বলবে। তুমি merge বা production deploy করতে পারো না এবং এমন দাবি করবে না।';
  let contents=history.slice();
  for(let turn=0;turn<MAX_TURNS;turn++){
   const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+model+':generateContent',{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':env.GEMINI_API_KEY},body:JSON.stringify({systemInstruction:{parts:[{text:system}]},contents,tools:[{functionDeclarations:TOOLS}],generationConfig:{maxOutputTokens:4096,temperature:0.1}})});
@@ -133,7 +136,9 @@ export default {async fetch(request,env){
   const body=await request.json();const message=String(body?.message||'').trim();
   if(!message)return json({ok:false,error:'message required'},400,origin);
   if(message.length>10000)return json({ok:false,error:'message too large'},413,origin);
-  const identity=makeIdentity(message);
+  const sessionId=String(body?.session_id||request.headers.get('X-Agent-Session')||'').trim();
+  const parentTaskId=String(body?.parent_task_id||'').trim();
+  const identity=makeIdentity(message,sessionId,parentTaskId);
   const result=await gemini(env,[{role:'user',parts:[{text:message}]}],identity);
   return json({ok:true,identity,answer:result.answer,provider:result.model,agent_version:env.AGENT_VERSION||'1.0.0',isolated:true,merge:false,deploy:false},200,origin);
  }catch(e){return json({ok:false,error:'PROJECT_AGENT_FAILED',detail:String(e?.message||e).slice(0,600)},500,origin);}
