@@ -100,14 +100,6 @@ async function loadTask(env,taskId,branch){
   if(!taskId||!isAgentBranch(branch))return null;
   try{return JSON.parse((await readFile(env,{path:'docs/agent-work/runtime/'+taskId+'.json',branch})).content);}catch{return null;}
 }
-function maxActiveMs(env){
-  const n=Number(env.AGENT_MAX_ACTIVE_MS||DEFAULT_MAX_ACTIVE_MS);
-  return Number.isFinite(n)&&n>0?n:DEFAULT_MAX_ACTIVE_MS;
-}
-function maxSameFailures(env){
-  const n=Number(env.AGENT_MAX_SAME_FAILURES||DEFAULT_MAX_SAME_FAILURES);
-  return Number.isFinite(n)&&n>0?Math.floor(n):DEFAULT_MAX_SAME_FAILURES;
-}
 function newActiveWindow(env){
   const started=Date.now();
   return {started_at:new Date(started).toISOString(),deadline_at:new Date(started+maxActiveMs(env)).toISOString()};
@@ -191,9 +183,6 @@ async function gemini(env,history,context,deadlineMs,maxFailures){
   let contents=history.slice();
   const repairBudget=new Map();
   for(let turn=0;turn<MAX_TURNS;turn++){
-    ensureActiveWindow(task);
-    task.last_activity_at=nowIso();
-    if(checkpoint) await checkpoint({last_activity_at:task.last_activity_at});
     checkTimeLimit(deadlineMs);
     const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+model+':generateContent',{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':env.GEMINI_API_KEY},body:JSON.stringify({systemInstruction:{parts:[{text:system}]},contents:[{role:'user',parts:[{text:context}]},...contents],tools:[{functionDeclarations:TOOLS}],generationConfig:{maxOutputTokens:4096,temperature:0.1}})});
     const data=await r.json(); if(!r.ok)throw new Error('Gemini HTTP '+r.status+': '+String(data?.error?.message||'').slice(0,400));
