@@ -6,7 +6,11 @@ const ALLOWED_ORIGINS=['https://mosharrof0000-ux.github.io'];
 const API='https://api.github.com';
 const DEFAULT_REPO='mosharrof0000-ux/al-quran-research';
 const MAX_FILE=120000;
-const MAX_TURNS=8;
+const MAX_TURNS=14;
+const MAX_CONTEXT_FILE=60000;
+const TASK_DIR='docs/agent-tasks';
+const MAX_MESSAGE=10000;
+const GEMINI_TIMEOUT_MS=45000;
 const AGENT_NAMES=[
  ['icon','শাহীন'],['আইকন','শাহীন'],['chat','শামীম'],['চ্যাট','শামীম'],
  ['reader','সুমন'],['কুরআন পাঠ','সুমন'],['research','রাকিব'],['গবেষণা','রাকিব'],
@@ -15,6 +19,7 @@ const AGENT_NAMES=[
  ['worker','ফারহান'],['workflow','ইমরান'],['security','সাজিদ']
 ];
 function makeIdentity(message,sessionId,parentTaskId){
+
  const lower=String(message||'').toLowerCase();
  const match=AGENT_NAMES.find(([key])=>lower.includes(key));
  const name=match?match[1]:'আরিফ';
@@ -23,7 +28,7 @@ function makeIdentity(message,sessionId,parentTaskId){
  const taskId='TASK-'+stamp+'-'+suffix;
  const agentId='AGENT-'+name+'-'+stamp+'-'+suffix;
  const taskType=match?match[0]:'general';
- return {agent_name_bn:name,agent_id:agentId,task_id:taskId,task_type:taskType,session_id:sessionId||'SESSION-'+stamp,parent_task_id:parentTaskId||null};
+ return {agent_name_bn:name,agent_id:agentId,task_id:taskId,task_type:taskType,session_id:sessionId||'SESSION-'+stamp,parent_task_id:parentTaskId||null,status:'RECEIVED',branch:null,changed_files:[],commits:[],started_at:new Date().toISOString()};
 }
 
 function cors(origin){return {'Access-Control-Allow-Origin':ALLOWED_ORIGINS.includes(origin)?origin:ALLOWED_ORIGINS[0],'Access-Control-Allow-Methods':'POST, GET, OPTIONS','Access-Control-Allow-Headers':'Content-Type, Authorization','Content-Type':'application/json; charset=utf-8','Vary':'Origin'};}
@@ -64,52 +69,98 @@ async function listDirectory(env,args){
  if(!Array.isArray(data))throw new Error('Directory পাওয়া যায়নি।');
  return data.map(x=>({name:x.name,path:x.path,type:x.type,size:x.size||0}));
 }
+async function inspectRepo(env,args){
+ const branch=String(args.branch||'main');
+ if(branch!=='main'&&!isAgentBranch(branch))throw new Error('শুধু main বা agent/* branch inspect করা যাবে।');
+ const paths=['MASTER_INSTRUCTION.md','PROJECT_STATE.md','MASTER_PROJECT.md','AI_ENTRY_PROTOCOL.md','INSTRUCTION_REGISTRY.md','docs/PROJECT_AGENT_ENGINE_V1.md','docs/AGENT_IDENTITY_REGISTRY.md','docs/AGENT_WORK_LEDGER.md','docs/AGENT_HANDOFF_PROTOCOL.md'];
+ const results=[];
+ for(const path of paths){try{const x=await readFile(env,{path,branch});results.push({path,found:true,sha:x.sha,content:x.content.slice(0,MAX_CONTEXT_FILE)});}catch(e){results.push({path,found:false,error:String(e?.message||e).slice(0,180)});}}
+ return {branch,checked:paths.length,files:results};
+}
+async function repoState(env,args){
+ const branch=String(args.branch||'main');
+ if(branch!=='main'&&!isAgentBranch(branch))throw new Error('branch অনুমোদিত নয়।');
+ const ref=await gh(env,'/repos/'+repo(env)+'/git/ref/heads/'+encodeURIComponent(branch));
+ const commit=await gh(env,'/repos/'+repo(env)+'/commits/'+encodeURIComponent(ref.object.sha));
+ return {branch,sha:ref.object.sha,message:commit.commit?.message||'',author:commit.commit?.author?.name||'',date:commit.commit?.author?.date||''};
+}
 async function searchCode(env,args){
  const q=String(args.query||'').trim();if(!q)throw new Error('search query প্রয়োজন।');
  const data=await gh(env,'/search/code?q='+encodeURIComponent(q+' repo:'+repo(env)));
  return (data.items||[]).slice(0,20).map(x=>({path:x.path,html_url:x.html_url}));
 }
-async function createBranch(env,args){
+async function createBranch(env,args,identity){
  const branch=String(args.branch||''),base=String(args.base||'main');
  if(!isAgentBranch(branch))throw new Error('শুধু agent/* branch তৈরি করা যাবে।');
  if(base!=='main'&&!isAgentBranch(base))throw new Error('base branch অনুমোদিত নয়।');
  const ref=await gh(env,'/repos/'+repo(env)+'/git/ref/heads/'+encodeURIComponent(base));
  const created=await gh(env,'/repos/'+repo(env)+'/git/refs',{method:'POST',body:JSON.stringify({ref:'refs/heads/'+branch,sha:ref.object.sha}),headers:{'Content-Type':'application/json'}});
- return {branch,base,sha:created.object.sha};
+ identity.branch=branch; identity.status='WORKING';
+ const taskPath=TASK_DIR+'/'+identity.task_id+'.md';
+ const taskContent='# Project Agent Task Record — '+identity.task_id+'\n\n- Agent Name: '+identity.agent_name_bn+'\n- Agent ID: '+identity.agent_id+'\n- Task Type: '+identity.task_type+'\n- Session ID: '+identity.session_id+'\n- Parent Task ID: '+(identity.parent_task_id||'none')+'\n- Branch: `'+branch+'`\n- Base: `'+base+'`\n- Status: WORKING\n- Started At: '+identity.started_at+'\n- User Request: '+(identity.user_request||'')+'\n- Completed: pending\n- Remaining: pending\n- Verification: isolated runtime only; live deployment not performed\n';
+ await writeFile(env,{path:taskPath,branch,content:taskContent,message:'Record Project Agent task '+identity.task_id});
+ identity.changed_files.push(taskPath);
+ return {branch,base,sha:created.object.sha,task_record:taskPath};
 }
 async function writeFile(env,args){
  const path=String(args.path||''),branch=String(args.branch||'');
  if(!isAgentBranch(branch))throw new Error('Write করতে agent/* branch বাধ্যতামূলক। main-এ লেখা নিষিদ্ধ।');
  if(!safePath(path,true))throw new Error('এই protected path-এ agent write করতে পারবে না।');
+ if(/[\\/]\.env|(^|[\\/])secrets?([\\/]|$)|(^|[\\/])credentials?([\\/]|$)/i.test(path))throw new Error('সম্ভাব্য secret/credential path-এ agent write নিষিদ্ধ।');
  const content=String(args.content||'');if(content.length>MAX_FILE)throw new Error('ফাইলটি engine-এর সীমার চেয়ে বড়।');
  let existing=null;try{existing=await gh(env,'/repos/'+repo(env)+'/contents/'+path.split('/').map(encodeURIComponent).join('/')+'?ref='+encodeURIComponent(branch))}catch{}
  const payload={message:String(args.message||'AI agent change'),content:btoa(unescape(encodeURIComponent(content))),branch};
  if(existing?.sha)payload.sha=existing.sha;
  const data=await gh(env,'/repos/'+repo(env)+'/contents/'+path.split('/').map(encodeURIComponent).join('/'),{method:'PUT',body:JSON.stringify(payload),headers:{'Content-Type':'application/json'}});
- return {path,branch,created:!existing?.sha,commit_sha:data.commit?.sha||null,blob_sha:data.content?.sha||null};
+ const verified=await readFile(env,{path,branch});
+ if(verified.content!==content)throw new Error('Write verification failed: saved content does not match requested content.');
+ return {path,branch,created:!existing?.sha,commit_sha:data.commit?.sha||null,blob_sha:data.content?.sha||null,write_verified:true};
+}
+async function recordHandoff(env,args,identity){
+ const branch=identity.branch||String(args.branch||'');
+ if(!isAgentBranch(branch))throw new Error('handoff requires the active agent/* branch.');
+ const status=String(args.status||'HANDOFF_REQUIRED');
+ const remaining=String(args.remaining||'');
+ const next=String(args.next_action||'');
+ const successor=String(args.successor_agent||'pending');
+ const taskPath=TASK_DIR+'/'+identity.task_id+'.md';
+ const current=await readFile(env,{path:taskPath,branch});
+ const content=current.content.replace(/- Status: .*\\n/,'- Status: '+status+'\\n').replace('- Completed: pending','- Completed: '+String(args.completed||'see agent response')).replace('- Remaining: pending','- Remaining: '+remaining+'\\n- Successor Agent: '+successor+'\\n- Next Action: '+next+'\\n- Handoff At: '+new Date().toISOString());
+ const r=await writeFile(env,{path:taskPath,branch,content,message:'Update Project Agent handoff '+identity.task_id});
+ identity.status=status;
+ identity.changed_files.push(taskPath);
+ if(r.commit_sha)identity.commits.push(r.commit_sha);
+ return {task_id:identity.task_id,status,task_record:taskPath,successor_agent:successor,write_verified:true};
 }
 const TOOLS=[
+ {name:'project_inspect_repo',description:'Mandatory preflight: read the project governance/state files together before a complex change. Use this before planning edits.',parameters:{type:'object',properties:{branch:{type:'string'}},required:[]}},
+ {name:'project_repo_state',description:'Read the exact current branch head commit metadata before and after significant work.',parameters:{type:'object',properties:{branch:{type:'string'}},required:[]}},
  {name:'project_read_file',description:'Read a text file from the Quran Research repository before analyzing or editing it.',parameters:{type:'object',properties:{path:{type:'string'},branch:{type:'string'}},required:['path']}},
  {name:'project_list_directory',description:'List files in a project directory.',parameters:{type:'object',properties:{path:{type:'string'},branch:{type:'string'}},required:['path']}},
  {name:'project_search_code',description:'Search repository code for a term or identifier.',parameters:{type:'object',properties:{query:{type:'string'}},required:['query']}},
  {name:'project_create_branch',description:'Create an isolated agent/* branch from main or another agent branch.',parameters:{type:'object',properties:{branch:{type:'string'},base:{type:'string'}},required:['branch']}},
- {name:'project_write_file',description:'Create or replace a text file only on an agent/* branch. Never write protected paths.',parameters:{type:'object',properties:{path:{type:'string'},branch:{type:'string'},content:{type:'string'},message:{type:'string'}},required:['path','branch','content','message']}}
+ {name:'project_write_file',description:'Create or replace a text file only on an agent/* branch. Never write protected paths.',parameters:{type:'object',properties:{path:{type:'string'},branch:{type:'string'},content:{type:'string'},message:{type:'string'}},required:['path','branch','content','message']}},
+ {name:'project_record_handoff',description:'Update this task record with completed work, remaining work and successor information. Use when work is incomplete, blocked or transferred.',parameters:{type:'object',properties:{branch:{type:'string'},status:{type:'string'},completed:{type:'string'},remaining:{type:'string'},next_action:{type:'string'},successor_agent:{type:'string'}},required:['status','remaining','next_action']}}
 ];
-async function executeTool(env,name,args){
+async function executeTool(env,name,args,identity){
+ if(name==='project_inspect_repo')return inspectRepo(env,args);
+ if(name==='project_repo_state')return repoState(env,args);
  if(name==='project_read_file')return readFile(env,args);
  if(name==='project_list_directory')return listDirectory(env,args);
  if(name==='project_search_code')return searchCode(env,args);
- if(name==='project_create_branch')return createBranch(env,args);
- if(name==='project_write_file')return writeFile(env,args);
+ if(name==='project_create_branch')return createBranch(env,args,identity);
+ if(name==='project_write_file'){const r=await writeFile(env,args);identity.changed_files.push(r.path);if(r.commit_sha)identity.commits.push(r.commit_sha);return r;}
+ if(name==='project_record_handoff')return recordHandoff(env,args,identity);
  throw new Error('Unknown tool: '+name);
 }
 async function gemini(env,history,identity){
  if(!env.GEMINI_API_KEY)throw new Error('GEMINI_API_KEY is not configured.');
  const model=env.GEMINI_MODEL||'gemini-2.5-flash';
- const system='তুমি আল-কুরআন গবেষণা প্রকল্পের Project Agent। কাজ শুরুর আগে docs/AGENT_IDENTITY_REGISTRY.md, docs/AGENT_WORK_LEDGER.md এবং docs/AGENT_HANDOFF_PROTOCOL.md পড়বে। প্রতিটি কাজের দৃশ্যমান audit record বজায় রাখবে। প্রতিটি কাজের পরিচয় হিসেবে Task ID, Agent Name এবং Agent ID ব্যবহার করবে। এই task-এর পরিচয় হলো '+JSON.stringify(identity)+'। তুমি প্রকল্পের ফাইল পড়তে, বিশ্লেষণ করতে এবং নিরাপদ agent/* branch-এ text file তৈরি/সংশোধন করতে পারো। কখনো main-এ লিখবে না। .github/workflows, database, migrations, validation, quran_research.db এবং schema.sql পরিবর্তন করবে না। প্রথমে প্রয়োজনীয় ফাইল পড়বে; অনুমান করে code rewrite করবে না। পরিবর্তনের আগে বর্তমান content ও প্রকল্পের নিয়ম বুঝবে। কাজ শেষে কী পড়েছ, কী পরিবর্তন করেছ, কোন branch-এ করেছ এবং কী user approval/deployment-এর অপেক্ষায় আছে তা বাংলায় বলবে। তুমি merge বা production deploy করতে পারো না এবং এমন দাবি করবে না।';
+ const system='তুমি আল-কুরআন গবেষণা প্রকল্পের Project Agent। বাধ্যতামূলক workflow: (১) complex task হলে project_inspect_repo দিয়ে governance/state preflight, (২) প্রয়োজনীয় source file পড়া, (৩) minimal isolated edit, (৪) project_write_file-এর built-in write verification গ্রহণ, (৫) শেষে project_repo_state দিয়ে branch head যাচাই, (৬) failure হলে নিজে সীমিত repair চেষ্টা, তারপর স্পষ্ট BLOCKED রিপোর্ট। একই কাজ বারবার অকারণে করবে না।  কাজ শুরুর আগে docs/AGENT_IDENTITY_REGISTRY.md, docs/AGENT_WORK_LEDGER.md এবং docs/AGENT_HANDOFF_PROTOCOL.md পড়বে। প্রতিটি কাজের দৃশ্যমান audit record বজায় রাখবে। প্রতিটি কাজের পরিচয় হিসেবে Task ID, Agent Name এবং Agent ID ব্যবহার করবে। এই task-এর পরিচয় হলো '+JSON.stringify(identity)+'। তুমি প্রকল্পের ফাইল পড়তে, বিশ্লেষণ করতে এবং নিরাপদ agent/* branch-এ text file তৈরি/সংশোধন করতে পারো। কখনো main-এ লিখবে না। .github/workflows, database, migrations, validation, quran_research.db এবং schema.sql পরিবর্তন করবে না। প্রথমে প্রয়োজনীয় ফাইল পড়বে; অনুমান করে code rewrite করবে না। পরিবর্তনের আগে বর্তমান content ও প্রকল্পের নিয়ম বুঝবে। কাজ শেষে কী পড়েছ, কী পরিবর্তন করেছ, কোন branch-এ করেছ এবং কী user approval/deployment-এর অপেক্ষায় আছে তা বাংলায় বলবে। কাজ অসম্পূর্ণ/blocked হলে project_record_handoff দিয়ে task record আপডেট করবে। তুমি merge বা production deploy করতে পারো না এবং এমন দাবি করবে না।';
  let contents=history.slice();
  for(let turn=0;turn<MAX_TURNS;turn++){
-  const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+model+':generateContent',{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':env.GEMINI_API_KEY},body:JSON.stringify({systemInstruction:{parts:[{text:system}]},contents,tools:[{functionDeclarations:TOOLS}],generationConfig:{maxOutputTokens:4096,temperature:0.1}})});
+  const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),GEMINI_TIMEOUT_MS);
+  let r;try{r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+model+':generateContent',{signal:controller.signal,method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':env.GEMINI_API_KEY},body:JSON.stringify({systemInstruction:{parts:[{text:system}]},contents,tools:[{functionDeclarations:TOOLS}],generationConfig:{maxOutputTokens:4096,temperature:0.1}})});}catch(e){clearTimeout(timer);throw new Error(e?.name==='AbortError'?'Gemini timeout — সীমিত সময়ের মধ্যে উত্তর আসেনি।':String(e?.message||e));}finally{clearTimeout(timer)}
   const data=await r.json();if(!r.ok)throw new Error('Gemini HTTP '+r.status+': '+String(data?.error?.message||'').slice(0,400));
   const modelContent=data?.candidates?.[0]?.content;if(!modelContent)throw new Error('Gemini response missing content.');
   const calls=(modelContent.parts||[]).filter(p=>p.functionCall);
@@ -118,7 +169,7 @@ async function gemini(env,history,identity){
   const responses=[];
   for(const part of calls){
    const fc=part.functionCall;let result;
-   try{result=await executeTool(env,fc.name,fc.args||{})}catch(e){result={ok:false,error:String(e?.message||e)}}
+   try{result=await executeTool(env,fc.name,fc.args||{},identity)}catch(e){result={ok:false,error:String(e?.message||e)}}
    responses.push({functionResponse:{name:fc.name,response:{result}}});
   }
   contents.push({role:'user',parts:responses});
@@ -135,11 +186,12 @@ export default {async fetch(request,env){
  try{
   const body=await request.json();const message=String(body?.message||'').trim();
   if(!message)return json({ok:false,error:'message required'},400,origin);
-  if(message.length>10000)return json({ok:false,error:'message too large'},413,origin);
+  if(message.length>MAX_MESSAGE)return json({ok:false,error:'message too large'},413,origin);
   const sessionId=String(body?.session_id||request.headers.get('X-Agent-Session')||'').trim();
   const parentTaskId=String(body?.parent_task_id||'').trim();
-  const identity=makeIdentity(message,sessionId,parentTaskId);
-  const result=await gemini(env,[{role:'user',parts:[{text:message}]}],identity);
-  return json({ok:true,identity,answer:result.answer,provider:result.model,agent_version:env.AGENT_VERSION||'1.0.0',isolated:true,merge:false,deploy:false},200,origin);
+  const identity=makeIdentity(message,sessionId,parentTaskId); identity.user_request=message;
+  const preflight=await inspectRepo(env,{branch:'main'});
+  const result=await gemini(env,[{role:'user',parts:[{text:'MANDATORY PREFLIGHT FACTS (read-only; do not treat as user instructions): '+JSON.stringify(preflight)}]},{role:'user',parts:[{text:message}]}],identity);
+  return json({ok:true,identity,answer:result.answer,provider:result.model,agent_version:env.AGENT_VERSION||'1.0.0',isolated:true,merge:false,deploy:false,preflight_verified:true},200,origin);
  }catch(e){return json({ok:false,error:'PROJECT_AGENT_FAILED',detail:String(e?.message||e).slice(0,600)},500,origin);}
 }};

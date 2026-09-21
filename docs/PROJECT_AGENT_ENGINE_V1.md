@@ -16,13 +16,27 @@
 ## Agent identity and continuity
 প্রতিটি request-এর জন্য Agent Name, Agent ID, Task ID, Session ID, Task Type এবং optional Parent Task ID তৈরি হয়। Bengali human-like name কাজের ধরন অনুযায়ী নির্ধারিত হয়। Takeover হলে successor নতুন Agent ID পায় এবং predecessor history অক্ষুণ্ণ থাকে।
 
+## শক্তিশালী runtime workflow
+এখন Agent complex কাজের আগে governance/state preflight করতে পারে এবং significant work-এর branch head যাচাই করতে পারে। File write-এর পর Worker নিজেই saved content আবার পড়ে মিলিয়ে দেখে।
+
+বাধ্যতামূলক নিরাপত্তা ধাপ:
+1. Project governance/state preflight
+2. Source inspection
+3. Minimal isolated edit
+4. Write verification
+5. Branch-state verification
+6. সীমিত self-repair; ব্যর্থ হলে BLOCKED রিপোর্ট
+
 ## Gemini tool layer
-Gemini function calling ব্যবহার করে পাঁচটি tool:
-1. project_read_file
-2. project_list_directory
-3. project_search_code
-4. project_create_branch
-5. project_write_file
+Gemini function calling ব্যবহার করে আটটি tool:
+1. project_inspect_repo
+2. project_repo_state
+3. project_read_file
+4. project_list_directory
+5. project_search_code
+6. project_create_branch
+7. project_write_file
+8. project_record_handoff
 
 Gemini নিজে GitHub পরিবর্তন করে না; Worker tool call গ্রহণ করে GitHub API-তে নিরাপদভাবে কাজ সম্পন্ন করে।
 
