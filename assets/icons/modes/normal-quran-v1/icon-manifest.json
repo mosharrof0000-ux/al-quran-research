@@ -1,0 +1,21 @@
+{
+  "name": "Al-Quran Research — Normal Quran Mode Icon Set",
+  "version": "1.0.0",
+  "mode": "normal-quran",
+  "status": "REFERENCE_STORED_NOT_LIVE_INTEGRATED",
+  "style": {"stroke":"currentColor","fill":"none","strokeWidth":2,"linecap":"round","linejoin":"round","monochrome":true,"viewBox":"0 0 64 64"},
+  "icons": [
+    {"id":"quran","file":"quran.svg","use":"Main Quran reader"},
+    {"id":"surah","file":"surah.svg","use":"Surah navigation"},
+    {"id":"ayah","file":"ayah.svg","use":"Ayah reference"},
+    {"id":"tafseer","file":"tafseer.svg","use":"Knowledge/Tafseer entry"},
+    {"id":"bookmark","file":"bookmark.svg","use":"Save/bookmark"},
+    {"id":"audio","file":"audio.svg","use":"Tilawat/audio"},
+    {"id":"home","file":"home.svg","use":"Home navigation"},
+    {"id":"search","file":"search.svg","use":"Search"},
+    {"id":"favorite","file":"favorite.svg","use":"Favorite/like"},
+    {"id":"share","file":"share.svg","use":"Share"}
+  ],
+  "mode_policy": {"normal":"Use this set for ordinary Quran reading.","sufi":"Use a separate Sufi-mode icon set; do not overwrite these assets.","research":"Research-specific icons may use the existing research icon family."},
+  "integration_policy":"Integrate only after isolated visual review and backup. Existing icon engine remains unchanged by this reference set."
+}
