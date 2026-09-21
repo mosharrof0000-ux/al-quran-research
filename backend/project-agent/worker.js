@@ -6,7 +6,20 @@ const ALLOWED_ORIGINS=['https://mosharrof0000-ux.github.io'];
 const API='https://api.github.com';
 const DEFAULT_REPO='mosharrof0000-ux/al-quran-research';
 const MAX_FILE=120000;
-const MAX_TURNS=8;
+const MAX_TURNS=12;
+const AGENT_VERSION='2.0.0';
+
+function makeTaskId(){return 'TASK-'+new Date().toISOString().replace(/[-:TZ.]/g,'').slice(0,14)+'-'+crypto.randomUUID().slice(0,6).toUpperCase();}
+function chooseAgentName(message=''){
+ const m=message.toLowerCase();
+ if(/icon|আইকন|logo|লোগো/.test(m))return 'শাহীন';
+ if(/reader|কুরআন পাঠ|রিডার|আয়াত|verse|সূরা/.test(m))return 'সুমন';
+ if(/chat|চ্যাট|ui|ইন্টারফেস|header|হেডার/.test(m))return 'শামীম';
+ if(/test|browser|পরীক্ষা|যাচাই/.test(m))return 'নাঈম';
+ if(/data|ডেটা|database|ডাটাবেজ/.test(m))return 'রাকিব';
+ return 'আরিফ';
+}
+function slugName(name){return ({'শাহীন':'shaheen','সুমন':'sumon','শামীম':'shamim','নাঈম':'naim','রাকিব':'rakib','আরিফ':'arif'})[name]||'agent';}
 
 function cors(origin){return {'Access-Control-Allow-Origin':ALLOWED_ORIGINS.includes(origin)?origin:ALLOWED_ORIGINS[0],'Access-Control-Allow-Methods':'POST, GET, OPTIONS','Access-Control-Allow-Headers':'Content-Type, Authorization','Content-Type':'application/json; charset=utf-8','Vary':'Origin'};}
 function json(data,status,origin){return new Response(JSON.stringify(data),{status,headers:cors(origin)});}
@@ -34,7 +47,9 @@ async function readFile(env,args){
  const data=await gh(env,'/repos/'+repo(env)+'/contents/'+path.split('/').map(encodeURIComponent).join('/')+'?ref='+encodeURIComponent(branch));
  if(data.type!=='file')throw new Error('এটি file নয়।');
  if(Number(data.size||0)>MAX_FILE)throw new Error('ফাইলটি engine-এর সীমার চেয়ে বড়।');
- const bin=atob(String(data.content||'').replace(/\n/g,''));\n const bytes=Uint8Array.from(bin,c=>c.charCodeAt(0));\n const decoded=new TextDecoder().decode(bytes);
+ const bin=atob(String(data.content||'').replace(/\n/g,''));
+ const bytes=Uint8Array.from(bin,c=>c.charCodeAt(0));
+ const decoded=new TextDecoder().decode(bytes);
  return {path,branch,sha:data.sha,size:data.size,content:decoded};
 }
 async function listDirectory(env,args){
@@ -83,7 +98,7 @@ async function executeTool(env,name,args){
  if(name==='project_write_file')return writeFile(env,args);
  throw new Error('Unknown tool: '+name);
 }
-async function gemini(env,history){
+async function gemini(env,history,meta){
  if(!env.GEMINI_API_KEY)throw new Error('GEMINI_API_KEY is not configured.');
  const model=env.GEMINI_MODEL||'gemini-2.5-flash';
  const system='তুমি আল-কুরআন গবেষণা প্রকল্পের Project Agent। তুমি প্রকল্পের ফাইল পড়তে, বিশ্লেষণ করতে এবং নিরাপদ agent/* branch-এ text file তৈরি/সংশোধন করতে পারো। কখনো main-এ লিখবে না। .github/workflows, database, migrations, validation, quran_research.db এবং schema.sql পরিবর্তন করবে না। প্রথমে প্রয়োজনীয় ফাইল পড়বে; অনুমান করে code rewrite করবে না। পরিবর্তনের আগে বর্তমান content ও প্রকল্পের নিয়ম বুঝবে। কাজ শেষে কী পড়েছ, কী পরিবর্তন করেছ, কোন branch-এ করেছ এবং কী user approval/deployment-এর অপেক্ষায় আছে তা বাংলায় বলবে। তুমি merge বা production deploy করতে পারো না এবং এমন দাবি করবে না।';
@@ -108,15 +123,18 @@ async function gemini(env,history){
 export default {async fetch(request,env){
  const origin=request.headers.get('Origin')||'';
  if(request.method==='OPTIONS')return new Response(null,{status:204,headers:cors(origin)});
- if(request.method==='GET')return json({ok:true,service:'al-quran-research-project-agent',version:env.AGENT_VERSION||'1.0.0',isolated:true,write_scope:'agent/* only',merge:false,deploy:false},200,origin);
+ if(request.method==='GET')return json({ok:true,service:'al-quran-research-project-agent',version:AGENT_VERSION,isolated:true,write_scope:'agent/* only',merge:false,deploy:false},200,origin);
  if(request.method!=='POST')return json({ok:false,error:'POST/GET only'},405,origin);
  const auth=request.headers.get('Authorization')||'';
  if(!env.AGENT_ACCESS_TOKEN||auth!=='Bearer '+env.AGENT_ACCESS_TOKEN)return json({ok:false,error:'Unauthorized'},401,origin);
  try{
   const body=await request.json();const message=String(body?.message||'').trim();
+  const taskId=String(body?.task_id||makeTaskId());
+  const agentName=String(body?.agent_name||chooseAgentName(message));
+  const agentId='AG-'+new Date().toISOString().slice(0,10).replace(/-/g,'')+'-'+slugName(agentName)+'-'+crypto.randomUUID().slice(0,6).toUpperCase();
   if(!message)return json({ok:false,error:'message required'},400,origin);
   if(message.length>10000)return json({ok:false,error:'message too large'},413,origin);
-  const result=await gemini(env,[{role:'user',parts:[{text:message}]}]);
-  return json({ok:true,answer:result.answer,provider:result.model,agent_version:env.AGENT_VERSION||'1.0.0',isolated:true,merge:false,deploy:false},200,origin);
+  const result=await gemini(env,[{role:'user',parts:[{text:message}]}],{taskId,agentName,agentId});
+  return json({ok:true,answer:result.answer,provider:result.model,agent_version:AGENT_VERSION,isolated:true,merge:false,deploy:false,task:{task_id:taskId,agent_name:agentName,agent_id:agentId,status:'HANDOFF_READY'}},200,origin);
  }catch(e){return json({ok:false,error:'PROJECT_AGENT_FAILED',detail:String(e?.message||e).slice(0,600)},500,origin);}
 }};
