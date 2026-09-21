@@ -336,3 +336,14 @@ The approved visual reference has been converted into a dedicated Normal Qur'an 
 Safety: backup/pre-normal-mode-icon-set-2026-09-21 was created before the asset work. Future Sufi Mode must use a separate icon family and must not overwrite Normal Mode assets.
 
 Live integration remains pending review and runtime mode-resolver implementation.
+
+
+## 27. Normal Quran Mode Icon Asset Family Stored — 2026-09-21
+
+**Status:** STORED ON MAIN — RUNTIME INTEGRATION PENDING
+
+The 10-icon Normal Quran Reading Mode family is now stored in the repository under `assets/icon-engine/modes/normal-v1/`. The family is intentionally separate from the canonical icon engine and from any future Sufi icon family.
+
+Merge commit: `a2d4685101fef099ae309ca3387ad3e8a22478a6` (PR #82).
+
+Usage is documented in `docs/design/MODE_ICON_USAGE_REGISTRY_NORMAL_V1.md`. The next step is visual/mobile verification and then explicit runtime integration; storing these assets does not itself change the live Reader.
