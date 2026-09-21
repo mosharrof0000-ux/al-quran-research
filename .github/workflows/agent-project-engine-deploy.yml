@@ -1,0 +1,43 @@
+name: Deploy Isolated Project Agent Engine
+
+on:
+  push:
+    branches:
+      - 'agent/**'
+    paths:
+      - 'backend/project-agent/**'
+      - '.github/workflows/agent-project-engine-deploy.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy-agent-engine:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout isolated branch
+        uses: actions/checkout@v6
+      - name: Syntax check
+        run: node --check backend/project-agent/worker.js
+      - name: Deploy isolated Worker
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: backend/project-agent
+          command: deploy --name al-quran-research-project-agent
+      - name: Smoke test isolated health endpoint
+        run: |
+          set -euo pipefail
+          URL='https://al-quran-research-project-agent.workers.dev'
+          ORIGIN='https://mosharrof0000-ux.github.io'
+          BODY="$(curl -fsS --connect-timeout 8 --max-time 20 -H "Origin: $ORIGIN" "$URL/")"
+          echo "$BODY"
+          echo "$BODY" | grep -q '"isolated":true'
+          echo "$BODY" | grep -q '"merge":false'
+          echo "$BODY" | grep -q '"deploy":false'
+      - name: Verify production Worker is not targeted
+        run: |
+          test 'https://al-quran-research-project-agent.workers.dev' != 'https://al-quran-research.mosharrof0000.workers.dev'
