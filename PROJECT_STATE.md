@@ -309,3 +309,18 @@ Source-level integration verified। Canonical live page-এ browser/AI end-to-e
 The generated icon-sheet is recorded as a design reference only. It defines the general Qur'an reading-mode icon family and establishes a future separate Sufi-mode icon family. No live UI/database change is implied by this record. Canonical custom icon engine remains the technical source.
 
 Reference: `docs/design/MODE_ICON_DESIGN_REFERENCE_2026-09-21.md`
+
+
+## 26. Normal Quran Mode Icon Assets — 2026-09-21
+
+**Status:** ASSET SET CREATED — LIVE INTEGRATION PENDING
+
+A 10-icon Normal Quran Reading Mode family has been created from the recorded design reference and stored separately from the canonical icon engine implementation. The assets are intended for Reader mode use only and are not yet wired into the live UI.
+
+Location: `assets/icon-engine/modes/normal-v1/`
+
+The family contains Quran/Rehal, Surah/Mihrab, Ayah/Rub-el-Hizb, Tafsir/Lantern, Bookmark/Minaret, Audio/Tilawat, Home/Mihrab, Search/Star, Favorite/Geometric, and Share/Arch icons.
+
+Mode isolation rule: Normal mode and future Sufi mode must use separate asset families. The Sufi family must not overwrite or modify `normal-v1`.
+
+Next acceptance gate: isolated demo → mobile/desktop visual verification → approval → runtime mode switch integration → live verification.
