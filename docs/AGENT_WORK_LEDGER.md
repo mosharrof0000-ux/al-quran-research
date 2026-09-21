@@ -33,3 +33,19 @@ BLOCKED / ROLLED_BACK / HANDOFF_PENDING
 
 ## Incomplete work
 কোনো Agent কাজ থামালে/ব্যর্থ হলে incomplete handoff বাধ্যতামূলক। পরবর্তী Agent নতুন identity নিয়ে কাজ নেবে এবং পূর্ববর্তী Agent-কে predecessor হিসেবে উল্লেখ করবে।
+
+
+## Active Task — 2026-09-21
+- Task ID: AGENT-IDENTITY-001
+- Requester: Project owner
+- Agent Name: শাহীন
+- Agent ID: SHAHIN-AGENT-IDENTITY-001
+- Work Type: Project Agent শক্তিশালীকরণ / Identity & Handoff Foundation
+- Status: WORKING
+- Branch: agent/shahin-agent-identity-001
+- Completed: identity registry, work ledger, handoff protocol, registry coverage
+- Remaining: Agent runtime identity allocation, persistent task storage, browser/visual/console/network verification, self-repair loop, notification and soft-live-update integration
+- Latest Commit: 0a015c5e4d3b4057829ca84c0e5beca03ce2b887
+- Deployment: NOT DEPLOYED
+- Live Verification: NOT RUN
+- Next Step: implement runtime task/identity allocation in the isolated Project Agent engine; keep production unchanged until validation
