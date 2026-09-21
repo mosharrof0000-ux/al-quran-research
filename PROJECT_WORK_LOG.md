@@ -213,3 +213,14 @@ A generated icon-sheet image has been recorded as the visual reference for the f
 
 Reference record: `docs/design/MODE_ICON_DESIGN_REFERENCE_2026-09-21.md`
 Reference SHA-256: `170c83ecf42c84ca4c09686fccb32311c2272fe2d15dd4eb4b9be6ebce14c4d1`
+
+
+## WORK-2026-09-21-NORMAL-QURAN-ICON-MODE-V1
+- Status: STORED AS ISOLATED REFERENCE/PILOT ASSETS — NOT LIVE-INTEGRATED
+- User decision: create the ten-icon visual system now and document how it will be used by Reader modes.
+- Reference: user-supplied/generated 10-icon design sheet dated 2026-09-21.
+- Assets: assets/icons/modes/normal-quran-v1/ (10 SVG icons, manifest, README, reference board).
+- Design contract: monochrome line art; fill=none; stroke=currentColor; stroke-width=2; round caps/joins; 64x64 viewBox.
+- Mode contract: normal Quran reading uses this set; Sufi mode must use a separate future asset family and must not overwrite these files.
+- Safety: backup/pre-normal-quran-icons-2026-09-21-v1 was created from main before this asset set is proposed for merge.
+- Integration status: files are stored and documented; no existing reader/icon-engine behavior was replaced.
