@@ -182,3 +182,9 @@ BACKUP-2026-09-21-PRE-MODE-ICON-ASSETS
 **Scope:** General Quran Mode icon assets and their documentation only. No database/backend/live Reader code change.
 
 **Status:** VERIFIED RESTORE PATH
+
+
+BACKUP-2026-09-21-PRE-ICON-MODE-RECONCILIATION
+- Restore point: `backup/pre-standard-islamic-reader-icons-2026-09-21`
+- Purpose: preserve main before icon-mode asset reconciliation.
+- Result: duplicate temporary namespace removed; canonical `general-quran-v1` retained. No live UI/database changes.
