@@ -161,3 +161,43 @@ Safety-branch file updates completed. Production Live Page verification remains 
 
 ### Rollback
 If the live result is broken or rejected, restore the previous known-good state using the backup branch before another design iteration.
+
+
+## WORK-2026-09-21-PROJECT-AGENT-STRENGTHENING-01
+
+**Agent Identity:** শাহীন
+**Agent ID:** agent-শাহীন-system-001
+**Task ID:** TASK-202609212145-agent
+**Status:** IMPLEMENTED ON SAFETY BRANCH — validation pending
+**Branch:** agent/shahin-ai-strengthening-001
+
+### Objective
+Project Agent-কে আরও শক্তিশালী করা, যাতে প্রতিটি কাজের জন্য Bengali human-like identity, Task/Session metadata, governance-first bootstrap এবং নিরাপদ isolated execution বজায় থাকে।
+
+### Verified findings before change
+- MASTER_INSTRUCTION.md, AI_ENTRY_PROTOCOL.md, INSTRUCTION_REGISTRY.md, PROJECT_STATE.md, PROJECT_WORK_LOG.md inspected.
+- Existing isolated Project Agent branch/work found.
+- Project Agent Worker-এ JavaScript syntax corruption পাওয়া যায়: decoded-content লাইনে literal backslash-n ছিল।
+- Identity/work-ledger/handoff documents ছিল, কিন্তু তাদের colocated instructions ছিল না।
+
+### Changes
+- Fixed Project Agent Worker decoding syntax.
+- Added work-type-based Bengali Agent Name selection.
+- Added Task ID, Session ID, Agent ID and work-type metadata generation.
+- Strengthened governance-first system instruction.
+- Added mandatory incomplete-task handoff language.
+- Added colocated instruction files for the Agent Identity, Work Ledger, Handoff Protocol, Worker, Wrangler config, workflow and engine documentation.
+- Registered the new governance instructions in INSTRUCTION_REGISTRY.md.
+
+### Safety
+- Production main was not changed.
+- Project Agent remains isolated to agent/* writes.
+- Merge/deploy capability remains disabled inside the Worker.
+
+### Remaining verification
+- Run Worker syntax/runtime check.
+- Validate isolated health endpoint.
+- Validate authenticated tool call.
+- Validate branch-only write and protected-path rejection.
+- Validate identity metadata in actual Agent response.
+- Only after successful verification consider PR/review and later explicit promotion.
