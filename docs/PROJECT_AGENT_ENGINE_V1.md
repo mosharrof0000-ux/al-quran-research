@@ -28,7 +28,7 @@
 6. সীমিত self-repair; ব্যর্থ হলে BLOCKED রিপোর্ট
 
 ## Gemini tool layer
-Gemini function calling ব্যবহার করে সাতটি tool:
+Gemini function calling ব্যবহার করে আটটি tool:
 1. project_inspect_repo
 2. project_repo_state
 3. project_read_file
@@ -36,6 +36,7 @@ Gemini function calling ব্যবহার করে সাতটি tool:
 5. project_search_code
 6. project_create_branch
 7. project_write_file
+8. project_record_handoff
 
 Gemini নিজে GitHub পরিবর্তন করে না; Worker tool call গ্রহণ করে GitHub API-তে নিরাপদভাবে কাজ সম্পন্ন করে।
 
