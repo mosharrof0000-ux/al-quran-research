@@ -213,3 +213,25 @@ A generated icon-sheet image has been recorded as the visual reference for the f
 
 Reference record: `docs/design/MODE_ICON_DESIGN_REFERENCE_2026-09-21.md`
 Reference SHA-256: `170c83ecf42c84ca4c09686fccb32311c2272fe2d15dd4eb4b9be6ebce14c4d1`
+
+
+## WORK-2026-09-21-MODE-ICON-ASSET-SET-01
+
+**Status:** ASSETS CREATED AND STORED — NOT YET INTEGRATED INTO LIVE UI
+
+### User decision
+ব্যবহারকারী চেয়েছেন সাধারণ কোরআন পড়ার জন্য reference image অনুযায়ী ১০টি minimalist Islamic/Qur'anic icon এখনই তৈরি করে project-এ সংরক্ষণ করতে এবং এগুলোর mode-based ব্যবহারের নিয়ম নথিভুক্ত করতে। ভবিষ্যতে Sufi mode-এর জন্য সম্পূর্ণ আলাদা icon family থাকবে।
+
+### Safety
+- Backup branch: `backup/pre-mode-icon-assets-2026-09-21`
+- Working branch: `feat/mode-icon-assets-2026-09-21`
+- No database/backend/live UI change was made by this asset work.
+
+### Stored assets
+`assets/icons/modes/general-quran-v1/` contains 10 SVG icons plus `manifest.json` and `README.md`.
+
+### Runtime usage rule
+`readingMode === "general-quran"` selects this family. `readingMode === "sufi"` must select a separate Sufi family and must not overwrite or reuse the general family as its design source.
+
+### Integration gate
+Backup → Review → Approve → Integrate → Verify → Live.
