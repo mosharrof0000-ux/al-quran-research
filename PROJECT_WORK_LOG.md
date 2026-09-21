@@ -283,3 +283,40 @@ Verification: all ten SVG asset files were present on the working branch and use
 - Technical contract: SVG, 64x64, fill=none, stroke=currentColor, nominal 1.9–2px line art, round caps/joins.
 - Verification: all ten SVG assets are present on main; audio uses the existing canonical filename audio-tilawat.svg; manifest maps the reader role to that file.
 - Live integration: NOT performed. Existing reader/icon engine behavior remains unchanged pending isolated visual review and approval.
+
+
+## WORK-2026-09-21-PROJECT-AGENT-STRENGTHENING-01
+
+**Agent Identity:** শাহীন
+**Agent ID:** agent-shahin-system-001
+**Task ID:** TASK-202609212145-agent
+**Status:** IMPLEMENTED ON SAFETY BRANCH — validation pending
+**Branch:** agent/shahin-ai-strengthening-002
+
+### Objective
+Project Agent-কে শক্তিশালী করা: Bengali human-like identity, Task/Session metadata, governance-first bootstrap, isolated branch safety এবং handoff continuity।
+
+### Findings
+- Master/entry/governance/state/work-log layers inspected before implementation.
+- Existing isolated Project Agent architecture found.
+- Worker-এর decoded-content অংশে literal backslash-n syntax corruption ছিল।
+- Existing Agent identity/work-ledger/handoff documents-এর colocated instructions অনুপস্থিত ছিল।
+- Earlier Agent branch main থেকে 110 commits পিছিয়ে ছিল; তাই নতুন কাজ current main থেকে fresh safety branch-এ পুনরায় স্থাপন করা হয়েছে।
+
+### Changes
+- Fixed Worker decoding syntax.
+- Added work-type-based Bengali Agent Name selection.
+- Added Task ID, Session ID, Agent ID and work-type metadata.
+- Strengthened governance-first system instruction.
+- Added mandatory incomplete-task handoff requirement.
+- Added colocated instructions for Agent identity, ledger, handoff, Worker, Wrangler, workflow and engine documentation.
+- Added isolated manual deployment workflow with health checks.
+- Registered new instructions in INSTRUCTION_REGISTRY.md.
+
+### Safety
+- main was not modified.
+- Agent writes remain restricted to agent/* branches.
+- Merge and production deployment remain unavailable to the Agent Worker itself.
+
+### Remaining verification
+Worker syntax/runtime, isolated health endpoint, authenticated tool call, protected-path rejection, identity metadata, and end-to-end task logging must be verified before any promotion.
