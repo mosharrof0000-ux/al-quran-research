@@ -240,3 +240,25 @@ Documentation-only governance change. No research dataset, backend entrypoint, R
 
 ### Next verification
 Compare branch with `main`, run syntax/build checks, review UI behavior, then obtain explicit user approval before promotion.
+
+
+## 2026-09-21 — Project Agent Identity and Handoff Foundation
+
+### Agent
+- Agent Name: শাহীন
+- Agent ID: AGENT-SHAHEEN-20260921-001
+- Task ID: TASK-20260921-001
+- Branch: `agent/shaheen-agent-identity-001`
+
+### Added
+- `docs/AGENT_IDENTITY_REGISTRY.md` + instruction
+- `docs/AGENT_WORK_LEDGER.md` + instruction
+- `docs/AGENT_HANDOFF_PROTOCOL.md` + instruction
+- Project Agent Worker identity metadata
+- Instructions for isolated Project Agent Worker/config/deployment workflow
+
+### Purpose
+Every distinct Agent task receives a Bengali human-readable work identity plus unique Agent ID and Task ID. Incomplete work can be handed to a successor without overwriting original history.
+
+### Safety
+Production `main`, live website paths, research datasets and production chat Worker were not promoted or intentionally changed. Work remains isolated on the Agent branch.

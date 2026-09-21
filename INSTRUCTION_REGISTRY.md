@@ -68,6 +68,17 @@ This registry is the dictionary/index of project instructions. It records which 
 | `ui/home-v1/home-v1.js.instruction.md` | `ui/home-v1/home-v1.js` | DRAFT — safety branch |
 | `ui/home-v1/home-v1.css.instruction.md` | `ui/home-v1/home-v1.css` | DRAFT — safety branch |
 
+## Project Agent Governance
+
+| Instruction | Governs | Status |
+|---|---|---|
+| `docs/AGENT_IDENTITY_REGISTRY.md` | Bengali Agent identity and unique task identity policy | ACTIVE |
+| `docs/AGENT_WORK_LEDGER.md` | Visible Agent task audit history | ACTIVE |
+| `docs/AGENT_HANDOFF_PROTOCOL.md` | Incomplete/inherited Agent work continuity | ACTIVE |
+| `backend/project-agent/worker.instruction.md` | Isolated Project Agent Worker | ACTIVE |
+| `backend/project-agent/wrangler.instruction.md` | Isolated Project Agent deployment config | ACTIVE |
+| `.github/workflows/agent-project-engine-deploy.instruction.md` | Isolated Agent deployment workflow | ACTIVE |
+
 ## Audit Records
 
 | Record | Purpose | Status |
@@ -118,6 +129,17 @@ Safety-branch governance work is not production publication. Before promotion to
 ## Migration Rule
 Instructions formerly stored under `docs/instructions/` were migrated by copy → verify → registry update → old-path removal. No governed target file, website path, backend path, data file, or research record was moved as part of this instruction migration.
 
+## Project Agent runtime governance — 2026-09-21 safety branch
+- `backend/project-agent/worker.js.instruction.md` — isolated Worker runtime
+- `backend/project-agent/wrangler.toml.instruction.md` — isolated deployment configuration
+- `docs/PROJECT_AGENT_ENGINE_V1.instruction.md` — engine architecture contract
+
+## Project Agent governance — 2026-09-21 safety branch
+- `docs/AGENT_IDENTITY_REGISTRY.md` — Bengali Agent identity and naming rules
+- `docs/AGENT_WORK_LEDGER.md` — persistent visible task history
+- `docs/AGENT_HANDOFF_PROTOCOL.md` — successor/takeover continuity
+- Their colocated `.instruction.md` files govern these artifacts
+
 ## 2026-09-20 Safety-branch additions
 - Research Intelligence Architecture
 - Private Research Library
@@ -126,4 +148,4 @@ Instructions formerly stored under `docs/instructions/` were migrated by copy �
 - Home v1 Private Research chat tool
 
 ## Status
-ACTIVE — v1.9 on main; safety-branch additions are DRAFT until review/promotion. Canonical live connection map is registered on `main`. Universal startup governance remains in REVIEW on the safety branch and is not promoted to `main`.
+ACTIVE — v2.0 on main; Project Agent identity additions are on the Shahin safety branch until review/promotion. safety-branch additions are DRAFT until review/promotion. Canonical live connection map is registered on `main`. Universal startup governance remains in REVIEW on the safety branch and is not promoted to `main`.
