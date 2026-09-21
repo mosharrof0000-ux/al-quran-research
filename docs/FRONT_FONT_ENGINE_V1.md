@@ -17,7 +17,7 @@ The instruction defines a Dynamic Typography & Visual Presentation Engine coveri
 ## v1 modules
 - Font Registry
 - Typography controls
-- Language-aware typography hooks
+- Language/script-aware typography hooks (not limited to a fixed language set)
 - Color tokens
 - Theme-ready tokens
 - Animation registry
