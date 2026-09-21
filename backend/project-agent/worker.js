@@ -105,6 +105,7 @@ async function executeTool(env,name,args){
  if(name==='project_search_code')return searchCode(env,args);
  if(name==='project_create_branch')return createBranch(env,args);
  if(name==='project_write_file')return writeFile(env,args);
+ if(name==='project_create_task_record')return createTaskRecord(env,meta,args);
  throw new Error('Unknown tool: '+name);
 }
 async function gemini(env,history,meta){
