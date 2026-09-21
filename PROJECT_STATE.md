@@ -309,3 +309,12 @@ Source-level integration verified। Canonical live page-এ browser/AI end-to-e
 The generated icon-sheet is recorded as a design reference only. It defines the general Qur'an reading-mode icon family and establishes a future separate Sufi-mode icon family. No live UI/database change is implied by this record. Canonical custom icon engine remains the technical source.
 
 Reference: `docs/design/MODE_ICON_DESIGN_REFERENCE_2026-09-21.md`
+
+
+## 26. General Quran Mode Icon Assets — 2026-09-21
+
+Status: STORED — NOT YET LIVE-INTEGRATED
+
+A 10-icon production SVG family was created from the approved mode icon reference. Assets are stored under `assets/icons/modes/general-quran-v1/`. The family is reserved for general Qur'an reading mode. Sufi mode will use a separate icon family. No live UI/database change is implied by this asset set.
+
+Integration must remain mode-aware and follow Backup → Review → Approve → Integrate → Verify → Live.
