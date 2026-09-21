@@ -160,3 +160,10 @@ A single canonical automatic writer now controls these live-entrypoint integrati
 **Status:** VERIFIED RESTORE BRANCH CREATED
 
 **Note:** এই restore point source-level বর্তমান অবস্থাকে সংরক্ষণ করে; live browser end-to-end verification এখনও pending।
+
+
+BACKUP-2026-09-21-PRE-MODE-ICON-ASSETS
+- Backup branch: `backup/pre-mode-icon-assets-2026-09-21`
+- Purpose: preserve main before storing the new general Qur'an mode icon family.
+- Working branch: `feat/mode-icon-assets-2026-09-21`
+- Status: safe point created before asset integration work.
