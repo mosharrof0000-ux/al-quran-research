@@ -260,3 +260,12 @@ Backup branch: `backup/pre-mode-icon-assets-2026-09-21`। এই verification �
 
 ### Integration gate
 Backup → Review → Approve → Integrate → Verify → Live.
+
+
+## WORK-2026-09-21-NORMAL-QURAN-ICON-REFERENCE-RECONCILIATION-01
+- Status: VERIFIED / NORMALIZED.
+- Canonical 10-icon family: `assets/icons/modes/general-quran-v1/` with manifest and mode-aware usage rules.
+- A temporary duplicate namespace from this session was removed before live UI integration.
+- Canonical mode ID: `general-quran`; future Sufi mode remains separate.
+- The supplied design reference remains the visual reference; project documentation records its SHA-256 and integration gate.
+- No live reader, database, Quran text, or routing changes were made by this reconciliation.
