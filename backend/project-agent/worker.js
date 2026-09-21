@@ -8,6 +8,8 @@ const DEFAULT_REPO='mosharrof0000-ux/al-quran-research';
 const MAX_FILE=120000;
 const MAX_TURNS=8;
 const VERIFIER_MODEL='gemini-2.5-flash';
+const DEFAULT_MAX_ACTIVE_MS=2*60*60*1000;
+const DEFAULT_MAX_SAME_FAILURES=3;
 
 function cors(origin){
   return {'Access-Control-Allow-Origin':ALLOWED_ORIGINS.includes(origin)?origin:ALLOWED_ORIGINS[0],
@@ -93,6 +95,25 @@ async function loadTask(env,taskId,branch){
   if(!taskId||!isAgentBranch(branch))return null;
   try{return JSON.parse((await readFile(env,{path:'docs/agent-work/runtime/'+taskId+'.json',branch})).content);}catch{return null;}
 }
+function maxActiveMs(env){
+  const n=Number(env.AGENT_MAX_ACTIVE_MS||DEFAULT_MAX_ACTIVE_MS);
+  return Number.isFinite(n)&&n>0?n:DEFAULT_MAX_ACTIVE_MS;
+}
+function maxSameFailures(env){
+  const n=Number(env.AGENT_MAX_SAME_FAILURES||DEFAULT_MAX_SAME_FAILURES);
+  return Number.isFinite(n)&&n>0?Math.floor(n):DEFAULT_MAX_SAME_FAILURES;
+}
+function newActiveWindow(env){
+  const started=Date.now();
+  return {started_at:new Date(started).toISOString(),deadline_at:new Date(started+maxActiveMs(env)).toISOString()};
+}
+function checkTimeLimit(deadlineMs){
+  if(Date.now()>deadlineMs){
+    const e=new Error('ACTIVE_TIME_LIMIT_REACHED');
+    e.code='ACTIVE_TIME_LIMIT_REACHED';
+    throw e;
+  }
+}
 function normalizeCommand(message){return String(message||'').trim().toLowerCase().replace(/[\s\u200b]+/g,' ').replace(/[.!?。！？]+$/,'');}
 async function fingerprint(message){
   const data=new TextEncoder().encode(normalizeCommand(message));
@@ -158,13 +179,14 @@ async function independentVerify(env,identity,answer){
   if(!['VERIFIED','FAILED','REQUIRES_REVIEW'].includes(parsed.status))parsed.status='REQUIRES_REVIEW';
   return {status:parsed.status,reasons:Array.isArray(parsed.reasons)?parsed.reasons.slice(0,8):[],files,branch_sha:ref.object?.sha||null};
 }
-async function gemini(env,history,context){
+async function gemini(env,history,context,deadlineMs,maxFailures){
   if(!env.GEMINI_API_KEY)throw new Error('GEMINI_API_KEY is not configured.');
   const model=env.GEMINI_MODEL||'gemini-2.5-flash';
   const system='তুমি আল-কুরআন গবেষণা প্রকল্পের Project Agent। প্রথমে প্রকল্পের প্রয়োজনীয় ফাইল পড়বে। কখনো main-এ লিখবে না; শুধু নির্ধারিত agent/* branch-এ লিখবে। .github/workflows, database, migrations, validation, quran_research.db এবং schema.sql পরিবর্তন করবে না। কাজের আগে বিদ্যমান কাজ, task state এবং বর্তমান branch বুঝবে। একই task পুনরায় এলে নতুন পরিবর্তন না করে আগের state থেকে resume করবে। কাজ ইতিমধ্যে সম্পন্ন হলে DUPLICATE হিসেবে চিহ্নিত করবে। কোনো tool error পেলে কারণ বুঝে নিরাপদভাবে arguments/path/branch ঠিক করে সীমিত retry করবে; একই ভুল অনন্তবার করবে না। destructive বা অস্পষ্ট পরিবর্তন অনুমান করে করবে না। শেষে কী পড়েছ, কী পরিবর্তন করেছ, branch/commit এবং approval/deployment অবস্থা বাংলায় জানাবে। Merge বা production deploy করতে পারো না।';
   let contents=history.slice();
   const repairBudget=new Map();
   for(let turn=0;turn<MAX_TURNS;turn++){
+    checkTimeLimit(deadlineMs);
     const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+model+':generateContent',{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':env.GEMINI_API_KEY},body:JSON.stringify({systemInstruction:{parts:[{text:system}]},contents:[{role:'user',parts:[{text:context}]},...contents],tools:[{functionDeclarations:TOOLS}],generationConfig:{maxOutputTokens:4096,temperature:0.1}})});
     const data=await r.json(); if(!r.ok)throw new Error('Gemini HTTP '+r.status+': '+String(data?.error?.message||'').slice(0,400));
     const modelContent=data?.candidates?.[0]?.content; if(!modelContent)throw new Error('Gemini response missing content.');
@@ -173,13 +195,14 @@ async function gemini(env,history,context){
     contents.push(modelContent);
     const responses=[];
     for(const part of calls){
+      checkTimeLimit(deadlineMs);
       const fc=part.functionCall;
       const key=fc.name+':'+JSON.stringify(fc.args||{});
       let result;
       try{result=await executeTool(env,fc.name,fc.args||{}); repairBudget.delete(key);}
       catch(e){
         const attempts=Number(repairBudget.get(key)||0);
-        if(attempts<2){
+        if(attempts<maxFailures){
           repairBudget.set(key,attempts+1);
           result={ok:false,error:String(e?.message||e),repair_attempt:attempts+1,repair_instruction:'এই tool call ব্যর্থ হয়েছে। কারণটি বিশ্লেষণ করে নিরাপদভাবে arguments/path/branch ঠিক করে পুনরায় চেষ্টা করো। একই ভুল পুনরাবৃত্তি করো না।'};
         }else{
@@ -212,21 +235,28 @@ export default {async fetch(request,env){
       return json({ok:true,duplicate:true,resumed:false,answer:'এই কাজটি ইতিমধ্যে সম্পন্ন হয়েছে; একই Task আবার প্রয়োগ করা হয়নি।',provider:'task-registry',agent_version:env.AGENT_VERSION||'1.1.0',isolated:true,merge:false,deploy:false,identity:{...identity,task_state:'DUPLICATE',resume_count:Number(prior.resume_count||0),last_commit:prior.last_commit||null}},200,origin);
     }
     const resumeCount=Number(prior?.resume_count||0)+(prior?1:0);
-    await persistTask(env,identity,{state:prior?'RESUMING':'RECEIVED',resume_count:resumeCount,last_commit:prior?.last_commit||null});
+    const window=newActiveWindow(env);
+    await persistTask(env,identity,{state:prior?'RESUMING':'RECEIVED',resume_count:resumeCount,last_commit:prior?.last_commit||null,started_at:window.started_at,deadline_at:window.deadline_at,max_active_ms:maxActiveMs(env),max_same_failures:maxSameFailures(env),timeout_policy:'TIME_LIMIT_REACHED -> CHECKPOINTED -> WAITING_FOR_RECOVERY'});
     const context='TASK CONTEXT\\n'+JSON.stringify({identity,previous_state:prior||null,rule:'If previous state is incomplete, resume from last verified step. Do not repeat already committed changes.'})+'\\nUSER COMMAND\\n'+message;
     let result;
     try{
-      result=await gemini(env,[{role:'user',parts:[{text:message}]}],context);
+      result=await gemini(env,[{role:'user',parts:[{text:message}]}],context,Date.parse(window.deadline_at),maxSameFailures(env));
     }catch(e){
-      await persistTask(env,identity,{state:'BLOCKED',error:String(e?.message||e).slice(0,600),resume_count:resumeCount});
+      if(e?.code==='ACTIVE_TIME_LIMIT_REACHED'){
+        await persistTask(env,identity,{state:'WAITING_FOR_RECOVERY',timeout_state:'TIME_LIMIT_REACHED',resume_count:resumeCount,last_commit:prior?.last_commit||null,started_at:window.started_at,deadline_at:window.deadline_at,error:'Active execution window exceeded; checkpoint preserved for a later resume.',resumable:true});
+      }else{
+        await persistTask(env,identity,{state:'BLOCKED',error:String(e?.message||e).slice(0,600),resume_count:resumeCount});
+      }
       throw e;
     }
+    checkTimeLimit(Date.parse(window.deadline_at));
     const verification=await independentVerify(env,identity,result.answer);
     const verified=verification.status==='VERIFIED';
     const finalState={state:verified?'HANDOFF_COMPLETE':'READY_FOR_REVIEW',verification_status:verification.status,verification_reasons:verification.reasons,resume_count:resumeCount,last_commit:null,answer:result.answer,provider:result.model};
     const persisted=await persistTask(env,identity,finalState);
-    return json({ok:verified,duplicate:false,resumed:Boolean(prior),answer:result.answer,provider:result.model,verification,agent_version:env.AGENT_VERSION||'1.2.0',isolated:true,merge:false,deploy:false,identity:{...identity,task_state:verified?'HANDOFF_COMPLETE':'READY_FOR_REVIEW',resume_count:resumeCount,persisted:Boolean(persisted?.commit_sha),last_commit:persisted?.commit_sha||null}},verified?200:409,origin);
+    return json({ok:verified,duplicate:false,resumed:Boolean(prior),answer:result.answer,provider:result.model,verification,agent_version:env.AGENT_VERSION||'1.2.0',isolated:true,merge:false,deploy:false,time_policy:{max_active_ms:maxActiveMs(env),max_same_failures:maxSameFailures(env),active_window_started_at:window.started_at,active_window_deadline_at:window.deadline_at},identity:{...identity,task_state:verified?'HANDOFF_COMPLETE':'READY_FOR_REVIEW',resume_count:resumeCount,persisted:Boolean(persisted?.commit_sha),last_commit:persisted?.commit_sha||null}},verified?200:409,origin);
   }catch(e){
-    return json({ok:false,error:'PROJECT_AGENT_FAILED',detail:String(e?.message||e).slice(0,600),identity:identity?{...identity,task_state:'BLOCKED'}:null},500,origin);
+    const timedOut=e?.code==='ACTIVE_TIME_LIMIT_REACHED';
+    return json({ok:false,error:timedOut?'TIME_LIMIT_REACHED':'PROJECT_AGENT_FAILED',detail:String(e?.message||e).slice(0,600),resumable:timedOut,identity:identity?{...identity,task_state:timedOut?'WAITING_FOR_RECOVERY':'BLOCKED'}:null},timedOut?408:500,origin);
   }
 }};
