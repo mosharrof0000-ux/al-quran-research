@@ -5,4 +5,4 @@ workers_dev = true
 
 [vars]
 PROJECT_REPO = "mosharrof0000-ux/al-quran-research"
-AGENT_VERSION = "1.1.0"
+AGENT_VERSION = "1.2.0"
