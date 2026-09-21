@@ -21,9 +21,10 @@
   letter-spacing: var(--aqr-text-letter-spacing);
 }
 
-.aqr-text[data-aqr-language="arabic"] { color: var(--aqr-color-arabic); }
-.aqr-text[data-aqr-language="bengali"] { color: var(--aqr-color-bengali); }
-.aqr-text[data-aqr-language="english"] { color: var(--aqr-color-english); }
+.aqr-text[data-aqr-language] { color: var(--aqr-color-text); }
+.aqr-text[data-aqr-script] { font-family: var(--aqr-font-family, inherit); }
+.aqr-text[data-aqr-direction="rtl"] { direction: rtl; text-align: right; }
+.aqr-text[data-aqr-direction="ltr"] { direction: ltr; text-align: left; }
 
 @keyframes aqr-fade-in { from { opacity:0 } to { opacity:1 } }
 @keyframes aqr-slide-in { from { opacity:0; transform:translateY(12px) } to { opacity:1; transform:none } }
