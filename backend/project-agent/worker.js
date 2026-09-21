@@ -14,6 +14,7 @@ const AGENT_NAMES=[
  ['database','তানভীর'],['ডেটা','তানভীর'],['data','তানভীর'],['backend','ফারহান'],
  ['worker','ফারহান'],['workflow','ইমরান'],['security','সাজিদ']
 ];
+function branchSlug(name){return ({'শাহীন':'shaheen','শামীম':'shamim','সুমন':'sumon','রাকিব':'rakib','নাঈম':'naim','তানভীর':'tanvir','ফারহান':'farhan','ইমরান':'imran','সাজিদ':'sajid','আরিফ':'arif'}[name]||'agent').toLowerCase();}
 function makeIdentity(message,sessionId,parentTaskId){
  const lower=String(message||'').toLowerCase();
  const match=AGENT_NAMES.find(([key])=>lower.includes(key));
@@ -23,7 +24,8 @@ function makeIdentity(message,sessionId,parentTaskId){
  const taskId='TASK-'+stamp+'-'+suffix;
  const agentId='AGENT-'+name+'-'+stamp+'-'+suffix;
  const taskType=match?match[0]:'general';
- return {agent_name_bn:name,agent_id:agentId,task_id:taskId,task_type:taskType,session_id:sessionId||'SESSION-'+stamp,parent_task_id:parentTaskId||null};
+ const branch='agent/'+branchSlug(name)+'-'+taskId.toLowerCase().replace(/[^a-z0-9-]/g,'-').slice(0,48);
+ return {agent_name_bn:name,agent_id:agentId,task_id:taskId,task_type:taskType,session_id:sessionId||'SESSION-'+stamp,parent_task_id:parentTaskId||null,branch,status:'RECEIVED'};
 }
 
 function cors(origin){return {'Access-Control-Allow-Origin':ALLOWED_ORIGINS.includes(origin)?origin:ALLOWED_ORIGINS[0],'Access-Control-Allow-Methods':'POST, GET, OPTIONS','Access-Control-Allow-Headers':'Content-Type, Authorization','Content-Type':'application/json; charset=utf-8','Vary':'Origin'};}
@@ -103,10 +105,12 @@ async function executeTool(env,name,args){
  if(name==='project_write_file')return writeFile(env,args);
  throw new Error('Unknown tool: '+name);
 }
+function taskPath(identity){return 'docs/agent-tasks/'+identity.task_id+'.md';}
+function taskRecord(identity,extra=''){return `# Task ${identity.task_id}\n\n- Agent Name: ${identity.agent_name_bn}\n- Agent ID: ${identity.agent_id}\n- Session ID: ${identity.session_id}\n- Task Type: ${identity.task_type}\n- Parent Task ID: ${identity.parent_task_id||'none'}\n- Branch: ${identity.branch}\n- Status: ${identity.status}\n- Updated: ${new Date().toISOString()}\n\n## Audit\nOperational audit only; hidden chain-of-thought is not stored.\n\n${extra}\n`}
 async function gemini(env,history,identity){
  if(!env.GEMINI_API_KEY)throw new Error('GEMINI_API_KEY is not configured.');
  const model=env.GEMINI_MODEL||'gemini-2.5-flash';
- const system='তুমি আল-কুরআন গবেষণা প্রকল্পের Project Agent। কাজ শুরুর আগে docs/AGENT_IDENTITY_REGISTRY.md, docs/AGENT_WORK_LEDGER.md এবং docs/AGENT_HANDOFF_PROTOCOL.md পড়বে। প্রতিটি কাজের দৃশ্যমান audit record বজায় রাখবে। প্রতিটি কাজের পরিচয় হিসেবে Task ID, Agent Name এবং Agent ID ব্যবহার করবে। এই task-এর পরিচয় হলো '+JSON.stringify(identity)+'। তুমি প্রকল্পের ফাইল পড়তে, বিশ্লেষণ করতে এবং নিরাপদ agent/* branch-এ text file তৈরি/সংশোধন করতে পারো। কখনো main-এ লিখবে না। .github/workflows, database, migrations, validation, quran_research.db এবং schema.sql পরিবর্তন করবে না। প্রথমে প্রয়োজনীয় ফাইল পড়বে; অনুমান করে code rewrite করবে না। পরিবর্তনের আগে বর্তমান content ও প্রকল্পের নিয়ম বুঝবে। কাজ শেষে কী পড়েছ, কী পরিবর্তন করেছ, কোন branch-এ করেছ এবং কী user approval/deployment-এর অপেক্ষায় আছে তা বাংলায় বলবে। তুমি merge বা production deploy করতে পারো না এবং এমন দাবি করবে না।';
+ const system='তুমি আল-কুরআন গবেষণা প্রকল্পের Project Agent। এই task-এর সব write অবশ্যই '+identity.branch+' branch-এ হবে। কাজ শুরুর আগে docs/AGENT_IDENTITY_REGISTRY.md, docs/AGENT_WORK_LEDGER.md এবং docs/AGENT_HANDOFF_PROTOCOL.md পড়বে। প্রতিটি কাজের দৃশ্যমান audit record বজায় রাখবে। প্রতিটি কাজের পরিচয় হিসেবে Task ID, Agent Name এবং Agent ID ব্যবহার করবে। এই task-এর পরিচয় হলো '+JSON.stringify(identity)+'। তুমি প্রকল্পের ফাইল পড়তে, বিশ্লেষণ করতে এবং নিরাপদ agent/* branch-এ text file তৈরি/সংশোধন করতে পারো। কখনো main-এ লিখবে না। .github/workflows, database, migrations, validation, quran_research.db এবং schema.sql পরিবর্তন করবে না। প্রথমে প্রয়োজনীয় ফাইল পড়বে; অনুমান করে code rewrite করবে না। পরিবর্তনের আগে বর্তমান content ও প্রকল্পের নিয়ম বুঝবে। কাজ শেষে কী পড়েছ, কী পরিবর্তন করেছ, কোন branch-এ করেছ এবং কী user approval/deployment-এর অপেক্ষায় আছে তা বাংলায় বলবে। তুমি merge বা production deploy করতে পারো না এবং এমন দাবি করবে না।';
  let contents=history.slice();
  for(let turn=0;turn<MAX_TURNS;turn++){
   const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+model+':generateContent',{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':env.GEMINI_API_KEY},body:JSON.stringify({systemInstruction:{parts:[{text:system}]},contents,tools:[{functionDeclarations:TOOLS}],generationConfig:{maxOutputTokens:4096,temperature:0.1}})});
@@ -139,7 +143,12 @@ export default {async fetch(request,env){
   const sessionId=String(body?.session_id||request.headers.get('X-Agent-Session')||'').trim();
   const parentTaskId=String(body?.parent_task_id||'').trim();
   const identity=makeIdentity(message,sessionId,parentTaskId);
+  await createBranch(env,{branch:identity.branch,base:String(body?.base_branch||'main')});
+  identity.status='WORKING';
+  await writeFile(env,{path:taskPath(identity),branch:identity.branch,content:taskRecord(identity,`## User request\n${message}\n\n## Lifecycle\nRECEIVED → INSPECTING → WORKING\n`),message:`Agent task ${identity.task_id} received`});
   const result=await gemini(env,[{role:'user',parts:[{text:message}]}],identity);
+  identity.status='HANDOFF_REQUIRED';
+  await writeFile(env,{path:taskPath(identity),branch:identity.branch,content:taskRecord(identity,`## User request\n${message}\n\n## Agent result\n${result.answer||'(no textual answer)'}\n\n## Lifecycle\nRECEIVED → INSPECTING → WORKING → HANDOFF_REQUIRED\n\n## Verification\nRuntime response completed; browser/live verification and production promotion remain separate gates.\n`),message:`Agent task ${identity.task_id} audit update`});
   return json({ok:true,identity,answer:result.answer,provider:result.model,agent_version:env.AGENT_VERSION||'1.0.0',isolated:true,merge:false,deploy:false},200,origin);
  }catch(e){return json({ok:false,error:'PROJECT_AGENT_FAILED',detail:String(e?.message||e).slice(0,600)},500,origin);}
 }};
