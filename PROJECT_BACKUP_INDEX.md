@@ -167,3 +167,6 @@ BACKUP-2026-09-21-PRE-MODE-ICON-ASSETS
 - Purpose: preserve main before storing the new general Qur'an mode icon family.
 - Working branch: `feat/mode-icon-assets-2026-09-21`
 - Status: safe point created before asset integration work.
+
+
+- `BACKUP-2026-09-21-PRE-NORMAL-QURAN-ICON-MODE`: backup branch `backup/pre-standard-islamic-reader-icons-2026-09-21` created before storing Normal Quran icon assets. New assets were stored under a separate namespace; no existing live UI/database data was overwritten.
