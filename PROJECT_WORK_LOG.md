@@ -235,3 +235,21 @@ Reference SHA-256: `170c83ecf42c84ca4c09686fccb32311c2272fe2d15dd4eb4b9be6ebce14
 
 ### Integration gate
 Backup → Review → Approve → Integrate → Verify → Live.
+
+
+## WORK-2026-09-21-NORMAL-MODE-ICON-ASSET-SET-01
+
+Status: CREATED AND STORED — ASSET-ONLY; NOT YET LIVE-WIRED
+
+User approved the supplied icon-sheet as the Normal Qur'an Reader visual reference and requested the icon set be created, stored in the project, and its usage documented. A separate Sufi icon family will be created later and will not overwrite the Normal family.
+
+Safety point:
+- Backup branch: backup/pre-normal-mode-icon-set-2026-09-21
+- Working branch: feat/normal-quran-mode-icon-set-v1-2026-09-21-r2
+
+Created:
+- assets/icons/modes/normal-v1/ — 10 SVG icons + icon-manifest.json + README.md
+- docs/design/MODE_ICON_USAGE_2026-09-21.md
+
+Verification:
+All ten SVG asset files are present in the working branch and use the required monochrome/currentColor line-art contract. No live UI/database/backend integration was made. Runtime mode switching remains a later integration step.
