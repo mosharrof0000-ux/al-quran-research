@@ -233,6 +233,7 @@ export default {async fetch(request,env){
   const auth=request.headers.get('Authorization')||'';
   if(!env.AGENT_ACCESS_TOKEN||auth!=='Bearer '+env.AGENT_ACCESS_TOKEN)return json({ok:false,error:'Unauthorized'},401,origin);
   let identity=null;
+  let activeTask=null;
   try{
     const body=await request.json();
     const message=String(body?.message||'').trim();
