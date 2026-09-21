@@ -63,6 +63,27 @@ async function searchCode(env,args){
  const data=await gh(env,'/search/code?q='+encodeURIComponent(q+' repo:'+repo(env)));
  return (data.items||[]).slice(0,30).map(x=>({path:x.path,html_url:x.html_url}));
 }
+async function fetchPullRequest(env,args){
+ const n=Number(args.number);if(!Number.isInteger(n)||n<1)throw new Error('PR number প্রয়োজন।');
+ const data=await gh(env,'/repos/'+repo(env)+'/pulls/'+n);
+ return {number:data.number,state:data.state,draft:data.draft,merged:data.merged,mergeable:data.mergeable,base:data.base?.ref,head:data.head?.ref,head_sha:data.head?.sha,title:data.title,url:data.html_url};
+}
+async function searchPullRequests(env,args){
+ const q=String(args.query||'').trim();if(!q)throw new Error('PR search query প্রয়োজন।');
+ const data=await gh(env,'/search/issues?q='+encodeURIComponent(q+' repo:'+repo(env)+' is:pr'));
+ return (data.items||[]).slice(0,20).map(x=>({number:x.number,title:x.title,state:x.state,draft:x.draft||false,url:x.html_url}));
+}
+async function fetchCommit(env,args){
+ const sha=String(args.sha||'').trim();if(!sha)throw new Error('commit SHA প্রয়োজন।');
+ const data=await gh(env,'/repos/'+repo(env)+'/commits/'+encodeURIComponent(sha));
+ return {sha:data.sha,message:data.commit?.message,author:data.commit?.author,html_url:data.html_url,files:(data.files||[]).map(x=>({filename:x.filename,status:x.status,additions:x.additions,deletions:x.deletions,changes:x.changes}))};
+}
+async function compareRefs(env,args){
+ const base=String(args.base||'').trim(),head=String(args.head||'').trim();
+ if(!base||!head)throw new Error('base এবং head প্রয়োজন।');
+ const data=await gh(env,'/repos/'+repo(env)+'/compare/'+encodeURIComponent(base)+'...'+encodeURIComponent(head));
+ return {status:data.status,ahead_by:data.ahead_by,behind_by:data.behind_by,total_commits:data.total_commits,files:(data.files||[]).map(x=>({filename:x.filename,status:x.status,additions:x.additions,deletions:x.deletions,changes:x.changes}))};
+}
 async function createBranch(env,args){
  const branch=String(args.branch||''),base=String(args.base||'main');
  if(!isAgentBranch(branch))throw new Error('শুধু agent/* branch তৈরি করা যাবে।');
@@ -85,6 +106,10 @@ const TOOLS=[
  {name:'project_read_file',description:'Read a project file before analyzing or editing it.',parameters:{type:'object',properties:{path:{type:'string'},branch:{type:'string'}},required:['path']}},
  {name:'project_list_directory',description:'List a project directory.',parameters:{type:'object',properties:{path:{type:'string'},branch:{type:'string'}},required:['path']}},
  {name:'project_search_code',description:'Search repository code and documentation.',parameters:{type:'object',properties:{query:{type:'string'}},required:['query']}},
+ {name:'project_fetch_pull_request',description:'Inspect a pull request before taking over or reviewing work.',parameters:{type:'object',properties:{number:{type:'integer'}},required:['number']}},
+ {name:'project_search_pull_requests',description:'Find related pull requests and prior agent work.',parameters:{type:'object',properties:{query:{type:'string'}},required:['query']}},
+ {name:'project_fetch_commit',description:'Inspect a commit, changed files and author metadata.',parameters:{type:'object',properties:{sha:{type:'string'}},required:['sha']}},
+ {name:'project_compare_refs',description:'Compare a work branch against main or another approved ref before review.',parameters:{type:'object',properties:{base:{type:'string'},head:{type:'string'}},required:['base','head']}},
  {name:'project_create_branch',description:'Create an isolated agent/* branch. Use the assigned agent identity in the branch name.',parameters:{type:'object',properties:{branch:{type:'string'},base:{type:'string'}},required:['branch']}},
  {name:'project_write_file',description:'Create or replace a text file only on an agent/* branch.',parameters:{type:'object',properties:{path:{type:'string'},branch:{type:'string'},content:{type:'string'},message:{type:'string'}},required:['path','branch','content','message']}}
 ];
@@ -92,6 +117,10 @@ async function executeTool(env,name,args){
  if(name==='project_read_file')return readFile(env,args);
  if(name==='project_list_directory')return listDirectory(env,args);
  if(name==='project_search_code')return searchCode(env,args);
+ if(name==='project_fetch_pull_request')return fetchPullRequest(env,args);
+ if(name==='project_search_pull_requests')return searchPullRequests(env,args);
+ if(name==='project_fetch_commit')return fetchCommit(env,args);
+ if(name==='project_compare_refs')return compareRefs(env,args);
  if(name==='project_create_branch')return createBranch(env,args);
  if(name==='project_write_file')return writeFile(env,args);
  throw new Error('Unknown tool: '+name);
@@ -131,7 +160,7 @@ Task ID: ${task}
 export default {async fetch(request,env){
  const origin=request.headers.get('Origin')||'';
  if(request.method==='OPTIONS')return new Response(null,{status:204,headers:cors(origin)});
- if(request.method==='GET')return json({ok:true,service:'al-quran-research-project-agent',version:env.AGENT_VERSION||'1.1.0',isolated:true,write_scope:'agent/* only',merge:false,deploy:false,identity_registry:true,task_handoff:true},200,origin);
+ if(request.method==='GET')return json({ok:true,service:'al-quran-research-project-agent',version:env.AGENT_VERSION||'1.2.0',isolated:true,write_scope:'agent/* only',merge:false,deploy:false,identity_registry:true,task_handoff:true},200,origin);
  if(request.method!=='POST')return json({ok:false,error:'POST/GET only'},405,origin);
  const auth=request.headers.get('Authorization')||'';
  if(!env.AGENT_ACCESS_TOKEN||auth!=='Bearer '+env.AGENT_ACCESS_TOKEN)return json({ok:false,error:'Unauthorized'},401,origin);
@@ -139,8 +168,8 @@ export default {async fetch(request,env){
   const body=await request.json();const message=String(body?.message||'').trim();
   if(!message)return json({ok:false,error:'message required'},400,origin);
   if(message.length>10000)return json({ok:false,error:'message too large'},413,origin);
-  const identity=pickIdentity(message), task=taskId(identity);
+  const identity=pickIdentity(message), task=taskId(identity), session=String(body?.session_id||'SESSION-'+crypto.randomUUID().slice(0,8)), parent_task=String(body?.parent_task_id||'');
   const result=await gemini(env,[{role:'user',parts:[{text:message}]}],identity.name,task);
-  return json({ok:true,answer:result.answer,provider:result.model,agent_version:env.AGENT_VERSION||'1.1.0',task_id:task,agent_name:identity.name,agent_role:identity.code,isolated:true,merge:false,deploy:false},200,origin);
+  return json({ok:true,answer:result.answer,provider:result.model,agent_version:env.AGENT_VERSION||'1.2.0',task_id:task,agent_name:identity.name,agent_role:identity.code,session_id:session,parent_task_id:parent_task||null,branch_hint:'agent/'+identity.code+'-'+task.toLowerCase(),isolated:true,merge:false,deploy:false},200,origin);
  }catch(e){return json({ok:false,error:'PROJECT_AGENT_FAILED',detail:String(e?.message||e).slice(0,600)},500,origin);}
 }};
