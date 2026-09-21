@@ -9,6 +9,8 @@ const MAX_FILE=120000;
 const MAX_TURNS=8;
 const MAX_TASK_ID=80;
 const MAX_AGENT_NAME=80;
+const TASK_STATES=['RECEIVED','INSPECTING','PLANNED','WORKING','TESTING','REPAIRING','VALIDATED','READY_FOR_REVIEW','APPROVED','DEPLOYING','LIVE_VERIFIED','NOTIFIED','HANDOFF_COMPLETE','BLOCKED','ROLLED_BACK'];
+const NAME_BY_WORK={chat:'শামীম',ui:'শামীম',icon:'শাহীন',reader:'সুমন',data:'ফারহান',notification:'রাকিব',browser:'নাঈম',verification:'নাঈম',security:'তানভীর',research:'আরিফ',general:'সোহেল'};
 const TASK_DIR='docs/agent-tasks/';
 const TASK_STATES=['RECEIVED','INSPECTING','PLANNED','WORKING','TESTING','REPAIRING','VALIDATED','READY_FOR_REVIEW','APPROVED','DEPLOYING','LIVE_VERIFIED','NOTIFIED','HANDOFF_COMPLETE','BLOCKED','ROLLED_BACK'];
 
@@ -73,7 +75,18 @@ async function writeFile(env,args){
  return {path,branch,created:!existing?.sha,commit_sha:data.commit?.sha||null,blob_sha:data.content?.sha||null};
 }
 function cleanMeta(value,max){return String(value||'').trim().slice(0,max);}
-function taskMeta(body){return {task_id:cleanMeta(body?.task_id,MAX_TASK_ID)||null,agent_name:cleanMeta(body?.agent_name,MAX_AGENT_NAME)||null,agent_id:cleanMeta(body?.agent_id,MAX_TASK_ID)||null,session_id:cleanMeta(body?.session_id,MAX_TASK_ID)||null,parent_task_id:cleanMeta(body?.parent_task_id,MAX_TASK_ID)||null,work_type:cleanMeta(body?.work_type,MAX_AGENT_NAME)||null};}
+function taskMeta(body){
+ const now=Date.now().toString(36).toUpperCase();
+ const work=cleanMeta(body?.work_type,MAX_AGENT_NAME)||'general';
+ const key=work.toLowerCase();
+ const agentName=cleanMeta(body?.agent_name,MAX_AGENT_NAME)||Object.entries(NAME_BY_WORK).find(([k])=>key.includes(k))?.[1]||NAME_BY_WORK.general;
+ const taskId=cleanMeta(body?.task_id,MAX_TASK_ID)||`TASK-${now}`;
+ const agentId=cleanMeta(body?.agent_id,MAX_TASK_ID)||`AGENT-${now}`;
+ const sessionId=cleanMeta(body?.session_id,MAX_TASK_ID)||`SESSION-${now}`;
+ const requested=cleanMeta(body?.status,MAX_AGENT_NAME)||'RECEIVED';
+ const status=TASK_STATES.includes(requested)?requested:'RECEIVED';
+ return {task_id:taskId,agent_name:agentName,agent_id:agentId,session_id:sessionId,parent_task_id:cleanMeta(body?.parent_task_id,MAX_TASK_ID)||null,work_type:work,status,branch:cleanMeta(body?.branch,MAX_AGENT_NAME)||null};
+}
 function taskPath(taskId){
  const id=cleanMeta(taskId,MAX_TASK_ID); if(!/^[A-Za-z0-9_-]+$/.test(id)) throw new Error('Invalid Task ID.');
  return TASK_DIR+id+'.md';
@@ -144,6 +157,6 @@ export default {async fetch(request,env){
   if(message.length>10000)return json({ok:false,error:'message too large'},413,origin);
   const meta=taskMeta(body);
   const result=await gemini(env,[{role:'user',parts:[{text:message}]}],meta);
-  return json({ok:true,answer:result.answer,provider:result.model,agent_version:env.AGENT_VERSION||'1.0.0',isolated:true,merge:false,deploy:false,task:meta},200,origin);
+  return json({ok:true,answer:result.answer,provider:result.model,agent_version:env.AGENT_VERSION||'1.0.0',isolated:true,merge:false,deploy:false,task:{...meta,status:'WORKING',next_status:'TESTING'}},200,origin);
  }catch(e){return json({ok:false,error:'PROJECT_AGENT_FAILED',detail:String(e?.message||e).slice(0,600)},500,origin);}
 }};
