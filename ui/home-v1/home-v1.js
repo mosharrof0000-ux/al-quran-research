@@ -2,6 +2,24 @@ const CHAT_ENDPOINT='https://al-quran-research.mosharrof0000.workers.dev';
 const PRIVATE_RESEARCH_ENDPOINT=CHAT_ENDPOINT+'/private-research';
 const toastEl=document.getElementById('toast');
 function toast(t){toastEl.textContent=t;toastEl.classList.add('show');clearTimeout(window.__toast);window.__toast=setTimeout(()=>toastEl.classList.remove('show'),1800)}
+const AQR_AI_ICON_NAMES=new Set(['quran','ayah','research','analysis','translation','tafsir','document','info','verified','success','user','settings','bookmark','reference','warning']);
+const AQR_AI_ICON_FALLBACKS=[['গবেষণা','research'],['বিশ্লেষণ','analysis'],['অনুবাদ','translation'],['তাফসির','tafsir'],['আয়াত','ayah'],['আয়াত','ayah'],['কুরআন','quran'],['সূরা','quran'],['যাচাই','verified'],['তথ্য','info']];
+function iconNameFromQuestion(q){for(const [word,name] of AQR_AI_ICON_FALLBACKS)if(String(q||'').includes(word))return name;return 'quran'}
+function renderAiIcon(body,iconName){
+  const name=AQR_AI_ICON_NAMES.has(iconName)?iconName:'quran';
+  const holder=document.createElement('div');holder.className='ai-semantic-icon';holder.setAttribute('aria-label','AI নির্বাচিত আইকন');
+  holder.appendChild(AQRIcon.create(name,{color:'#123A63',size:24,strokeWidth:2.4,title:name}));
+  body.prepend(holder);
+}
+function renderGeminiAnswer(body,text,question){
+  const raw=String(text||'');
+  const match=raw.match(/\\[\\[AQR_ICON:(quran|ayah|research|analysis|translation|tafsir|document|info|verified|success|user|settings|bookmark|reference|warning)\\]\\]/i);
+  const icon=match?match[1].toLowerCase():iconNameFromQuestion(question);
+  const clean=raw.replace(/\\[\\[AQR_ICON:[^\\]]+\\]\\]/gi,'').trim();
+  body.textContent=clean;
+  renderAiIcon(body,icon);
+  return icon;
+}
 const drawer=document.getElementById('drawer');
 const quranHome=document.getElementById('quranHome');
 const sourceList=document.getElementById('sourceList');
@@ -112,7 +130,7 @@ async function shareAiMessage(text){
  await copyAiMessage(text);toast('শেয়ার সুবিধা না থাকায় উত্তরটি কপি করা হয়েছে')
 }
 function setBusy(busy){document.getElementById('sendBtn').disabled=busy;document.getElementById('sendBtn').textContent=busy?'…':'↑'}
-async function sendQuestion(){const prompt=document.getElementById('prompt');const q=prompt.value.trim();if(!q){toast('প্রশ্ন লিখুন বা বলুন');return}sessionStorage.setItem('aqr:lastQuestion',q);document.getElementById('welcome').style.display='none';addMessage(q,'user');const readerJump=parseReaderJump(q);prompt.value='';if(readerJump)openReaderAt(readerJump.sura,readerJump.ayah,readerJump.source);setBusy(true);const pending=addMessage('উত্তর তৈরি হচ্ছে…','ai pending');try{const response=await fetch(CHAT_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:q,mode:'general'})});let data={};try{data=await response.json()}catch{}if(!response.ok)throw new Error(data.error||'AI সংযোগে সমস্যা হয়েছে।');pending.querySelector('.message-body').textContent=data.answer||'AI কোনো উত্তর দেয়নি。';if(data.provider)pending.dataset.provider=data.provider;if(pending.__actions)pending.__actions.hidden=false}catch(error){pending.querySelector('.message-body').textContent='দুঃখিত, AI সংযোগে সমস্যা হয়েছে। আবার চেষ্টা করুন।';if(pending.__actions)pending.__actions.hidden=false;toast(String(error.message||error))}finally{pending.classList.remove('pending');setBusy(false)}}
+async function sendQuestion(){const prompt=document.getElementById('prompt');const q=prompt.value.trim();if(!q){toast('প্রশ্ন লিখুন বা বলুন');return}sessionStorage.setItem('aqr:lastQuestion',q);document.getElementById('welcome').style.display='none';addMessage(q,'user');const readerJump=parseReaderJump(q);prompt.value='';if(readerJump)openReaderAt(readerJump.sura,readerJump.ayah,readerJump.source);setBusy(true);const pending=addMessage('উত্তর তৈরি হচ্ছে…','ai pending');try{const response=await fetch(CHAT_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:q+'\\n\\n[UI নির্দেশনা: এই উত্তরের শেষে একটি UI আইকন নির্বাচন করুন এবং শুধু এই ফরম্যাটে দিন: [[AQR_ICON:quran]] বা [[AQR_ICON:ayah]] বা [[AQR_ICON:research]] বা [[AQR_ICON:analysis]] বা [[AQR_ICON:translation]] বা [[AQR_ICON:tafsir]] বা [[AQR_ICON:document]] বা [[AQR_ICON:info]] বা [[AQR_ICON:verified]]. এই ট্যাগটি উত্তরটির শেষে রাখুন; অন্য কোনো আইকন লাইব্রেরি ব্যবহার করবেন না।]',mode:'general'})});let data={};try{data=await response.json()}catch{}if(!response.ok)throw new Error(data.error||'AI সংযোগে সমস্যা হয়েছে।');const selectedIcon=renderGeminiAnswer(pending.querySelector('.message-body'),data.answer||'AI কোনো উত্তর দেয়নি。',q);pending.dataset.icon=selectedIcon;if(data.provider)pending.dataset.provider=data.provider;if(pending.__actions)pending.__actions.hidden=false}catch(error){pending.querySelector('.message-body').textContent='দুঃখিত, AI সংযোগে সমস্যা হয়েছে। আবার চেষ্টা করুন।';if(pending.__actions)pending.__actions.hidden=false;toast(String(error.message||error))}finally{pending.classList.remove('pending');setBusy(false)}}
 function loadActionBarDemo(){
  if(location.hash!=='#actionbar-demo')return;
  document.getElementById('welcome').style.display='none';
