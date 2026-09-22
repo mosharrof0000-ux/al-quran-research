@@ -1,0 +1,11 @@
+name = "al-quran-research-project-agent"
+main = "worker.js"
+compatibility_date = "2026-09-20"
+workers_dev = true
+account_id = "5deb168bbc31c47db0419913860fce21"
+
+[vars]
+PROJECT_REPO = "mosharrof0000-ux/al-quran-research"
+AGENT_VERSION = "1.3.1"
+AGENT_MAX_ACTIVE_MS = "7200000"
+AGENT_MAX_SAME_FAILURES = "3"

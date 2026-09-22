@@ -1,0 +1,111 @@
+name: Deploy Isolated Project Agent Engine
+# Autonomous AI activation gate: deployment -> runtime -> E2E -> verification
+
+on:
+  push:
+    branches:
+      - agent/project-engine-v1-isolated
+    paths:
+      - 'backend/project-agent/**'
+      - '.github/workflows/agent-project-engine-deploy.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy-agent-engine:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout isolated branch
+        uses: actions/checkout@v6
+
+      - name: Deploy isolated Worker
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          workingDirectory: backend/project-agent
+          command: deploy --name al-quran-research-project-agent
+
+      - name: Ensure isolated workers.dev subdomain is enabled
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          set -euo pipefail
+          ACCOUNT_ID='5deb168bbc31c47db0419913860fce21'
+          SCRIPT='al-quran-research-project-agent'
+          API="https://api.cloudflare.com/client/v4/accounts/$ACCOUNT_ID/workers/scripts/$SCRIPT/subdomain"
+          curl -fsS --retry 5 --retry-all-errors --retry-delay 2 \
+            -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+            -H 'Content-Type: application/json' \
+            -X POST "$API" \
+            --data '{"enabled":true,"previews_enabled":true}' | jq .
+          curl -fsS --retry 5 --retry-all-errors --retry-delay 2 \
+            -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+            -H 'Accept: application/json' \
+            "$API" | tee /tmp/subdomain.json
+          jq -e '.success == true and .result.enabled == true' /tmp/subdomain.json >/dev/null
+
+      - name: Verify isolated Worker deployment metadata
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          set -euo pipefail
+          ACCOUNT_ID='5deb168bbc31c47db0419913860fce21'
+          SCRIPT='al-quran-research-project-agent'
+          DEPLOYMENTS="https://api.cloudflare.com/client/v4/accounts/$ACCOUNT_ID/workers/scripts/$SCRIPT/deployments"
+          curl -fsS --retry 5 --retry-all-errors --retry-delay 2 \
+            -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+            -H 'Accept: application/json' \
+            "$DEPLOYMENTS" | tee /tmp/deployments.json
+          jq -e '.success == true' /tmp/deployments.json >/dev/null
+          jq -e '((.result.deployments // .result) | type) == "array" and ((.result.deployments // .result) | length) > 0' /tmp/deployments.json >/dev/null
+          echo "Cloudflare deployment metadata verified for $SCRIPT"
+
+      - name: Smoke test isolated health endpoint
+        run: |
+          set -euo pipefail
+          URL='https://al-quran-research-project-agent.mosharrof0000.workers.dev'
+          ORIGIN='https://mosharrof0000-ux.github.io'
+
+          echo "Waiting for isolated Worker DNS/edge propagation..."
+          for attempt in $(seq 1 30); do
+            echo "Attempt $attempt/30"
+            if getent hosts al-quran-research-project-agent.mosharrof0000.workers.dev >/dev/null 2>&1; then
+              if BODY="$(curl -fsS --connect-timeout 8 --max-time 20 -H "Origin: $ORIGIN" "$URL/")"; then
+                echo "$BODY"
+                echo "$BODY" | grep -q '"isolated":true'
+                echo "$BODY" | grep -q '"merge":false'
+                echo "$BODY" | grep -q '"deploy":false'
+                exit 0
+              fi
+            fi
+            sleep 10
+          done
+          echo "Isolated health endpoint did not return the isolated-agent health payload."
+          exit 1
+
+      - name: End-to-end authenticated Agent runtime and resume proof
+        env:
+          AGENT_ACCESS_TOKEN: ${{ secrets.AGENT_ACCESS_TOKEN }}
+        run: |
+          set -euo pipefail
+          URL='https://al-quran-research-project-agent.mosharrof0000.workers.dev'
+          ORIGIN='https://mosharrof0000-ux.github.io'
+          test -n "$AGENT_ACCESS_TOKEN"
+          BODY="$(curl -fsS --retry 5 --retry-all-errors --retry-delay 3 --connect-timeout 8 --max-time 120 \
+            -H "Origin: $ORIGIN" -H "Authorization: Bearer $AGENT_ACCESS_TOKEN" \
+            -H 'Content-Type: application/json' \
+            --data '{"message":"Runtime proof: inspect the project agent rules and create a small handoff proof file in the assigned agent branch. Do not modify main or protected paths."}' "$URL/")"
+          echo "$BODY" | jq -e '.ok == true and .isolated == true and .merge == false and .deploy == false' >/dev/null
+          BRANCH="$(echo "$BODY" | jq -r '.identity.branch')"
+          TASK="$(echo "$BODY" | jq -r '.identity.task_id')"
+          test -n "$BRANCH"; test -n "$TASK"
+          echo "Runtime task=$TASK branch=$BRANCH"
+          echo "$BODY" | jq .
+
+      - name: Verify production Worker is not targeted
+        run: |
+          set -euo pipefail
+          test 'https://al-quran-research-project-agent.mosharrof0000.workers.dev' != 'https://al-quran-research.mosharrof0000.workers.dev'
