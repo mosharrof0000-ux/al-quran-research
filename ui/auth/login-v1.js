@@ -1,0 +1,13 @@
+(()=>{"use strict";
+const form=document.getElementById("loginForm"),identity=document.getElementById("identity"),password=document.getElementById("password"),errorBox=document.getElementById("loginError"),statusBox=document.getElementById("loginStatus"),submit=document.getElementById("loginSubmit");
+const showError=m=>{errorBox.textContent=m;errorBox.hidden=false;statusBox.hidden=true};
+const showStatus=m=>{statusBox.textContent=m;statusBox.hidden=false;errorBox.hidden=true};
+const clearMessages=()=>{errorBox.hidden=true;statusBox.hidden=true;errorBox.textContent="";statusBox.textContent=""};
+const setLoading=v=>{submit.disabled=v;submit.classList.toggle("is-loading",v)};
+const validate=()=>{const u=identity.value.trim(),p=password.value;if(!u)return"Email / Username দিন।";if(!p)return"Password দিন।";if(p.length<6)return"Password কমপক্ষে ৬ অক্ষরের হতে হবে।";return null};
+const saveSession=p=>{const token=p&& (p.token||p.access_token||p.sessionToken);if(token)localStorage.setItem("authToken",token);if(p&&p.user)localStorage.setItem("authUser",JSON.stringify(p.user))};
+const redirectAfterLogin=()=>window.location.assign(form.dataset.successRedirect||"../home-v1/home-v1.html");
+const mockLogin=async p=>{await new Promise(r=>setTimeout(r,450));return{ok:true,mock:true,token:"mock-session-"+btoa(unescape(encodeURIComponent(p.identity))).slice(0,24),user:{identity:p.identity}}};
+const authenticate=async p=>{const endpoint=form.dataset.apiEndpoint;if(!endpoint)return mockLogin(p);try{const response=await fetch(endpoint,{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify(p)});let data={};try{data=await response.json()}catch(_){ }if(!response.ok)throw new Error(data.message||data.error||("Authentication failed ("+response.status+")"));return data}catch(error){if(error instanceof TypeError)return mockLogin(p);throw error}};
+form.addEventListener("submit",async event=>{event.preventDefault();clearMessages();const validationError=validate();if(validationError){showError(validationError);return}setLoading(true);showStatus("লগইন যাচাই করা হচ্ছে…");try{const result=await authenticate({identity:identity.value.trim(),password:password.value});saveSession(result);showStatus(result.mock?"Mock login সফল — redirect করা হচ্ছে…":"লগইন সফল — redirect করা হচ্ছে…");setTimeout(redirectAfterLogin,250)}catch(error){showError(error.message||"লগইন করা যায়নি। আবার চেষ্টা করুন।");setLoading(false)}});
+})();
