@@ -7,6 +7,7 @@ on:
     paths:
       - 'index.html'
       - 'ui/home-v1/home-v1.html'
+      - 'ui/home-v1/home-v1.js'
       - '.github/workflows/link-integrity.yml'
 
 permissions:
@@ -22,7 +23,7 @@ jobs:
         run: |
           set -euo pipefail
           base='https://mosharrof0000-ux.github.io/al-quran-research'
-          source="$base/index.html"
+          source="$base/index.html?integrity=$GITHUB_SHA"
           html="$(curl -fsSL --retry 5 --retry-delay 2 "$source")"
           printf '%s\n' "$html" | grep -Fq 'ui/home-v1/home-v1.html'
           printf '%s\n' "$html" | grep -Fq 'id="homeApp"'
@@ -31,8 +32,18 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          target='https://mosharrof0000-ux.github.io/al-quran-research/ui/home-v1/home-v1.html'
+          base='https://mosharrof0000-ux.github.io/al-quran-research'
+          target="$base/ui/home-v1/home-v1.html?integrity=$GITHUB_SHA"
           html="$(curl -fsSL --retry 5 --retry-delay 2 "$target")"
           printf '%s\n' "$html" | grep -Fq 'id="quranHome"'
-          printf '%s\n' "$html" | grep -Fq 'ভাষাভিত্তিক কুরআন'
           printf '%s\n' "$html" | grep -Fq 'id="quranReader"'
+          printf '%s\n' "$html" | grep -Fq 'id="sourceList"'
+
+      - name: Verify source label in current reader script
+        shell: bash
+        run: |
+          set -euo pipefail
+          base='https://mosharrof0000-ux.github.io/al-quran-research'
+          target="$base/ui/home-v1/home-v1.js?integrity=$GITHUB_SHA"
+          html="$(curl -fsSL --retry 5 --retry-delay 2 "$target")"
+          printf '%s\n' "$html" | grep -Fq 'ভাষাভিত্তিক কুরআন'
