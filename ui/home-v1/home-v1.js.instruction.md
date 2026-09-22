@@ -8,11 +8,14 @@ Status: DRAFT — Smart Research Tools extension
 Govern Reader/chat UI behavior.
 
 ## Allowed
+- Implement local-only profile avatar selection, FileReader preview, LocalStorage persistence, save/remove behavior, and main-avatar rendering.
 - Add Private Research source discovery/unlock calls.
 - Add research routing metadata to chat requests where compatible.
 - Preserve existing Reader/chat behavior.
 
 ## Forbidden
+- Do not upload avatar data to a server or external service.
+- Do not distort, stretch, or manually crop uploaded images.
 - Storing private PIN persistently.
 - Bundling private source text.
 - Changing existing source data semantics without approval.

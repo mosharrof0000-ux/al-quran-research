@@ -202,6 +202,21 @@ Future live connection incidents must identify the failing layer, observed error
 ### Safety result
 This change is documentation/governance only. No existing website entrypoint, backend code, research dataset, public path, or chat UI behavior was intentionally changed.
 
+## 2026-09-23 — User Profile Avatar System v2
+
+### Changed
+- Replaced the initial avatar-only preview flow with a complete circular main-avatar + dark modal system.
+- Added FileReader base64 live preview before save.
+- Added LocalStorage key `userProfileAvatar` for refresh persistence.
+- Added explicit Save Avatar and Remove Avatar actions.
+- Preserved automatic circular clipping with `border-radius:50%`, `overflow:hidden`, and `object-fit:cover`.
+
+### Safety boundary
+Avatar data remains local to the browser. No server upload or external JavaScript framework/library was introduced.
+
+### Promotion status
+Safety branch only; main/live promotion requires the controlled promotion gate and explicit user request.
+
 ## Status
 ACTIVE — v1.9
 

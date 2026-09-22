@@ -13,19 +13,30 @@
   <button class="icon-btn" id="searchBtn" aria-label="অনুসন্ধান">⌕</button>
   <div class="brand">আল-কুরআন রিসার্চ</div>
   <button class="icon-btn" id="themeBtn" aria-label="থিম">☾</button>
-  <button class="icon-btn" id="profileBtn" aria-label="প্রোফাইল">○</button>
+  <button class="icon-btn profile-avatar-trigger" id="profileBtn" aria-label="প্রোফাইল ছবি সম্পাদনা">
+  <span class="profile-avatar-main" id="profileAvatarMain"><span class="profile-avatar-default">○</span></span>
+  <span class="profile-avatar-edit" aria-hidden="true">✏️</span>
+</button>
 </header>
 
 <section class="quran-home" id="quranHome" aria-label="আল-কুরআন হোম"><div class="reader-head"><strong>📖 আল-কুরআন হোম</strong><button id="closeQuranHome" aria-label="বন্ধ">×</button></div><div class="quran-home-body"><h1>📚 কুরআনসমূহ</h1><p>একটি কুরআন নির্বাচন করে পাঠ ও গবেষণা শুরু করুন।</p><div class="source-list" id="sourceList"></div></div></section>
 <section class="quran-reader" id="quranReader" aria-label="কুরআন পাঠ"><div class="reader-head"><strong>📖 কুরআন পাঠ</strong><button id="closeReader">×</button></div><div class="reader-controls"><button id="prevSura">◀</button><select id="suraSelect" aria-label="সূরা"></select><button id="nextSura">▶</button></div><div id="quranStatus" class="reader-status">কুরআন উৎস লোড হচ্ছে…</div><div id="quranText" class="quran-text"></div><div class="reader-credit">আরবি উৎস: Tanzil Project (Uthmani Text, CC BY 3.0)। বাংলা উচ্চারণ: Anis Afifi Multilingual Quran Dataset-এর <code>transliteration_bn</code> ক্ষেত্র (dataset ঘোষিত CC BY 4.0)। বাংলা অনুবাদ: ড. আবূ বকর মুহাম্মাদ যাকারিয়া, QuranEnc V1.1.1। উচ্চারণের উৎসের dataset-level লাইসেন্স নথিভুক্ত; underlying source provenance আলাদাভাবে যাচাইাধীন। <a href="https://tanzil.net/" target="_blank" rel="noopener">tanzil.net</a> · <a href="https://quranenc.com/bn/home" target="_blank" rel="noopener">QuranEnc</a> · <a href="https://huggingface.co/datasets/anisafifi/multilingual-quran" target="_blank" rel="noopener">Multilingual Quran Dataset</a></div></section>
-<section class="profile-avatar-panel" id="profileAvatarPanel" hidden aria-label="ব্যবহারকারী প্রোফাইল ছবি">
-  <div class="profile-avatar-head"><strong>👤 প্রোফাইল ছবি</strong><button type="button" id="closeProfileAvatar" aria-label="বন্ধ">×</button></div>
-  <div class="profile-avatar-body">
-    <div class="profile-avatar-preview" id="profileAvatarPreview" aria-label="প্রোফাইল ছবির গোল প্রিভিউ"><span id="profileAvatarPlaceholder">○</span></div>
-    <p class="profile-avatar-help">যেকোনো ছবি নির্বাচন করুন। সিস্টেম নিজে থেকেই ছবিটিকে গোল ফ্রেমে দেখাবে। আলাদা করে crop করার প্রয়োজন নেই।</p>
-    <input id="profileAvatarInput" type="file" accept="image/*" aria-label="প্রোফাইল ছবি নির্বাচন">
-    <button type="button" class="profile-avatar-select" id="profileAvatarSelect">ছবি নির্বাচন করুন</button>
-    <button type="button" class="profile-avatar-remove" id="profileAvatarRemove" hidden>ছবি সরান</button>
+<section class="profile-avatar-modal modal-overlay" id="profileAvatarPanel" hidden aria-label="প্রোফাইল ছবি">
+  <div class="profile-avatar-modal-card" role="dialog" aria-modal="true" aria-labelledby="profileAvatarTitle">
+    <div class="profile-avatar-modal-head">
+      <strong id="profileAvatarTitle">👤 Profile Avatar</strong>
+      <button type="button" id="closeProfileAvatar" aria-label="বন্ধ">×</button>
+    </div>
+    <div class="profile-avatar-modal-body">
+      <div class="preview-box" id="profileAvatarPreview" aria-label="প্রোফাইল ছবির গোল প্রিভিউ"><span class="profile-avatar-default">○</span></div>
+      <p class="profile-avatar-help">যেকোনো ছবি নির্বাচন করুন। ছবিটি স্বয়ংক্রিয়ভাবে গোল ফ্রেমে দেখা যাবে—manual crop প্রয়োজন নেই।</p>
+      <input id="profileAvatarInput" type="file" accept="image/*" hidden aria-label="প্রোফাইল ছবি নির্বাচন">
+      <div class="profile-avatar-modal-actions">
+        <button type="button" class="profile-avatar-button" id="profileAvatarSelect">Select Image</button>
+        <button type="button" class="profile-avatar-button primary" id="profileAvatarSave" disabled>Save Avatar</button>
+        <button type="button" class="profile-avatar-button danger" id="profileAvatarRemove">Remove Avatar</button>
+      </div>
+    </div>
   </div>
 </section>
 <main class="chat">
