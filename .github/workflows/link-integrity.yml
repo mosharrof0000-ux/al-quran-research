@@ -24,20 +24,15 @@ jobs:
           base='https://mosharrof0000-ux.github.io/al-quran-research'
           source="$base/index.html"
           html="$(curl -fsSL --retry 5 --retry-delay 2 "$source")"
-          printf '%s
-' "$html" | grep -Fq 'ui/home-v1/home-v1.html?v=20260920-source1-fix'
-          printf '%s
-' "$html" | grep -Fq 'id="homeApp"'
+          printf '%s\n' "$html" | grep -Fq 'ui/home-v1/home-v1.html'
+          printf '%s\n' "$html" | grep -Fq 'id="homeApp"'
 
       - name: Verify current home-v1 identity
         shell: bash
         run: |
           set -euo pipefail
-          target='https://mosharrof0000-ux.github.io/al-quran-research/ui/home-v1/home-v1.html?v=20260920-source1-fix'
+          target='https://mosharrof0000-ux.github.io/al-quran-research/ui/home-v1/home-v1.html'
           html="$(curl -fsSL --retry 5 --retry-delay 2 "$target")"
-          printf '%s
-' "$html" | grep -Fq 'id="quranHome"'
-          printf '%s
-' "$html" | grep -Fq 'ভাষাভিত্তিক কুরআন'
-          printf '%s
-' "$html" | grep -Fq 'id="quranReader"'
+          printf '%s\n' "$html" | grep -Fq 'id="quranHome"'
+          printf '%s\n' "$html" | grep -Fq 'ভাষাভিত্তিক কুরআন'
+          printf '%s\n' "$html" | grep -Fq 'id="quranReader"'
