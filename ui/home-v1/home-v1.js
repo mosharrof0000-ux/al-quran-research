@@ -265,34 +265,77 @@ document.getElementById('nextSura').onclick=()=>showSura(Math.min(114,Number(sel
  [bn,ar,size,line].forEach(x=>x.addEventListener('input',apply)); reset.onclick=()=>{bn.value='system';ar.value='default';size.value=15;line.value=1.7;apply()}; load();
 })();
 
-/* User Profile Avatar Form v1 */
+/* User Profile Avatar System v2 — FileReader preview + LocalStorage persistence. */
 const profileAvatarPanel=document.getElementById('profileAvatarPanel');
 const profileAvatarInput=document.getElementById('profileAvatarInput');
 const profileAvatarPreview=document.getElementById('profileAvatarPreview');
+const profileAvatarMain=document.getElementById('profileAvatarMain');
 const profileAvatarSelect=document.getElementById('profileAvatarSelect');
+const profileAvatarSave=document.getElementById('profileAvatarSave');
 const profileAvatarRemove=document.getElementById('profileAvatarRemove');
 const closeProfileAvatar=document.getElementById('closeProfileAvatar');
-let profileAvatarObjectUrl=null;
-function openProfileAvatar(){profileAvatarPanel.hidden=false}
+let pendingProfileAvatar=null;
+
+function profileAvatarPlaceholder(){return '<span class="profile-avatar-default">○</span>'}
+function renderProfileAvatar(src){
+  const render=(target)=>{
+    if(!target)return;
+    if(src){
+      target.innerHTML='';
+      const img=document.createElement('img');
+      img.src=src;
+      img.alt='ব্যবহারকারীর প্রোফাইল ছবি';
+      target.appendChild(img);
+    }else{
+      target.innerHTML=profileAvatarPlaceholder();
+    }
+  };
+  render(profileAvatarMain);
+  render(profileAvatarPreview);
+}
+function openProfileAvatar(){
+  profileAvatarPanel.hidden=false;
+  profileAvatarSave.disabled=!pendingProfileAvatar;
+}
 function closeProfileAvatarPanel(){profileAvatarPanel.hidden=true}
-function setProfileAvatar(file){
+function previewProfileAvatar(file){
   if(!file||!file.type.startsWith('image/')){toast('একটি ছবি নির্বাচন করুন');return}
-  if(profileAvatarObjectUrl)URL.revokeObjectURL(profileAvatarObjectUrl);
-  profileAvatarObjectUrl=URL.createObjectURL(file);
-  profileAvatarPreview.innerHTML='';
-  const img=document.createElement('img');
-  img.src=profileAvatarObjectUrl;
-  img.alt='ব্যবহারকারীর প্রোফাইল ছবি';
-  profileAvatarPreview.appendChild(img);
-  profileAvatarRemove.hidden=false;
+  const reader=new FileReader();
+  reader.onload=()=>{pendingProfileAvatar=String(reader.result||'');renderProfileAvatar(pendingProfileAvatar);profileAvatarSave.disabled=!pendingProfileAvatar};
+  reader.onerror=()=>toast('ছবিটি পড়া যায়নি');
+  reader.readAsDataURL(file);
+}
+function saveAvatar(){
+  if(!pendingProfileAvatar){toast('আগে একটি ছবি নির্বাচন করুন');return}
+  try{
+    localStorage.setItem('userProfileAvatar',pendingProfileAvatar);
+    renderProfileAvatar(pendingProfileAvatar);
+    profileAvatarInput.value='';
+    pendingProfileAvatar=null;
+    profileAvatarSave.disabled=true;
+    closeProfileAvatarPanel();
+    toast('প্রোফাইল ছবি সংরক্ষণ হয়েছে');
+  }catch(e){toast('ছবি সংরক্ষণ করা যায়নি');}
+}
+function removeAvatar(){
+  localStorage.removeItem('userProfileAvatar');
+  pendingProfileAvatar=null;
+  profileAvatarInput.value='';
+  profileAvatarSave.disabled=true;
+  renderProfileAvatar(null);
+  closeProfileAvatarPanel();
+  toast('প্রোফাইল ছবি সরানো হয়েছে');
+}
+function loadSavedAvatar(){
+  const saved=localStorage.getItem('userProfileAvatar');
+  renderProfileAvatar(saved||null);
+  profileAvatarSave.disabled=true;
 }
 profileAvatarSelect.onclick=()=>profileAvatarInput.click();
-profileAvatarInput.onchange=()=>setProfileAvatar(profileAvatarInput.files&&profileAvatarInput.files[0]);
-profileAvatarRemove.onclick=()=>{
-  if(profileAvatarObjectUrl){URL.revokeObjectURL(profileAvatarObjectUrl);profileAvatarObjectUrl=null}
-  profileAvatarPreview.innerHTML='<span>○</span>';
-  profileAvatarInput.value='';
-  profileAvatarRemove.hidden=true;
-};
+profileAvatarInput.onchange=()=>previewProfileAvatar(profileAvatarInput.files&&profileAvatarInput.files[0]);
+profileAvatarSave.onclick=saveAvatar;
+profileAvatarRemove.onclick=removeAvatar;
 closeProfileAvatar.onclick=closeProfileAvatarPanel;
 profileAvatarPanel.addEventListener('click',e=>{if(e.target===profileAvatarPanel)closeProfileAvatarPanel()});
+window.addEventListener('keydown',e=>{if(e.key==='Escape'&&!profileAvatarPanel.hidden)closeProfileAvatarPanel()});
+window.addEventListener('load',loadSavedAvatar);
