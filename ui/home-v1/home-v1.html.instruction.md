@@ -21,3 +21,5 @@ Check mobile layout and existing controls after changes.
 
 ## Change history
 - 2026-09-20 — Added for controlled extension.
+
+- 2026-09-23 — Profile Avatar System v2: main circular avatar with edit control and dark modal markup.
