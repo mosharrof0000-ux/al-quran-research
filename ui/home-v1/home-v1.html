@@ -5,6 +5,7 @@
 <title>আল-কুরআন গবেষণা</title>
 <link rel="stylesheet" href="home-v1.css?v=20260918-minimal-v1">
 <link rel="stylesheet" href="gemini-icon-v1.css?v=1.0.0">
+<link rel="stylesheet" href="../auth/drawer-v1.css?v=1.0.0">
 </head>
 <body>
 <div class="shell">
@@ -77,6 +78,26 @@
     </div>
   </section>
 </main>
+<!-- Integrated Profile Drawer v1 -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()" aria-hidden="true"></div>
+<aside class="drawer-menu" id="drawerMenu" aria-label="প্রোফাইল মেনু" aria-hidden="true">
+  <button class="drawer-close-btn" type="button" onclick="closeDrawer()" aria-label="ড্রয়ার বন্ধ করুন">✕</button>
+  <div class="drawer-user-card">
+    <button class="drawer-avatar-wrap" type="button" onclick="openDrawerAvatar()" aria-label="প্রোফাইল ছবি পরিবর্তন করুন">
+      <img id="drawerAvatarImg" alt="ব্যবহারকারীর প্রোফাইল ছবি">
+      <span class="avatar-edit-icon" aria-hidden="true">✏️</span>
+    </button>
+    <div class="drawer-user-details"><h3 id="drawerUserName">মাওলার ভাব তরঙ্গে</h3><p id="drawerUserEmail">user@gmail.com</p></div>
+  </div>
+  <nav class="drawer-menu-list" aria-label="অ্যাকাউন্ট মেনু">
+    <a href="#history" class="drawer-item"><span class="item-icon" aria-hidden="true">🔍</span> গবেষণা ইতিহাস (Activity)</a>
+    <a href="#customization" class="drawer-item"><span class="item-icon" aria-hidden="true">👤</span> ব্যক্তিগত কাস্টমাইজেশন</a>
+    <a href="#notifications" class="drawer-item"><span class="item-icon" aria-hidden="true">🔔</span> নোটিফিকেশন</a>
+    <a href="#settings" class="drawer-item"><span class="item-icon" aria-hidden="true">⚙️</span> গবেষণা সেটিংস</a>
+    <a href="#theme" class="drawer-item"><span class="item-icon" aria-hidden="true">🌙</span> থিম পরিবর্তন</a>
+    <hr class="drawer-divider"><a href="#logout" class="drawer-item logout-btn" onclick="handleLogout(event)"><span class="item-icon" aria-hidden="true">🚪</span> লগআউট</a>
+  </nav>
+</aside>
 <div class="private-research-dialog" id="privateResearchDialog" hidden aria-label="Private Research">
   <div class="private-research-card">
     <div class="reader-head"><strong>🔐 Private Research</strong><button id="closePrivateResearch" type="button" aria-label="বন্ধ">×</button></div>
@@ -103,5 +124,6 @@
 </div>
 <script src="../../assets/icon-engine/aqr-icon-engine.js?v=1.0.0"></script>
 <script src="home-v1.js"></script>
+<script src="../auth/drawer-v1.js"></script>
 </body>
 </html>
