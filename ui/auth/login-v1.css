@@ -15,9 +15,10 @@ h1{margin:0;text-align:center;font-size:28px;letter-spacing:-.02em}
 .error-msg{color:#ffd8dc;border:1px solid rgba(255,94,110,.28);background:rgba(255,94,110,.1)}
 .status-msg{color:#dceaff;border:1px solid rgba(76,139,245,.24);background:rgba(76,139,245,.09)}
 .submit-btn{position:relative;width:100%;min-height:48px;margin-top:20px;border:0;border-radius:12px;color:#fff;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#4c8bf5,#8a4cf5);box-shadow:0 12px 26px rgba(76,139,245,.2);transition:transform .18s ease,filter .18s ease,box-shadow .18s ease}
-.submit-btn:hover:not(:disabled){filter:brightness(1.08);box-shadow:0 15px 32px rgba(138,76,245,.25)}.submit-btn:active:not(:disabled){transform:translateY(1px)}.submit-btn:disabled{cursor:not-allowed;opacity:.72}
+.submit-btn:hover:not(:disabled){filter:brightness(1.08);box-shadow:0 15px 32px rgba(138,76,245,.25)}
+.submit-btn:active:not(:disabled){transform:translateY(1px)}
+.submit-btn:disabled{cursor:not-allowed;opacity:.72}
 .submit-spinner{display:none;width:16px;height:16px;margin:auto;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
 .submit-btn.is-loading .submit-label{display:none}.submit-btn.is-loading .submit-spinner{display:block}
-.login-note{margin:18px 0 0;text-align:center;color:#777f8d;font-size:11px;line-height:1.6}
 @keyframes spin{to{transform:rotate(360deg)}}
 @media (max-width:420px){body{padding:14px}.login-card{padding:24px 20px}}

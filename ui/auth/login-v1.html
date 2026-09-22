@@ -2,25 +2,37 @@
 <html lang="bn">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>লগইন — আল-কুরআন রিসার্চ</title>
 <link rel="stylesheet" href="login-v1.css">
 </head>
 <body>
 <main class="auth-shell">
-<section class="login-card" aria-labelledby="loginTitle">
-<div class="login-brand" aria-hidden="true">ق</div>
-<h1 id="loginTitle">স্বাগতম</h1>
-<p class="login-subtitle">আপনার গবেষণা সেশনে প্রবেশ করুন</p>
-<form id="loginForm" novalidate data-api-endpoint="/api/login" data-success-redirect="../home-v1/home-v1.html">
-<div class="field"><label for="identity">Email / Username</label><input id="identity" name="identity" type="text" autocomplete="username" placeholder="Email বা Username" required></div>
-<div class="field"><label for="password">Password</label><input id="password" name="password" type="password" autocomplete="current-password" placeholder="আপনার password" required minlength="6"></div>
-<div id="loginError" class="error-msg" role="alert" aria-live="assertive" hidden></div>
-<div id="loginStatus" class="status-msg" role="status" aria-live="polite" hidden></div>
-<button id="loginSubmit" class="submit-btn" type="submit"><span class="submit-label">Log In</span><span class="submit-spinner" aria-hidden="true"></span></button>
-</form>
-<p class="login-note">Backend endpoint না থাকলে valid input দিয়ে local mock mode-এ দ্রুত পরীক্ষা করা যাবে।</p>
-</section>
+  <section class="login-card" aria-labelledby="loginTitle">
+    <div class="login-brand" aria-hidden="true">ق</div>
+    <h1 id="loginTitle">স্বাগতম</h1>
+    <p class="login-subtitle">আপনার গবেষণা সেশনে প্রবেশ করুন</p>
+
+    <form id="loginForm" novalidate data-api-endpoint="" data-success-redirect="../home-v1/home-v1.html">
+      <div class="field">
+        <label for="identity">Email / Username</label>
+        <input id="identity" name="identity" type="text" autocomplete="username" placeholder="Email বা Username" required>
+      </div>
+
+      <div class="field">
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" placeholder="আপনার password" minlength="6" required>
+      </div>
+
+      <div id="loginError" class="error-msg" role="alert" aria-live="assertive" hidden></div>
+      <div id="loginStatus" class="status-msg" role="status" aria-live="polite" hidden></div>
+
+      <button id="loginSubmit" class="submit-btn" type="submit">
+        <span class="submit-label">Log In</span>
+        <span class="submit-spinner" aria-hidden="true"></span>
+      </button>
+    </form>
+  </section>
 </main>
 <script src="login-v1.js"></script>
 </body>

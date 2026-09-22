@@ -1,20 +1,21 @@
 # Login v1 Component Instruction
 
 ## Purpose
-Reusable vanilla HTML/CSS/JS dark Glassmorphism login component.
+Standalone vanilla HTML/CSS/JS dark Glassmorphism login component rebuilt after the previous implementation was discarded.
 
 ## Protected behavior
-- No external libraries/frameworks.
-- Form submission uses preventDefault() and asynchronous Fetch API logic.
-- Validation and authentication errors are dynamically shown.
-- Session tokens are stored in localStorage only after a successful response/mock result.
-- Responsive container target is max-width 400px.
+- No external libraries or frameworks.
+- Form submission always uses preventDefault() and async JavaScript.
+- Validation/authentication errors are dynamically visible.
+- Session token and optional user data are stored only after successful authentication/mock authentication.
+- Responsive layout remains fluid with a 400px maximum width.
 
-## Backend contract
-- data-api-endpoint defaults to /api/login.
-- POST JSON payload: { identity, password }.
-- Success may return token, access_token, or sessionToken; optional user object is persisted.
-- Network/unavailable backend falls back to mock mode for rapid UI testing.
+## Authentication behavior
+- If no API endpoint is configured, the component uses explicit local mock mode for UI testing.
+- A real backend can be supplied with form data-api-endpoint or window.ALQURAN_LOGIN_API.
+- POST payload is JSON: { identity, password }.
+- Success accepts token, access_token, or sessionToken, plus optional user.
+- Network TypeError falls back to mock mode; real HTTP authentication errors remain visible.
 
 ## Change policy
-Update this instruction when component behavior, API contract, or protected constraints change.
+Test the component before merge or live publication. Do not publish an untested version.
