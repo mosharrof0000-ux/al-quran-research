@@ -25,10 +25,8 @@ jobs:
           source="$base/index.html"
           for attempt in $(seq 1 36); do
             if html="$(curl -fsSL --retry 3 --retry-delay 2 "$source")" &&
-               printf '%s
-' "$html" | grep -Fq 'ui/home-v1/home-v1.html' &&
-               printf '%s
-' "$html" | grep -Fq 'id="homeApp"'; then
+               grep -Fq 'ui/home-v1/home-v1.html' <<< "$html" &&
+               grep -Fq 'id="homeApp"' <<< "$html"; then
               exit 0
             fi
             sleep 5
@@ -43,12 +41,9 @@ jobs:
           target='https://mosharrof0000-ux.github.io/al-quran-research/ui/home-v1/home-v1.html'
           for attempt in $(seq 1 36); do
             if html="$(curl -fsSL --retry 3 --retry-delay 2 "$target")" &&
-               printf '%s
-' "$html" | grep -Fq 'id="quranHome"' &&
-               printf '%s
-' "$html" | grep -Fq 'ভাষাভিত্তিক কুরআন' &&
-               printf '%s
-' "$html" | grep -Fq 'id="quranReader"'; then
+               grep -Fq 'id="quranHome"' <<< "$html" &&
+               grep -Fq 'ভাষাভিত্তিক কুরআন' <<< "$html" &&
+               grep -Fq 'id="quranReader"' <<< "$html"; then
               exit 0
             fi
             sleep 5
