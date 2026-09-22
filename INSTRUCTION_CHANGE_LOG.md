@@ -240,3 +240,4 @@ Documentation-only governance change. No research dataset, backend entrypoint, R
 
 ### Next verification
 Compare branch with `main`, run syntax/build checks, review UI behavior, then obtain explicit user approval before promotion.
+- 2026-09-23 — Added isolated User Profile Avatar Form v1 in Home v1 safety branch: image upload, automatic circular clipping, centered focal point, no manual crop, no aspect-ratio distortion. Main/live not promoted.

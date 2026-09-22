@@ -37,7 +37,7 @@ document.getElementById('closeQuranHome').onclick=closeQuranHome;
 document.getElementById('menuBtn').onclick=()=>drawer.classList.add('open');
 document.getElementById('closeDrawer').onclick=()=>drawer.classList.remove('open');
 document.getElementById('themeBtn').onclick=()=>{const night=document.body.classList.toggle('night');document.body.classList.toggle('light',!night);toast(night?'রাতের ১৬ রঙ চালু হয়েছে':'দিনের ১৬ রঙ চালু হয়েছে')};
-document.getElementById('profileBtn').onclick=()=>toast('প্রোফাইল প্যানেল');
+document.getElementById('profileBtn').onclick=openProfileAvatar;
 document.getElementById('searchBtn').onclick=()=>document.getElementById('prompt').focus();
 const composerTools=document.getElementById('composerTools');
 const plusBtn=document.getElementById('plusBtn');
@@ -264,3 +264,35 @@ document.getElementById('nextSura').onclick=()=>showSura(Math.min(114,Number(sel
  open.onclick=()=>{panel.hidden=!panel.hidden}; close.onclick=()=>panel.hidden=true;
  [bn,ar,size,line].forEach(x=>x.addEventListener('input',apply)); reset.onclick=()=>{bn.value='system';ar.value='default';size.value=15;line.value=1.7;apply()}; load();
 })();
+
+/* User Profile Avatar Form v1 */
+const profileAvatarPanel=document.getElementById('profileAvatarPanel');
+const profileAvatarInput=document.getElementById('profileAvatarInput');
+const profileAvatarPreview=document.getElementById('profileAvatarPreview');
+const profileAvatarSelect=document.getElementById('profileAvatarSelect');
+const profileAvatarRemove=document.getElementById('profileAvatarRemove');
+const closeProfileAvatar=document.getElementById('closeProfileAvatar');
+let profileAvatarObjectUrl=null;
+function openProfileAvatar(){profileAvatarPanel.hidden=false}
+function closeProfileAvatarPanel(){profileAvatarPanel.hidden=true}
+function setProfileAvatar(file){
+  if(!file||!file.type.startsWith('image/')){toast('একটি ছবি নির্বাচন করুন');return}
+  if(profileAvatarObjectUrl)URL.revokeObjectURL(profileAvatarObjectUrl);
+  profileAvatarObjectUrl=URL.createObjectURL(file);
+  profileAvatarPreview.innerHTML='';
+  const img=document.createElement('img');
+  img.src=profileAvatarObjectUrl;
+  img.alt='ব্যবহারকারীর প্রোফাইল ছবি';
+  profileAvatarPreview.appendChild(img);
+  profileAvatarRemove.hidden=false;
+}
+profileAvatarSelect.onclick=()=>profileAvatarInput.click();
+profileAvatarInput.onchange=()=>setProfileAvatar(profileAvatarInput.files&&profileAvatarInput.files[0]);
+profileAvatarRemove.onclick=()=>{
+  if(profileAvatarObjectUrl){URL.revokeObjectURL(profileAvatarObjectUrl);profileAvatarObjectUrl=null}
+  profileAvatarPreview.innerHTML='<span>○</span>';
+  profileAvatarInput.value='';
+  profileAvatarRemove.hidden=true;
+};
+closeProfileAvatar.onclick=closeProfileAvatarPanel;
+profileAvatarPanel.addEventListener('click',e=>{if(e.target===profileAvatarPanel)closeProfileAvatarPanel()});
