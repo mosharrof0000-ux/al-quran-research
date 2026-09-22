@@ -42,8 +42,8 @@ jobs:
           for attempt in $(seq 1 36); do
             if html="$(curl -fsSL --retry 3 --retry-delay 2 "$target")" &&
                grep -Fq 'id="quranHome"' <<< "$html" &&
-               grep -Fq 'ভাষাভিত্তিক কুরআন' <<< "$html" &&
-               grep -Fq 'id="quranReader"' <<< "$html"; then
+               grep -Fq 'id="quranReader"' <<< "$html" &&
+               grep -Fq 'home-v1.js' <<< "$html"; then
               exit 0
             fi
             sleep 5
