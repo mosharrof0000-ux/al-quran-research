@@ -8,28 +8,27 @@
 </head>
 <body>
 <main class="auth-shell">
-  <section class="login-card" aria-labelledby="loginTitle">
-    <div class="login-brand" aria-hidden="true">ق</div>
-    <h1 id="loginTitle">স্বাগতম</h1>
-    <p class="login-subtitle">আপনার গবেষণা সেশনে প্রবেশ করুন</p>
+  <section id="loginBox" class="login-card" aria-labelledby="loginTitle">
+    <h2 id="loginTitle">কুরআন অ্যাপে প্রবেশ</h2>
+    <p class="login-subtext">আপনার গবেষণা সেশনে নিরাপদে প্রবেশ করুন</p>
 
-    <form id="loginForm" novalidate data-api-endpoint="" data-success-redirect="../home-v1/home-v1.html">
-      <div class="field">
-        <label for="identity">Email / Username</label>
-        <input id="identity" name="identity" type="text" autocomplete="username" placeholder="Email বা Username" required>
+    <form id="quranLoginForm" novalidate onsubmit="submitLogin(event)">
+      <div class="input-group">
+        <label for="userEmail">ইমেইল</label>
+        <input id="userEmail" name="email" type="email" autocomplete="username"
+               placeholder="আপনার ইমেইল লিখুন" required>
       </div>
 
-      <div class="field">
-        <label for="password">Password</label>
-        <input id="password" name="password" type="password" autocomplete="current-password" placeholder="আপনার password" minlength="6" required>
+      <div class="input-group">
+        <label for="userPassword">পাসওয়ার্ড</label>
+        <input id="userPassword" name="password" type="password" autocomplete="current-password"
+               placeholder="আপনার পাসওয়ার্ড লিখুন" minlength="6" required>
       </div>
 
-      <div id="loginError" class="error-msg" role="alert" aria-live="assertive" hidden></div>
-      <div id="loginStatus" class="status-msg" role="status" aria-live="polite" hidden></div>
+      <div id="loginError" class="error-msg" role="alert" aria-live="assertive" aria-atomic="true"></div>
 
-      <button id="loginSubmit" class="submit-btn" type="submit">
-        <span class="submit-label">Log In</span>
-        <span class="submit-spinner" aria-hidden="true"></span>
+      <button class="login-btn" type="submit">
+        <span>লগইন</span>
       </button>
     </form>
   </section>
