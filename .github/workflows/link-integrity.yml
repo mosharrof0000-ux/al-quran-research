@@ -23,16 +23,35 @@ jobs:
           set -euo pipefail
           base='https://mosharrof0000-ux.github.io/al-quran-research'
           source="$base/index.html"
-          html="$(curl -fsSL --retry 5 --retry-delay 2 "$source")"
-          printf '%s\n' "$html" | grep -Fq 'ui/home-v1/home-v1.html'
-          printf '%s\n' "$html" | grep -Fq 'id="homeApp"'
+          for attempt in $(seq 1 36); do
+            if html="$(curl -fsSL --retry 3 --retry-delay 2 "$source")" &&
+               printf '%s
+' "$html" | grep -Fq 'ui/home-v1/home-v1.html' &&
+               printf '%s
+' "$html" | grep -Fq 'id="homeApp"'; then
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "Canonical live entrypoint verification timed out."
+          exit 1
 
       - name: Verify current home-v1 identity
         shell: bash
         run: |
           set -euo pipefail
           target='https://mosharrof0000-ux.github.io/al-quran-research/ui/home-v1/home-v1.html'
-          html="$(curl -fsSL --retry 5 --retry-delay 2 "$target")"
-          printf '%s\n' "$html" | grep -Fq 'id="quranHome"'
-          printf '%s\n' "$html" | grep -Fq 'ভাষাভিত্তিক কুরআন'
-          printf '%s\n' "$html" | grep -Fq 'id="quranReader"'
+          for attempt in $(seq 1 36); do
+            if html="$(curl -fsSL --retry 3 --retry-delay 2 "$target")" &&
+               printf '%s
+' "$html" | grep -Fq 'id="quranHome"' &&
+               printf '%s
+' "$html" | grep -Fq 'ভাষাভিত্তিক কুরআন' &&
+               printf '%s
+' "$html" | grep -Fq 'id="quranReader"'; then
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "Current home-v1 identity verification timed out."
+          exit 1
