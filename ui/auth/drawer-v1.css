@@ -1,0 +1,18 @@
+.drawer-overlay{position:fixed;inset:0;width:100%;height:100%;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:block;z-index:998;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .3s ease,visibility .3s ease}
+.drawer-overlay.active{opacity:1;visibility:visible;pointer-events:auto}
+.drawer-menu{position:fixed;top:0;right:0;width:min(300px,86vw);height:100%;background:#18191c;color:#fff;box-shadow:-5px 0 25px rgba(0,0,0,.6);transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);z-index:999;padding:20px;display:flex;flex-direction:column;overflow-y:auto}
+.drawer-menu.active{transform:translateX(0)}
+.drawer-close-btn{align-self:flex-end;background:transparent;border:0;color:#888;font-size:20px;cursor:pointer;padding:5px;line-height:1}
+.drawer-close-btn:hover,.drawer-close-btn:focus-visible{color:#fff}
+.drawer-user-card{background:#232429;border-radius:16px;padding:15px;display:flex;align-items:center;gap:12px;margin:15px 0 20px;border:1px solid rgba(255,255,255,.08)}
+.drawer-avatar-wrap{position:relative;flex:0 0 48px;width:48px;height:48px;padding:0;border:0;border-radius:50%;cursor:pointer;background:transparent}
+.drawer-avatar-wrap img{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block}
+.avatar-edit-icon{position:absolute;bottom:-2px;right:-2px;background:#2f3036;border-radius:50%;font-size:10px;padding:3px;border:1px solid #444}
+.drawer-user-details{min-width:0}.drawer-user-details h3{font-size:14px;font-weight:600;margin:0 0 2px;overflow-wrap:anywhere}.drawer-user-details p{font-size:12px;color:#999;margin:0;overflow-wrap:anywhere}
+.drawer-menu-list{display:flex;flex-direction:column;gap:4px}
+.drawer-item{display:flex;align-items:center;gap:12px;padding:12px 14px;color:#ccc;text-decoration:none;border-radius:10px;font-size:14px;transition:background .2s,color .2s}
+.drawer-item:hover,.drawer-item:focus-visible{background:#28292e;color:#fff;outline:none}
+.drawer-divider{width:100%;border:0;border-top:1px solid #2e2f35;margin:10px 0}
+.logout-btn{color:#ff5252}.logout-btn:hover,.logout-btn:focus-visible{background:rgba(255,82,82,.1);color:#ff5252}
+body.drawer-open{overflow:hidden}
+@media(max-width:420px){.drawer-menu{padding:16px;width:min(300px,90vw)}}
