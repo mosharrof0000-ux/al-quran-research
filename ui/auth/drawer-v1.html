@@ -1,0 +1,23 @@
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()" aria-hidden="true"></div>
+<aside class="drawer-menu" id="drawerMenu" aria-label="প্রোফাইল মেনু" aria-hidden="true">
+  <button class="drawer-close-btn" type="button" onclick="closeDrawer()" aria-label="ড্রয়ার বন্ধ করুন">✕</button>
+  <div class="drawer-user-card">
+    <button class="drawer-avatar-wrap" type="button" onclick="openAvatarModal()" aria-label="প্রোফাইল ছবি পরিবর্তন করুন">
+      <img id="drawerAvatarImg" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='%23888888'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>" alt="User Avatar">
+      <span class="avatar-edit-icon" aria-hidden="true">✏️</span>
+    </button>
+    <div class="drawer-user-details">
+      <h3 id="drawerUserName">মাওলার ভাব তরঙ্গে</h3>
+      <p id="drawerUserEmail">user@gmail.com</p>
+    </div>
+  </div>
+  <nav class="drawer-menu-list" aria-label="অ্যাকাউন্ট মেনু">
+    <a href="#history" class="drawer-item"><span class="item-icon" aria-hidden="true">🔍</span> গবেষণা ইতিহাস (Activity)</a>
+    <a href="#customization" class="drawer-item"><span class="item-icon" aria-hidden="true">👤</span> ব্যক্তিগত কাস্টমাইজেশন</a>
+    <a href="#notifications" class="drawer-item"><span class="item-icon" aria-hidden="true">🔔</span> নোটিফিকেশন</a>
+    <a href="#settings" class="drawer-item"><span class="item-icon" aria-hidden="true">⚙️</span> গবেষণা সেটিংস</a>
+    <a href="#theme" class="drawer-item"><span class="item-icon" aria-hidden="true">🌙</span> থিম পরিবর্তন</a>
+    <hr class="drawer-divider">
+    <a href="#logout" class="drawer-item logout-btn" onclick="handleLogout(event)"><span class="item-icon" aria-hidden="true">🚪</span> লগআউট</a>
+  </nav>
+</aside>
