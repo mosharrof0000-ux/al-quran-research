@@ -20,6 +20,18 @@ function renderGeminiAnswer(body,text,question){
   renderAiIcon(body,icon);
   return icon;
 }
+/* Dynamic Glass Header Brand v1 — visible before chat, hidden after first message */
+const topbarEl=document.querySelector('.topbar');
+const messagesEl=document.getElementById('messages');
+function syncBrandWithMessages(){
+  if(!topbarEl||!messagesEl)return;
+  topbarEl.classList.toggle('brand-hidden',messagesEl.children.length>0);
+}
+if(messagesEl){
+  new MutationObserver(syncBrandWithMessages).observe(messagesEl,{childList:true});
+  syncBrandWithMessages();
+}
+
 const drawer=document.getElementById('drawer');
 const quranHome=document.getElementById('quranHome');
 const sourceList=document.getElementById('sourceList');
