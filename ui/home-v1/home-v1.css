@@ -183,31 +183,24 @@ html{--aqr-chat-bn-font:system-ui,"Noto Sans Bengali",sans-serif;--aqr-chat-ar-f
 .ayah-ar{font-family:var(--aqr-chat-ar-font)}
 
 
-/* Glass Header v2 — ultra-transparent glass, layout blends with the page */
+/* Glass Header v3 — 100% transparent, only text/icons remain */
 .topbar{
-  background:rgba(255,255,255,.14)!important;
-  border-bottom:1px solid rgba(255,255,255,.16)!important;
-  box-shadow:0 3px 14px rgba(15,23,42,.035);
-  backdrop-filter:blur(8px) saturate(110%);
-  -webkit-backdrop-filter:blur(8px) saturate(110%);
+  background:transparent!important;
+  border-bottom:0!important;
+  box-shadow:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
   isolation:isolate;
 }
-.topbar::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  z-index:-1;
-  background:linear-gradient(180deg,rgba(255,255,255,.10),rgba(255,255,255,.025));
-  pointer-events:none;
-}
+.topbar::before{content:none!important}
 body.night .topbar{
-  background:rgba(14,20,18,.16)!important;
-  border-bottom-color:rgba(255,255,255,.07)!important;
-  box-shadow:0 3px 14px rgba(0,0,0,.06);
-  backdrop-filter:blur(8px) saturate(108%);
-  -webkit-backdrop-filter:blur(8px) saturate(108%);
+  background:transparent!important;
+  border-bottom:0!important;
+  box-shadow:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
 }
-body.night .topbar::before{background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(0,0,0,.025))}
+body.night .topbar::before{content:none!important}
 
 /* AI transparent streaming response v1 */
 .chat-message.ai{background:transparent;border:0;box-shadow:none;color:#17231f;backdrop-filter:none;-webkit-backdrop-filter:none}
