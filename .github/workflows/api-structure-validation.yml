@@ -1,0 +1,32 @@
+name: API Structure Validation
+
+on:
+  push:
+    paths:
+      - 'backend/**'
+      - '.github/workflows/api-structure-validation.yml'
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check JavaScript syntax
+        run: |
+          set -euo pipefail
+          node --check backend/api-v1-router.js
+          node --check backend/research-api.js
+          node --check backend/worker-entry.js
+
+      - name: Check required API structure
+        run: |
+          set -euo pipefail
+          test -f backend/api-v1-router.js
+          test -f backend/api-architecture-v1.md
+          test -f backend/db/schema-v1.sql
+          grep -q "/api/v1/health" backend/api-v1-router.js
+          grep -q "CREATE TABLE IF NOT EXISTS ayahs" backend/db/schema-v1.sql
+          grep -q "api-v1-router.js" backend/worker-entry.js
