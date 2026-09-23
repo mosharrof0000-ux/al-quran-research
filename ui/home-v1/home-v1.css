@@ -2,7 +2,7 @@
 :root{--bg:#fff;--text:#1f2933;--muted:#6b7280;--line:#e5e7eb;--soft:#f7f7f8;--accent:#0f766e}
 html,body{margin:0;width:100%;height:100%;background:var(--bg);color:var(--text);font-family:system-ui,'Noto Sans Bengali',sans-serif}
 body{overflow:hidden}.shell{width:100%;height:100%;max-width:920px;margin:auto;display:flex;flex-direction:column;background:var(--bg)}
-.topbar{position:relative;z-index:110;height:56px;min-height:56px;display:grid;grid-template-columns:40px 40px 1fr 40px 40px;align-items:center;padding:0 8px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.96)}
+.topbar{position:relative;z-index:100;height:56px;min-height:56px;display:grid;grid-template-columns:40px 40px 1fr 40px 40px;align-items:center;padding:0 8px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.96)}
 .icon-btn{width:36px;height:36px;border:0;border-radius:9px;background:transparent;color:var(--text);display:grid;place-items:center;font-size:21px}
 .icon-btn:active{background:var(--soft)}.hamb{display:grid;gap:3px}.hamb i{display:block;width:15px;height:1.5px;background:currentColor;border-radius:2px}
 .brand{text-align:center;font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -144,7 +144,7 @@ body.night .message-more-menu button:hover,body.night .message-more-menu button:
 @media(prefers-reduced-motion:reduce){body.night{animation:none;background-color:#101715}}
 
 /* Smart Chat Composer v1 */
-.composer-wrap{width:100%;max-width:760px;margin:0 auto;position:relative;z-index:110;pointer-events:auto}
+.composer-wrap{width:100%;max-width:760px;margin:0 auto;position:relative;z-index:100;pointer-events:auto}
 .composer{max-width:none}
 .composer-left{flex:0 0 auto;order:0}
 .composer textarea{order:1;min-height:34px;overflow-y:hidden}
