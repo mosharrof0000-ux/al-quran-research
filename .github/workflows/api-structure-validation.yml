@@ -1,6 +1,7 @@
 name: API Structure Validation
 
 on:
+  pull_request:
   push:
     paths:
       - 'backend/**'
