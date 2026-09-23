@@ -35,7 +35,30 @@ jobs:
           URL='https://al-quran-research.mosharroff0000.workers.dev'
           ORIGIN='https://mosharroff0000-ux.github.io'
 
+          echo "Waiting for Worker DNS/edge propagation..."
+          for i in {1..12}; do
+            if curl -fsS --connect-timeout 5 --max-time 10 -H "Origin: $ORIGIN" "$URL/diagnostic" >/tmp/aqr-diagnostic.json; then
+              cat /tmp/aqr-diagnostic.json
+              break
+            fi
+            if [ "$i" -eq 12 ]; then
+              echo "Worker endpoint did not become reachable after retry window."
+              exit 1
+            fi
+            sleep 5
+          done
+          echo
+
+          echo "Checking Research API status..."
+          curl -fsS --connect-timeout 8 --max-time 20             -H "Origin: $ORIGIN" "$URL/api/v1/status"
+          echo
+
+          echo "Checking Research API Fatiha 1:1..."
+          curl -fsS --connect-timeout 8 --max-time 20             -H "Origin: $ORIGIN" "$URL/api/v1/ayah/1/1"
+          echo
+
           echo "Checking Worker diagnostic..."
+
           curl -fsS --connect-timeout 8 --max-time 20 \
             -H "Origin: $ORIGIN" "$URL/diagnostic"
           echo
