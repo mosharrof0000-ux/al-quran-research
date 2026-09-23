@@ -1,9 +1,9 @@
 /* Sidebar Drawer Layer Fix — 2026-09-23 */
-.drawer-overlay{position:fixed;inset:0;width:100%;height:100%;background:rgba(0,0,0,.6);display:block;z-index:9998;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .3s ease,visibility .3s ease;isolation:isolate}
+.drawer-overlay{position:fixed!important;inset:0!important;width:100%;height:100%;background:rgba(0,0,0,.6);display:block;z-index:2147483645!important;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .3s ease,visibility .3s ease;isolation:isolate}
 .drawer-overlay.active{opacity:1;visibility:visible;pointer-events:auto}
-.drawer-menu{position:fixed;top:0;right:0;width:min(300px,86vw);height:100%;background:#121316;color:#fff;box-shadow:-5px 0 25px rgba(0,0,0,.6);transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);z-index:9999;padding:20px;display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;box-sizing:border-box;opacity:1;isolation:isolate}
+.drawer-menu{position:fixed!important;top:0!important;right:0;width:min(300px,86vw);height:100%;background:#121316;color:#fff;box-shadow:-5px 0 25px rgba(0,0,0,.6);transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);z-index:2147483646!important;padding:20px;display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;box-sizing:border-box;opacity:1;isolation:isolate}
 .drawer-menu.active{transform:translateX(0)}
-.drawer-close-btn{align-self:flex-end;flex:0 0 auto;width:42px;height:42px;margin:0 0 8px 12px;padding:9px;box-sizing:border-box;background:#121316;border:0;border-radius:10px;color:#fff;font-size:20px;cursor:pointer;line-height:1;display:grid;place-items:center;position:relative;z-index:10000}
+.drawer-close-btn{align-self:flex-end;flex:0 0 auto;width:42px;height:42px;margin:0 0 8px 12px;padding:9px;box-sizing:border-box;background:#121316;border:0;border-radius:10px;color:#fff;font-size:20px;cursor:pointer;line-height:1;display:grid;place-items:center;position:relative;z-index:2147483647!important;
 .drawer-close-btn:hover,.drawer-close-btn:focus-visible{background:#24262b;color:#fff}
 .drawer-user-card{background:#232429;border-radius:16px;padding:15px;display:flex;align-items:center;gap:12px;margin:7px 0 20px;border:1px solid rgba(255,255,255,.08)}
 .drawer-avatar-wrap{position:relative;flex:0 0 48px;width:48px;height:48px;padding:0;border:0;border-radius:50%;cursor:pointer;background:transparent}
