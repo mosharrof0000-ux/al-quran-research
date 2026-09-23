@@ -3,7 +3,7 @@
    Project context, provenance, read-only versioned research memory and save proposals are attached before Gemini.
 */
 import worker from './worker.js';
-import { handleApiV1 } from './api-v1.js';
+import { handleApiV1 } from './api-v1-router.js';
 import { handleResearchApi } from './research-api.js';
 import { recoverChat } from './chat-recovery.js';
 import { BRAIN_VERSION, BRAIN_SYSTEM, buildBrainPrompt } from './ai-research-brain.js';
