@@ -1,5 +1,5 @@
 import { positiveInt } from './validation.js';
-import { error } from './response.js';
+import { error, json } from './response.js';
 
 const DATA_URL = 'https://raw.githubusercontent.com/mosharrof0000-ux/al-quran-research/main/data/fatiha-master-v1.json';
 
@@ -23,7 +23,7 @@ export async function getAyah(surahValue, ayahValue, origin) {
     const surah = surahs(data).find(s => Number(s.surah_number) === surahNo);
     const ayah = surah?.ayahs?.find(a => Number(a.ayah_number) === ayahNo);
     if (!ayah) return error('AYAH_NOT_FOUND', 'Requested ayah is not in the verified dataset.', 404, origin);
-    return Response.json({
+    return json({
       ok: true,
       api_version: 'v1',
       source: 'master-dataset',
@@ -31,7 +31,7 @@ export async function getAyah(surahValue, ayahValue, origin) {
       surah_number: surahNo,
       surah_name: surah.name_bengali || surah.name_bn || surah.name_ar || null,
       ...ayah
-    }, { headers: { 'Cache-Control': 'public, max-age=300' } });
+    }, 200, origin);
   } catch (e) {
     const code = String(e?.message || e);
     return error(code === 'MASTER_DATASET_FETCH_FAILED' ? code : 'VALIDATION_ERROR', 'Unable to read Qur’an data.', code === 'MASTER_DATASET_FETCH_FAILED' ? 503 : 400, origin);
