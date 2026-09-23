@@ -29,7 +29,7 @@ export async function handleApiV1(request) {
       '/api/v1/ayah/{surah_number}/{ayah_number}','/api/v1/word/{token_id}','/api/v1/search?q={query}'
     ]},200,origin,'public, max-age=30');
   }
-  if (url.pathname === '/api/v1/capabilities') {\n    return json({ok:true,api_version:API_VERSION,read_only:true,layers:{gateway:'ready',research:'v1-read-only',ai:'worker-entry',database:'D1-ready-not-active'}},200,origin);\n  }\n  if (url.pathname === '/api/v1/health') {
+  if (url.pathname === '/api/v1/capabilities') {    return json({ok:true,api_version:API_VERSION,read_only:true,layers:{gateway:'ready',research:'v1-read-only',ai:'worker-entry',database:'D1-ready-not-active'}},200,origin);\n  }\n  if (url.pathname === '/api/v1/health') {
     return json({ok:true,service:'al-quran-research-api',api_version:API_VERSION,read_only:true,
       data_layer:'master-dataset-adapter',database_migration:'D1-ready-not-active'},200,origin);
   }
