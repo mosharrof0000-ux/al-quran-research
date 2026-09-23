@@ -128,7 +128,14 @@ function addMessage(text,type){
    addMore('🔊 পড়ে শোনান',()=>speakAiMessage(body.textContent));addMore('⧉ উত্তর কপি করুন',()=>copyAiMessage(body.textContent));addMore('↗ উত্তর শেয়ার করুন',()=>shareAiMessage(body.textContent));addMore('⚑ মতামত/রিপোর্ট',()=>toast('মতামত/রিপোর্ট অপশন প্রস্তুত করা হয়েছে'));
    moreWrap.appendChild(moreMenu);actions.appendChild(moreWrap);el.__actions=actions;el.__body=body;el.appendChild(actions);
  }
- box.appendChild(el);box.scrollTop=box.scrollHeight;return el
+ box.appendChild(el);
+ if(type.includes('user')){
+   const targetTop=Math.max(0,el.offsetTop-78);
+   box.scrollTop=targetTop;
+ }else{
+   box.scrollTop=box.scrollHeight;
+ }
+ return el
 }
 async function streamAiResponse(body,text){
  const raw=String(text||'');body.innerHTML='';let partial='';
