@@ -1,9 +1,11 @@
-const CACHE_NAME='aqr-pwa-v1';
+const CACHE_NAME='aqr-pwa-v2';
 const APP_SHELL=[
   './',
   './index.html',
   './manifest.webmanifest',
   './favicon.svg',
+  './pwa-icon-192.png',
+  './pwa-icon-512.png',
   './ui/home-v1/home-v1.html',
   './ui/home-v1/home-v1.css',
   './ui/home-v1/home-v1.js',
