@@ -104,7 +104,7 @@ async function getResearchContext(message){
  const [surah,ayah]=ref;
  try{
    const req=new Request(`https://research.local/api/v1/ayah/${surah}/${ayah}`,{method:'GET'});
-   const response=await handleResearchApi(req);
+   const response=await handleResearchApi(req,env);
    if(!response||!response.ok)return {context:'',ref,used:false,provenance:null};
    const data=await response.json();
    if(!data||data.error)return {context:'',ref,used:false,provenance:null};
@@ -135,4 +135,4 @@ async function directGemini(request,env,origin){
  return null;
 }
 
-export default {async fetch(request,env,ctx){const origin=request.headers.get('Origin')||'';const privateResearch=await handlePrivateResearch(request,env);if(privateResearch)return privateResearch;const rp=await readerProxy(request,env);if(rp)return rp;const d=await diagnostic(request,env);if(d)return d;if(request.method==='OPTIONS')return new Response(null,{status:204,headers:{'Access-Control-Allow-Origin':ALLOWED_ORIGINS.includes(origin)?origin:ALLOWED_ORIGINS[0],'Access-Control-Allow-Methods':'GET, POST, OPTIONS','Access-Control-Allow-Headers':'Content-Type','Content-Type':'application/json; charset=utf-8','Vary':'Origin'}});const research=await handleResearchApi(request);if(research)return research;const gemini=await directGemini(request,env,origin);if(gemini)return gemini;const response=await worker.fetch(request.clone(),env,ctx);if(response.status<500)return response;const recovery=await recoverChat(request.clone(),env);if(recovery)return recovery;return response;}};
+export default {async fetch(request,env,ctx){const origin=request.headers.get('Origin')||'';const privateResearch=await handlePrivateResearch(request,env);if(privateResearch)return privateResearch;const rp=await readerProxy(request,env);if(rp)return rp;const d=await diagnostic(request,env);if(d)return d;if(request.method==='OPTIONS')return new Response(null,{status:204,headers:{'Access-Control-Allow-Origin':ALLOWED_ORIGINS.includes(origin)?origin:ALLOWED_ORIGINS[0],'Access-Control-Allow-Methods':'GET, POST, OPTIONS','Access-Control-Allow-Headers':'Content-Type','Content-Type':'application/json; charset=utf-8','Vary':'Origin'}});const research=await handleResearchApi(request,env);if(research)return research;const gemini=await directGemini(request,env,origin);if(gemini)return gemini;const response=await worker.fetch(request.clone(),env,ctx);if(response.status<500)return response;const recovery=await recoverChat(request.clone(),env);if(recovery)return recovery;return response;}};
