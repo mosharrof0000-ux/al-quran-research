@@ -259,3 +259,18 @@ body.night .chat-message.ai{background:transparent;border:0;color:#f1f5f3}
 }
 .topbar .icon-btn{pointer-events:auto}
 .topbar .brand{pointer-events:none}
+
+
+/* Dynamic Brand v1 — hide the glass-header title once chat messages appear */
+.topbar .brand{
+  transition:transform .34s ease,opacity .28s ease;
+  will-change:transform,opacity;
+}
+.topbar.brand-hidden .brand{
+  opacity:0!important;
+  transform:translateY(-32px)!important;
+  visibility:hidden;
+}
+@media(prefers-reduced-motion:reduce){
+  .topbar .brand{transition:none}
+}
