@@ -25,8 +25,8 @@ jobs:
         run: |
           set -euo pipefail
           test -f backend/api-v1.js
-          test -f backend/api-architecture-v1.md
-          test -f backend/db/schema-v1.sql
+          test -f backend/API_ARCHITECTURE_V1.md
+          test -f database/schema-v1.sql
           grep -q "/api/v1/health" backend/api-v1.js
           grep -q "CREATE TABLE IF NOT EXISTS ayahs" database/schema-v1.sql
           grep -q "api-v1.js" backend/worker-entry.js
