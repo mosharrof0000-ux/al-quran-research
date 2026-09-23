@@ -9,6 +9,8 @@ import android.webkit.WebViewClient
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.ViewCompat
 import androidx.webkit.WebSettingsCompat
 import androidx.webkit.WebViewFeature
 
@@ -24,7 +26,10 @@ class MainActivity : AppCompatActivity() {
         // Android 15+ enforces edge-to-edge for targetSdk 35; this enables the
         // same behavior on older Android versions and lets the WebView draw
         // behind the transparent status bar.
-        WindowCompat.enableEdgeToEdge(window)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        window.statusBarColor = Color.TRANSPARENT
+        window.navigationBarColor = Color.TRANSPARENT
+        window.navigationBarDividerColor = Color.TRANSPARENT
         window.isNavigationBarContrastEnforced = false
 
         setContentView(R.layout.activity_main)
