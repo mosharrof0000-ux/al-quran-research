@@ -4,6 +4,7 @@
 */
 import worker from './worker.js';
 import { handleResearchApi } from './research-api.js';
+import { handleApiV1 } from './api-v1-router.js';
 import { recoverChat } from './chat-recovery.js';
 import { BRAIN_VERSION, BRAIN_SYSTEM, buildBrainPrompt } from './ai-research-brain.js';
 import { RESEARCH_OUTPUT_STYLE, RESEARCH_OUTPUT_STYLE_VERSION } from './research-output-style.js';
@@ -135,4 +136,4 @@ async function directGemini(request,env,origin){
  return null;
 }
 
-export default {async fetch(request,env,ctx){const origin=request.headers.get('Origin')||'';const privateResearch=await handlePrivateResearch(request,env);if(privateResearch)return privateResearch;const rp=await readerProxy(request,env);if(rp)return rp;const d=await diagnostic(request,env);if(d)return d;if(request.method==='OPTIONS')return new Response(null,{status:204,headers:{'Access-Control-Allow-Origin':ALLOWED_ORIGINS.includes(origin)?origin:ALLOWED_ORIGINS[0],'Access-Control-Allow-Methods':'GET, POST, OPTIONS','Access-Control-Allow-Headers':'Content-Type','Content-Type':'application/json; charset=utf-8','Vary':'Origin'}});const research=await handleResearchApi(request);if(research)return research;const gemini=await directGemini(request,env,origin);if(gemini)return gemini;const response=await worker.fetch(request.clone(),env,ctx);if(response.status<500)return response;const recovery=await recoverChat(request.clone(),env);if(recovery)return recovery;return response;}};
+export default {async fetch(request,env,ctx){const origin=request.headers.get('Origin')||'';const privateResearch=await handlePrivateResearch(request,env);if(privateResearch)return privateResearch;const rp=await readerProxy(request,env);if(rp)return rp;const d=await diagnostic(request,env);if(d)return d;if(request.method==='OPTIONS')return new Response(null,{status:204,headers:{'Access-Control-Allow-Origin':ALLOWED_ORIGINS.includes(origin)?origin:ALLOWED_ORIGINS[0],'Access-Control-Allow-Methods':'GET, POST, OPTIONS','Access-Control-Allow-Headers':'Content-Type','Content-Type':'application/json; charset=utf-8','Vary':'Origin'}});const research=await handleApiV1(request,env);if(research)return research;const gemini=await directGemini(request,env,origin);if(gemini)return gemini;const response=await worker.fetch(request.clone(),env,ctx);if(response.status<500)return response;const recovery=await recoverChat(request.clone(),env);if(recovery)return recovery;return response;}};
