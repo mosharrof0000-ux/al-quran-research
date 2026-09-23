@@ -9,7 +9,6 @@ import android.webkit.WebViewClient
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsControllerCompat
 import androidx.webkit.WebSettingsCompat
 import androidx.webkit.WebViewFeature
 
@@ -21,13 +20,12 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Edge-to-edge: web content is allowed to draw behind transparent system bars.
-        WindowCompat.setDecorFitsSystemWindows(window, false)
-        window.statusBarColor = Color.TRANSPARENT
-        window.navigationBarColor = Color.TRANSPARENT
-        window.navigationBarDividerColor = Color.TRANSPARENT
-
-        applySystemBarIconMode()
+        // Recommended backward-compatible edge-to-edge setup.
+        // Android 15+ enforces edge-to-edge for targetSdk 35; this enables the
+        // same behavior on older Android versions and lets the WebView draw
+        // behind the transparent status bar.
+        WindowCompat.enableEdgeToEdge(window)
+        window.isNavigationBarContrastEnforced = false
 
         setContentView(R.layout.activity_main)
 
@@ -61,13 +59,6 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         })
-    }
-
-    private fun applySystemBarIconMode() {
-        val controller = WindowInsetsControllerCompat(window, window.decorView)
-        // Current Qur'an UI is light at the top, so dark system icons are clearer.
-        controller.isAppearanceLightStatusBars = true
-        controller.isAppearanceLightNavigationBars = true
     }
 
     override fun onDestroy() {
