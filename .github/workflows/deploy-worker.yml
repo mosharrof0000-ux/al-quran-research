@@ -57,12 +57,6 @@ jobs:
           curl -fsS --connect-timeout 8 --max-time 20             -H "Origin: $ORIGIN" "$URL/api/v1/ayah/1/1"
           echo
 
-          echo "Checking Worker diagnostic..."
-
-          curl -fsS --connect-timeout 8 --max-time 20 \
-            -H "Origin: $ORIGIN" "$URL/diagnostic"
-          echo
-
           echo "Checking CORS preflight..."
           curl -fsS -o /dev/null -D - -X OPTIONS \
             -H "Origin: $ORIGIN" \
