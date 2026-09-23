@@ -8,6 +8,11 @@ on:
       - 'tafsir-library.html'
       - 'assets/tiya-ai-logo.svg'
       - 'chat-system.js'
+      - 'ui/home-v1/home-v1.html'
+      - 'ui/home-v1/home-v1.css'
+      - 'ui/home-v1/home-v1.js'
+      - 'ui/auth/drawer-v1.css'
+      - 'ui/auth/drawer-v1.js'
       - '.github/workflows/live-entrypoint-sync.yml'
   workflow_dispatch:
 
