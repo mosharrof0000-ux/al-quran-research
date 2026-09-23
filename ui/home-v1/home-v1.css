@@ -274,3 +274,12 @@ body.night .chat-message.ai{background:transparent;border:0;color:#f1f5f3}
 @media(prefers-reduced-motion:reduce){
   .topbar .brand{transition:none}
 }
+
+
+/* Chat message clearance below transparent glass header v1 */
+.messages{
+  padding-top:68px!important;
+}
+@media(max-width:650px){
+  .messages{padding-top:62px!important}
+}
