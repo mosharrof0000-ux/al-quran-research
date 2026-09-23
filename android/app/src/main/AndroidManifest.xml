@@ -8,7 +8,8 @@
         android:label="আল-কুরআন রিসার্চ"
         android:supportsRtl="true"
         android:theme="@style/Theme.AlQuranResearch"
-        android:usesCleartextTraffic="false">
+        android:usesCleartextTraffic="false"
+        android:enableOnBackInvokedCallback="true">
 
         <activity
             android:name=".MainActivity"
