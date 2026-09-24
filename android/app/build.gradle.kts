@@ -17,7 +17,7 @@ android {
 
     signingConfigs {
         create("ciDebug") {
-            storeFile = file("ci-debug.keystore")
+            storeFile = file("ci-debug.p12")
             storePassword = "al-quran-ci-debug"
             keyAlias = "androiddebugkey"
             keyPassword = "al-quran-ci-debug"
