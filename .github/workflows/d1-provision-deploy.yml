@@ -43,6 +43,13 @@ jobs:
           TOKEN="${CLOUDFLARE_API_TOKEN//$'\r'/}"
           TOKEN="${TOKEN//$'\n'/}"
           TOKEN="${TOKEN#Bearer }"
+          TOKEN="${TOKEN#bearer }"
+          TOKEN="${TOKEN#Token }"
+          TOKEN="${TOKEN#token }"
+          TOKEN="${TOKEN#CLOUDFLARE_API_TOKEN=}"
+          TOKEN="${TOKEN#"}"
+          TOKEN="${TOKEN%"}"
+          TOKEN="$(printf '%s' "$TOKEN" | tr -d '[:space:]')"
           if [ -z "$TOKEN" ]; then
             echo "CLOUDFLARE_API_TOKEN is empty."
             exit 1
