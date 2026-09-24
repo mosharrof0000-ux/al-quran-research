@@ -20,6 +20,7 @@ permissions:
 
 env:
   DB_NAME: al-quran-research-db
+  D1_CONFIG: backend/.wrangler-d1.jsonc
 
 jobs:
   deploy:
@@ -88,21 +89,21 @@ jobs:
           }
           const i=base.lastIndexOf('}');
           if(i<0) throw new Error('Invalid Wrangler config');
-          const binding=',\n  "d1_databases": [{\n    "binding": "DB",\n    "database_name": "'+process.env.DB_NAME+'",\n    "database_id": "'+process.env.DB_ID+'"\n  }]\n';
-          fs.writeFileSync('/tmp/wrangler-d1.jsonc',base.slice(0,i)+binding+base.slice(i));
+          const binding=',\n  "migrations_dir": "../migrations",\n  "d1_databases": [{\n    "binding": "DB",\n    "database_name": "'+process.env.DB_NAME+'",\n    "database_id": "'+process.env.DB_ID+'"\n  }]\n';
+          fs.writeFileSync(' .wrangler-d1.jsonc'.trim(),base.slice(0,i)+binding+base.slice(i));
           NODE
 
       - name: Apply D1 migrations
         working-directory: backend
         run: |
-          npx --yes wrangler@latest d1 migrations apply "$DB_NAME" --remote --config /tmp/wrangler-d1.jsonc
+          npx --yes wrangler@latest d1 migrations apply "$DB_NAME" --remote --config .wrangler-d1.jsonc
 
       - name: Seed Fatiha pilot when database is empty
         working-directory: backend
         shell: bash
         run: |
           set -euo pipefail
-          COUNT="$(npx --yes wrangler@latest d1 execute "$DB_NAME" --remote --config /tmp/wrangler-d1.jsonc --json --command 'SELECT COUNT(*) AS c FROM surah' | node -e '
+          COUNT="$(npx --yes wrangler@latest d1 execute "$DB_NAME" --remote --config .wrangler-d1.jsonc --json --command 'SELECT COUNT(*) AS c FROM surah' | node -e '
             let s="";
             process.stdin.on("data",d=>s+=d).on("end",()=>{
               const x=JSON.parse(s);
@@ -112,7 +113,7 @@ jobs:
           ')"
           echo "surah rows: $COUNT"
           if [ "$COUNT" = "0" ]; then
-            npx --yes wrangler@latest d1 execute "$DB_NAME" --remote --config /tmp/wrangler-d1.jsonc --file ../database/pilot_fatiha_v0.1.sql --yes
+            npx --yes wrangler@latest d1 execute "$DB_NAME" --remote --config .wrangler-d1.jsonc --file ../database/pilot_fatiha_v0.1.sql --yes
           else
             echo "Existing research data found; seed skipped."
           fi
@@ -121,12 +122,12 @@ jobs:
         working-directory: backend
         run: |
           set -euo pipefail
-          npx --yes wrangler@latest d1 execute "$DB_NAME" --remote --config /tmp/wrangler-d1.jsonc --json --command 'SELECT COUNT(*) AS surahs FROM surah; SELECT COUNT(*) AS ayahs FROM ayah; SELECT COUNT(*) AS tokens FROM token;'
+          npx --yes wrangler@latest d1 execute "$DB_NAME" --remote --config .wrangler-d1.jsonc --json --command 'SELECT COUNT(*) AS surahs FROM surah; SELECT COUNT(*) AS ayahs FROM ayah; SELECT COUNT(*) AS tokens FROM token;'
 
       - name: Deploy Worker with D1 binding
         working-directory: backend
         run: |
-          npx --yes wrangler@latest deploy --config /tmp/wrangler-d1.jsonc
+          npx --yes wrangler@latest deploy --config .wrangler-d1.jsonc
 
       - name: Smoke test Worker, Research API, CORS and chat
         shell: bash
@@ -158,4 +159,3 @@ jobs:
           echo "Checking real POST chat path..."
           curl -fsS --connect-timeout 8 --max-time 45 -H "Origin: $ORIGIN" -H 'Content-Type: application/json' --data '{"message":"আপনি কেমন আছেন","mode":"general","language":"bn"}' "$URL/"
           echo
-      
