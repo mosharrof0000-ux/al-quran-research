@@ -1,0 +1,36 @@
+{
+  "schema_version":"0.1",
+  "states":[
+    "NEW","CLASSIFIED","RETRIEVING","STRATEGIZING","EXECUTING",
+    "VERIFYING","SCORING","EXPLAINING","STORING","REUSING",
+    "ADAPTING","RE_EVALUATING","VALIDATED","REJECTED","BLOCKED"
+  ],
+  "transitions":[
+    "NEW->CLASSIFIED",
+    "CLASSIFIED->RETRIEVING",
+    "RETRIEVING->STRATEGIZING",
+    "STRATEGIZING->EXECUTING",
+    "EXECUTING->VERIFYING",
+    "VERIFYING->SCORING",
+    "SCORING->EXPLAINING",
+    "EXPLAINING->STORING",
+    "STORING->REUSING",
+    "REUSING->ADAPTING",
+    "ADAPTING->RE_EVALUATING",
+    "RE_EVALUATING->VALIDATED",
+    "RE_EVALUATING->REJECTED",
+    "EXECUTING->BLOCKED",
+    "VERIFYING->BLOCKED",
+    "SCORING->BLOCKED"
+  ],
+  "failure_policy":{
+    "retry_self":1,
+    "alternate_strategy":2,
+    "peer_consultation":3,
+    "targeted_experiment_after_repeated_failure":true
+  },
+  "promotion":{
+    "direct_live":false,
+    "required":["SANDBOX","EVALUATE","VALIDATE","REVIEW","STAGING","VERIFY"]
+  }
+}
