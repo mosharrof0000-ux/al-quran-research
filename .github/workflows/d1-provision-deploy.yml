@@ -40,7 +40,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          TOKEN="$(printf '%s' "$CLOUDFLARE_API_TOKEN" | tr -d '\r\n' | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' -e 's/^Bearer //' -e 's/^bearer //' -e 's/^Token //' -e 's/^token //' -e 's/^CLOUDFLARE_API_TOKEN=//' -e 's/^"//' -e 's/"$//' | tr -d '[:space:]')"
+          TOKEN="$(printf '%s' "$CLOUDFLARE_API_TOKEN" | tr -d '\r\n' | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' -e 's/^Authorization:[[:space:]]*//' -e 's/^authorization:[[:space:]]*//' -e 's/^Bearer //' -e 's/^bearer //' -e 's/^Token //' -e 's/^token //' -e 's/^CLOUDFLARE_API_TOKEN[=:][[:space:]]*//' -e 's/^"//' -e 's/"$//' -e "s/^'//" -e "s/'$//" | tr -d '[:space:]')"
           if [ -z "$TOKEN" ]; then
             echo "CLOUDFLARE_API_TOKEN is empty."
             exit 1
