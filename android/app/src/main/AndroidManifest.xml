@@ -5,7 +5,9 @@
 
     <application
         android:allowBackup="true"
+        android:icon="@drawable/ic_app_icon"
         android:label="আল-কুরআন রিসার্চ"
+        android:roundIcon="@drawable/ic_app_icon"
         android:supportsRtl="true"
         android:theme="@style/Theme.AlQuranResearch"
         android:usesCleartextTraffic="false"

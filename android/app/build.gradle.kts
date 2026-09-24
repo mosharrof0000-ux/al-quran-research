@@ -11,11 +11,23 @@ android {
         applicationId = "com.mosharrof.alquranresearch"
         minSdk = 23
         targetSdk = 36
-        versionCode = 2
-        versionName = "1.1.0"
+        versionCode = 3
+        versionName = "1.2.0"
+    }
+
+    signingConfigs {
+        create("ciDebug") {
+            storeFile = file("ci-debug.keystore")
+            storePassword = "al-quran-ci-debug"
+            keyAlias = "androiddebugkey"
+            keyPassword = "al-quran-ci-debug"
+        }
     }
 
     buildTypes {
+        debug {
+            signingConfig = signingConfigs.getByName("ciDebug")
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(
