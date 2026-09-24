@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 const assert=(c,m)=>{if(!c)throw new Error(m)};
-const {resolveToken,isUnder}=require('./mosharrof_token_engine.mjs');
+const {resolveToken,isUnder}=await import('./mosharrof_token_engine.mjs');
 
 const tests = [
   ['TR-001 active matching token', () => {
