@@ -35,4 +35,4 @@ function resolveToken({permission, tokens, approval=false}) {
   };
 }
 
-module.exports = {isUnder, resolveToken};
+export { isUnder, resolveToken };
