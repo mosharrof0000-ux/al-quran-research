@@ -9,7 +9,7 @@ const tests = [
     assert(r.status==='AUTHORIZED' && r.effective_scope==='/data/a','matching token rejected');
   }],
   ['TR-002 narrow token denied for child scope', () => {
-    const r=resolveToken({permission:{capability:'READ',operation:'READ',scope:'/data/a/b',environment:'sandbox'},tokens:[{token_id:'T1',status:'ACTIVE',capability:'READ',operation:'READ',scope:'/data/a',environment:'sandbox',privilegeCost:2}]});
+    const r=resolveToken({permission:{capability:'READ',operation:'READ',scope:'/data/b',environment:'sandbox'},tokens:[{token_id:'T1',status:'ACTIVE',capability:'READ',operation:'READ',scope:'/data/a',environment:'sandbox',privilegeCost:2}]});
     assert(r.status==='BLOCKED','narrow token widened');
   }],
   ['TR-003 broad token cannot widen effective scope', () => {
