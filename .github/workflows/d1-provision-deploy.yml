@@ -55,6 +55,20 @@ jobs:
           esac
           echo "CLOUDFLARE_API_TOKEN=$TOKEN" >> "$GITHUB_ENV"
 
+      - name: Normalize Cloudflare token format
+        shell: bash
+        run: |
+          set -euo pipefail
+          TOKEN="${CLOUDFLARE_API_TOKEN#Bearer }"
+          TOKEN="${TOKEN#bearer }"
+          TOKEN="${TOKEN#\"}"
+          TOKEN="${TOKEN%\"}"
+          if [ -z "$TOKEN" ]; then
+            echo "Cloudflare API token is empty."
+            exit 1
+          fi
+          echo "CLOUDFLARE_API_TOKEN=$TOKEN" >> "$GITHUB_ENV"
+
       - name: Provision or find D1
         working-directory: backend
         shell: bash
