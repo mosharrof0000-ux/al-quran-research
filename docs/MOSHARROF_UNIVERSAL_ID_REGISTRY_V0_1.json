@@ -1,0 +1,51 @@
+{
+  "version": "0.1",
+  "registry_id": "MOSHARROF-ID-REGISTRY",
+  "identifier_namespaces": [
+    "PAGE-ID",
+    "TOOL-ID",
+    "ENTITY-ID",
+    "AI-PEER-ID",
+    "RESEARCH-ID"
+  ],
+  "lifecycle": [
+    "REGISTERED",
+    "REVIEWED",
+    "APPROVED",
+    "ACTIVE",
+    "SUSPENDED",
+    "RETIRED"
+  ],
+  "lookup": {
+    "cross_page": true,
+    "read_only": true,
+    "permission_grant": false,
+    "protected_core_bypass": false
+  },
+  "invariants": {
+    "globally_unique_within_namespace": true,
+    "silent_id_reuse": false,
+    "child_can_become_root": false,
+    "raw_token_exposure": false
+  },
+  "record_required": [
+    "id",
+    "id_type",
+    "canonical_name",
+    "lifecycle_state",
+    "parent_id",
+    "page_id",
+    "tool_id",
+    "visibility",
+    "version",
+    "registry_reference"
+  ],
+  "failures": [
+    "UNKNOWN_ID",
+    "AMBIGUOUS_ID",
+    "NOT_VISIBLE",
+    "SUSPENDED",
+    "RETIRED",
+    "POLICY_BLOCKED"
+  ]
+}
