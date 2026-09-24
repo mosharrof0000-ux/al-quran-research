@@ -45,12 +45,6 @@ jobs:
             echo "CLOUDFLARE_API_TOKEN is empty."
             exit 1
           fi
-          case "$TOKEN" in
-            Bearer *|bearer *|Basic *|basic *|Token *|token *)
-              echo "Cloudflare secret still contains an authorization prefix; store the raw API token."
-              exit 1
-              ;;
-          esac
           echo "CLOUDFLARE_API_TOKEN=$TOKEN" >> "$GITHUB_ENV"
 
       - name: Provision or find D1
