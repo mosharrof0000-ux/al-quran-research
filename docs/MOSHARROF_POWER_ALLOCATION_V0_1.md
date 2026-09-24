@@ -1,0 +1,1 @@
+Add capability and power allocation model
