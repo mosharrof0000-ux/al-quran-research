@@ -1,114 +1,65 @@
 #!/usr/bin/env node
 'use strict';
-
-const assert = (c, m) => { if (!c) throw new Error(m); };
-
-const scopeAllows = (allowed, requested) =>
-  requested === allowed || requested.startsWith(allowed.endsWith('/') ? allowed : allowed + '/');
-
-const effective = (permission, token) => ({
-  capability: permission.capability === token.capability ? permission.capability : null,
-  operation: permission.operation === token.operation ? permission.operation : null,
-  scope: scopeAllows(token.scope, permission.scope) ? permission.scope : null,
-  environment: permission.environment === token.environment ? permission.environment : null,
-  allowed: permission.status === 'ACTIVE' && token.status === 'ACTIVE' &&
-    !permission.denied && !token.denied &&
-    permission.capability === token.capability &&
-    permission.operation === token.operation &&
-    scopeAllows(token.scope, permission.scope) &&
-    permission.environment === token.environment
-});
-
-const selectToken = (tokens) =>
-  [...tokens].filter(t => t.status === 'ACTIVE')
-    .sort((a,b) => a.privilegeCost - b.privilegeCost)[0] ?? null;
+const assert=(c,m)=>{if(!c)throw new Error(m)};
+const {resolveToken,isUnder}=require('./mosharrof_token_engine.mjs');
 
 const tests = [
-  ['TR-001 matching active token', () => {
-    const r = effective(
-      {status:'ACTIVE',capability:'READ',operation:'READ',scope:'/data/a',environment:'sandbox'},
-      {status:'ACTIVE',capability:'READ',operation:'READ',scope:'/data',environment:'sandbox'}
-    );
-    assert(r.allowed, 'matching token rejected');
+  ['TR-001 active matching token', () => {
+    const r=resolveToken({permission:{capability:'READ',operation:'READ',scope:'/data/a',environment:'sandbox'},tokens:[{token_id:'T1',status:'ACTIVE',capability:'READ',operation:'READ',scope:'/data',environment:'sandbox',privilegeCost:2}]});
+    assert(r.status==='AUTHORIZED' && r.effective_scope==='/data/a','matching token rejected');
   }],
-  ['TR-002 token scope too narrow', () => {
-    const r = effective(
-      {status:'ACTIVE',capability:'READ',operation:'READ',scope:'/data/a/b',environment:'sandbox'},
-      {status:'ACTIVE',capability:'READ',operation:'READ',scope:'/data/a',environment:'sandbox'}
-    );
-    assert(r.allowed, 'parent token scope should cover child resource');
+  ['TR-002 narrow token denied for child scope', () => {
+    const r=resolveToken({permission:{capability:'READ',operation:'READ',scope:'/data/a/b',environment:'sandbox'},tokens:[{token_id:'T1',status:'ACTIVE',capability:'READ',operation:'READ',scope:'/data/a',environment:'sandbox',privilegeCost:2}]});
+    assert(r.status==='BLOCKED','narrow token widened');
   }],
-  ['TR-003 token scope cannot be wider than permission', () => {
-    const r = effective(
-      {status:'ACTIVE',capability:'READ',operation:'READ',scope:'/data/a',environment:'sandbox'},
-      {status:'ACTIVE',capability:'READ',operation:'READ',scope:'/data',environment:'sandbox'}
-    );
-    assert(r.allowed, 'broader token may cover a narrower permission but does not widen effective scope');
+  ['TR-003 broad token cannot widen effective scope', () => {
+    const r=resolveToken({permission:{capability:'READ',operation:'READ',scope:'/data/a',environment:'sandbox'},tokens:[{token_id:'T1',status:'ACTIVE',capability:'READ',operation:'READ',scope:'/data',environment:'sandbox',privilegeCost:2}]});
+    assert(r.status==='AUTHORIZED' && r.effective_scope==='/data/a','effective scope widened');
   }],
   ['TR-004 capability mismatch denied', () => {
-    const r = effective(
-      {status:'ACTIVE',capability:'EDIT',operation:'WRITE',scope:'/data/a',environment:'sandbox'},
-      {status:'ACTIVE',capability:'READ',operation:'READ',scope:'/data',environment:'sandbox'}
-    );
-    assert(!r.allowed, 'capability mismatch accepted');
+    const r=resolveToken({permission:{capability:'EDIT',operation:'WRITE',scope:'/data/a',environment:'sandbox'},tokens:[{token_id:'T1',status:'ACTIVE',capability:'READ',operation:'READ',scope:'/data',environment:'sandbox'}]});
+    assert(r.status==='BLOCKED','capability mismatch accepted');
   }],
   ['TR-005 inactive token denied', () => {
-    const r = effective(
-      {status:'ACTIVE',capability:'READ',operation:'READ',scope:'/data/a',environment:'sandbox'},
-      {status:'SUSPENDED',capability:'READ',operation:'READ',scope:'/data',environment:'sandbox'}
-    );
-    assert(!r.allowed, 'inactive token accepted');
+    const r=resolveToken({permission:{capability:'READ',operation:'READ',scope:'/data/a',environment:'sandbox'},tokens:[{token_id:'T1',status:'SUSPENDED',capability:'READ',operation:'READ',scope:'/data',environment:'sandbox'}]});
+    assert(r.status==='BLOCKED','inactive token accepted');
   }],
-  ['TR-006 parent permission deny preserved', () => {
-    const r = effective(
-      {status:'ACTIVE',capability:'READ',operation:'READ',scope:'/data/a',environment:'sandbox',denied:true},
-      {status:'ACTIVE',capability:'READ',operation:'READ',scope:'/data',environment:'sandbox'}
-    );
-    assert(!r.allowed, 'token bypassed parent deny');
+  ['TR-006 parent deny preserved', () => {
+    const r=resolveToken({permission:{denied:true,capability:'READ',operation:'READ',scope:'/data/a',environment:'sandbox'},tokens:[{token_id:'T1',status:'ACTIVE',capability:'READ',operation:'READ',scope:'/data',environment:'sandbox'}]});
+    assert(r.status==='DENIED','parent deny bypassed');
   }],
-  ['TR-007 least privilege selection', () => {
-    const t = selectToken([
-      {id:'wide',status:'ACTIVE',privilegeCost:10},
-      {id:'narrow',status:'ACTIVE',privilegeCost:2}
-    ]);
-    assert(t.id === 'narrow', 'least privilege token not selected');
+  ['TR-007 least privilege selected', () => {
+    const r=resolveToken({permission:{capability:'READ',operation:'READ',scope:'/data/a',environment:'sandbox'},tokens:[
+      {token_id:'WIDE',status:'ACTIVE',capability:'READ',operation:'READ',scope:'/data',environment:'sandbox',privilegeCost:10},
+      {token_id:'NARROW',status:'ACTIVE',capability:'READ',operation:'READ',scope:'/data/a',environment:'sandbox',privilegeCost:2}]});
+    assert(r.token_id==='NARROW','least privilege token not selected');
   }],
   ['TR-008 revoked token denied', () => {
-    const r = effective(
-      {status:'ACTIVE',capability:'READ',operation:'READ',scope:'/data',environment:'sandbox'},
-      {status:'REVOKED',capability:'READ',operation:'READ',scope:'/data',environment:'sandbox'}
-    );
-    assert(!r.allowed, 'revoked token accepted');
+    const r=resolveToken({permission:{capability:'READ',operation:'READ',scope:'/data',environment:'sandbox'},tokens:[{token_id:'T1',status:'REVOKED',capability:'READ',operation:'READ',scope:'/data',environment:'sandbox'}]});
+    assert(r.status==='BLOCKED','revoked token accepted');
   }],
-  ['TR-009 live environment mismatch denied', () => {
-    const r = effective(
-      {status:'ACTIVE',capability:'DEPLOY',operation:'DEPLOY',scope:'/app',environment:'live'},
-      {status:'ACTIVE',capability:'DEPLOY',operation:'DEPLOY',scope:'/app',environment:'staging'}
-    );
-    assert(!r.allowed, 'environment mismatch accepted');
+  ['TR-009 environment mismatch denied', () => {
+    const r=resolveToken({permission:{capability:'DEPLOY',operation:'DEPLOY',scope:'/app',environment:'live'},tokens:[{token_id:'T1',status:'ACTIVE',capability:'DEPLOY',operation:'DEPLOY',scope:'/app',environment:'staging'}]});
+    assert(r.status==='BLOCKED','environment mismatch accepted');
   }],
-  ['TR-010 raw secret never represented', () => {
-    const record = {token_id:'TOK-001',auth_reference:'secret://provider/token-001'};
-    assert(!Object.values(record).some(v => String(v).startsWith('sk-')), 'raw secret exposed');
+  ['TR-010 raw secret not part of registry record', () => {
+    const record={token_id:'T1',auth_reference:'secret://cloudflare/mosharrof/T1'};
+    assert(!Object.values(record).some(v=>/^(sk-|cfp_|secret=)/i.test(String(v))),'raw secret represented');
   }],
   ['TR-011 destructive default deny', () => {
-    const r = effective(
-      {status:'ACTIVE',capability:'DESTRUCTIVE',operation:'DELETE',scope:'/data',environment:'live',denied:true},
-      {status:'ACTIVE',capability:'DESTRUCTIVE',operation:'DELETE',scope:'/data',environment:'live'}
-    );
-    assert(!r.allowed, 'destructive action bypassed deny');
+    const r=resolveToken({permission:{destructive:true,capability:'DESTRUCTIVE',operation:'DELETE',scope:'/data',environment:'live'},tokens:[{token_id:'T1',status:'ACTIVE',capability:'DESTRUCTIVE',operation:'DELETE',scope:'/data',environment:'live'}]});
+    assert(r.status==='DENIED','destructive operation bypassed approval');
   }],
-  ['TR-012 no self escalation', () => {
-    const request = {requested:'SECURITY_ADMIN',current:'READ',approved:false};
-    assert(request.current !== request.requested && !request.approved, 'self escalation accepted');
+  ['TR-012 self escalation blocked by capability mismatch/no approval', () => {
+    const r=resolveToken({permission:{security_admin:true,capability:'SECURITY_ADMIN',operation:'ADMIN',scope:'/account',environment:'live'},tokens:[{token_id:'T1',status:'ACTIVE',capability:'READ',operation:'READ',scope:'/account',environment:'live'}]});
+    assert(r.status==='REQUIRES_APPROVAL','security escalation did not require approval');
+  }],
+  ['TR-013 boundary helper', () => {
+    assert(isUnder('/data','/data/a') && !isUnder('/data/a','/data'),'scope boundary incorrect');
   }]
 ];
-
-let passed = 0;
-for (const [name, test] of tests) {
-  try { test(); passed++; console.log('PASS', name); }
-  catch (e) { console.log('FAIL', name, '-', e.message); }
-}
+let passed=0;
+for(const [name,fn] of tests){try{fn();passed++;console.log('PASS',name)}catch(e){console.log('FAIL',name,'-',e.message)}}
 console.log(`RESULT: ${passed}/${tests.length} tests passed`);
-if (passed !== tests.length) process.exit(1);
+if(passed!==tests.length)process.exit(1);
 console.log('STATUS: PASS');
