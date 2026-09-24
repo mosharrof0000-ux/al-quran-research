@@ -1,0 +1,1 @@
+Add Mosharrof entity registry foundation
