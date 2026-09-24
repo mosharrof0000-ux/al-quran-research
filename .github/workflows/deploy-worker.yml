@@ -1,18 +1,13 @@
 name: Deploy Cloudflare Worker
 
+# D1 provisioning + Worker deployment is handled by d1-provision-deploy.yml.
+# Keep this workflow manual so two deploy workflows cannot race and overwrite
+# the D1-bound Worker with the base Wrangler configuration.
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'backend/**'
-      - '.github/workflows/deploy-worker.yml'
+  workflow_dispatch:
 
 permissions:
   contents: read
-
-env:
-  CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
 
 jobs:
   deploy:
@@ -22,52 +17,35 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+
+      - name: Normalize and validate Cloudflare token
+        shell: bash
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          set -euo pipefail
+          TOKEN="${CLOUDFLARE_API_TOKEN//$'\r'/}"
+          TOKEN="${TOKEN//$'\n'/}"
+          TOKEN="${TOKEN#Bearer }"
+          if [ -z "$TOKEN" ]; then
+            echo "CLOUDFLARE_API_TOKEN is empty."
+            exit 1
+          fi
+          case "$TOKEN" in
+            Bearer\ *|Basic\ *)
+              echo "Store the raw Cloudflare API token in the GitHub secret."
+              exit 1
+              ;;
+          esac
+          echo "CLOUDFLARE_API_TOKEN=$TOKEN" >> "$GITHUB_ENV"
+
       - name: Deploy Worker
         uses: cloudflare/wrangler-action@v3
         with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          apiToken: ${{ env.CLOUDFLARE_API_TOKEN }}
           workingDirectory: backend
           command: deploy --config wrangler.jsonc
-
-      - name: Smoke test Worker diagnostic and chat
-        run: |
-          set -euo pipefail
-          URL='https://al-quran-research.mosharroff0000.workers.dev'
-          ORIGIN='https://mosharroff0000-ux.github.io'
-
-          echo "Waiting for Worker DNS/edge propagation..."
-          for i in {1..12}; do
-            if curl -fsS --connect-timeout 5 --max-time 10 -H "Origin: $ORIGIN" "$URL/diagnostic" >/tmp/aqr-diagnostic.json; then
-              cat /tmp/aqr-diagnostic.json
-              break
-            fi
-            if [ "$i" -eq 12 ]; then
-              echo "Worker endpoint did not become reachable after retry window."
-              exit 1
-            fi
-            sleep 5
-          done
-          echo
-
-          echo "Checking Research API status..."
-          curl -fsS --connect-timeout 8 --max-time 20             -H "Origin: $ORIGIN" "$URL/api/v1/status"
-          echo
-
-          echo "Checking Research API Fatiha 1:1..."
-          curl -fsS --connect-timeout 8 --max-time 20             -H "Origin: $ORIGIN" "$URL/api/v1/ayah/1/1"
-          echo
-
-          echo "Checking CORS preflight..."
-          curl -fsS -o /dev/null -D - -X OPTIONS \
-            -H "Origin: $ORIGIN" \
-            -H 'Access-Control-Request-Method: POST' \
-            -H 'Access-Control-Request-Headers: content-type' \
-            "$URL/"
-
-          echo "Checking real POST chat path..."
-          curl -fsS --connect-timeout 8 --max-time 45 \
-            -H "Origin: $ORIGIN" \
-            -H 'Content-Type: application/json' \
-            --data '{"message":"আপনি কেমন আছেন","mode":"general","language":"bn"}' \
-            "$URL/"
-          echo
