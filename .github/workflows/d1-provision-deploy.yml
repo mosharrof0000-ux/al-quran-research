@@ -20,7 +20,6 @@ permissions:
 
 env:
   DB_NAME: al-quran-research-db
-  D1_CONFIG: backend/.wrangler-d1.jsonc
 
 jobs:
   deploy:
@@ -89,8 +88,8 @@ jobs:
           }
           const i=base.lastIndexOf('}');
           if(i<0) throw new Error('Invalid Wrangler config');
-          const binding=',\n  "migrations_dir": "../migrations",\n  "d1_databases": [{\n    "binding": "DB",\n    "database_name": "'+process.env.DB_NAME+'",\n    "database_id": "'+process.env.DB_ID+'"\n  }]\n';
-          fs.writeFileSync(' .wrangler-d1.jsonc'.trim(),base.slice(0,i)+binding+base.slice(i));
+          const binding=',\n  "d1_databases": [{\n    "binding": "DB",\n    "database_name": "'+process.env.DB_NAME+'",\n    "database_id": "'+process.env.DB_ID+'",\n    "migrations_dir": "../migrations"\n  }]\n';
+          fs.writeFileSync('.wrangler-d1.jsonc',base.slice(0,i)+binding+base.slice(i));
           NODE
 
       - name: Apply D1 migrations
