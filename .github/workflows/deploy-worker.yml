@@ -28,9 +28,51 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: |
           set -euo pipefail
-          TOKEN="${CLOUDFLARE_API_TOKEN//$'\r'/}"
-          TOKEN="${TOKEN//$'\n'/}"
+          TOKEN="${CLOUDFLARE_API_TOKEN//
+          if [ -z "$TOKEN" ]; then
+            echo "CLOUDFLARE_API_TOKEN is empty."
+            exit 1
+          fi
+          case "$TOKEN" in
+            Bearer\ *|Basic\ *)
+              echo "Store the raw Cloudflare API token in the GitHub secret."
+              exit 1
+              ;;
+          esac
+          echo "CLOUDFLARE_API_TOKEN=$TOKEN" >> "$GITHUB_ENV"
+
+      - name: Deploy Worker
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ env.CLOUDFLARE_API_TOKEN }}
+          workingDirectory: backend
+          command: deploy --config wrangler.jsonc
+\r'/}"
+          TOKEN="${TOKEN//
+          if [ -z "$TOKEN" ]; then
+            echo "CLOUDFLARE_API_TOKEN is empty."
+            exit 1
+          fi
+          case "$TOKEN" in
+            Bearer\ *|Basic\ *)
+              echo "Store the raw Cloudflare API token in the GitHub secret."
+              exit 1
+              ;;
+          esac
+          echo "CLOUDFLARE_API_TOKEN=$TOKEN" >> "$GITHUB_ENV"
+
+      - name: Deploy Worker
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ env.CLOUDFLARE_API_TOKEN }}
+          workingDirectory: backend
+          command: deploy --config wrangler.jsonc
+\n'/}"
           TOKEN="${TOKEN#Bearer }"
+          TOKEN="${TOKEN#CLOUDFLARE_API_TOKEN=}"
+          TOKEN="${TOKEN#"}"
+          TOKEN="${TOKEN%"}"
+          TOKEN="$(printf '%s' "$TOKEN" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
           if [ -z "$TOKEN" ]; then
             echo "CLOUDFLARE_API_TOKEN is empty."
             exit 1
