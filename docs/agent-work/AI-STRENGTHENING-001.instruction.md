@@ -1,0 +1,1 @@
+Instruction for this task record. Preserve completed, remaining, verification, and successor information; never store secrets or hidden chain-of-thought.
