@@ -283,3 +283,26 @@ Verification: all ten SVG asset files were present on the working branch and use
 - Technical contract: SVG, 64x64, fill=none, stroke=currentColor, nominal 1.9–2px line art, round caps/joins.
 - Verification: all ten SVG assets are present on main; audio uses the existing canonical filename audio-tilawat.svg; manifest maps the reader role to that file.
 - Live integration: NOT performed. Existing reader/icon engine behavior remains unchanged pending isolated visual review and approval.
+
+
+## WORK-2026-09-24-MAIN-LIVE-PROTECTION-NOTICE-01
+
+**Status:** ACTIVE — স্থায়ী URL ও live update rule জারি
+
+### User decision
+ব্যবহারকারী নির্দেশ দিয়েছেন যে Main Live-কে নিরাপদ মূল পেজ হিসেবে রাখতে হবে; update-এর কারণে Main Live URL পরিবর্তন করা যাবে না। কাজের আগে backup থাকবে, ব্যর্থ হলে নিরাপদ backup restore হবে, এবং failed version storage/history-তে থাকবে।
+
+### Canonical Main Live
+https://mosharrof0000-ux.github.io/al-quran-research/#quran
+
+### Required correction
+Feature-এর direct page URL আলাদা করে দেওয়ার ফলে Main Live URL নিয়ে বিভ্রান্তি হতে পারে। এখন থেকে কোনো feature/test URL-কে Main Live বলা যাবে না। Main Live URL অপরিবর্তিত থাকবে।
+
+### Mandatory reporting
+প্রতিটি production change-এর পরে রিপোর্টে আলাদা করে Main Live, Feature/Test (যদি থাকে), এবং Deployment Status দিতে হবে। Deployment সফল না হওয়া পর্যন্ত live কাজ সম্পূর্ণ বলা যাবে না।
+
+### Backup
+Smart Face কাজ শুরুর আগে backup branch: backup/pre-mosharrif-smart-face-2026-09-24
+
+### Permanent safety rule
+Main Live URL পরিবর্তন শুধু ব্যবহারকারীর আলাদা স্পষ্ট অনুমোদনে করা যাবে। ব্যর্থ production change হলে সর্বশেষ নিরাপদ backup restore করতে হবে এবং ব্যর্থ সংস্করণ ইতিহাসে সংরক্ষণ করতে হবে।
