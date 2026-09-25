@@ -1,0 +1,65 @@
+{
+  "schema_version": "0.1",
+  "entities": {
+    "learning_candidate": {
+      "required": [
+        "candidate_id",
+        "problem_class",
+        "input_context",
+        "source_refs",
+        "proposed_strategy",
+        "status"
+      ],
+      "fields": [
+        "candidate_id",
+        "problem_class",
+        "input_context",
+        "source_refs",
+        "peer_refs",
+        "proposed_strategy",
+        "assumptions",
+        "test_cases",
+        "baseline_result",
+        "candidate_result",
+        "evaluation",
+        "security_status",
+        "validation_status",
+        "created_at",
+        "updated_at",
+        "version",
+        "supersedes"
+      ]
+    },
+    "learning_event": {
+      "required": [
+        "event_id",
+        "candidate_id",
+        "event_type",
+        "timestamp"
+      ],
+      "event_types": [
+        "OBSERVE",
+        "CLASSIFY",
+        "RETRIEVE",
+        "HYPOTHESIZE",
+        "PLAN",
+        "ACT",
+        "VERIFY",
+        "SCORE",
+        "EXPLAIN",
+        "STORE",
+        "REUSE",
+        "ADAPT",
+        "RE_EVALUATE",
+        "PROMOTE",
+        "REJECT"
+      ]
+    }
+  },
+  "rules": {
+    "external_output_is_candidate": true,
+    "raw_secrets_forbidden": true,
+    "silent_overwrite_forbidden": true,
+    "direct_live_promotion_forbidden": true
+  }
+}
