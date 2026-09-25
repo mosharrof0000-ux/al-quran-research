@@ -128,6 +128,35 @@ jobs:
         run: |
           npx --yes wrangler@latest deploy --config .wrangler-d1.jsonc
 
+      - name: Deploy isolated Project Agent
+        working-directory: backend/project-agent
+        run: |
+          set -euo pipefail
+          npx --yes wrangler@latest deploy --config wrangler.jsonc
+
+      - name: Verify Project Agent workers.dev endpoint
+        shell: bash
+        run: |
+          set -euo pipefail
+          URL='https://al-quran-research-agent.mosharrof000.workers.dev'
+          echo "Waiting for Project Agent DNS/edge propagation..."
+          for i in {1..12}; do
+            if curl -fsS --connect-timeout 5 --max-time 10 "$URL/" >/tmp/project-agent.json; then
+              cat /tmp/project-agent.json
+              grep -q '"ok":true' /tmp/project-agent.json
+              grep -q '"service":"al-quran-research-project-agent"' /tmp/project-agent.json
+              grep -q '"isolated":true' /tmp/project-agent.json
+              grep -q '"merge":false' /tmp/project-agent.json
+              grep -q '"deploy":false' /tmp/project-agent.json
+              break
+            fi
+            if [ "$i" -eq 12 ]; then
+              echo "Project Agent endpoint did not become reachable after retry window."
+              exit 1
+            fi
+            sleep 5
+          done
+
       - name: Smoke test Worker, Research API, CORS and chat
         shell: bash
         run: |
