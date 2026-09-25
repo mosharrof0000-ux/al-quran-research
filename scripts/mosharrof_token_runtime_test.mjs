@@ -50,11 +50,15 @@ const tests = [
     const r=resolveToken({permission:{destructive:true,capability:'DESTRUCTIVE',operation:'DELETE',scope:'/data',environment:'live'},tokens:[{token_id:'T1',status:'ACTIVE',capability:'DESTRUCTIVE',operation:'DELETE',scope:'/data',environment:'live'}]});
     assert(r.status==='DENIED','destructive operation bypassed approval');
   }],
-  ['TR-012 self escalation blocked by capability mismatch/no approval', () => {
+  ['TR-012 raw DELETE operation always denied', () => {
+    const r=resolveToken({permission:{capability:'DELETE',operation:'DELETE',scope:'/data',environment:'live'},tokens:[{token_id:'T1',status:'ACTIVE',capability:'DELETE',operation:'DELETE',scope:'/data',environment:'live'}]});
+    assert(r.status==='DENIED','DELETE operation bypassed permanent delete block');
+  }],
+  ['TR-013 self escalation blocked by capability mismatch/no approval', () => {
     const r=resolveToken({permission:{security_admin:true,capability:'SECURITY_ADMIN',operation:'ADMIN',scope:'/account',environment:'live'},tokens:[{token_id:'T1',status:'ACTIVE',capability:'READ',operation:'READ',scope:'/account',environment:'live'}]});
     assert(r.status==='REQUIRES_APPROVAL','security escalation did not require approval');
   }],
-  ['TR-013 boundary helper', () => {
+  ['TR-014 boundary helper', () => {
     assert(isUnder('/data','/data/a') && !isUnder('/data/a','/data'),'scope boundary incorrect');
   }]
 ];
