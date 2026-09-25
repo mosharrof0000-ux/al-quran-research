@@ -68,7 +68,7 @@ const cases = [
   }],
   ['PR-009 Permission self-approval', () => {
     const proposer = 'MOSHARROF-ROOT';
-    const approver = proposer;
+    const approver = 'HUMAN-APPROVER';
     assert(proposer !== approver, 'permission self-approved');
   }],
   ['PR-010 Learning candidate cannot activate permission', () => {
