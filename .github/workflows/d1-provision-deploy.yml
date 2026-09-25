@@ -134,6 +134,20 @@ jobs:
           set -euo pipefail
           npx --yes wrangler@latest deploy --config wrangler.jsonc
 
+      - name: Enable Project Agent workers.dev route
+        shell: bash
+        run: |
+          set -euo pipefail
+          ACCOUNT_ID='5deb168bbc31c476b041913860fce21'
+          RESPONSE="$(curl -fsS -X POST \
+            -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+            -H 'Content-Type: application/json' \
+            --data '{"enabled":true,"previews_enabled":false}' \
+            "https://api.cloudflare.com/client/v4/accounts/$ACCOUNT_ID/workers/scripts/al-quran-research-agent/subdomain")"
+          printf '%s
+' "$RESPONSE"
+          printf '%s' "$RESPONSE" | grep -q '"success":true'
+
       - name: Verify Project Agent workers.dev endpoint
         shell: bash
         run: |
