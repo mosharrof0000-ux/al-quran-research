@@ -306,3 +306,35 @@ Smart Face কাজ শুরুর আগে backup branch: backup/pre-mosharr
 
 ### Permanent safety rule
 Main Live URL পরিবর্তন শুধু ব্যবহারকারীর আলাদা স্পষ্ট অনুমোদনে করা যাবে। ব্যর্থ production change হলে সর্বশেষ নিরাপদ backup restore করতে হবে এবং ব্যর্থ সংস্করণ ইতিহাসে সংরক্ষণ করতে হবে।
+
+
+## WORK-2026-09-26-CONTEXT-AWARE-SMART-VOICE-ENGINE-V1
+
+**Status:** IMPLEMENTED ON ISOLATED BRANCH — production integration pending verification
+
+### User decision
+Context-Aware Smart Voice Engine যুক্ত করার অনুমোদন দেওয়া হয়েছে: smart punctuation, conservative contextual correction এবং phonetic normalization।
+
+### Safety point
+- Working branch: `feat/context-aware-smart-voice-engine-v1`
+- Main/live untouched.
+- No research dataset or production UI was changed.
+
+### Changes
+Created:
+- `backend/voice-engine.js`
+- `backend/voice-engine.test.js`
+- `backend/VOICE_ENGINE_V1.md`
+- `.github/workflows/voice-engine-isolated-test.yml`
+
+### Behavior
+- Pause/intonation metadata থেকে বাংলা punctuation যোগ করতে পারে।
+- High-confidence supplied correction candidate ছাড়া contextual correction করে না।
+- Explicit phonetic alias map দিয়ে আঞ্চলিক/colloquial transcript normalize করতে পারে।
+- Combined transcript pipeline প্রদান করে।
+
+### Verification
+Isolated CI workflow added for Node 20 test execution. At the time of this entry, GitHub workflow run result has not yet been returned, so this feature is **not marked VERIFIED** and is **not merged to main**.
+
+### Next gate
+CI PASS → code review → PR approval → merge → deployment/live voice integration test.
