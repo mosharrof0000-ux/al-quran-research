@@ -27,23 +27,23 @@ jobs:
           set -euo pipefail
           test -n "$AGENT_URL"
           test -n "$AGENT_ACCESS_TOKEN"
-          MESSAGE="AUTONOMOUS IMPROVEMENT CYCLE $(date -u +%Y-%m-%dT%H:%M:%SZ). Inspect the repository and existing roadmap. Choose ONE safe, useful improvement that is within the autonomous policy. Do not modify protected data/governance/workflow paths. Work only on an agent/* branch. Implement it, record evidence, and independently verify it. If no safe improvement is available, report NO_SAFE_IMPROVEMENT."
-          RESPONSE=$(curl -fsS -X POST "$AGENT_URL"             -H "Authorization: Bearer $AGENT_ACCESS_TOKEN"             -H "Content-Type: application/json"             --data "$(python -c 'import json,os; print(json.dumps({"message":os.environ["MESSAGE"]}))')" )
-          echo "$RESPONSE" > agent-response.json
+          MESSAGE="AUTONOMOUS IMPROVEMENT CYCLE $(date -u +%Y-%m-%dT%H:%M:%SZ). Inspect the repository and existing roadmap. Choose ONE safe, useful improvement within the autonomous policy. Do not modify protected data/governance/workflow paths. Work only on an agent/* branch. Implement it, record evidence, and independently verify it. If no safe improvement is available, report NO_SAFE_IMPROVEMENT."
+          export MESSAGE
           python - <<'PY'
-          import json, os
-          d=json.load(open("agent-response.json"))
-          i=d.get("identity") or {}
-          print("branch="+str(i.get("branch","")))
-          print("verified="+str((d.get("verification") or {}).get("status","")))
-          print("task_state="+str(i.get("task_state","")))
+          import json, os, urllib.request
+          req=urllib.request.Request(
+              os.environ["AGENT_URL"],
+              data=json.dumps({"message":os.environ["MESSAGE"]}).encode(),
+              headers={"Authorization":"Bearer "+os.environ["AGENT_ACCESS_TOKEN"],"Content-Type":"application/json"},
+              method="POST")
+          with urllib.request.urlopen(req, timeout=900) as r:
+              open("agent-response.json","wb").write(r.read())
           PY
-        env:
-          MESSAGE: "AUTONOMOUS IMPROVEMENT CYCLE"
 
       - name: Read agent decision
         id: decision
         run: |
+          set -euo pipefail
           python - <<'PY'
           import json, os
           d=json.load(open("agent-response.json"))
@@ -67,9 +67,9 @@ jobs:
       - name: Verify repository changes
         run: |
           set -euo pipefail
-          git diff --exit-code origin/main -- .github database migrations validation quran_research.db schema.sql || {
-            echo "Protected path changed."; exit 1;
-          }
+          if git diff --name-only origin/main | grep -E '^(\.github/|database/|migrations/|validation/|quran_research\.db$|schema\.sql$)'; then
+            echo "Protected path changed."; exit 1
+          fi
           git diff --name-only origin/main > changed-files.txt
           test -s changed-files.txt
           ! grep -E '(^|/)(\.env|.*\.pem|.*\.key)$' changed-files.txt
