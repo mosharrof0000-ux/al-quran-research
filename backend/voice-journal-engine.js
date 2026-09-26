@@ -1,9 +1,7 @@
 /**
  * Mosharrof Context-Aware Smart Voice Engine v1
- *
  * ASR transcript -> phonetic normalization -> contextual correction -> punctuation.
- * Safety: uncertain speech is preserved rather than silently rewritten.
- * This module does not perform audio-to-text; an ASR adapter supplies text.
+ * Audio-to-text remains an adapter boundary; uncertain speech is preserved.
  */
 
 const DEFAULT_PHONETIC_MAP = Object.freeze({
@@ -39,7 +37,6 @@ function applySmartPunctuation(rawText) {
 function replaceWholeWords(text, replacements) {
   let output = String(text ?? "");
   for (const [from, to] of Object.entries(replacements || {})) {
-    // Conservative boundary check without constructing an unsafe regex.
     const pattern = new RegExp("(^|\\s)" + from.replace(/[.*+?^()|[\]\\]/g, "\\$&") + "(?=\\s|[।,!?]|$)", "gu");
     output = output.replace(pattern, "$1" + to);
   }
@@ -53,21 +50,17 @@ function correctContextualGrammar(rawText, context = {}) {
   text = replaceWholeWords(text, context.contextMap || DEFAULT_CONTEXT_MAP);
   text = replaceWholeWords(text, context.phoneticMap || DEFAULT_PHONETIC_MAP);
 
-  text = text
+  return text
     .replace(/আমি\s+যাবেন\b/gu, "আমি যাব")
     .replace(/আমি\s+করবেন\b/gu, "আমি করব")
     .replace(/তুমি\s+করবেন\b/gu, "তুমি করবে")
     .replace(/সে\s+করবেন\b/gu, "সে করবে");
-
-  return text;
 }
 
 function normalizeTranscript(input, context = {}) {
   const source = typeof input === "string" ? { text: input } : (input || {});
   const rawText = cleanWhitespace(source.text);
-  if (!rawText) {
-    return { rawText: "", text: "", confidence: source.confidence ?? null, changed: false };
-  }
+  if (!rawText) return { rawText: "", text: "", confidence: source.confidence ?? null, changed: false };
 
   const corrected = correctContextualGrammar(rawText, context);
   const punctuated = applySmartPunctuation(corrected);
@@ -89,14 +82,7 @@ async function sanitizePhoneticSpeech(audioStream, transcribe, context = {}) {
   return normalizeTranscript(transcript, context);
 }
 
-export {
-  applySmartPunctuation,
-  correctContextualGrammar,
-  sanitizePhoneticSpeech,
-  normalizeTranscript
-};
-
-export default {
+module.exports = {
   applySmartPunctuation,
   correctContextualGrammar,
   sanitizePhoneticSpeech,
