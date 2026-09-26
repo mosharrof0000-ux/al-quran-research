@@ -1,0 +1,1 @@
+# Voice Engine Change Log\n\n## 2026-09-26 — Context-Aware Smart Voice Engine v1\n\n- Added isolated voice engine and tests.\n- Added conservative Bengali punctuation.\n- Added confidence-gated contextual correction.\n- Added STT/phonetic sanitization boundary.\n- No production/live file modified.\n- No deletion/destructive operation introduced.\n
