@@ -33,10 +33,15 @@ def apply_smart_punctuation(raw_text: str) -> str:
                        "কখন ", "কে ", "কোন ", "কত ", "হবে কি", "আছে কি")
     return text + ("?" if text.startswith(question_starts) else "।")
 
+_DEFAULT_CORRECTIONS = {
+    "কোরআন গবেষনা": "কোরআন গবেষণা",
+    "গবেষনা": "গবেষণা",
+}
+
 def correct_contextual_grammar(raw_text: str, *, corrections: Optional[dict[str, str]] = None) -> str:
-    """Apply only explicitly supplied, deterministic corrections."""
+    """Apply only high-confidence deterministic corrections."""
     text = _clean_spaces(raw_text)
-    for wrong, right in (corrections or {}).items():
+    for wrong, right in (_DEFAULT_CORRECTIONS | (corrections or {})).items():
         if wrong and right and wrong != right:
             text = text.replace(wrong, right)
     return text
