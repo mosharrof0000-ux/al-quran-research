@@ -1,0 +1,106 @@
+name: Mosharrof Autonomous Development Loop
+
+on:
+  schedule:
+    - cron: "17 */6 * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: mosharrof-autonomous-development
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  autonomous-cycle:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Start isolated Mosharrof agent cycle
+        id: agent
+        env:
+          AGENT_URL: ${{ secrets.MOSHARROF_AGENT_URL }}
+          AGENT_ACCESS_TOKEN: ${{ secrets.AGENT_ACCESS_TOKEN }}
+        run: |
+          set -euo pipefail
+          test -n "$AGENT_URL"
+          test -n "$AGENT_ACCESS_TOKEN"
+          MESSAGE="AUTONOMOUS IMPROVEMENT CYCLE $(date -u +%Y-%m-%dT%H:%M:%SZ). Inspect the repository and existing roadmap. Choose ONE safe, useful improvement within the autonomous policy. Do not modify protected data/governance/workflow paths. Work only on an agent/* branch. Implement it, record evidence, and independently verify it. If no safe improvement is available, report NO_SAFE_IMPROVEMENT."
+          export MESSAGE
+          python - <<'PY'
+          import json, os, urllib.request
+          req=urllib.request.Request(
+              os.environ["AGENT_URL"],
+              data=json.dumps({"message":os.environ["MESSAGE"]}).encode(),
+              headers={"Authorization":"Bearer "+os.environ["AGENT_ACCESS_TOKEN"],"Content-Type":"application/json"},
+              method="POST")
+          with urllib.request.urlopen(req, timeout=900) as r:
+              open("agent-response.json","wb").write(r.read())
+          PY
+
+      - name: Read agent decision
+        id: decision
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json, os
+          d=json.load(open("agent-response.json"))
+          i=d.get("identity") or {}
+          v=(d.get("verification") or {}).get("status","")
+          branch=i.get("branch","")
+          if not branch.startswith("agent/"):
+              raise SystemExit("No safe agent branch returned")
+          if v != "VERIFIED":
+              raise SystemExit("Agent was not independently verified: "+str(v))
+          with open(os.environ["GITHUB_OUTPUT"],"a") as f:
+              f.write("branch="+branch+"\n")
+          PY
+
+      - name: Checkout isolated branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.decision.outputs.branch }}
+          fetch-depth: 0
+
+      - name: Verify repository changes
+        run: |
+          set -euo pipefail
+          if git diff --name-only origin/main | grep -E '^(\.github/|database/|migrations/|validation/|quran_research\.db$|schema\.sql$)'; then
+            echo "Protected path changed."; exit 1
+          fi
+          git diff --name-only origin/main > changed-files.txt
+          test -s changed-files.txt
+          ! grep -E '(^|/)(\.env|.*\.pem|.*\.key)$' changed-files.txt
+
+      - name: Run available project checks
+        run: |
+          set -euo pipefail
+          ran=0
+          if [ -f package.json ]; then
+            ran=1
+            if [ -f package-lock.json ]; then npm ci --ignore-scripts; else npm install --ignore-scripts; fi
+            npm test --if-present
+            npm run build --if-present
+          fi
+          if [ -f pyproject.toml ] || [ -f requirements.txt ]; then
+            ran=1
+            python -m compileall -q .
+            if command -v pytest >/dev/null 2>&1 && find . -maxdepth 3 -type f -name 'test_*.py' -print -quit | grep -q .; then pytest -q; fi
+          fi
+          if [ "$ran" -eq 0 ]; then
+            echo "No package/Python test suite detected; static safety checks remain mandatory."
+          fi
+
+      - name: Create PR and enable auto-merge
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BRANCH: ${{ steps.decision.outputs.branch }}
+        run: |
+          set -euo pipefail
+          PR=$(gh pr list --base main --head "$BRANCH" --state open --json number,url --jq '.[0].url')
+          if [ -z "$PR" ]; then
+            PR=$(gh pr create --base main --head "$BRANCH"               --title "Mosharrof autonomous improvement: $BRANCH"               --body "Created by Mosharrof Autonomous Development Loop. The change was built on an isolated agent branch and passed the available automated verification gates.")
+          fi
+          gh pr merge "$PR" --auto --squash
