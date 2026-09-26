@@ -1,0 +1,203 @@
+name: Provision D1 and Deploy Worker
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'backend/**'
+      - 'database/**'
+      - 'migrations/**'
+      - '.github/workflows/d1-provision-deploy.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: d1-worker-main
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  DB_NAME: al-quran-research-db
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+
+      - name: Normalize and validate Cloudflare token
+        shell: bash
+        run: |
+          set -euo pipefail
+          TOKEN="$(printf '%s' "$CLOUDFLARE_API_TOKEN" | tr -d '\r\n' | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' -e 's/^Authorization:[[:space:]]*//' -e 's/^authorization:[[:space:]]*//' -e 's/^Bearer //' -e 's/^bearer //' -e 's/^Token //' -e 's/^token //' -e 's/^CLOUDFLARE_API_TOKEN[=:][[:space:]]*//' -e 's/^"//' -e 's/"$//' -e "s/^'//" -e "s/'$//" | tr -d '[:space:]')"
+          if [ -z "$TOKEN" ]; then
+            echo "CLOUDFLARE_API_TOKEN is empty."
+            exit 1
+          fi
+          echo "CLOUDFLARE_API_TOKEN=$TOKEN" >> "$GITHUB_ENV"
+
+      - name: Provision or find D1
+        working-directory: backend
+        shell: bash
+        run: |
+          set -euo pipefail
+          LIST_JSON="$(npx --yes wrangler@latest d1 list --json)"
+          DB_ID="$(printf '%s' "$LIST_JSON" | node -e '
+            let s="";
+            process.stdin.on("data",d=>s+=d).on("end",()=>{
+              const x=JSON.parse(s);
+              const rows=Array.isArray(x)?x:(x.result||x.databases||[]);
+              const r=rows.find(v=>v.name===process.env.DB_NAME);
+              process.stdout.write(r?.uuid||r?.database_id||"");
+            });
+          ')"
+          if [ -z "$DB_ID" ]; then
+            echo "D1 '$DB_NAME' not found; creating it."
+            OUT="$(npx --yes wrangler@latest d1 create "$DB_NAME" --location apac)"
+            printf '%s\n' "$OUT"
+            DB_ID="$(printf '%s\n' "$OUT" | grep -Eo '[0-9a-fA-F]{8}-[0-9a-fA-F-]{27,}' | head -n1 || true)"
+          fi
+          if [ -z "$DB_ID" ]; then
+            echo "Could not determine D1 database ID."
+            exit 1
+          fi
+          echo "D1 database ready: $DB_NAME"
+          echo "DB_ID=$DB_ID" >> "$GITHUB_ENV"
+
+      - name: Generate D1-bound Wrangler config
+        working-directory: backend
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs=require('fs');
+          const base=fs.readFileSync('wrangler.jsonc','utf8');
+          if (/^\s*"d1_databases"\s*:/m.test(base)) {
+            throw new Error('wrangler.jsonc already contains an active d1_databases binding; remove the duplicate binding before using the generated config.');
+          }
+          const i=base.lastIndexOf('}');
+          if(i<0) throw new Error('Invalid Wrangler config');
+          const binding=',\n  "d1_databases": [{\n    "binding": "DB",\n    "database_name": "'+process.env.DB_NAME+'",\n    "database_id": "'+process.env.DB_ID+'",\n    "migrations_dir": "../migrations"\n  }]\n';
+          fs.writeFileSync('.wrangler-d1.jsonc',base.slice(0,i)+binding+base.slice(i));
+          NODE
+
+      - name: Apply D1 migrations
+        working-directory: backend
+        run: |
+          npx --yes wrangler@latest d1 migrations apply "$DB_NAME" --remote --config .wrangler-d1.jsonc
+
+      - name: Seed Fatiha pilot when database is empty
+        working-directory: backend
+        shell: bash
+        run: |
+          set -euo pipefail
+          COUNT="$(npx --yes wrangler@latest d1 execute "$DB_NAME" --remote --config .wrangler-d1.jsonc --json --command 'SELECT COUNT(*) AS c FROM surah' | node -e '
+            let s="";
+            process.stdin.on("data",d=>s+=d).on("end",()=>{
+              const x=JSON.parse(s);
+              const row=(x[0]?.results||x.result?.[0]?.results||[])[0] || {};
+              process.stdout.write(String(row.c??0));
+            });
+          ')"
+          echo "surah rows: $COUNT"
+          if [ "$COUNT" = "0" ]; then
+            npx --yes wrangler@latest d1 execute "$DB_NAME" --remote --config .wrangler-d1.jsonc --file ../database/pilot_fatiha_v0.1.sql --yes
+          else
+            echo "Existing research data found; seed skipped."
+          fi
+
+      - name: Verify D1 data
+        working-directory: backend
+        run: |
+          set -euo pipefail
+          npx --yes wrangler@latest d1 execute "$DB_NAME" --remote --config .wrangler-d1.jsonc --json --command 'SELECT COUNT(*) AS surahs FROM surah; SELECT COUNT(*) AS ayahs FROM ayah; SELECT COUNT(*) AS tokens FROM token;'
+
+      - name: Deploy Worker with D1 binding
+        working-directory: backend
+        run: |
+          npx --yes wrangler@latest deploy --config .wrangler-d1.jsonc
+
+      - name: Deploy isolated Project Agent
+        working-directory: backend/project-agent
+        run: |
+          set -euo pipefail
+          npx --yes wrangler@latest deploy --config wrangler.jsonc
+
+      - name: Enable Project Agent workers.dev route
+        shell: bash
+        run: |
+          set -euo pipefail
+          ACCOUNT_ID='5deb168bbc31c476b041913860fce21'
+          RESPONSE="$(curl -fsS -X POST \
+            -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+            -H 'Content-Type: application/json' \
+            --data '{"enabled":true,"previews_enabled":false}' \
+            "https://api.cloudflare.com/client/v4/accounts/$ACCOUNT_ID/workers/scripts/al-quran-research-agent/subdomain")"
+          printf '%s
+' "$RESPONSE"
+          printf '%s' "$RESPONSE" | grep -q '"success":true'
+
+      - name: Verify Project Agent workers.dev endpoint
+        shell: bash
+        run: |
+          set -euo pipefail
+          URL='https://al-quran-research-agent.mosharrof000.workers.dev'
+          echo "Waiting for Project Agent DNS/edge propagation..."
+          for i in {1..12}; do
+            if curl -fsS --connect-timeout 5 --max-time 10 "$URL/" >/tmp/project-agent.json; then
+              cat /tmp/project-agent.json
+              grep -q '"ok":true' /tmp/project-agent.json
+              grep -q '"service":"al-quran-research-project-agent"' /tmp/project-agent.json
+              grep -q '"isolated":true' /tmp/project-agent.json
+              grep -q '"merge":false' /tmp/project-agent.json
+              grep -q '"deploy":false' /tmp/project-agent.json
+              break
+            fi
+            if [ "$i" -eq 12 ]; then
+              echo "Project Agent endpoint did not become reachable after retry window."
+              exit 1
+            fi
+            sleep 5
+          done
+
+      - name: Smoke test Worker, Research API, CORS and chat
+        shell: bash
+        run: |
+          set -euo pipefail
+          URL='https://al-quran-research.mosharrof0000.workers.dev'
+          ORIGIN='https://mosharrof0000-ux.github.io'
+          echo "Waiting for Worker DNS/edge propagation..."
+          for i in {1..12}; do
+            if curl -fsS --connect-timeout 5 --max-time 10 -H "Origin: $ORIGIN" "$URL/diagnostic" >/tmp/aqr-diagnostic.json; then
+              cat /tmp/aqr-diagnostic.json
+              break
+            fi
+            if [ "$i" -eq 12 ]; then
+              echo "Worker endpoint did not become reachable after retry window."
+              exit 1
+            fi
+            sleep 5
+          done
+          echo
+          echo "Checking Research API status..."
+          curl -fsS --connect-timeout 8 --max-time 20 -H "Origin: $ORIGIN" "$URL/api/v1/status"
+          echo
+          echo "Checking Research API Fatiha 1:1..."
+          curl -fsS --connect-timeout 8 --max-time 20 -H "Origin: $ORIGIN" "$URL/api/v1/ayah/1/1"
+          echo
+          echo "Checking CORS preflight..."
+          curl -fsS -o /dev/null -D - -X OPTIONS -H "Origin: $ORIGIN" -H 'Access-Control-Request-Method: POST' -H 'Access-Control-Request-Headers: content-type' "$URL/"
+          echo "Checking real POST chat path..."
+          curl -fsS --connect-timeout 8 --max-time 45 -H "Origin: $ORIGIN" -H 'Content-Type: application/json' --data '{"message":"আপনি কেমন আছেন","mode":"general","language":"bn"}' "$URL/"
+          echo

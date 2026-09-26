@@ -1,0 +1,54 @@
+{
+  "name": "Al-Quran Research — Normal Quran Mode Icon Set",
+  "version": "1.0.0",
+  "mode": "normal-quran",
+  "style": {
+    "stroke": "currentColor",
+    "fill": "none",
+    "strokeWidth": 1.9,
+    "linecap": "round",
+    "linejoin": "round"
+  },
+  "icons": {
+    "quran": {
+      "label": "Quran / Main Book",
+      "path": "assets/icons/modes/normal/quran.svg"
+    },
+    "surah": {
+      "label": "Surah",
+      "path": "assets/icons/modes/normal/surah.svg"
+    },
+    "ayah": {
+      "label": "Ayah",
+      "path": "assets/icons/modes/normal/ayah.svg"
+    },
+    "tafseer": {
+      "label": "Tafseer / Knowledge",
+      "path": "assets/icons/modes/normal/tafseer.svg"
+    },
+    "bookmark": {
+      "label": "Save / Bookmark",
+      "path": "assets/icons/modes/normal/bookmark.svg"
+    },
+    "audio": {
+      "label": "Audio / Tilawat",
+      "path": "assets/icons/modes/normal/audio.svg"
+    },
+    "home": {
+      "label": "Home Navigation",
+      "path": "assets/icons/modes/normal/home.svg"
+    },
+    "search": {
+      "label": "Search",
+      "path": "assets/icons/modes/normal/search.svg"
+    },
+    "favorite": {
+      "label": "Like / Favorite",
+      "path": "assets/icons/modes/normal/favorite.svg"
+    },
+    "share": {
+      "label": "Share",
+      "path": "assets/icons/modes/normal/share.svg"
+    }
+  }
+}

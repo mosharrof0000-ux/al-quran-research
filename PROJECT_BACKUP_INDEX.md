@@ -138,3 +138,62 @@ A single canonical automatic writer now controls these live-entrypoint integrati
 
 **State record:** `PROJECT_STATE.md` Version 0.3 — VERIFIED / STABLE CHECKPOINT
 **Work record:** `PROJECT_WORK_LOG.md` — `WORK-2026-09-11-STABLE-CHECKPOINT-01`
+
+
+## BACKUP-2026-09-21-PRE-GEMINI-CUSTOM-ICON-DOCUMENTATION
+
+**Date:** 2026-09-21
+
+**Purpose:** Gemini custom-icon integration-এর বর্তমান main state নথিভুক্ত/সংশোধনের আগে rollback point
+
+**Restore branch:** `backup/pre-gemini-custom-icon-documentation-2026-09-21`
+
+**Pre-documentation main commit:** `386b2b417b32d64526b9974b23fd738b688e0364`
+
+**Scope protected:**
+- Gemini custom icon integration
+- `assets/icon-engine/aqr-icon-engine.js`
+- `ui/home-v1/home-v1.html`
+- `ui/home-v1/home-v1.js`
+- `ui/home-v1/gemini-icon-v1.css`
+
+**Status:** VERIFIED RESTORE BRANCH CREATED
+
+**Note:** এই restore point source-level বর্তমান অবস্থাকে সংরক্ষণ করে; live browser end-to-end verification এখনও pending।
+
+
+BACKUP-2026-09-21-PRE-MODE-ICON-ASSETS
+- Backup branch: `backup/pre-mode-icon-assets-2026-09-21`
+- Purpose: preserve main before storing the new general Qur'an mode icon family.
+- Working branch: `feat/mode-icon-assets-2026-09-21`
+- Status: safe point created before asset integration work.
+
+
+## BACKUP-2026-09-21-PRE-NORMAL-QURAN-MODE-ICON-ASSET-VERIFICATION
+
+**Date:** 2026-09-21
+
+**Purpose:** Preserve the main state before the final verification/documentation pass for the General Quran Mode icon family.
+
+**Restore branch:** `backup/pre-mode-icon-assets-2026-09-21`
+
+**Working branch:** `docs/normal-quran-icon-mode-asset-record-2026-09-21`
+
+**Scope:** General Quran Mode icon assets and their documentation only. No database/backend/live Reader code change.
+
+**Status:** VERIFIED RESTORE PATH
+
+
+## BACKUP-2026-09-21-PRE-NORMAL-MODE-ICON-ASSET-SET
+
+Date: 2026-09-21
+Purpose: rollback point immediately before creating the Normal Qur'an Mode icon asset family.
+Restore branch: backup/pre-normal-mode-icon-set-2026-09-21
+Protected scope: existing custom icon engine, live UI, research/database files, and main state before this asset-family work.
+Status: VERIFIED BACKUP BRANCH CREATED
+
+
+### BACKUP-2026-09-21-PRE-NORMAL-QURAN-ICON-REFERENCE-FINAL
+- Restore branch: backup/pre-normal-quran-icons-2026-09-21-v1
+- Scope: pre-change main state before final manifest/reference-board storage.
+- Live Reader/database/backend behavior: unchanged by this icon-reference storage step.

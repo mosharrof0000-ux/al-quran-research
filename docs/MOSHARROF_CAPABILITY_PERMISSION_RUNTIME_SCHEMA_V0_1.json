@@ -1,0 +1,32 @@
+{
+  "schema_version": "0.1",
+  "request": {
+    "required": [
+      "request_id",
+      "entity_id",
+      "capability",
+      "operation",
+      "resource_scope",
+      "environment",
+      "policy_context"
+    ]
+  },
+  "resolution": {
+    "required": [
+      "permission_status",
+      "auth_reference",
+      "scope_status",
+      "policy_status",
+      "audit_event_id"
+    ]
+  },
+  "outcomes": ["AUTHORIZED","DENIED","REQUIRES_APPROVAL","BLOCKED"],
+  "rules": {
+    "least_privilege": true,
+    "no_super_token": true,
+    "raw_token_exposure": false,
+    "intelligence_cannot_self_escalate": true,
+    "direct_live_bypass": false,
+    "destructive_default": "DENY"
+  }
+}

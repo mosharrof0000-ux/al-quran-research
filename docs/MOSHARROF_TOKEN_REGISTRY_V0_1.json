@@ -1,0 +1,32 @@
+{
+  "version": "0.1",
+  "token_record": {
+    "required": ["token_id", "provider", "auth_reference", "status", "capabilities", "operations", "resource_scopes", "environments", "policy_gate", "audit_reference"],
+    "fields": {
+      "token_id": "opaque identifier",
+      "provider": "credential provider",
+      "auth_reference": "secret-manager reference only; never raw secret",
+      "status": ["DISCOVERED", "REGISTERED", "VERIFIED", "ACTIVE", "REVIEW", "SUSPENDED", "REVOKED"],
+      "capabilities": ["READ", "CREATE", "EDIT", "EXECUTE", "DEPLOY", "SECURITY_ADMIN", "DESTRUCTIVE"],
+      "operations": ["READ", "CREATE", "WRITE", "EXECUTE", "DEPLOY", "ADMIN", "DELETE"],
+      "resource_scopes": ["scoped resource identifiers"],
+      "environments": ["sandbox", "staging", "live"],
+      "rate_limits": "optional",
+      "expiry": "optional",
+      "review_at": "optional",
+      "policy_gate": "required",
+      "audit_reference": "required"
+    }
+  },
+  "rules": {
+    "least_privilege": true,
+    "no_super_token": true,
+    "raw_token_exposure": false,
+    "token_scope_cannot_widen_permission": true,
+    "intelligence_cannot_self_escalate": true,
+    "parent_deny_override": false,
+    "permission_self_approval": false,
+    "direct_live_bypass": false,
+    "destructive_default_deny": true
+  }
+}

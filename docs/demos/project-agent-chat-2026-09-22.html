@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Al-Quran Research — Project Agent Demo</title>
+<style>
+:root{font-family:system-ui,-apple-system,"Noto Sans Bengali",sans-serif;background:#f7faf8;color:#17352a}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;display:flex;flex-direction:column}
+header{padding:14px 18px;border-bottom:1px solid #dbe8e1;background:white;position:sticky;top:0}
+h1{font-size:18px;margin:0}.sub{font-size:12px;color:#6a7c74;margin-top:4px}
+main{width:min(900px,100%);margin:auto;padding:18px;display:flex;flex-direction:column;gap:12px;flex:1}
+#chat{display:flex;flex-direction:column;gap:10px;flex:1;min-height:45vh}
+.msg{padding:12px 14px;border-radius:14px;white-space:pre-wrap;line-height:1.55}
+.user{background:#e6f3ec;align-self:flex-end;max-width:88%}.ai{background:white;border:1px solid #dbe8e1;align-self:flex-start;max-width:94%}
+.panel{background:white;border:1px solid #dbe8e1;border-radius:14px;padding:12px}
+input,textarea,button{font:inherit}input,textarea{width:100%;border:1px solid #cbdad3;border-radius:10px;padding:10px;background:#fff}
+textarea{min-height:74px;resize:vertical}button{border:0;border-radius:10px;padding:10px 15px;background:#176b4a;color:#fff;font-weight:600}
+.row{display:flex;gap:8px;align-items:center}.row>*{flex:1}.status{font-size:12px;color:#667a71}.small{font-size:11px;color:#71827b}
+</style>
+</head>
+<body>
+<header><h1>আল-কুরআন রিসার্চ — Project AI Demo</h1><div class="sub">Isolated Project Agent • inspect → work → verify → report</div></header>
+<main>
+<div class="panel">
+  <div class="small">Project Agent Worker</div>
+  <input id="endpoint" value="https://agent-project-engine-v1-isolated-al-quran-research.mosharrof0000.workers.dev">
+  <div class="small" style="margin-top:8px">Access Token (শুধু আপনার নিজের token; এখানে সংরক্ষণ করা হয় না)</div>
+  <input id="token" type="password" placeholder="x-agent-access-token">
+</div>
+<div id="chat"><div class="msg ai">আমি Project Agent-এর isolated demo। আমাকে একটি প্রকল্পের কাজ দিন। আমি উত্তর/কাজের ফলাফল, Agent ID, Task ID এবং blocker থাকলে তা দেখাব।</div></div>
+<div class="panel">
+<textarea id="q" placeholder="উদাহরণ: Project Agent-এর বর্তমান ক্ষমতাগুলো যাচাই করে কোনগুলো PASS/PARTIAL/NOT TESTED তা বলো।"></textarea>
+<div class="row" style="margin-top:8px"><button id="send">প্রশ্ন পাঠান</button><span id="status" class="status">প্রস্তুত</span></div>
+</div>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+function add(cls,text){const d=document.createElement("div");d.className="msg "+cls;d.textContent=text;$("chat").appendChild(d);d.scrollIntoView({behavior:"smooth",block:"end"});}
+async function send(){
+ const q=$("q").value.trim(), endpoint=$("endpoint").value.trim(), token=$("token").value.trim();
+ if(!q)return; add("user",q); $("q").value=""; $("send").disabled=true; $("status").textContent="AI কাজ করছে…";
+ try{
+   const r=await fetch(endpoint,{method:"POST",headers:{"Content-Type":"application/json","x-agent-access-token":token},body:JSON.stringify({request:q})});
+   const d=await r.json();
+   if(!r.ok) throw new Error(d.error||("HTTP "+r.status));
+   const i=d.identity||{}, result=d.result||{};
+   add("ai",(result.answer||JSON.stringify(result,null,2))+"\n\nTask: "+(i.task_id||"—")+"\nAgent: "+(i.agent_name||"—")+" • "+(i.agent_id||"—")+"\nStatus: "+(d.status||"—"));
+   $("status").textContent="উত্তর পাওয়া গেছে";
+ }catch(e){add("ai","BLOCKED / ERROR\n"+e.message);$("status").textContent="সংযোগ/অনুমতি সমস্যা";}
+ finally{$("send").disabled=false}
+}
+$("send").onclick=send;
+$("q").addEventListener("keydown",e=>{if(e.key==="Enter"&&(e.ctrlKey||e.metaKey))send()});
+</script>
+</body>
+</html>

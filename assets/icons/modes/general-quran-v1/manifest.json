@@ -1,0 +1,10 @@
+{
+  "name":"General Quran Reading Mode Icon Set",
+  "version":"1.0.0",
+  "status":"DESIGN ASSET — NOT YET INTEGRATED",
+  "source_reference":"MODE_ICON_DESIGN_REFERENCE_2026-09-21.md",
+  "style":{"strokeWidth":1.9,"fill":"none","stroke":"currentColor","viewBox":"0 0 64 64","monochrome":true},
+  "mode":"general-quran",
+  "icons":["quran","surah","ayah","tafseer","bookmark","audio","home","search","favorite","share"],
+  "runtimeRule":"Mode-aware loader must select this family only when general-quran mode is active. Sufi mode uses a separate family."
+}

@@ -277,3 +277,66 @@ Update Reason: Universal AI governance control set `cf6a49812e14ab7a04d0aafb2ce9
 
 Status: VERIFIED — STABLE CHECKPOINT
 Verification: `PROJECT_STATE.md` ও এর instruction পর্যালোচনা করা হয়েছে; deployment/check results এবং ব্যবহারকারীর live-site verification-এর সঙ্গে state মিলিয়ে আপডেট করা হয়েছে।
+
+## ২৪. সর্বশেষ কাজ — Gemini Custom Icon Integration
+
+### Recorded date
+2026-09-21
+
+### Status
+**IMPLEMENTED ON MAIN — LIVE VISUAL VERIFICATION PENDING**
+
+Gemini AI response-এর সঙ্গে project custom icon rendering সংযোগ করা হয়েছে। Frontend controlled marker শনাক্ত করে marker-টি visible text থেকে সরিয়ে custom SVG icon render করে।
+
+### Main commits
+- `d0c5834f6859c91898d5495a15578fe1703ab36f` — initial integration merge
+- `df4d58e331a2bf8449a1ca47b6f3d30360c24a36` — HTML literal line-break fix
+- `386b2b417b32d64526b9974b23fd738b688e0364` — icon-engine script line-break fix
+
+### Safety point
+`backup/pre-gemini-custom-icon-documentation-2026-09-21` → pre-documentation main state `386b2b417b32d64526b9974b23fd738b688e0364`
+
+### Verification limitation
+Source-level integration verified। Canonical live page-এ browser/AI end-to-end visual verification এখনও করা হয়নি। অতএব feature-টিকে LIVE VERIFIED বলা যাবে না।
+
+### Important implementation note
+বর্তমান সংযোগ prompt-controlled marker পদ্ধতির; এটি Gemini native function-calling integration নয়। এছাড়া custom icon engine-এর canonical Master ZIP source-এর সঙ্গে বর্তমান `assets/icon-engine/aqr-icon-engine.js` implementation পুনরায় audit করা প্রয়োজন।
+
+
+
+## 25. Mode-aware icon design reference — 2026-09-21
+
+The generated icon-sheet is recorded as a design reference only. It defines the general Qur'an reading-mode icon family and establishes a future separate Sufi-mode icon family. No live UI/database change is implied by this record. Canonical custom icon engine remains the technical source.
+
+Reference: `docs/design/MODE_ICON_DESIGN_REFERENCE_2026-09-21.md`
+
+
+## 26. General Quran Mode Icon Assets — 2026-09-21
+
+Status: STORED — NOT YET LIVE-INTEGRATED
+
+A 10-icon production SVG family was created from the approved mode icon reference. Assets are stored under `assets/icons/modes/general-quran-v1/`. The family is reserved for general Qur'an reading mode. Sufi mode will use a separate icon family. No live UI/database change is implied by this asset set.
+
+Integration must remain mode-aware and follow Backup → Review → Approve → Integrate → Verify → Live.
+
+
+## 27. General Quran Mode Icon Family — VERIFIED STORAGE — 2026-09-21
+
+The existing General Quran Mode v1 icon family was re-checked against the approved reference direction. All 10 named SVG assets are present under `assets/icons/modes/general-quran-v1/` and use fill="none" + stroke="currentColor". They remain stored design assets and are not automatically connected to the live Reader.
+
+Mode contract: `general-quran` uses this family; `sufi` must use a separate family. The reference is documented at `docs/design/MODE_ICON_DESIGN_REFERENCE_2026-09-21.md`.
+
+
+## 26. Normal Qur'an Mode Icon Asset Set — 2026-09-21
+
+Status: CREATED AND STORED ON MAIN — ASSET-ONLY; NOT LIVE-WIRED
+
+The approved visual reference has been converted into a dedicated Normal Qur'an Reading Mode family at assets/icons/modes/normal-v1/. It contains ten semantic SVG icons, a manifest, and README. Usage and Normal-vs-Sufi separation are documented in docs/design/MODE_ICON_USAGE_2026-09-21.md.
+
+Safety: backup/pre-normal-mode-icon-set-2026-09-21 was created before the asset work. Future Sufi Mode must use a separate icon family and must not overwrite Normal Mode assets.
+
+Live integration remains pending review and runtime mode-resolver implementation.
+
+
+## Normal Quran Icon Reference Finalized (2026-09-21)
+The 10-icon ordinary Quran Reader visual family is now stored under assets/icons/modes/normal-quran-v1/ with a manifest and reference board. The project records the mode separation contract: normal-quran uses this family; future sufi mode uses a separate family. These are stored reference/pilot assets and are not yet wired into the live Reader.

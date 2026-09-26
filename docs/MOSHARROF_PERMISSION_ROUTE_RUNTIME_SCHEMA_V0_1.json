@@ -1,0 +1,63 @@
+{
+  "schema_version": "0.1",
+  "name": "mosharrof_permission_route_runtime",
+  "request": {
+    "required": [
+      "request_id",
+      "entity_id",
+      "capability",
+      "operation",
+      "resource_scope",
+      "environment",
+      "policy_context"
+    ]
+  },
+  "permission": {
+    "required": [
+      "permission_id",
+      "parent_policy_ref",
+      "capability",
+      "operation",
+      "resource_scope",
+      "environment",
+      "status"
+    ],
+    "statuses": [
+      "PROPOSED",
+      "REVIEWED",
+      "APPROVED",
+      "ACTIVE",
+      "SUSPENDED",
+      "REVOKED"
+    ]
+  },
+  "route": {
+    "states": [
+      "DISCOVERED",
+      "POLICY_CHECKED",
+      "SCOPE_CHECKED",
+      "SAFETY_CHECKED",
+      "ROUTE_VALIDATED",
+      "AUTHORIZED",
+      "EXECUTED",
+      "VERIFIED",
+      "AUDITED"
+    ],
+    "failure_states": [
+      "DENIED",
+      "BLOCKED",
+      "REQUIRES_APPROVAL"
+    ]
+  },
+  "rules": {
+    "least_privilege": true,
+    "no_super_token": true,
+    "raw_token_exposure": false,
+    "intelligence_cannot_self_escalate": true,
+    "direct_live_bypass": false,
+    "destructive_default": "DENY",
+    "parent_deny_override": false,
+    "permission_self_approval": false,
+    "audit_bypass": false
+  }
+}

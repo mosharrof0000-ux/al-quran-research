@@ -161,3 +161,148 @@ Safety-branch file updates completed. Production Live Page verification remains 
 
 ### Rollback
 If the live result is broken or rejected, restore the previous known-good state using the backup branch before another design iteration.
+
+
+## WORK-2026-09-21-GEMINI-CUSTOM-ICON-INTEGRATION-01
+
+**Status:** IMPLEMENTED ON MAIN — documentation recorded; live visual verification pending
+
+### User decision
+ব্যবহারকারী চেয়েছেন Gemini AI যেন আল-কুরআন Research Project-এর নিজস্ব custom icon system ব্যবহার করে আয়াত/গবেষণা-উত্তর উপস্থাপন করতে পারে।
+
+### Safety point
+- Pre-documentation backup branch: `backup/pre-gemini-custom-icon-documentation-2026-09-21`
+- Pre-documentation main commit: `386b2b417b32d64526b9974b23fd738b688e0364`
+
+### Changes made
+PR #66-এর মাধ্যমে main-এ সংযুক্ত:
+- `assets/icon-engine/aqr-icon-engine.js`
+- `ui/home-v1/home-v1.html`
+- `ui/home-v1/home-v1.js`
+- `ui/home-v1/gemini-icon-v1.css`
+
+### Integration behavior
+Gemini-কে controlled icon marker ব্যবহারের নির্দেশ দেওয়া হয়েছে:
+`[[AQR_ICON:quran]]`, `ayah`, `research`, `analysis`, `translation`, `tafsir`, `document`, `info`, `verified` ইত্যাদি।
+Frontend marker-টি দৃশ্যমান উত্তরের বাইরে সরিয়ে project icon engine-এর SVG icon হিসেবে render করে।
+
+### Important technical note
+এটি বর্তমানে Gemini function-calling নয়; prompt-controlled marker → frontend renderer পদ্ধতি।
+একটি AI response-এ semantic icon নির্বাচন ও প্রদর্শনের integration করা হয়েছে।
+
+### Corrections after merge
+Merge-এর পরে `home-v1.html`-এ literal \\n সমস্যা ধরা পড়ে এবং দুই দফায় ঠিক করা হয়েছে:
+- `df4d58e331a2bf8449a1ca47b6f3d30360c24a36`
+- `386b2b417b32d64526b9974b23fd738b688e0364`
+
+### Verification
+- Main source files inspected after fixes.
+- Current main commit: `386b2b417b32d64526b9974b23fd738b688e0364`.
+- Live browser rendering/AI marker appearance এখনও প্রত্যক্ষভাবে verified নয়।
+- তাই এই entry live feature fully verified বলে দাবি করছে না।
+
+### Preservation / follow-up
+Master custom icon engine-এর exact source এবং বর্তমান compact integration implementation আলাদা করে audit করতে হবে; project-এর মূল icon asset overwrite না করে canonical engine source সংরক্ষণ করা প্রয়োজন।
+
+
+## WORK-2026-09-21-MODE-ICON-DESIGN-REFERENCE-01
+
+Status: REFERENCE RECORDED — NO LIVE UI CHANGE
+
+A generated icon-sheet image has been recorded as the visual reference for the future mode-aware icon system. General Qur'an reading mode will use the referenced minimalist Islamic icon family. A separate Sufi mode will have a separately designed icon family; it will not overwrite the general family. Future integration must follow Backup → Design → Review → Approve → Integrate → Verify → Live.
+
+Reference record: `docs/design/MODE_ICON_DESIGN_REFERENCE_2026-09-21.md`
+Reference SHA-256: `170c83ecf42c84ca4c09686fccb32311c2272fe2d15dd4eb4b9be6ebce14c4d1`
+
+
+## WORK-2026-09-21-MODE-ICON-ASSET-SET-01
+
+**Status:** ASSETS CREATED AND STORED — NOT YET INTEGRATED INTO LIVE UI
+
+### User decision
+ব্যবহারকারী চেয়েছেন সাধারণ কোরআন পড়ার জন্য reference image অনুযায়ী ১০টি minimalist Islamic/Qur'anic icon এখনই তৈরি করে project-এ সংরক্ষণ করতে এবং এগুলোর mode-based ব্যবহারের নিয়ম নথিভুক্ত করতে। ভবিষ্যতে Sufi mode-এর জন্য সম্পূর্ণ আলাদা icon family থাকবে।
+
+### Safety
+- Backup branch: `backup/pre-mode-icon-assets-2026-09-21`
+- Working branch: `feat/mode-icon-assets-2026-09-21`
+- No database/backend/live UI change was made by this asset work.
+
+### Stored assets
+`assets/icons/modes/general-quran-v1/` contains 10 SVG icons plus `manifest.json` and `README.md`.
+
+### Runtime usage rule
+`readingMode === "general-quran"` selects this family. `readingMode === "sufi"` must select a separate Sufi family and must not overwrite or reuse the general family as its design source.
+
+### Integration gate
+Backup → Review → Approve → Integrate → Verify → Live.
+
+
+## WORK-2026-09-21-NORMAL-QURAN-MODE-ICON-ASSET-VERIFICATION-01
+
+**Status:** VERIFIED AND STORED — NOT LIVE-INTEGRATED
+
+### User decision
+ব্যবহারকারী reference image অনুযায়ী সাধারণ কোরআন পড়ার জন্য ১০টি minimalist Islamic/Qur'anic icon project-এ স্থায়ীভাবে সংরক্ষণ এবং ব্যবহারবিধি নথিভুক্ত করতে বলেছেন। ভবিষ্যতের Sufi mode-এর জন্য সম্পূর্ণ আলাদা icon family থাকবে।
+
+### Verified assets
+`assets/icons/modes/general-quran-v1/`-এ ১০টি SVG যাচাই করা হয়েছে: quran, surah, ayah, tafseer, bookmark, audio, home, search, favorite, share। প্রতিটি SVG-তে `fill="none"` ও `stroke="currentColor"` রয়েছে এবং lightweight line-art structure বজায় আছে।
+
+### Reference
+`docs/design/MODE_ICON_DESIGN_REFERENCE_2026-09-21.md` reference record হিসেবে সংরক্ষিত। Reference SHA-256: `170c83ecf42c84ca4c09686fccb32311c2272fe2d15dd4eb4b9be6ebce14c4d1`।
+
+### Mode usage rule
+- `general-quran` mode → `assets/icons/modes/general-quran-v1/`
+- `sufi` mode → আলাদা Sufi icon family; General family overwrite/reuse করা যাবে না।
+- Runtime mode switch icon family নির্বাচন করবে; live integration আলাদা approval gate-এর অধীন।
+
+### Safety
+Backup branch: `backup/pre-mode-icon-assets-2026-09-21`। এই verification কাজ কোনো database/backend/live UI পরিবর্তন করেনি।
+
+### Integration gate
+Backup → Review → Approve → Integrate → Verify → Live.
+
+
+## WORK-2026-09-21-NORMAL-MODE-ICON-ASSET-SET-01
+
+Status: CREATED AND STORED ON MAIN — ASSET-ONLY; NOT LIVE-WIRED
+
+The user approved the generated icon-sheet as the Normal Qur'an Reader visual reference and requested the icon set be created, stored in the project, and its usage documented. A separate Sufi icon family will be created later and will not overwrite the Normal family.
+
+Safety point: backup/pre-normal-mode-icon-set-2026-09-21 was created before this asset work.
+
+Created assets: assets/icons/modes/normal-v1/ — 10 SVG icons, icon-manifest.json, README.md.
+Usage record: docs/design/MODE_ICON_USAGE_2026-09-21.md.
+
+Verification: all ten SVG asset files were present on the working branch and use fill=none, stroke=currentColor, 1.8px line-art. No live UI/database/backend integration was made. Runtime mode switching remains a later integration step.
+
+
+### WORK-2026-09-21-NORMAL-QURAN-ICON-REFERENCE-FINAL
+- User requested the 10-icon reference be created now, stored in the project, and its mode usage documented.
+- Stored/verified assets: assets/icons/modes/normal-quran-v1/ (quran, surah, ayah, tafseer, bookmark, audio-tilawat, home, search, favorite, share), plus icon-manifest.json and reference-board.svg.
+- Normal mode contract: these assets are for ordinary Quran reading only. Future Sufi mode must use a separate versioned asset family.
+- Technical contract: SVG, 64x64, fill=none, stroke=currentColor, nominal 1.9–2px line art, round caps/joins.
+- Verification: all ten SVG assets are present on main; audio uses the existing canonical filename audio-tilawat.svg; manifest maps the reader role to that file.
+- Live integration: NOT performed. Existing reader/icon engine behavior remains unchanged pending isolated visual review and approval.
+
+
+## WORK-2026-09-24-MAIN-LIVE-PROTECTION-NOTICE-01
+
+**Status:** ACTIVE — স্থায়ী URL ও live update rule জারি
+
+### User decision
+ব্যবহারকারী নির্দেশ দিয়েছেন যে Main Live-কে নিরাপদ মূল পেজ হিসেবে রাখতে হবে; update-এর কারণে Main Live URL পরিবর্তন করা যাবে না। কাজের আগে backup থাকবে, ব্যর্থ হলে নিরাপদ backup restore হবে, এবং failed version storage/history-তে থাকবে।
+
+### Canonical Main Live
+https://mosharrof0000-ux.github.io/al-quran-research/#quran
+
+### Required correction
+Feature-এর direct page URL আলাদা করে দেওয়ার ফলে Main Live URL নিয়ে বিভ্রান্তি হতে পারে। এখন থেকে কোনো feature/test URL-কে Main Live বলা যাবে না। Main Live URL অপরিবর্তিত থাকবে।
+
+### Mandatory reporting
+প্রতিটি production change-এর পরে রিপোর্টে আলাদা করে Main Live, Feature/Test (যদি থাকে), এবং Deployment Status দিতে হবে। Deployment সফল না হওয়া পর্যন্ত live কাজ সম্পূর্ণ বলা যাবে না।
+
+### Backup
+Smart Face কাজ শুরুর আগে backup branch: backup/pre-mosharrif-smart-face-2026-09-24
+
+### Permanent safety rule
+Main Live URL পরিবর্তন শুধু ব্যবহারকারীর আলাদা স্পষ্ট অনুমোদনে করা যাবে। ব্যর্থ production change হলে সর্বশেষ নিরাপদ backup restore করতে হবে এবং ব্যর্থ সংস্করণ ইতিহাসে সংরক্ষণ করতে হবে।

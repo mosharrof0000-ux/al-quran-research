@@ -1,0 +1,42 @@
+name: Strong API Validation
+
+on:
+  push:
+    branches:
+      - feature/strong-api-d1-v1
+      - main
+    paths:
+      - 'backend/**'
+      - 'database/**'
+      - 'migrations/**'
+      - '.github/workflows/strong-api-validation.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - name: Syntax check Worker modules
+        run: |
+          set -euo pipefail
+          find backend -type f -name '*.js' -print0 | xargs -0 -n1 node --check
+      - name: Validate Wrangler configuration
+        working-directory: backend
+        run: |
+          npx --yes wrangler@latest deploy --dry-run --config wrangler.jsonc
+      - name: Validate SQL files are present
+        run: |
+          test -s database/schema.sql
+          test -s database/pilot_fatiha_v0.1.sql
+          test -s migrations/002_workspace_versioning.sql
+          test -s migrations/003_api_hardening.sql

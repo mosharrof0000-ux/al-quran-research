@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ফন্ট কাস্টমাইজার — চ্যাট ডেমো</title>
+<style>
+body{margin:0;font-family:"Hind Siliguri",sans-serif;background:#f7faf8;color:#173326}
+.chat{max-width:760px;margin:auto;height:100vh;display:flex;flex-direction:column}
+header{padding:14px 16px;border-bottom:1px solid #dce8e0;background:#fff;display:flex;justify-content:space-between;align-items:center}
+h1{font-size:18px;margin:0}.settings{position:absolute;right:16px;top:62px;background:#fff;border:1px solid #dce8e0;border-radius:14px;padding:14px;width:250px;box-shadow:0 8px 30px #0001;display:none;z-index:2}
+.settings.open{display:block}.row{margin:10px 0}.row label{display:block;font-size:13px;margin-bottom:5px}
+select,input{width:100%;box-sizing:border-box;padding:8px;border:1px solid #ccdcd2;border-radius:9px;background:#fff}
+.messages{flex:1;padding:20px;overflow:auto}.msg{max-width:82%;padding:12px 15px;border-radius:15px;margin:10px 0;line-height:1.8}.user{margin-left:auto;background:#e5f3e9}.ai{background:#fff;border:1px solid #e1ebe5}
+.composer{padding:12px;border-top:1px solid #dce8e0;background:#fff;display:flex;gap:8px}.composer input{flex:1}.composer button,header button{border:0;border-radius:10px;padding:9px 12px;background:#edf5ef;color:#173326}
+</style>
+</head>
+<body>
+<div class="chat" id="chat">
+<header><h1>আল-কুরআন রিসার্চ · চ্যাট</h1><button id="fontBtn">Aa ফন্ট</button></header>
+<div class="settings" id="settings">
+<strong>ফন্ট কাস্টমাইজ</strong>
+<div class="row"><label>বাংলা ফন্ট</label><select id="bnFont"><option>Hind Siliguri</option><option>Hasan Meghaloy</option><option>Hasan Munam</option><option>Hasan Hera</option><option>Hasan Mokhmoli</option></select></div>
+<div class="row"><label>আরবি ফন্ট</label><select id="arFont"><option>System Arabic</option><option>Al Quds</option></select></div>
+<div class="row"><label>ফন্ট সাইজ</label><input id="size" type="range" min="14" max="25" value="18"></div>
+<div class="row"><label>লাইন স্পেসিং</label><input id="spacing" type="range" min="1.4" max="2.6" step=".1" value="1.8"></div>
+<button id="reset">ডিফল্ট</button>
+</div>
+<div class="messages" id="messages">
+<div class="msg user">সূরা ফাতিহা সম্পর্কে গবেষণা করতে চাই।</div>
+<div class="msg ai">অবশ্যই। এখানে কুরআনের পাঠ, বাংলা উচ্চারণ, অনুবাদ ও গবেষণা তথ্য আলাদা স্তরে দেখা যাবে।<br><br><span style="font-family:serif;font-size:22px">بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</span></div>
+</div>
+<div class="composer"><input placeholder="প্রশ্ন লিখুন…"><button>➤</button></div>
+</div>
+<script>
+const root=document.getElementById('chat'),s=document.getElementById('settings');
+fontBtn.onclick=()=>s.classList.toggle('open');
+function apply(){root.style.fontFamily=document.getElementById('bnFont').value+',sans-serif';root.style.fontSize=size.value+'px';root.style.lineHeight=spacing.value}
+[bnFont,arFont,size,spacing].forEach(x=>x.oninput=apply);
+reset.onclick=()=>{bnFont.value='Hind Siliguri';arFont.value='System Arabic';size.value=18;spacing.value=1.8;apply()};
+apply();
+</script>
+</body></html>

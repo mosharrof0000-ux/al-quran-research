@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Autonomous Vision Agent — Human Approval Demo</title>
+<style>
+:root{font-family:system-ui,-apple-system,"Noto Sans Bengali",sans-serif;background:#f5f7f5;color:#10231d}
+*{box-sizing:border-box}body{margin:0;padding:20px;min-height:100vh}
+main{max-width:760px;margin:auto}.card{background:white;border:1px solid #dbe5df;border-radius:20px;padding:22px;margin:14px 0;box-shadow:0 8px 30px #10231d12}
+h1{margin:0 0 8px;font-size:25px}.muted{color:#60736b}.status{display:inline-block;padding:7px 11px;border-radius:999px;background:#eef6f1;margin:8px 0;font-weight:700}
+.row{display:flex;gap:10px;flex-wrap:wrap}.gate{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #edf1ee}
+button{border:0;border-radius:12px;padding:12px 16px;font-weight:700;cursor:pointer}.approve{background:#126b4d;color:white}.reject{background:#eef1ef;color:#253a32}
+.log{background:#07130f;color:#d8f2e7;border-radius:14px;padding:14px;min-height:110px;white-space:pre-wrap;font:13px ui-monospace,monospace}
+.warn{font-size:13px;color:#6c5a00;background:#fff8d9;border-radius:12px;padding:12px}
+</style>
+</head>
+<body>
+<main>
+  <div class="card">
+    <div class="muted">আল-কুরআন রিসার্চ</div>
+    <h1>Autonomous Vision & Self-Correction Agent</h1>
+    <p class="muted">Human Director Approval Gate — নিরাপদ Draft পরীক্ষার ডেমো</p>
+    <div class="status" id="status">TESTED — LIVE BLOCKED</div>
+  </div>
+
+  <div class="card">
+    <h2>Validation Gates</h2>
+    <div class="gate"><span>Source index.html read-only</span><b>PASS</b></div>
+    <div class="gate"><span>AI response validation</span><b>PASS</b></div>
+    <div class="gate"><span>HTML safety validation</span><b>PASS</b></div>
+    <div class="gate"><span>Draft-only GitHub write</span><b>PASS</b></div>
+    <div class="gate"><span>Human approval</span><b id="human">NOT APPROVED</b></div>
+    <div class="gate"><span>Live index.html release</span><b id="live">BLOCKED</b></div>
+  </div>
+
+  <div class="card">
+    <h2>Human Director</h2>
+    <p>এই ডেমোর Approve বোতামটি শুধু approval-gate UI প্রদর্শন করে। এটি মূল <code>index.html</code> পরিবর্তন করে না।</p>
+    <div class="row">
+      <button class="approve" id="approve">✓ APPROVE DEMO</button>
+      <button class="reject" id="reject">✕ REJECT</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Audit Log</h2>
+    <div class="log" id="log">[BOOT] Demo loaded
+[GATE] Live release = BLOCKED
+[SECURITY] index.html direct write = DISABLED</div>
+  </div>
+
+  <div class="warn">বাস্তব Release-এর জন্য আলাদা Cloudflare release Worker, DIRECTOR_APPROVAL_TOKEN এবং GitHub write permission প্রয়োজন। এই ডেমো কোনো live release সম্পাদন করে না।</div>
+</main>
+<script>
+const statusEl=document.getElementById("status"),human=document.getElementById("human"),live=document.getElementById("live"),log=document.getElementById("log");
+document.getElementById("approve").onclick=()=>{
+  statusEl.textContent="APPROVED — LIVE STILL BLOCKED IN DEMO";
+  human.textContent="APPROVED";
+  human.style.color="#126b4d";
+  log.textContent+="\n[DIRECTOR] Approval recorded in demo UI\n[RELEASE] BLOCKED — demo mode";
+};
+document.getElementById("reject").onclick=()=>{
+  statusEl.textContent="REJECTED — LIVE BLOCKED";
+  human.textContent="REJECTED";
+  live.textContent="BLOCKED";
+  log.textContent+="\n[DIRECTOR] Draft rejected\n[RELEASE] BLOCKED";
+};
+</script>
+</body>
+</html>

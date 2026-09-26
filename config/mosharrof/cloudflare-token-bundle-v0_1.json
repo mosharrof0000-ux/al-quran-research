@@ -1,0 +1,45 @@
+{
+  "version": "0.1",
+  "provider": "cloudflare",
+  "token_id": "CF-MOSHARROF-PRIMARY-001",
+  "secret_storage": {
+    "mode": "external-secret-store",
+    "raw_secret_in_repository": false
+  },
+  "permissions": {
+    "waf_firewall_services": {"read": true, "edit": true, "delete": false},
+    "access_apps_policies": {"read": true, "edit": true, "delete": false},
+    "access_mutual_tls": {"read": true, "edit": true, "delete": false},
+    "workers_scripts_pages": {"read": true, "edit": true, "delete": false},
+    "d1": {"read": true, "edit": true, "delete": false},
+    "workers_kv_storage": {"read": true, "edit": true, "delete": false},
+    "r2_storage": {"read": true, "edit": true, "delete": false},
+    "workers_scripts_bindings": {"read": true, "edit": true, "delete": false},
+    "access_service_tokens": {"read": true, "edit": true, "delete": false},
+    "rulesets_custom_rules": {"read": true, "edit": true, "delete": false},
+    "workers_ai_vectorize_ai_gateway": {"read": true, "edit": true, "delete": false},
+    "queues_pubsub": {"read": true, "edit": true, "delete": false},
+    "stream_images": {"read": true, "edit": true, "delete": false},
+    "workers_environment_variables_secrets": {"read": true, "edit": true, "delete": false},
+    "cloudflare_tunnels": {"read": true, "edit": true, "delete": false},
+    "pages_deployments": {"read": true, "edit": true, "delete": false}
+  },
+  "explicit_exclusions": [
+    "account_api_tokens",
+    "account_settings_edit_write",
+    "billing_subscriptions",
+    "all_delete_permissions",
+    "unapproved_permissions"
+  ],
+  "rules": {
+    "least_privilege": true,
+    "parent_boundary_authoritative": true,
+    "child_cannot_exceed_parent": true,
+    "no_super_token": true,
+    "raw_secret_exposure": false,
+    "self_escalation": false,
+    "direct_live_bypass": false
+  },
+  "status": "REGISTERED",
+  "auth_reference": "secret://cloudflare/mosharrof/CF-MOSHARROF-PRIMARY-001"
+}

@@ -1,0 +1,24 @@
+{
+  "name":"Al-Quran Research — Normal Quran Reader Icon Set",
+  "version":"1.0.0",
+  "mode":"normal-quran",
+  "status":"STORED_REFERENCE_NOT_LIVE_INTEGRATED",
+  "style":{"fill":"none","stroke":"currentColor","strokeWidth":1.9,"linecap":"round","linejoin":"round","viewBox":"0 0 64 64","monochrome":true},
+  "icons":[
+    {"id":"quran","file":"quran.svg","role":"Main Quran reader"},
+    {"id":"surah","file":"surah.svg","role":"Surah navigation"},
+    {"id":"ayah","file":"ayah.svg","role":"Ayah marker"},
+    {"id":"tafseer","file":"tafseer.svg","role":"Knowledge/Tafseer"},
+    {"id":"bookmark","file":"bookmark.svg","role":"Save/bookmark"},
+    {"id":"audio","file":"audio-tilawat.svg","role":"Tilawat/audio"},
+    {"id":"home","file":"home.svg","role":"Quran home"},
+    {"id":"search","file":"search.svg","role":"Quran search"},
+    {"id":"favorite","file":"favorite.svg","role":"Favorite"},
+    {"id":"share","file":"share.svg","role":"Share"}
+  ],
+  "mode_policy":{
+    "normal-quran":"Use this family for ordinary Quran reading.",
+    "sufi":"Use a separate versioned Sufi icon family; never overwrite this family."
+  },
+  "integration_policy":"Review -> isolated demo -> backup -> integration PR -> smoke test -> live."
+}

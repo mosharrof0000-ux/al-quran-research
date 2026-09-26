@@ -1,0 +1,261 @@
+*{box-sizing:border-box}
+:root{--bg:#fff;--text:#1f2933;--muted:#6b7280;--line:#e5e7eb;--soft:#f7f7f8;--accent:#0f766e}
+html,body{margin:0;width:100%;height:100%;background:var(--bg);color:var(--text);font-family:system-ui,'Noto Sans Bengali',sans-serif}
+body{overflow:hidden}.shell{width:100%;height:100%;max-width:920px;margin:auto;display:flex;flex-direction:column;background:var(--bg)}
+.topbar{position:relative;z-index:100;height:56px;min-height:56px;display:grid;grid-template-columns:40px 40px 1fr 40px 40px;align-items:center;padding:0 8px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.96)}
+.icon-btn{width:36px;height:36px;border:0;border-radius:9px;background:transparent;color:var(--text);display:grid;place-items:center;font-size:21px}
+.icon-btn:active{background:var(--soft)}.hamb{display:grid;gap:3px}.hamb i{display:block;width:15px;height:1.5px;background:currentColor;border-radius:2px}
+.brand{text-align:center;font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chat{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:flex-end;padding:24px 14px 16px}
+.welcome{text-align:center;margin:auto auto 26px;max-width:560px}.logo{width:48px;height:48px;margin:0 auto 14px;border:1px solid var(--line);border-radius:14px;display:grid;place-items:center;font-family:serif;font-size:25px;background:var(--soft)}
+.welcome h1{margin:0 0 7px;font-size:22px;font-weight:600}.welcome p{margin:0;color:var(--muted);font-size:14px}
+.composer{width:100%;display:flex;align-items:flex-end;gap:8px;border:1px solid #cfd3d8;border-radius:22px;background:#fff;padding:8px 9px 8px 14px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.composer textarea{flex:1;min-width:0;max-height:140px;border:0;outline:0;resize:none;background:transparent;color:var(--text);font:inherit;font-size:15px;line-height:1.5;padding:6px 0}
+.composer textarea::placeholder{color:#8a8f98}.composer-actions{display:flex;gap:4px;align-items:center}
+.small-btn,.send{width:34px;height:34px;border:0;border-radius:50%;display:grid;place-items:center}.small-btn{background:transparent;color:#5f6368;font-size:20px}.send{background:#1f2933;color:#fff;font-size:20px;font-weight:700}
+.toast{position:fixed;left:50%;bottom:86px;transform:translate(-50%,10px);opacity:0;pointer-events:none;background:#1f2933;color:#fff;border-radius:10px;padding:8px 12px;font-size:12px;transition:.2s;z-index:60}.toast.show{opacity:1;transform:translate(-50%,0)}
+.drawer{position:fixed!important;inset:0 auto 0 0!important;width:min(300px,84vw);background:#fff;border-right:1px solid var(--line);box-shadow:8px 0 24px rgba(0,0,0,.10);z-index:2147483646!important;transform:translateX(-105%);transition:transform .22s ease;padding:14px;box-sizing:border-box;isolation:isolate}.drawer.open{transform:translateX(0)}
+.drawer-head{height:44px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);margin-bottom:10px}.drawer-head button{border:0;background:transparent;font-size:25px;color:var(--text)}
+.drawer>button{width:100%;text-align:left;border:0;background:transparent;border-radius:10px;padding:12px 10px;margin:2px 0;color:var(--text);font-size:14px}.drawer>button:active{background:var(--soft)}
+@media(max-width:600px){.topbar{height:52px;min-height:52px}.brand{font-size:14px}.chat{padding:18px 10px 10px}.welcome h1{font-size:20px}.welcome p{font-size:13px}.composer{border-radius:20px}.composer textarea{font-size:14px}}
+body.light{background:#fff;color:#1f2933}
+/* Chat connection layer */
+.messages{width:min(760px,calc(100% - 28px));margin:0 auto;flex:1;overflow:auto;padding:20px 0 130px;display:flex;flex-direction:column;gap:12px}.chat-message{max-width:82%;padding:11px 14px;border-radius:16px;white-space:pre-wrap;line-height:1.65;font-size:14px}.chat-message.user{align-self:flex-end;background:#0b7d67;color:#fff;border-bottom-right-radius:5px}.chat-message.ai{align-self:flex-start;background:#f1f3f2;color:#17231f;border:1px solid #dfe5e2;border-bottom-left-radius:5px}.chat-message.pending{opacity:.7}.send:disabled{opacity:.55;cursor:wait}
+@media(max-width:650px){.messages{width:calc(100% - 18px);padding-top:12px}.chat-message{max-width:90%;font-size:13px}}
+
+/* Day ambient color cycle: 16 soft colors, 16 minutes per full cycle; 1 minute per color step. */
+html,body{background:#fff}
+body{animation:dayAmbient16m 960s ease-in-out infinite;background-color:#fff}
+.shell{background:transparent}
+.topbar{background:rgba(255,255,255,.86)}
+@keyframes dayAmbient16m{
+  0%{background-color:#fff}
+  6.25%{background-color:#f7f4ea}
+  12.5%{background-color:#f4edc9}
+  18.75%{background-color:#f3dcc7}
+  25%{background-color:#f1d8df}
+  31.25%{background-color:#efd5d2}
+  37.5%{background-color:#e3d9ed}
+  43.75%{background-color:#dcdff0}
+  50%{background-color:#d4e7ef}
+  56.25%{background-color:#d1e8e2}
+  62.5%{background-color:#d8eadb}
+  68.75%{background-color:#dcebcf}
+  75%{background-color:#d8dfc8}
+  81.25%{background-color:#e9dfc9}
+  87.5%{background-color:#e2e4e1}
+  93.75%{background-color:#d9e1e5}
+  100%{background-color:#fff}
+}
+@media(prefers-reduced-motion:reduce){body{animation:none;background-color:#fff}}
+
+.quran-reader{position:fixed;inset:0;background:#fff;z-index:45;display:none;flex-direction:column}
+.quran-reader.open{display:flex}
+.reader-head{height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 14px;border-bottom:1px solid var(--line)}
+.reader-head button{border:0;background:transparent;font-size:26px}
+.reader-controls{display:flex;gap:8px;align-items:center;padding:10px 12px;border-bottom:1px solid var(--line)}
+.reader-controls button{border:1px solid var(--line);background:var(--soft);border-radius:9px;width:38px;height:36px}
+.reader-controls select{flex:1;height:36px;border:1px solid var(--line);border-radius:9px;background:#fff;padding:0 8px}
+.reader-status{padding:8px 14px;color:var(--muted);font-size:12px}
+.quran-text{flex:1;overflow:auto;padding:10px 16px 24px;direction:rtl}
+.ayah{display:flex;align-items:flex-start;gap:10px;padding:14px 4px;border-bottom:1px solid #eef0ef}
+.ayah-no{direction:ltr;min-width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--soft);color:var(--muted);font-size:11px}
+.ayah-body{flex:1;min-width:0}
+.ayah-ar{font-family:"Noto Naskh Arabic","Amiri",serif;font-size:25px;line-height:2.15;text-align:right;direction:rtl}
+.ayah-bn-label{margin-top:9px;color:var(--accent);font-size:11px;font-weight:700;direction:ltr;text-align:left}
+.ayah-pron{margin-top:3px;font-family:"Noto Sans Bengali",system-ui,sans-serif;font-size:15px;line-height:1.8;text-align:left;direction:ltr;color:#334155;font-weight:500}
+.ayah-bn{margin-top:3px;font-family:"Noto Sans Bengali",system-ui,sans-serif;font-size:15px;line-height:1.8;text-align:left;direction:ltr;color:#334155}
+.reader-credit{padding:8px 12px;border-top:1px solid var(--line);font-size:10px;color:var(--muted);text-align:center}
+.reader-credit a{color:inherit}
+
+
+/* Quran Home / Source Library */
+.quran-home{position:fixed;inset:0;background:#fff;z-index:46;display:none;flex-direction:column}
+.quran-home.open{display:flex}
+.quran-home-body{flex:1;overflow:auto;padding:22px 16px 32px;max-width:760px;width:100%;margin:0 auto}
+.quran-home-body h1{margin:0 0 6px;font-size:22px}.quran-home-body p{margin:0 0 18px;color:var(--muted);font-size:13px}
+.source-list{display:flex;flex-direction:column;gap:10px}.source-card{width:100%;text-align:left;border:1px solid var(--line);background:#fff;border-radius:14px;padding:14px 15px;cursor:pointer}.source-card:active{background:var(--soft)}
+.source-top{display:flex;align-items:center;gap:10px}.source-number{min-width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:var(--soft);font-weight:700;font-size:13px}.source-name{font-size:15px;font-weight:650}.source-meta{margin:7px 0 0 42px;color:var(--muted);font-size:12px;line-height:1.5}.source-badge{display:inline-block;margin-left:auto;padding:4px 7px;border-radius:999px;background:#eef7f4;color:var(--accent);font-size:10px}
+
+/* AI response action bar: copy, feedback, read aloud, share, more */
+.message-body{white-space:pre-wrap}
+.message-actions{display:flex;align-items:center;gap:2px;margin-top:7px;padding-top:6px;border-top:1px solid rgba(100,116,139,.14)}
+.message-action{width:30px;height:30px;border:0;background:transparent;color:#66727c;border-radius:8px;display:grid;place-items:center;font-size:15px;cursor:pointer}
+.message-action:hover,.message-action:active,.message-action.active{background:#e8efec;color:#0f766e}
+.message-more{position:relative}
+.message-more-menu{position:absolute;left:0;bottom:34px;display:none;min-width:180px;padding:5px;background:#fff;border:1px solid var(--line);border-radius:11px;box-shadow:0 8px 24px rgba(0,0,0,.12);z-index:20}
+.message-more-menu.open{display:block}
+.message-more-menu button{display:block;width:100%;border:0;background:transparent;text-align:left;padding:9px 10px;border-radius:8px;color:var(--text);font:inherit;font-size:12px}
+.message-more-menu button:active,.message-more-menu button:hover{background:var(--soft)}
+
+
+/* AI Action Bar v1 demo: compact response controls */
+.message-actions{display:flex;align-items:center;gap:1px;margin-top:8px;padding-top:5px;border-top:0;min-height:32px}
+.message-action{width:30px;height:30px;border:0;background:transparent;color:#6b7280;border-radius:7px;display:grid;place-items:center;font-size:15px;line-height:1;cursor:pointer;transition:background .15s ease,color .15s ease,transform .1s ease}
+.message-action:hover{background:rgba(15,118,110,.08);color:#0f766e}.message-action:active{transform:scale(.94)}.message-action.active{background:rgba(15,118,110,.12);color:#0f766e}.message-action:focus-visible{outline:2px solid #8ab9aa;outline-offset:1px}
+.message-more{position:relative}.message-more-menu{position:absolute;left:0;bottom:35px;display:none;min-width:190px;padding:5px;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.12);z-index:20}.message-more-menu.open{display:block}.message-more-menu button{display:block;width:100%;border:0;background:transparent;text-align:left;padding:9px 10px;border-radius:7px;color:var(--text);font:inherit;font-size:12px;cursor:pointer}.message-more-menu button:hover,.message-more-menu button:active{background:var(--soft)}
+@media(max-width:480px){.message-actions{gap:0}.message-action{width:29px;height:29px;font-size:14px}.message-more-menu{min-width:180px}}
+
+
+/* Night ambient color cycle: 16 deep colors, 16 minutes per full cycle. */
+body.night{animation:nightAmbient16m 960s ease-in-out infinite;color:#e7ecea;--bg:#101715;--text:#e7ecea;--muted:#aab8b3;--line:#2b3935;--soft:#1a2522;--accent:#63c7a7}
+body.night .shell{background:transparent}
+body.night .topbar{background:rgba(14,20,18,.82);border-color:#2b3935}
+body.night .icon-btn,body.night .brand{color:#e7ecea}
+body.night .composer{background:#18211f;border-color:#3a4945;box-shadow:0 1px 6px rgba(0,0,0,.28)}
+body.night .composer textarea{color:#e7ecea}
+body.night .composer textarea::placeholder{color:#879691}
+body.night .small-btn{color:#aebbb7}
+body.night .send{background:#d9eee7;color:#10201b}
+body.night .drawer,body.night .quran-reader,body.night .quran-home{background:#121a18;border-color:#2b3935;color:#e7ecea}
+body.night .drawer-head,body.night .reader-head,body.night .reader-controls,body.night .reader-credit{border-color:#2b3935}
+body.night .drawer>button,body.night .drawer-head button,body.night .reader-head button{color:#e7ecea}
+body.night .chat-message.ai{background:#1a2522;color:#e7ecea;border-color:#30403b}
+body.night .chat-message.user{background:#126b59;color:#f2fffa}
+body.night .ayah{border-color:#26342f}
+body.night .ayah-pron,body.night .ayah-bn{color:#cbd7d3}
+body.night .reader-controls button,body.night .reader-controls select,body.night .source-card{background:#18221f;color:#e7ecea;border-color:#33433e}
+body.night .source-number{background:#23312d}
+body.night .source-badge{background:#173a31;color:#75d4b5}
+body.night .message-action{color:#9eaca7}
+body.night .message-action:hover,body.night .message-action:active,body.night .message-action.active{background:rgba(99,199,167,.13);color:#7ad6b8}
+body.night .message-more-menu{background:#18221f;border-color:#33433e;box-shadow:0 8px 24px rgba(0,0,0,.35)}
+body.night .message-more-menu button{color:#e7ecea}
+body.night .message-more-menu button:hover,body.night .message-more-menu button:active{background:#23312d}
+@keyframes nightAmbient16m{
+  0%{background-color:#0f1715}
+  6.25%{background-color:#18201a}
+  12.5%{background-color:#252316}
+  18.75%{background-color:#2a1d17}
+  25%{background-color:#2a1921}
+  31.25%{background-color:#28191a}
+  37.5%{background-color:#211a2a}
+  43.75%{background-color:#191d2d}
+  50%{background-color:#13252c}
+  56.25%{background-color:#102a25}
+  62.5%{background-color:#15291d}
+  68.75%{background-color:#202b18}
+  75%{background-color:#24291b}
+  81.25%{background-color:#2b241a}
+  87.5%{background-color:#202422}
+  93.75%{background-color:#182126}
+  100%{background-color:#0f1715}
+}
+@media(prefers-reduced-motion:reduce){body.night{animation:none;background-color:#101715}}
+
+/* Smart Chat Composer v1 */
+.composer-wrap{width:100%;max-width:760px;margin:0 auto;position:relative;z-index:100;pointer-events:auto}
+.composer{max-width:none}
+.composer-left{flex:0 0 auto;order:0}
+.composer textarea{order:1;min-height:34px;overflow-y:hidden}
+.composer-right{order:2}
+.composer-tools{display:flex;flex-wrap:wrap;gap:6px;padding:0 4px 7px;justify-content:flex-start}
+.composer-tools[hidden]{display:none}
+.composer-tools button{border:1px solid var(--line);background:#fff;color:var(--text);border-radius:10px;padding:7px 10px;font:inherit;font-size:12px;cursor:pointer}
+.composer-tools button:hover,.composer-tools button:active{background:var(--soft)}
+@media(max-width:600px){
+ .composer-wrap{max-width:none}
+ .composer-tools{gap:5px}
+ .composer-tools button{padding:6px 8px;font-size:11px}
+ .composer textarea{max-height:140px}
+}
+
+/* Private Research dialog — additive, scoped styles */
+.private-research-dialog{position:fixed;inset:0;z-index:80;background:rgba(0,0,0,.42);display:grid;place-items:center;padding:16px}
+.private-research-dialog[hidden]{display:none}
+.private-research-card{width:min(560px,100%);max-height:88vh;overflow:auto;background:var(--surface,#fff);color:var(--text,#183b2b);border-radius:18px;box-shadow:0 16px 48px rgba(0,0,0,.22)}
+.private-research-body{padding:16px}
+.private-research-body p{margin:0 0 12px}
+.private-source-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px;border:1px solid rgba(0,0,0,.12);border-radius:12px;margin:8px 0}
+.private-source-row button{min-height:40px}
+#privateResearchUnlock{display:flex;gap:8px;align-items:end;margin-top:14px;flex-wrap:wrap}
+#privateResearchUnlock label{width:100%}
+#privateResearchPin{min-height:42px;flex:1;min-width:160px;padding:8px 10px;border:1px solid rgba(0,0,0,.18);border-radius:10px}
+
+/* Chat Font Customizer v1 — UI only, safe pilot */
+.font-panel{position:fixed;top:58px;right:10px;width:min(300px,calc(100vw - 20px));padding:14px;background:rgba(255,255,255,.98);border:1px solid var(--line);border-radius:14px;box-shadow:0 12px 32px rgba(0,0,0,.14);z-index:70}
+.font-panel[hidden]{display:none}.font-panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}.font-panel-head button{border:0;background:transparent;font-size:24px;color:var(--text)}
+.font-panel label{display:block;margin:10px 0;color:var(--text);font-size:12px;font-weight:600}.font-panel select,.font-panel input{display:block;width:100%;margin-top:5px}.font-panel select{height:36px;border:1px solid var(--line);border-radius:9px;background:#fff;padding:0 8px;color:var(--text)}.font-panel input{accent-color:#0f766e}.font-panel label span{float:right;color:var(--muted);font-weight:500}.font-reset{width:100%;margin-top:5px;border:1px solid var(--line);background:var(--soft);color:var(--text);border-radius:9px;padding:9px}
+body.night .font-panel{background:#18221f;border-color:#33433e;color:#e7ecea}body.night .font-panel select,body.night .font-panel input{background:#18221f;color:#e7ecea;border-color:#33433e}body.night .font-reset{background:#23312d;color:#e7ecea;border-color:#33433e}
+
+html{--aqr-chat-bn-font:system-ui,"Noto Sans Bengali",sans-serif;--aqr-chat-ar-font:"Noto Naskh Arabic","Amiri",serif;--aqr-chat-size:15px;--aqr-chat-line:1.7}
+.chat-message,.composer textarea{font-family:var(--aqr-chat-bn-font);font-size:var(--aqr-chat-size);line-height:var(--aqr-chat-line)}
+.ayah-ar{font-family:var(--aqr-chat-ar-font)}
+
+
+/* Glass Header v3 — 100% transparent, only text/icons remain */
+.topbar{
+  background:transparent!important;
+  border-bottom:0!important;
+  box-shadow:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+  isolation:isolate;
+}
+.topbar::before{content:none!important}
+body.night .topbar{
+  background:transparent!important;
+  border-bottom:0!important;
+  box-shadow:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+body.night .topbar::before{content:none!important}
+
+/* AI transparent streaming response v1 */
+.chat-message.ai{background:transparent;border:0;box-shadow:none;color:#17231f;backdrop-filter:none;-webkit-backdrop-filter:none}
+.chat-message.ai .message-body{line-height:1.6}
+.chat-message.ai .message-body h1,.chat-message.ai .message-body h2,.chat-message.ai .message-body h3{margin:10px 0 5px;line-height:1.35}
+.chat-message.ai .message-body p{margin:0 0 9px}
+.chat-message.ai .message-body ul,.chat-message.ai .message-body ol{margin:6px 0 10px;padding-left:22px}
+.chat-message.ai .message-body li{margin:3px 0}
+.chat-message.ai .message-body blockquote{margin:8px 0;padding-left:12px;border-left:3px solid currentColor;opacity:.9}
+.chat-message.ai .message-body code{font-family:ui-monospace,monospace;font-size:.92em}
+.ai-stream-cursor{display:inline-block;width:.55em;margin-left:2px;animation:aiCursorBlink .85s step-end infinite;vertical-align:-.08em}
+@keyframes aiCursorBlink{50%{opacity:0}}
+body.night .chat-message.ai{background:transparent;border:0;color:#f1f5f3}
+
+/* User Profile Avatar System v2 — dark modal, circular preview, natural aspect ratio, LocalStorage persistence. */
+.profile-avatar-trigger{position:relative;overflow:visible}
+.profile-avatar-main{width:27px;height:27px;border-radius:50%;overflow:hidden;display:grid;place-items:center;background:#26332f;border:1px solid rgba(255,255,255,.22);color:#d9e3df}
+.profile-avatar-main img{display:block;width:100%;height:100%;object-fit:cover;object-position:center center}
+.profile-avatar-default{font-size:15px;line-height:1}
+.profile-avatar-edit{position:absolute;right:-2px;bottom:-2px;width:14px;height:14px;border-radius:50%;display:grid;place-items:center;background:#0f766e;color:#fff;font-size:8px;line-height:1;border:1px solid rgba(255,255,255,.9)}
+.modal-overlay{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(0,0,0,.68);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px)}
+.modal-overlay[hidden]{display:none}
+.profile-avatar-modal{font:inherit;color:#f1f5f3}
+.profile-avatar-modal-card{width:min(92vw,380px);border:1px solid #33413d;border-radius:18px;overflow:hidden;background:#111817;box-shadow:0 24px 80px rgba(0,0,0,.5)}
+.profile-avatar-modal-head{min-height:52px;padding:0 15px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #2b3835}
+.profile-avatar-modal-head button{width:34px;height:34px;border:0;border-radius:50%;background:transparent;color:#dce5e2;font-size:26px;cursor:pointer}
+.profile-avatar-modal-head button:hover{background:#202a28}
+.profile-avatar-modal-body{padding:22px 18px 18px;display:flex;flex-direction:column;align-items:center;gap:14px}
+.preview-box{width:156px;height:156px;border-radius:50%;overflow:hidden;display:grid;place-items:center;background:#202a28;border:2px solid #3c4b47;flex:0 0 156px;color:#8b9b96}
+.preview-box img{display:block;width:100%;height:100%;object-fit:cover;object-position:center center}
+.profile-avatar-help{max-width:300px;margin:0;text-align:center;color:#9eada8;font-size:12px;line-height:1.65}
+.profile-avatar-modal-actions{width:100%;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.profile-avatar-button{min-height:40px;border:1px solid #3a4a45;border-radius:10px;background:#1b2523;color:#edf3f1;font:inherit;font-size:13px;cursor:pointer}
+.profile-avatar-button:hover{background:#24302d}
+.profile-avatar-button.primary{background:#0f766e;border-color:#148a7f}
+.profile-avatar-button.primary:disabled{opacity:.45;cursor:not-allowed}
+.profile-avatar-button.danger{grid-column:1 / -1;background:transparent;color:#d6aaa6}
+@media(max-width:480px){.profile-avatar-modal-card{width:min(94vw,380px)}.preview-box{width:136px;height:136px;flex-basis:136px}}
+
+
+/* Glass Header v4 — transparent overlay; page content scrolls behind the glass */
+.shell{position:relative}
+.topbar{
+  position:absolute!important;
+  top:0!important;
+  left:0!important;
+  right:0!important;
+  width:100%!important;
+  z-index:100!important;
+  background:transparent!important;
+  border-bottom:0!important;
+  box-shadow:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+  pointer-events:none;
+}
+.topbar .icon-btn{pointer-events:auto}
+.topbar .brand{pointer-events:none}

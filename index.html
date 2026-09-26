@@ -5,11 +5,45 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>AI-Quran Research — আল-কুরআন গবেষণা প্ল্যাটফর্ম</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#123a2d">
 <meta name="description" content="আল-কুরআন গবেষণার জন্য নিজস্ব AI-powered reading and research interface.">
+<style id="aqr-install-style">
+#aqrInstallButton{position:fixed;right:14px;bottom:14px;z-index:2147483647;border:1px solid rgba(255,255,255,.28);border-radius:999px;padding:10px 14px;background:#123a2d;color:#fff;font:600 14px system-ui,sans-serif;box-shadow:0 6px 20px rgba(0,0,0,.22);display:none}
+</style>
 <style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#03100f}iframe{display:block;width:100%;height:100%;border:0}</style>
 </head>
 <body>
-<iframe id="homeApp" title="AI-Quran Research Home" src="ui/home-v1/home-v1.html?v=20260920-source1-fix"></iframe>
+<iframe id="homeApp" title="AI-Quran Research Home" src="ui/home-v1/home-v1.html?v=20260923-glass-live-v3"></iframe>
+<button id="aqrInstallButton" type="button">অ্যাপ ইনস্টল করুন</button>
 <script src="chat-system.js?v=20260902-2"></script>
+<script>
+let aqrInstallPrompt=null;
+const aqrInstallButton=document.getElementById("aqrInstallButton");
+window.addEventListener("beforeinstallprompt",event=>{
+  event.preventDefault();
+  aqrInstallPrompt=event;
+  if(aqrInstallButton)aqrInstallButton.style.display="block";
+});
+aqrInstallButton?.addEventListener("click",async()=>{
+  if(!aqrInstallPrompt)return;
+  const promptEvent=aqrInstallPrompt;
+  aqrInstallPrompt=null;
+  await promptEvent.prompt();
+  if(aqrInstallButton)aqrInstallButton.style.display="none";
+});
+window.addEventListener("appinstalled",()=>{
+  aqrInstallPrompt=null;
+  if(aqrInstallButton)aqrInstallButton.style.display="none";
+});
+if("serviceWorker" in navigator){
+  window.addEventListener("load",async()=>{
+    try{
+      const registration=await navigator.serviceWorker.register("/al-quran-research/sw.js",{scope:"/al-quran-research/"});
+      registration.update();
+    }catch(_){}
+  });
+}
+</script>
 </body>
 </html>

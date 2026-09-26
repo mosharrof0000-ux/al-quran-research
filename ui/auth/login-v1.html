@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>লগইন — আল-কুরআন রিসার্চ</title>
+<link rel="stylesheet" href="login-v1.css">
+</head>
+<body>
+<main class="auth-shell">
+  <section id="loginBox" class="login-card" aria-labelledby="loginTitle">
+    <h2 id="loginTitle">কুরআন অ্যাপে প্রবেশ</h2>
+    <p class="login-subtext">আপনার গবেষণা সেশনে নিরাপদে প্রবেশ করুন</p>
+
+    <form id="quranLoginForm" novalidate onsubmit="submitLogin(event)">
+      <div class="input-group">
+        <label for="userEmail">ইমেইল</label>
+        <input id="userEmail" name="email" type="email" autocomplete="username"
+               placeholder="আপনার ইমেইল লিখুন" required>
+      </div>
+
+      <div class="input-group">
+        <label for="userPassword">পাসওয়ার্ড</label>
+        <input id="userPassword" name="password" type="password" autocomplete="current-password"
+               placeholder="আপনার পাসওয়ার্ড লিখুন" minlength="6" required>
+      </div>
+
+      <div id="loginError" class="error-msg" role="alert" aria-live="assertive" aria-atomic="true"></div>
+
+      <button class="login-btn" type="submit">
+        <span>লগইন</span>
+      </button>
+    </form>
+  </section>
+</main>
+<script src="login-v1.js"></script>
+</body>
+</html>

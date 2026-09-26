@@ -2,6 +2,36 @@ const CHAT_ENDPOINT='https://al-quran-research.mosharrof0000.workers.dev';
 const PRIVATE_RESEARCH_ENDPOINT=CHAT_ENDPOINT+'/private-research';
 const toastEl=document.getElementById('toast');
 function toast(t){toastEl.textContent=t;toastEl.classList.add('show');clearTimeout(window.__toast);window.__toast=setTimeout(()=>toastEl.classList.remove('show'),1800)}
+const AQR_AI_ICON_NAMES=new Set(['quran','ayah','research','analysis','translation','tafsir','document','info','verified','success','user','settings','bookmark','reference','warning']);
+const AQR_AI_ICON_FALLBACKS=[['গবেষণা','research'],['বিশ্লেষণ','analysis'],['অনুবাদ','translation'],['তাফসির','tafsir'],['আয়াত','ayah'],['আয়াত','ayah'],['কুরআন','quran'],['সূরা','quran'],['যাচাই','verified'],['তথ্য','info']];
+function iconNameFromQuestion(q){for(const [word,name] of AQR_AI_ICON_FALLBACKS)if(String(q||'').includes(word))return name;return 'quran'}
+function renderAiIcon(body,iconName){
+  const name=AQR_AI_ICON_NAMES.has(iconName)?iconName:'quran';
+  const holder=document.createElement('div');holder.className='ai-semantic-icon';holder.setAttribute('aria-label','AI নির্বাচিত আইকন');
+  holder.appendChild(AQRIcon.create(name,{color:'#123A63',size:24,strokeWidth:2.4,title:name}));
+  body.prepend(holder);
+}
+function renderGeminiAnswer(body,text,question){
+  const raw=String(text||'');
+  const match=raw.match(/\\[\\[AQR_ICON:(quran|ayah|research|analysis|translation|tafsir|document|info|verified|success|user|settings|bookmark|reference|warning)\\]\\]/i);
+  const icon=match?match[1].toLowerCase():iconNameFromQuestion(question);
+  const clean=raw.replace(/\\[\\[AQR_ICON:[^\\]]+\\]\\]/gi,'').trim();
+  body.textContent=clean;
+  renderAiIcon(body,icon);
+  return icon;
+}
+/* Dynamic Glass Header Brand v1 — visible before chat, hidden after first message */
+const topbarEl=document.querySelector('.topbar');
+const messagesEl=document.getElementById('messages');
+function syncBrandWithMessages(){
+  if(!topbarEl||!messagesEl)return;
+  topbarEl.classList.toggle('brand-hidden',messagesEl.children.length>0);
+}
+if(messagesEl){
+  new MutationObserver(syncBrandWithMessages).observe(messagesEl,{childList:true});
+  syncBrandWithMessages();
+}
+
 const drawer=document.getElementById('drawer');
 const quranHome=document.getElementById('quranHome');
 const sourceList=document.getElementById('sourceList');
@@ -19,7 +49,7 @@ document.getElementById('closeQuranHome').onclick=closeQuranHome;
 document.getElementById('menuBtn').onclick=()=>drawer.classList.add('open');
 document.getElementById('closeDrawer').onclick=()=>drawer.classList.remove('open');
 document.getElementById('themeBtn').onclick=()=>{const night=document.body.classList.toggle('night');document.body.classList.toggle('light',!night);toast(night?'রাতের ১৬ রঙ চালু হয়েছে':'দিনের ১৬ রঙ চালু হয়েছে')};
-document.getElementById('profileBtn').onclick=()=>toast('প্রোফাইল প্যানেল');
+document.getElementById('profileBtn').onclick=openDrawer;
 document.getElementById('searchBtn').onclick=()=>document.getElementById('prompt').focus();
 const composerTools=document.getElementById('composerTools');
 const plusBtn=document.getElementById('plusBtn');
@@ -65,41 +95,58 @@ document.getElementById('privateResearchUnlockBtn').onclick=async()=>{
 };
 privatePin.addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('privateResearchUnlockBtn').click()});
 document.getElementById('micBtn').onclick=()=>{if(!('webkitSpeechRecognition'in window||'SpeechRecognition'in window)){toast('এই ব্রাউজারে voice input নেই');return}const R=window.SpeechRecognition||window.webkitSpeechRecognition;const r=new R();r.lang='bn-BD';r.onresult=e=>document.getElementById('prompt').value=e.results[0][0].transcript;r.start();toast('শুনছি…')};
+function escapeHtml(s){return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function markdownToSafeHtml(text){
+ const escaped=escapeHtml(text); const lines=escaped.split(/\n/); let html='',inList=false;
+ for(const line of lines){
+   if(/^###\s+/.test(line)){if(inList){html+='</ul>';inList=false}html+='<h3>'+line.replace(/^###\s+/,'')+'</h3>';continue}
+   if(/^##\s+/.test(line)){if(inList){html+='</ul>';inList=false}html+='<h2>'+line.replace(/^##\s+/,'')+'</h2>';continue}
+   if(/^#\s+/.test(line)){if(inList){html+='</ul>';inList=false}html+='<h1>'+line.replace(/^#\s+/,'')+'</h1>';continue}
+   if(/^[-*]\s+/.test(line)){if(!inList){html+='<ul>';inList=true}html+='<li>'+line.replace(/^[-*]\s+/,'')+'</li>';continue}
+   if(/^\d+[.)]\s+/.test(line)){if(inList){html+='</ul>';inList=false}html+='<p><strong>'+line.match(/^\d+[.)]/)[0]+'</strong> '+line.replace(/^\d+[.)]\s+/,'')+'</p>';continue}
+   if(/^>\s+/.test(line)){if(inList){html+='</ul>';inList=false}html+='<blockquote>'+line.replace(/^>\s+/,'')+'</blockquote>';continue}
+   if(!line.trim()){if(inList){html+='</ul>';inList=false}continue}
+   if(inList){html+='</ul>';inList=false}
+   html+='<p>'+line.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\*(.+?)\*/g,'<em>$1</em>')+'</p>';
+ }
+ if(inList)html+='</ul>'; return html;
+}
 function addMessage(text,type){
- const box=document.getElementById('messages');
- const el=document.createElement('div');
- el.className='chat-message '+type;
- const body=document.createElement('div');
- body.className='message-body';
- body.textContent=text;
- el.appendChild(body);
+ const box=document.getElementById('messages'),el=document.createElement('div');el.className='chat-message '+type;
+ const body=document.createElement('div');body.className='message-body';body.textContent=text;el.appendChild(body);
  if(type.includes('ai')){
-   const actions=document.createElement('div');
-   actions.className='message-actions';
-   actions.hidden=true;
+   const actions=document.createElement('div');actions.className='message-actions';actions.hidden=true;
    const makeBtn=(label,title,handler)=>{const b=document.createElement('button');b.type='button';b.className='message-action';b.textContent=label;b.title=title;b.setAttribute('aria-label',title);b.onclick=handler;actions.appendChild(b);return b};
    makeBtn('📋','কপি',()=>copyAiMessage(body.textContent));
    const like=makeBtn('👍','ভালো লেগেছে',()=>{like.classList.toggle('active');dislike.classList.remove('active');toast(like.classList.contains('active')?'পছন্দ সংরক্ষিত':'পছন্দ সরানো হয়েছে')});
    const dislike=makeBtn('👎','ভালো লাগেনি',()=>{dislike.classList.toggle('active');like.classList.remove('active');toast(dislike.classList.contains('active')?'মতামত সংরক্ষিত':'মতামত সরানো হয়েছে')});
-   makeBtn('🔊','পড়ে শোনান',()=>speakAiMessage(body.textContent));
-   makeBtn('↗','শেয়ার',()=>shareAiMessage(body.textContent));
-   const moreWrap=document.createElement('div');moreWrap.className='message-more';
-   const moreMenu=document.createElement('div');moreMenu.className='message-more-menu';
-   const more=makeBtn('⋯','আরও অপশন',()=>moreMenu.classList.toggle('open'));
-   moreWrap.appendChild(more);
+   makeBtn('🔊','পড়ে শোনান',()=>speakAiMessage(body.textContent));makeBtn('↗','শেয়ার',()=>shareAiMessage(body.textContent));
+   const moreWrap=document.createElement('div');moreWrap.className='message-more';const moreMenu=document.createElement('div');moreMenu.className='message-more-menu';
+   const more=makeBtn('⋯','আরও অপশন',()=>moreMenu.classList.toggle('open'));moreWrap.appendChild(more);
    const addMore=(label,handler)=>{const b=document.createElement('button');b.type='button';b.textContent=label;b.onclick=()=>{moreMenu.classList.remove('open');handler()};moreMenu.appendChild(b)};
    addMore('↻ আবার উত্তর চাই',()=>{const last=sessionStorage.getItem('aqr:lastQuestion');if(last){document.getElementById('prompt').value=last;sendQuestion()}});
-   addMore('🔊 পড়ে শোনান',()=>speakAiMessage(body.textContent));
-   addMore('⧉ উত্তর কপি করুন',()=>copyAiMessage(body.textContent));
-   addMore('↗ উত্তর শেয়ার করুন',()=>shareAiMessage(body.textContent));
-   addMore('⚑ মতামত/রিপোর্ট',()=>toast('মতামত/রিপোর্ট অপশন প্রস্তুত করা হয়েছে'));
-   moreWrap.appendChild(moreMenu);actions.appendChild(moreWrap);
-   el.__actions=actions;
-   el.__body=body;
-   el.appendChild(actions);
+   addMore('🔊 পড়ে শোনান',()=>speakAiMessage(body.textContent));addMore('⧉ উত্তর কপি করুন',()=>copyAiMessage(body.textContent));addMore('↗ উত্তর শেয়ার করুন',()=>shareAiMessage(body.textContent));addMore('⚑ মতামত/রিপোর্ট',()=>toast('মতামত/রিপোর্ট অপশন প্রস্তুত করা হয়েছে'));
+   moreWrap.appendChild(moreMenu);actions.appendChild(moreWrap);el.__actions=actions;el.__body=body;el.appendChild(actions);
  }
- box.appendChild(el);box.scrollTop=box.scrollHeight;return el
+ box.appendChild(el);
+ if(type.includes('user')){
+   const targetTop=Math.max(0,el.offsetTop-78);
+   box.scrollTop=targetTop;
+ }else{
+   box.scrollTop=box.scrollHeight;
+ }
+ return el
 }
+async function streamAiResponse(body,text){
+ const raw=String(text||'');body.innerHTML='';let partial='';
+ for(const token of raw.split(/(\s+)/)){
+   partial+=token;body.innerHTML=markdownToSafeHtml(partial);
+   const cursor=document.createElement('span');cursor.className='ai-stream-cursor';cursor.textContent='▋';body.appendChild(cursor);
+   boxScrollForStreaming(body);await new Promise(r=>setTimeout(r,/\s+/.test(token)?28:24));
+ }
+ body.innerHTML=markdownToSafeHtml(raw);
+}
+function boxScrollForStreaming(body){const box=document.getElementById('messages');if(box)box.scrollTop=box.scrollHeight}
 async function copyAiMessage(text){
  try{await navigator.clipboard.writeText(text);toast('উত্তর কপি হয়েছে')}catch(e){const ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();toast('উত্তর কপি হয়েছে')}
 }
@@ -112,7 +159,12 @@ async function shareAiMessage(text){
  await copyAiMessage(text);toast('শেয়ার সুবিধা না থাকায় উত্তরটি কপি করা হয়েছে')
 }
 function setBusy(busy){document.getElementById('sendBtn').disabled=busy;document.getElementById('sendBtn').textContent=busy?'…':'↑'}
-async function sendQuestion(){const prompt=document.getElementById('prompt');const q=prompt.value.trim();if(!q){toast('প্রশ্ন লিখুন বা বলুন');return}sessionStorage.setItem('aqr:lastQuestion',q);document.getElementById('welcome').style.display='none';addMessage(q,'user');const readerJump=parseReaderJump(q);prompt.value='';if(readerJump)openReaderAt(readerJump.sura,readerJump.ayah,readerJump.source);setBusy(true);const pending=addMessage('উত্তর তৈরি হচ্ছে…','ai pending');try{const response=await fetch(CHAT_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:q,mode:'general'})});let data={};try{data=await response.json()}catch{}if(!response.ok)throw new Error(data.error||'AI সংযোগে সমস্যা হয়েছে।');pending.querySelector('.message-body').textContent=data.answer||'AI কোনো উত্তর দেয়নি。';if(data.provider)pending.dataset.provider=data.provider;if(pending.__actions)pending.__actions.hidden=false}catch(error){pending.querySelector('.message-body').textContent='দুঃখিত, AI সংযোগে সমস্যা হয়েছে। আবার চেষ্টা করুন।';if(pending.__actions)pending.__actions.hidden=false;toast(String(error.message||error))}finally{pending.classList.remove('pending');setBusy(false)}}
+async function sendQuestion(){const prompt=document.getElementById('prompt');const q=prompt.value.trim();if(!q){toast('প্রশ্ন লিখুন বা বলুন');return}sessionStorage.setItem('aqr:lastQuestion',q);document.getElementById('welcome').style.display='none';addMessage(q,'user');const readerJump=parseReaderJump(q);prompt.value='';if(readerJump)openReaderAt(readerJump.sura,readerJump.ayah,readerJump.source);setBusy(true);const pending=addMessage('উত্তর তৈরি হচ্ছে…','ai pending');try{const response=await fetch(CHAT_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:q+'\\n\\n[UI নির্দেশনা: এই উত্তরের শেষে একটি UI আইকন নির্বাচন করুন এবং শুধু এই ফরম্যাটে দিন: [[AQR_ICON:quran]] বা [[AQR_ICON:ayah]] বা [[AQR_ICON:research]] বা [[AQR_ICON:analysis]] বা [[AQR_ICON:translation]] বা [[AQR_ICON:tafsir]] বা [[AQR_ICON:document]] বা [[AQR_ICON:info]] বা [[AQR_ICON:verified]]. এই ট্যাগটি উত্তরটির শেষে রাখুন; অন্য কোনো আইকন লাইব্রেরি ব্যবহার করবেন না।]',mode:'general'})});let data={};try{data=await response.json()}catch{}if(!response.ok)throw new Error(data.error||'AI সংযোগে সমস্যা হয়েছে।');const rawAnswer=String(data.answer||'AI কোনো উত্তর দেয়নি。');
+const iconMatch=rawAnswer.match(/\[\[AQR_ICON:(quran|ayah|research|analysis|translation|tafsir|document|info|verified|success|user|settings|bookmark|reference|warning)\]\]/i);
+const selectedIcon=iconMatch?iconMatch[1].toLowerCase():iconNameFromQuestion(q);
+const cleanAnswer=rawAnswer.replace(/\[\[AQR_ICON:[^\]]+\]\]/gi,'').trim();
+await streamAiResponse(pending.querySelector('.message-body'),cleanAnswer);
+renderAiIcon(pending.querySelector('.message-body'),selectedIcon);pending.dataset.icon=selectedIcon;if(data.provider)pending.dataset.provider=data.provider;if(pending.__actions)pending.__actions.hidden=false}catch(error){pending.querySelector('.message-body').textContent='দুঃখিত, AI সংযোগে সমস্যা হয়েছে। আবার চেষ্টা করুন।';if(pending.__actions)pending.__actions.hidden=false;toast(String(error.message||error))}finally{pending.classList.remove('pending');setBusy(false)}}
 function loadActionBarDemo(){
  if(location.hash!=='#actionbar-demo')return;
  document.getElementById('welcome').style.display='none';
@@ -217,3 +269,92 @@ document.getElementById('prevSura').onclick=()=>showSura(Math.max(1,Number(selec
 document.getElementById('nextSura').onclick=()=>showSura(Math.min(114,Number(select.value)+1));
 
 // Smart Chat Composer v1: adaptive input, left tools, focused tool prompts.
+
+/* Chat Font Customizer v1 */
+(function(){
+ const panel=document.getElementById('fontPanel'), open=document.getElementById('fontBtn'), close=document.getElementById('closeFontPanel');
+ const bn=document.getElementById('bnFontSelect'), ar=document.getElementById('arFontSelect'), size=document.getElementById('fontSizeRange'), line=document.getElementById('lineHeightRange');
+ const sizeOut=document.getElementById('fontSizeValue'), lineOut=document.getElementById('lineHeightValue'), reset=document.getElementById('fontReset');
+ if(!panel||!open)return;
+ const bnFonts={system:'system-ui,"Noto Sans Bengali",sans-serif',hind:'"Hind Siliguri",system-ui,sans-serif',meghaloy:'"Hasan Meghaloy","Hind Siliguri",sans-serif',munam:'"Hasan Munam","Hind Siliguri",sans-serif',hera:'"Hasan Hera","Hind Siliguri",sans-serif',mokhmoli:'"Hasan Mokhmoli","Hind Siliguri",sans-serif'};
+ const arFonts={default:'"Noto Naskh Arabic","Amiri",serif',alquds:'"Al Quds","Noto Naskh Arabic",serif'};
+ function apply(){document.documentElement.style.setProperty('--aqr-chat-bn-font',bnFonts[bn.value]||bnFonts.system);document.documentElement.style.setProperty('--aqr-chat-ar-font',arFonts[ar.value]||arFonts.default);document.documentElement.style.setProperty('--aqr-chat-size',size.value+'px');document.documentElement.style.setProperty('--aqr-chat-line',line.value);sizeOut.textContent=size.value+'px';lineOut.textContent=line.value;localStorage.setItem('aqr-font-settings',JSON.stringify({bn:bn.value,ar:ar.value,size:size.value,line:line.value}));}
+ function load(){try{const x=JSON.parse(localStorage.getItem('aqr-font-settings')||'{}');if(x.bn)bn.value=x.bn;if(x.ar)ar.value=x.ar;if(x.size)size.value=x.size;if(x.line)line.value=x.line}catch(e){}apply()}
+ open.onclick=()=>{panel.hidden=!panel.hidden}; close.onclick=()=>panel.hidden=true;
+ [bn,ar,size,line].forEach(x=>x.addEventListener('input',apply)); reset.onclick=()=>{bn.value='system';ar.value='default';size.value=15;line.value=1.7;apply()}; load();
+})();
+
+/* User Profile Avatar System v2 — FileReader preview + LocalStorage persistence. */
+const profileAvatarPanel=document.getElementById('profileAvatarPanel');
+const profileAvatarInput=document.getElementById('profileAvatarInput');
+const profileAvatarPreview=document.getElementById('profileAvatarPreview');
+const profileAvatarMain=document.getElementById('profileAvatarMain');
+const profileAvatarSelect=document.getElementById('profileAvatarSelect');
+const profileAvatarSave=document.getElementById('profileAvatarSave');
+const profileAvatarRemove=document.getElementById('profileAvatarRemove');
+const closeProfileAvatar=document.getElementById('closeProfileAvatar');
+let pendingProfileAvatar=null;
+
+function profileAvatarPlaceholder(){return '<span class="profile-avatar-default">○</span>'}
+function renderProfileAvatar(src){
+  const render=(target)=>{
+    if(!target)return;
+    if(src){
+      target.innerHTML='';
+      const img=document.createElement('img');
+      img.src=src;
+      img.alt='ব্যবহারকারীর প্রোফাইল ছবি';
+      target.appendChild(img);
+    }else{
+      target.innerHTML=profileAvatarPlaceholder();
+    }
+  };
+  render(profileAvatarMain);
+  render(profileAvatarPreview);
+}
+function openProfileAvatar(){
+  profileAvatarPanel.hidden=false;
+  profileAvatarSave.disabled=!pendingProfileAvatar;
+}
+function closeProfileAvatarPanel(){profileAvatarPanel.hidden=true}
+function previewProfileAvatar(file){
+  if(!file||!file.type.startsWith('image/')){toast('একটি ছবি নির্বাচন করুন');return}
+  const reader=new FileReader();
+  reader.onload=()=>{pendingProfileAvatar=String(reader.result||'');renderProfileAvatar(pendingProfileAvatar);profileAvatarSave.disabled=!pendingProfileAvatar};
+  reader.onerror=()=>toast('ছবিটি পড়া যায়নি');
+  reader.readAsDataURL(file);
+}
+function saveAvatar(){
+  if(!pendingProfileAvatar){toast('আগে একটি ছবি নির্বাচন করুন');return}
+  try{
+    localStorage.setItem('userProfileAvatar',pendingProfileAvatar);
+    renderProfileAvatar(pendingProfileAvatar);
+    profileAvatarInput.value='';
+    pendingProfileAvatar=null;
+    profileAvatarSave.disabled=true;
+    closeProfileAvatarPanel();
+    toast('প্রোফাইল ছবি সংরক্ষণ হয়েছে');
+  }catch(e){toast('ছবি সংরক্ষণ করা যায়নি');}
+}
+function removeAvatar(){
+  localStorage.removeItem('userProfileAvatar');
+  pendingProfileAvatar=null;
+  profileAvatarInput.value='';
+  profileAvatarSave.disabled=true;
+  renderProfileAvatar(null);
+  closeProfileAvatarPanel();
+  toast('প্রোফাইল ছবি সরানো হয়েছে');
+}
+function loadSavedAvatar(){
+  const saved=localStorage.getItem('userProfileAvatar');
+  renderProfileAvatar(saved||null);
+  profileAvatarSave.disabled=true;
+}
+profileAvatarSelect.onclick=()=>profileAvatarInput.click();
+profileAvatarInput.onchange=()=>previewProfileAvatar(profileAvatarInput.files&&profileAvatarInput.files[0]);
+profileAvatarSave.onclick=saveAvatar;
+profileAvatarRemove.onclick=removeAvatar;
+closeProfileAvatar.onclick=closeProfileAvatarPanel;
+profileAvatarPanel.addEventListener('click',e=>{if(e.target===profileAvatarPanel)closeProfileAvatarPanel()});
+window.addEventListener('keydown',e=>{if(e.key==='Escape'&&!profileAvatarPanel.hidden)closeProfileAvatarPanel()});
+window.addEventListener('load',loadSavedAvatar);
