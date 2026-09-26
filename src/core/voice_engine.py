@@ -18,27 +18,33 @@ def _clean_spaces(text: str) -> str:
     return text.strip()
 
 def apply_smart_punctuation(raw_text: str) -> str:
+    """Conservatively infer final Bengali punctuation from text cues."""
     text = _clean_spaces(raw_text)
     if not text:
         return ""
-    if re.search(r"[?？]$", text):
+    if re.search(r"[?؟]$", text):
         return text[:-1].rstrip() + "?"
     if re.search(r"[।.!]$", text):
         return text
-    question_starts = ("কি ", "কী ", "কেন ", "কীভাবে ", "কোথায় ", "কোথায় ",
-                       "কখন ", "কে ", "কোন ", "কত ", "হবে কি", "আছে কি")
-    return text + ("?" if text.startswith(question_starts) else "।")
+    question_words = (
+        "কি", "কী", "কেন", "কীভাবে", "কিভাবে", "কোথায়", "কোথায়",
+        "কখন", "কে", "কাকে", "কার", "কোন", "কত", "কেমন",
+        "হবে", "আছে", "করবেন", "করব", "পারবেন", "পারবে"
+    )
+    tokens = text.split()
+    is_question = any(token.rstrip(",") in question_words for token in tokens)
+    return text + ("?" if is_question else "।")
 
 _COMMON_CONTEXT_FIXES = {
     "কোরআন গবেষনা": "কোরআন গবেষণা",
     "গবেষনা": "গবেষণা",
-    "প্রজেক্টের": "প্রকল্পের",
 }
 
 def correct_contextual_grammar(raw_text: str) -> str:
+    """Apply only explicitly high-confidence, meaning-preserving fixes."""
     text = _clean_spaces(raw_text)
     for wrong, right in _COMMON_CONTEXT_FIXES.items():
-        text = re.sub(re.escape(wrong), right, text)
+        text = re.sub(rf"(?<!\S){re.escape(wrong)}(?!\S)", right, text)
     return text
 
 def sanitize_phonetic_speech(
@@ -57,6 +63,9 @@ def process_transcript(raw_text: str, *, correction: bool = True, punctuation: b
     original = sanitize_phonetic_speech(raw_text)
     text = correct_contextual_grammar(original) if correction else original
     text = apply_smart_punctuation(text) if punctuation else text
-    return VoiceResult(raw_text=raw_text, normalized_text=text,
-                       confidence=0.98 if text != original else 1.0,
-                       changed=text != original)
+    return VoiceResult(
+        raw_text=raw_text,
+        normalized_text=text,
+        confidence=0.98 if text != original else 1.0,
+        changed=text != original,
+    )
