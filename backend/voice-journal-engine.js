@@ -7,7 +7,6 @@ const QUESTION_START = /^(কি|কী|কেন|কিভাবে|কীভ�
 
 export function sanitize_phonetic_speech(rawText) {
   return String(rawText ?? '')
-    .normalize('NFC')
     .replace(/[\u200B-\u200D\uFEFF]/g, '')
     .replace(/\s+/g, ' ')
     .trim();
