@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Front Font & Text Engine — বাস্তব ডেমো</title>
+<link rel="stylesheet" href="typography-engine-v1.css">
+<style>
+body{margin:0;font-family:system-ui,sans-serif;background:#f6f8fa;color:#17202a}
+.wrap{max-width:760px;margin:auto;padding:18px}.card{background:#fff;border:1px solid #dfe5ea;border-radius:14px;padding:16px;margin:12px 0}
+h1{font-size:1.25rem;margin:0 0 6px}.muted{color:#667085;font-size:.9rem}
+.controls{display:grid;grid-template-columns:1fr 1fr;gap:10px}.controls label{font-size:.82rem;font-weight:600}.controls select,.controls input,.controls button{width:100%;box-sizing:border-box;padding:9px;border:1px solid #ccd4dc;border-radius:9px;background:#fff}
+.controls button{cursor:pointer}.samples{display:grid;gap:10px}.sample{padding:14px;border:1px solid #e2e8f0;border-radius:10px}
+.sample .tag{font-size:.75rem;color:#667085;margin-bottom:5px}
+[data-aqr-typography="on"] .demo-text{font-size:var(--aqr-text-size);font-weight:var(--aqr-text-weight);line-height:var(--aqr-text-line-height);letter-spacing:var(--aqr-text-letter-spacing)}
+@media(max-width:600px){.controls{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="card"><h1>Front Font & Text Engine v1 — বাস্তব ডেমো</h1><div class="muted">এটি আলাদা পরীক্ষামূলক পৃষ্ঠা। এখানে Font/Size/Weight/Line-height/Animation/Direction পরিবর্তন করে দেখা যাবে।</div></div>
+<div class="card controls">
+<label>Font group<select id="font"><option value="system">System / Default</option><option value="bengali">Bengali</option><option value="arabic">Arabic / Quranic</option><option value="english">English</option><option value="display">Display</option></select></label>
+<label>Text size<select id="size"><option value="small">Small</option><option value="medium" selected>Medium</option><option value="large">Large</option><option value="xlarge">X-Large</option></select></label>
+<label>Weight<select id="weight"><option value="400">Normal</option><option value="500">Medium</option><option value="600">Semi-bold</option><option value="700">Bold</option></select></label>
+<label>Animation<select id="animation"><option value="none">None</option><option value="fade-in">Fade In</option><option value="slide-in">Slide In</option><option value="typewriter">Typewriter</option><option value="word-reveal">Word Reveal</option><option value="highlight">Highlight</option><option value="pulse">Pulse</option><option value="soft-glow">Soft Glow</option><option value="scale-in">Scale In</option></select></label>
+<label>Direction<select id="direction"><option value="ltr">LTR</option><option value="rtl">RTL</option></select></label>
+<label>Motion<select id="motion"><option value="on">Animation On</option><option value="off">Reduced Motion</option></select></label>
+<button id="apply">প্রয়োগ করুন</button><button id="replay">অ্যানিমেশন আবার চালান</button>
+</div>
+<div class="card samples">
+<div class="sample"><div class="tag">Arabic / RTL</div><div id="arabic" class="demo-text aqr-text" data-aqr-language="arabic" data-aqr-script="arabic" data-aqr-direction="rtl">بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</div></div>
+<div class="sample"><div class="tag">বাংলা / Bengali</div><div id="bengali" class="demo-text aqr-text" data-aqr-language="bengali" data-aqr-script="bengali" data-aqr-direction="ltr">আল-কুরআন গবেষণা — ভাষা ও লিপি অনুযায়ী পাঠ</div></div>
+<div class="sample"><div class="tag">English / Latin</div><div id="english" class="demo-text aqr-text" data-aqr-language="english" data-aqr-script="latin" data-aqr-direction="ltr">Al-Quran Research — Dynamic Typography Engine</div></div>
+<div class="sample"><div class="tag">Future example / any script</div><div id="future" class="demo-text aqr-text" data-aqr-language="future" data-aqr-script="custom" data-aqr-direction="ltr">Future Language / Script Slot</div></div>
+</div>
+</div>
+<script src="../../assets/font-engine/aqr-typography-engine.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+const samples=[$('arabic'),$('bengali'),$('english'),$('future')];
+function apply(){
+  const dir=$('direction').value;
+  AQRTypography.set({size:$('size').value,weight:Number($('weight').value),reducedMotion:$('motion').value==='off'});
+  samples.forEach((el,i)=>{
+    el.style.setProperty('--aqr-font-family',$('font').value==='system'?'inherit':$('font').value==='arabic'?'Noto Naskh Arabic, serif':$('font').value==='bengali'?'Noto Sans Bengali, sans-serif':$('font').value==='english'?'Inter, system-ui, sans-serif':'Hind Siliguri, sans-serif');
+    if(i!==0) el.dataset.aqrDirection=dir;
+    AQRTypography.applyContentMeta(el,{language:el.dataset.aqrLanguage,script:el.dataset.aqrScript,direction:el.dataset.aqrDirection,fontFamily:getComputedStyle(el).getPropertyValue('--aqr-font-family'),animation:$('animation').value});
+  });
+}
+$('apply').onclick=apply;
+$('replay').onclick=()=>samples.forEach(el=>AQRTypography.animate(el,$('animation').value,{duration:'900ms'}));
+apply();
+</script>
+</body></html>
