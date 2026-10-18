@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI Action Bar Demo v1 — আল-কুরআন রিসার্চ</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#fff;color:#1f2933;font-family:system-ui,"Noto Sans Bengali",sans-serif}
+.page{max-width:760px;margin:auto;min-height:100vh;padding:18px 14px 40px}
+.head{display:flex;align-items:center;gap:10px;border-bottom:1px solid #e5e7eb;padding:8px 0 14px}
+.logo{width:34px;height:34px;border:1px solid #e5e7eb;border-radius:10px;display:grid;place-items:center;background:#f7f7f8}
+h1{font-size:17px;margin:0}.sub{font-size:11px;color:#6b7280;margin-top:2px}
+.demo-note{margin:18px 0 10px;color:#6b7280;font-size:12px}
+.chat{display:flex;flex-direction:column;gap:16px}
+.msg{max-width:88%;border-radius:16px;padding:12px 14px;line-height:1.7;font-size:14px;white-space:pre-wrap}
+.user{align-self:flex-end;background:#0b7d67;color:#fff;border-bottom-right-radius:5px}
+.ai{align-self:flex-start;background:#f1f3f2;border:1px solid #dfe5e2;border-bottom-left-radius:5px}
+.actions{display:flex;align-items:center;gap:2px;margin-top:8px;padding-top:6px;border-top:1px solid rgba(100,116,139,.14)}
+.action{width:32px;height:32px;border:0;background:transparent;color:#66727c;border-radius:8px;display:grid;place-items:center;font-size:16px;cursor:pointer}
+.action:hover,.action.active{background:#e8efec;color:#0f766e}
+.more{position:relative}.menu{position:absolute;left:0;bottom:36px;display:none;min-width:190px;padding:5px;background:#fff;border:1px solid #e5e7eb;border-radius:11px;box-shadow:0 8px 24px rgba(0,0,0,.12);z-index:5}
+.menu.open{display:block}.menu button{display:block;width:100%;border:0;background:transparent;text-align:left;padding:9px 10px;border-radius:8px;font:inherit;font-size:12px;color:#1f2933}.menu button:hover{background:#f7f7f8}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#1f2933;color:#fff;padding:8px 12px;border-radius:10px;font-size:12px;opacity:0;pointer-events:none;transition:.2s}.toast.show{opacity:1}
+@media(max-width:600px){.page{padding:12px 10px 30px}.msg{max-width:94%;font-size:13px}}
+</style>
+</head>
+<body>
+<main class="page">
+  <header class="head"><div class="logo">ق</div><div><h1>আল-কুরআন রিসার্চ — AI Action Bar</h1><div class="sub">প্রথম UI ডেমো • মূল Chat UI-তে এখনো সংযুক্ত নয়</div></div></header>
+  <div class="demo-note">নিচের AI উত্তরের নিচের প্রতিটি আইকন পরীক্ষা করুন। Copy শুধু এই AI উত্তরের লেখা কপি করবে।</div>
+  <section class="chat">
+    <div class="msg user">সূরা বাকারার ১৭৭ নম্বর আয়াত সম্পর্কে বলুন।</div>
+    <div class="msg ai">
+      <div id="answer">এটি একটি ডেমো AI উত্তর। এখানে AI-এর প্রকৃত গবেষণা-উত্তর দেখানোর পরিবর্তে Action Bar-এর আচরণ পরীক্ষা করা হচ্ছে।
+
+আপনি Copy, Like, Dislike, পড়ে শোনান, Share এবং ⋯ More অপশন পরীক্ষা করতে পারবেন।</div>
+      <div class="actions">
+        <button class="action" type="button" title="কপি" aria-label="কপি" onclick="copyAnswer()">📋</button>
+        <button class="action" type="button" title="ভালো লেগেছে" aria-label="ভালো লেগেছে" id="like" onclick="toggleFeedback('like')">👍</button>
+        <button class="action" type="button" title="ভালো লাগেনি" aria-label="ভালো লাগেনি" id="dislike" onclick="toggleFeedback('dislike')">👎</button>
+        <button class="action" type="button" title="পড়ে শোনান" aria-label="পড়ে শোনান" onclick="speakAnswer()">🔊</button>
+        <button class="action" type="button" title="শেয়ার" aria-label="শেয়ার" onclick="shareAnswer()">↗</button>
+        <div class="more">
+          <button class="action" type="button" title="আরও অপশন" aria-label="আরও অপশন" onclick="document.getElementById('menu').classList.toggle('open')">⋯</button>
+          <div class="menu" id="menu">
+            <button type="button" onclick="copyAnswer()">⧉ উত্তর কপি করুন</button>
+            <button type="button" onclick="speakAnswer()">🔊 পড়ে শোনান</button>
+            <button type="button" onclick="shareAnswer()">↗ উত্তর শেয়ার করুন</button>
+            <button type="button" onclick="toast('মতামত/রিপোর্ট অপশন ডেমো')">⚑ মতামত / রিপোর্ট</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+<div class="toast" id="toast"></div>
+<script>
+function toast(t){const e=document.getElementById("toast");e.textContent=t;e.classList.add("show");clearTimeout(window.__t);window.__t=setTimeout(()=>e.classList.remove("show"),1800)}
+function answer(){return document.getElementById("answer").innerText}
+async function copyAnswer(){try{await navigator.clipboard.writeText(answer())}catch(e){const t=document.createElement("textarea");t.value=answer();document.body.appendChild(t);t.select();document.execCommand("copy");t.remove()}toast("শুধু AI উত্তরটি কপি হয়েছে")}
+function toggleFeedback(id){const a=document.getElementById(id),other=document.getElementById(id==="like"?"dislike":"like");a.classList.toggle("active");other.classList.remove("active");toast(a.classList.contains("active")?(id==="like"?"পছন্দ সংরক্ষিত":"মতামত সংরক্ষিত"):"নির্বাচন সরানো হয়েছে")}
+function speakAnswer(){if(!("speechSynthesis"in window)){toast("এই ব্রাউজারে পড়ে শোনানোর সুবিধা নেই");return}speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(answer());u.lang="bn-BD";speechSynthesis.speak(u)}
+async function shareAnswer(){if(navigator.share){try{await navigator.share({title:"আল-কুরআন রিসার্চ",text:answer()});return}catch(e){if(e.name==="AbortError")return}}await copyAnswer();toast("শেয়ার সুবিধা না থাকায় উত্তরটি কপি করা হয়েছে")}
+document.addEventListener("click",e=>{if(!e.target.closest(".more"))document.getElementById("menu").classList.remove("open")})
+</script>
+</body>
+</html>
