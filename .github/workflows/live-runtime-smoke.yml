@@ -1,0 +1,40 @@
+name: Live runtime smoke (read-only)
+
+on:
+  pull_request:
+    paths:
+      - 'backend/worker.js'
+      - 'index.html'
+      - 'ui/home-v1/**'
+      - 'scripts/test-live-runtime-smoke.mjs'
+      - '.github/workflows/live-runtime-smoke.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'backend/worker.js'
+      - 'index.html'
+      - 'ui/home-v1/**'
+      - 'scripts/test-live-runtime-smoke.mjs'
+      - '.github/workflows/live-runtime-smoke.yml'
+
+concurrency:
+  group: live-runtime-smoke-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Verify live Worker and Pages using bounded read-only requests
+        run: node scripts/test-live-runtime-smoke.mjs
