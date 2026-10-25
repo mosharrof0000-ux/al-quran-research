@@ -1,0 +1,50 @@
+name: Research runtime safety contracts
+
+on:
+  pull_request:
+    paths:
+      - 'scripts/lib/chat-provider-provenance.mjs'
+      - 'scripts/test-chat-provider-provenance.mjs'
+      - 'scripts/test-d1-workflow-trigger-contract.mjs'
+      - 'scripts/test-live-runtime-smoke.mjs'
+      - '.github/workflows/d1-provision-deploy.yml'
+      - '.github/workflows/research-runtime-safety-contract.yml'
+      - 'docs/checkpoints/AQR-2026-10-26-AUTO02-RUN12-PRECHANGE.md'
+      - 'docs/checkpoints/AQR-2026-10-26-AUTO02-RUN12-RESULT.md'
+      - 'PROJECT_WORK_LOG.md'
+  push:
+    branches:
+      - main
+    paths:
+      - 'scripts/lib/chat-provider-provenance.mjs'
+      - 'scripts/test-chat-provider-provenance.mjs'
+      - 'scripts/test-d1-workflow-trigger-contract.mjs'
+      - 'scripts/test-live-runtime-smoke.mjs'
+      - '.github/workflows/d1-provision-deploy.yml'
+      - '.github/workflows/research-runtime-safety-contract.yml'
+      - 'docs/checkpoints/AQR-2026-10-26-AUTO02-RUN12-PRECHANGE.md'
+      - 'docs/checkpoints/AQR-2026-10-26-AUTO02-RUN12-RESULT.md'
+      - 'PROJECT_WORK_LOG.md'
+
+concurrency:
+  group: research-runtime-safety-contract-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Verify provider provenance labels
+        run: node scripts/test-chat-provider-provenance.mjs
+      - name: Verify D1 workflow trigger contract
+        run: node scripts/test-d1-workflow-trigger-contract.mjs

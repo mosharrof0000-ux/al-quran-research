@@ -2,6 +2,7 @@
 'use strict';
 
 import assert from 'node:assert/strict';
+import { classifyChatResponse } from './lib/chat-provider-provenance.mjs';
 
 const WORKER = 'https://al-quran-research.mosharrof0000.workers.dev';
 const PAGES = 'https://mosharrof0000-ux.github.io/al-quran-research/';
@@ -77,11 +78,14 @@ async function main() {
   }, 'Verified Bengali chat round-trip');
   assert.equal(chat.status, 200, `Bengali chat HTTP status was ${chat.status}`);
   const chatBody = await chat.json();
-  assert.equal(chatBody.provider, 'verified-project-data', 'Expected deterministic verified-data route; no model call is permitted in this smoke test');
+  const provenance = classifyChatResponse(chatBody);
+  assert.equal(provenance.kind, 'verified-data-fallback', 'This smoke test must identify the deterministic fallback, not claim model generation');
+  assert.equal(provenance.modelGenerated, false, 'verified-project-data must never count as a model-generated answer');
+  assert.equal(provenance.bengali, true, 'The deterministic response must contain Bengali text');
   assert.equal(chatBody.language, 'bn');
   assert.ok(typeof chatBody.answer === 'string' && chatBody.answer.includes(VERIFIED_ARABIC), 'Answer must contain the exact verified Arabic fixture');
   assert.ok(chatBody.answer.includes('বাংলা উচ্চারণ'), 'Answer must include Bengali word-analysis fields');
-  console.log('PASS live Bengali chat round-trip: verified-project-data route; provider call avoided');
+  console.log('PASS live Bengali chat round-trip: classified verified-data-fallback; modelGenerated=false; provider call avoided');
   console.log('RESULT: 5/5 live runtime smoke checks passed');
 }
 
