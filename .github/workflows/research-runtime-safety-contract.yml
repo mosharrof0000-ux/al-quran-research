@@ -10,6 +10,8 @@ on:
       - '.github/workflows/d1-provision-deploy.yml'
       - '.github/workflows/research-runtime-safety-contract.yml'
       - 'docs/checkpoints/AQR-2026-10-26-AUTO02-RUN12-PRECHANGE.md'
+      - 'docs/checkpoints/AQR-2026-10-26-AUTO02-RUN12-RESULT.md'
+      - 'PROJECT_WORK_LOG.md'
   push:
     branches:
       - main
@@ -21,6 +23,8 @@ on:
       - '.github/workflows/d1-provision-deploy.yml'
       - '.github/workflows/research-runtime-safety-contract.yml'
       - 'docs/checkpoints/AQR-2026-10-26-AUTO02-RUN12-PRECHANGE.md'
+      - 'docs/checkpoints/AQR-2026-10-26-AUTO02-RUN12-RESULT.md'
+      - 'PROJECT_WORK_LOG.md'
 
 permissions:
   contents: read
