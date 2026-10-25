@@ -80,3 +80,22 @@
 - **Release state:** No merge, main write, secret change, D1 provisioning, or production deployment. PR #170 and #171 remain Draft.
 - **Stage status for head `2e8187d8720cdfdb6ee5855d1948005fa8195aa7`:** DISCOVER PASS; DIAGNOSE PASS; PLAN PASS; CHANGE PASS; FOCUSED_TEST PASS; FULL_REQUIRED_CHECKS PASS for the three listed runs; ARTIFACT_REVIEW PASS; ACCEPTANCE_VERIFY PARTIAL PASS (Worker/Pages/deterministic chat) and NOT TESTED (AI provider + live D1); CHECKPOINT/REPORT pending final-head reconciliation after this log update.
 - **Next:** Re-check all relevant runs on the head produced by this checkpoint update. Keep the production AI-provider path untested unless a bounded request can be authorized without unexpected quota use. Continue investigating the zero-job D1 workflow separately.
+
+
+## AUTO-02 Run 11 — Live Research API acceptance
+
+- **Task ID:** AQR-2026-10-26-AUTO02-RUN11-LIVE-API-ACCEPTANCE
+- **Timestamp:** 2026-10-26 01:23 Asia/Dhaka
+- **Pre-checkpoint tested head:** `6f308af2d561668a681daa407876b6c6478cf3bd`; base/main SHA `7d10b8b30707fced4ff3a277cfa4c7b509629f3a`; PR #171 OPEN/DRAFT.
+- **Exact-head Actions evidence:**
+  - Research API contract: [run #40226709141](https://github.com/mosharrof0000-ux/al-quran-research/actions/runs/40226709141) PASS; `7/7` mocked-D1 tests.
+  - Token Runtime: [run #40226709153](https://github.com/mosharrof0000-ux/al-quran-research/actions/runs/40226709153) PASS; `14/14` token tests and `12/12` permission-route tests.
+  - Live runtime smoke: [run #40226709245](https://github.com/mosharrof0000-ux/al-quran-research/actions/runs/40226709245) PASS; `5/5` checks.
+- **Live smoke log:** Worker health HTTP 200/version confirmed; `/api/v1/status` returned API v1.1 with dataset `2026-09-04-fatiha-master-v1` and storage `github-json-fallback`; `/api/v1/ayah/1/1` returned the exact Fatiha 1:1 Arabic fixture from `master-dataset`; Pages returned HTTP 200 HTML; deterministic Bengali chat returned `provider=verified-project-data` without a model-provider call.
+- **Entrypoint verified from source:** `backend/wrangler.jsonc` uses `backend/cors-entry.js`, which imports `backend/worker-entry.js`; that entry imports and calls `handleResearchApi`. The live API checks confirm this route is reachable. Do not report an integration gap here.
+- **Important boundary:** Production D1 is not configured in `backend/wrangler.jsonc` (binding remains commented out); live API currently uses the GitHub JSON fallback. No D1 database creation/migration was attempted. Gemini/Cloudflare-AI model invocation and full browser interaction remain NOT TESTED.
+- **Agent blocker:** autonomous run #40211694743 failed before contacting the agent because `AGENT_URL` and `AGENT_ACCESS_TOKEN` were empty; repository administrator configuration is required.
+- **D1 workflow blocker:** run #40199683844 has zero jobs; exact trigger cause remains unproven and no migration/provisioning ran.
+- **Assistant-network note:** direct shell/browser access from this execution environment could not resolve public DNS, but the GitHub Actions runner obtained the successful live HTTP evidence above.
+- **Stage status on pre-checkpoint head:** DISCOVER PASS; DIAGNOSE PASS; PLAN PASS; CHANGE PASS; FOCUSED_TEST PASS; FULL_REQUIRED_CHECKS PASS; ARTIFACT_REVIEW PASS; ACCEPTANCE_VERIFY PARTIAL PASS (live Worker/API/Pages/deterministic chat) and NOT TESTED (model-provider + live D1); CHECKPOINT/REPORT pending exact-head re-poll after this checkpoint append.
+- **Next:** re-poll all relevant checks on the new PR head, update the PR handoff to that exact SHA, keep PR #171 Draft and production untouched.
