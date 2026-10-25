@@ -61,3 +61,22 @@
 - **Automation health:** AUTO-02 ID `6ad51b8bbbe08191aa33e12da4b96841` is enabled, but `next_run_time=null`; the scheduler is not confirmed healthy. The platform's last-run record still shows an in-progress entry from the current invocation, so re-check after completion.
 - **Staged status:** DISCOVER PASS; DIAGNOSE PASS; PLAN PASS; CHANGE PASS (this checkpoint append only); FOCUSED_TEST PASS on the pre-checkpoint head; FULL_REQUIRED_CHECKS PENDING until this checkpoint-triggered head is rechecked; ARTIFACT_REVIEW PASS for the recorded logs; ACCEPTANCE_VERIFY NOT TESTED for production; CHECKPOINT/REPORT pending final-head re-poll.
 - **Next action:** Re-poll PR #171 after this documentation update, verify exact new head and both relevant CI runs; continue investigating the D1 zero-job trigger without provisioning a database; keep PRs Draft and production untouched.
+
+
+## AUTO-02 Run 11 — Live runtime smoke result
+
+- **Task ID:** AQR-2026-10-26-AUTO02-RUN11-LIVE-SMOKE
+- **Timestamp:** 2026-10-26 01:23 Asia/Dhaka
+- **Implementation:** Added `scripts/test-live-runtime-smoke.mjs` and `.github/workflows/live-runtime-smoke.yml` on this existing PR branch. The workflow has `contents: read`, a 5-minute job timeout, bounded 10-second requests, at most two retries for transient network/429/5xx failures, and no credentials.
+- **Safety design:** The script checks the deployed Worker version before POSTing. If the advertised version differs, it stops before chat POST to avoid an unexpected model-provider call. The chosen Bengali Fatiha 1:1 word-analysis request follows the deployed `verified-project-data` branch, so it does not call Gemini or Cloudflare AI.
+- **Verified pre-checkpoint head:** `2e8187d8720cdfdb6ee5855d1948005fa8195aa7` (PR #171, still OPEN/DRAFT; base `7d10b8b30707fced4ff3a277cfa4c7b509629f3a`).
+- **Live runtime evidence:** [Run #40226340475](https://github.com/mosharrof0000-ux/al-quran-research/actions/runs/40226340475) PASS. Its exact job log reports:
+  - `PASS Worker health: service and expected version confirmed`
+  - `PASS Live Pages: HTTP 200 and HTML document received`
+  - `PASS live Bengali chat round-trip: verified-project-data route; provider call avoided`
+  - `RESULT: 3/3 live runtime smoke checks passed`
+- **Other checks on that head:** Research API contract [run #40226340399](https://github.com/mosharrof0000-ux/al-quran-research/actions/runs/40226340399) PASS — 7/7 mocked-D1 contract tests. Token Runtime [run #40226340409](https://github.com/mosharrof0000-ux/al-quran-research/actions/runs/40226340409) PASS — 14/14 token checks and 12/12 permission-route checks.
+- **Boundaries:** This proves public Worker health, Pages HTTP delivery, and a real non-mock HTTP Bengali chat round-trip through the deterministic verified-data branch. It does **not** prove Gemini/Cloudflare-AI model invocation, live D1 reads, database provisioning/migration, or full browser interaction. The assistant's own shell still could not resolve public DNS; GitHub Actions runner provided the successful runtime evidence.
+- **Release state:** No merge, main write, secret change, D1 provisioning, or production deployment. PR #170 and #171 remain Draft.
+- **Stage status for head `2e8187d8720cdfdb6ee5855d1948005fa8195aa7`:** DISCOVER PASS; DIAGNOSE PASS; PLAN PASS; CHANGE PASS; FOCUSED_TEST PASS; FULL_REQUIRED_CHECKS PASS for the three listed runs; ARTIFACT_REVIEW PASS; ACCEPTANCE_VERIFY PARTIAL PASS (Worker/Pages/deterministic chat) and NOT TESTED (AI provider + live D1); CHECKPOINT/REPORT pending final-head reconciliation after this log update.
+- **Next:** Re-check all relevant runs on the head produced by this checkpoint update. Keep the production AI-provider path untested unless a bounded request can be authorized without unexpected quota use. Continue investigating the zero-job D1 workflow separately.
