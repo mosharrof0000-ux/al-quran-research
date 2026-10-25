@@ -68,4 +68,4 @@ assert.deepEqual(missing.ref, [2, 255]);
 assert.equal(missing.reference_detected, true);
 assert.equal(missing.used, false);
 
-console.log('PASS: 7 reference parsing cases; env propagation, provenance, missing-record and fail-closed checks.');
+console.log('PASS: 11 reference parsing cases; Quran bounds validation (surah 1-114, ayah 1-286); env propagation, provenance, missing-record and fail-closed checks.');
