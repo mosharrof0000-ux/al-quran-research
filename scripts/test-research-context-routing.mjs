@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { getResearchContext, parseAyahReference } from '../backend/research-context.js';
+import { formatResearchContextReference, getResearchContext, parseAyahReference } from '../backend/research-context.js';
 
 const cases = [
   ['সূরা ফাতিহা আয়াত ১', { ref: [1, 1], detected: true }],
@@ -11,6 +11,11 @@ const cases = [
   ['কুরআনের ভাষাতত্ত্ব কী?', { ref: null, detected: false }]
 ];
 for (const [query, expected] of cases) assert.deepEqual(parseAyahReference(query), expected, query);
+
+assert.equal(formatResearchContextReference([1, 1]), '1:1');
+assert.equal(formatResearchContextReference([2, 255]), '2:255');
+assert.equal(formatResearchContextReference(null), null, 'unmapped surah must not crash fail-closed response formatting');
+assert.equal(formatResearchContextReference([2]), null, 'malformed reference must be rejected');
 
 const env = { DB: { binding: 'test' } };
 const record = {

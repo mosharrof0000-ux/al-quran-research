@@ -36,6 +36,13 @@ export function parseAyahReference(message) {
   return { ref: null, detected: explicit };
 }
 
+export function formatResearchContextReference(ref) {
+  if (!Array.isArray(ref) || ref.length !== 2) return null;
+  const [surah, ayah] = ref;
+  if (!Number.isInteger(surah) || !Number.isInteger(ayah)) return null;
+  return `${surah}:${ayah}`;
+}
+
 function buildResearchProvenance(data, surah, ayah) {
   const datasetVersion = data?.dataset_version || 'unknown';
   const ayahId = data?.ayah_id || 'S' + String(surah).padStart(3, '0') + '-A' + String(ayah).padStart(3, '0');
