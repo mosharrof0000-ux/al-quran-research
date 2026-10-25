@@ -41,6 +41,21 @@ async function main() {
   assert.equal(healthBody.version, EXPECTED_VERSION, 'Production version mismatch; skipped POST to avoid any model-provider call');
   console.log('PASS Worker health: service and expected version confirmed');
 
+  const apiStatusResponse = await fetchBounded(`${WORKER}/api/v1/status`, { method: 'GET' }, 'Research API status');
+  assert.equal(apiStatusResponse.status, 200, `Research API status HTTP status was ${apiStatusResponse.status}`);
+  const apiStatus = await apiStatusResponse.json();
+  assert.equal(apiStatus.api_version, '1.1', 'Live Research API must expose version 1.1');
+  assert.ok(['D1', 'github-json-fallback'].includes(apiStatus.storage), `Unexpected Research API storage mode: ${apiStatus.storage}`);
+  assert.ok(typeof apiStatus.dataset_version === 'string' && apiStatus.dataset_version.length > 0, 'Research API must report a dataset version');
+  console.log(`PASS live Research API status: v${apiStatus.api_version}, storage=${apiStatus.storage}, dataset=${apiStatus.dataset_version}`);
+
+  const ayahResponse = await fetchBounded(`${WORKER}/api/v1/ayah/1/1`, { method: 'GET' }, 'Research API Fatiha 1:1');
+  assert.equal(ayahResponse.status, 200, `Research API Fatiha 1:1 HTTP status was ${ayahResponse.status}`);
+  const ayah = await ayahResponse.json();
+  assert.equal(ayah.arabic_text, VERIFIED_ARABIC, 'Live Research API must return the exact Fatiha 1:1 Arabic fixture');
+  assert.ok(['D1', 'master-dataset'].includes(ayah.source), `Unexpected ayah source: ${ayah.source}`);
+  console.log(`PASS live Research API Fatiha 1:1: source=${ayah.source}`);
+
   const page = await fetchBounded(PAGES, { method: 'GET' }, 'Live Pages');
   assert.equal(page.status, 200, `Live Pages HTTP status was ${page.status}`);
   assert.match(page.headers.get('content-type') || '', /text\/html/i, 'Live Pages must return HTML');
@@ -67,7 +82,7 @@ async function main() {
   assert.ok(typeof chatBody.answer === 'string' && chatBody.answer.includes(VERIFIED_ARABIC), 'Answer must contain the exact verified Arabic fixture');
   assert.ok(chatBody.answer.includes('বাংলা উচ্চারণ'), 'Answer must include Bengali word-analysis fields');
   console.log('PASS live Bengali chat round-trip: verified-project-data route; provider call avoided');
-  console.log('RESULT: 3/3 live runtime smoke checks passed');
+  console.log('RESULT: 5/5 live runtime smoke checks passed');
 }
 
 main().catch((error) => {
