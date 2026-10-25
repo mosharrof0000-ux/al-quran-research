@@ -381,3 +381,19 @@ PR #170 is open as Draft. Keep it unmerged while production endpoints cannot be 
 - **Automation health snapshot:** AUTO-02 ID `6ad51b8bbbe08191aa33e12da4b96841` was enabled when checked, but `next_run_time=null` and its last-run record was stale `in_progress`; scheduler health is UNCONFIRMED. Recheck after this invocation completes; do not create a duplicate.
 - **Stage ledger:** DISCOVER=PASS; DIAGNOSE=PASS for the observed agent config blocker and D1 zero-job boundary; PLAN=PASS; CHANGE=PASS for this checkpoint-only append if the resulting commit is returned; FOCUSED_TEST=PENDING on the resulting PR head; FULL_REQUIRED_CHECKS=PENDING; ARTIFACT_REVIEW=PASS for the listed logs; ACCEPTANCE_VERIFY=PARTIAL PASS (live Worker/API/Pages/deterministic chat), NOT TESTED (live D1, model-provider, full browser UI); CHECKPOINT/REPORT=PENDING until exact new head and checks are reconciled.
 - **Next bounded actions:** inspect D1 run/check-suite metadata for a specific no-job reason without provisioning; refresh PR #170 and dependency PRs #145/#148 against current main; recheck token-runtime on the exact updated #170 head. Keep #170 Draft and production untouched.
+
+
+## AUTO-02 — Pre-change checkpoint (AQR-2026-10-26-AUTO02-RUN11-PRECHANGE)
+
+- **Timestamp:** 2026-10-26 02:05 Asia/Dhaka.
+- **Scope:** Al-Quran Research only; no Android or video work.
+- **Canonical repository:** https://github.com/mosharrof0000-ux/al-quran-research
+- **Main SHA:** `c6e0fd2d269b39a677cfa3999b6078c7efc9b630` (confirmed by latest repository commit search).
+- **Existing PR:** #170 remains OPEN/DRAFT; branch `fix/research-context-ayah-routing-20261025-r1`; pre-change head `f757172001875fdc754e825eab173d952f3a971d`. No duplicate PR, merge, or deployment.
+- **Current exact-head test evidence:** Token Runtime run #40228527990 completed SUCCESS on the pre-change head; job log reports 14/14 token tests, 12/12 permission-route tests, and the research-context routing test PASS (7 reference cases plus env/provenance/fail-closed checks). Run: https://github.com/mosharrof0000-ux/al-quran-research/actions/runs/40228527990
+- **Main runtime evidence:** run #40227837387 passed 5/5 read-only smoke checks on main SHA `c6e0fd2d269b39a677cfa3999b6078c7efc9b630`; it verifies Worker health, API status, Fatiha 1:1, Pages HTTP 200, and deterministic Bengali chat. It explicitly did NOT call an AI provider and reported `github-json-fallback` storage. Run: https://github.com/mosharrof0000-ux/al-quran-research/actions/runs/40227837387
+- **Observed blockers/boundaries:** full browser interaction and live Gemini/Cloudflare AI generation remain NOT TESTED; D1 run #40227836398 had zero jobs and did not deploy/provision D1; autonomous agent run #40211694743 failed because AGENT_URL and AGENT_ACCESS_TOKEN were empty. No secret was read or changed.
+- **Pre-change diagnosis:** `backend/research-context.js` parses numeric references without validating general Qur'an bounds, and `formatResearchContextReference` currently formats out-of-range integers. Plan is to reject surah outside 1–114 and ayah outside 1–286 while preserving `reference_detected=true` and fail-closed behavior; add regression tests proving invalid references do not call the API.
+- **Stages at checkpoint:** DISCOVER=PASS; DIAGNOSE=PASS; PLAN=PASS; CHANGE=PENDING; FOCUSED_TEST=PENDING; FULL_REQUIRED_CHECKS=PENDING; ARTIFACT_REVIEW=PASS for the evidence above; ACCEPTANCE_VERIFY=PARTIAL (deterministic runtime smoke only); CHECKPOINT/REPORT=PENDING.
+- **Rollback:** all planned code/test changes remain isolated on PR #170 branch. Main and production are untouched. If focused checks fail, do not merge/deploy; fix or revert only the isolated branch changes.
+- **Next step:** commit the regression guard/test together after this checkpoint is persisted; verify the exact resulting head and all checks before any further decision.
