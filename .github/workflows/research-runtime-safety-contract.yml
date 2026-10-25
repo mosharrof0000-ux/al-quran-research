@@ -26,6 +26,10 @@ on:
       - 'docs/checkpoints/AQR-2026-10-26-AUTO02-RUN12-RESULT.md'
       - 'PROJECT_WORK_LOG.md'
 
+concurrency:
+  group: research-runtime-safety-contract-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
