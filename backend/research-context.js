@@ -1,5 +1,12 @@
 import { handleResearchApi } from './research-api.js';
 
+function isValidAyahReference(ref) {
+  if (!Array.isArray(ref) || ref.length !== 2) return false;
+  const [surah, ayah] = ref;
+  return Number.isInteger(surah) && Number.isInteger(ayah) &&
+    surah >= 1 && surah <= 114 && ayah >= 1 && ayah <= 286;
+}
+
 export function parseAyahReference(message) {
   const raw = String(message || '').trim();
   const text = raw
@@ -8,7 +15,10 @@ export function parseAyahReference(message) {
     .replace(/\s+/g, ' ');
 
   const numeric = text.match(/(?:সূরা|সুরা)\s*(\d{1,3})\s*[:/.-]\s*(\d{1,3})/i);
-  if (numeric) return { ref: [Number(numeric[1]), Number(numeric[2])], detected: true };
+  if (numeric) {
+    const ref = [Number(numeric[1]), Number(numeric[2])];
+    return { ref: isValidAyahReference(ref) ? ref : null, detected: true };
+  }
 
   const nameMap = [
     [/(?:সূরা|সুরা)\s*(?:আল[-\s]?)?বাকারা(?:র|কে|তে)?/i, 2],
@@ -25,7 +35,10 @@ export function parseAyahReference(message) {
       rest.match(/(?:আয়াত|আয়াত|verse|ayat)\s*(?:নম্বর|নং|নাম্বার)?\s*(\d{1,3})/i) ||
       rest.match(/(\d{1,3})\s*(?:নম্বর|নং|নাম্বার)?\s*(?:আয়াত|আয়াত|verse|ayat)/i) ||
       rest.match(/^\s*(?:নম্বর|নং|নাম্বার)?\s*(\d{1,3})(?!\d)/i);
-    if (number) return { ref: [surahNumber, Number(number[1])], detected: true };
+    if (number) {
+      const ref = [surahNumber, Number(number[1])];
+      return { ref: isValidAyahReference(ref) ? ref : null, detected: true };
+    }
   }
 
   const explicit =
@@ -37,9 +50,8 @@ export function parseAyahReference(message) {
 }
 
 export function formatResearchContextReference(ref) {
-  if (!Array.isArray(ref) || ref.length !== 2) return null;
+  if (!isValidAyahReference(ref)) return null;
   const [surah, ayah] = ref;
-  if (!Number.isInteger(surah) || !Number.isInteger(ayah)) return null;
   return `${surah}:${ayah}`;
 }
 
