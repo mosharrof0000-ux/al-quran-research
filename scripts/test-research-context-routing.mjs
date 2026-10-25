@@ -6,6 +6,10 @@ const cases = [
   ['আল-ফাতিহার ১ নম্বর আয়াত', { ref: [1, 1], detected: true }],
   ['সূরা 1:1', { ref: [1, 1], detected: true }],
   ['সূরা ২:২৫৫', { ref: [2, 255], detected: true }],
+  ['সূরা 0:1', { ref: null, detected: true }],
+  ['সূরা 115:1', { ref: null, detected: true }],
+  ['সূরা 1:287', { ref: null, detected: true }],
+  ['সূরা ফাতিহা আয়াত 0', { ref: null, detected: true }],
   ['সূরা বাকারা আয়াত 255', { ref: [2, 255], detected: true }],
   ['সূরা নিসা আয়াত 5', { ref: null, detected: true }],
   ['কুরআনের ভাষাতত্ত্ব কী?', { ref: null, detected: false }]
@@ -16,6 +20,9 @@ assert.equal(formatResearchContextReference([1, 1]), '1:1');
 assert.equal(formatResearchContextReference([2, 255]), '2:255');
 assert.equal(formatResearchContextReference(null), null, 'unmapped surah must not crash fail-closed response formatting');
 assert.equal(formatResearchContextReference([2]), null, 'malformed reference must be rejected');
+assert.equal(formatResearchContextReference([0, 1]), null, 'surah below the Quran range must be rejected');
+assert.equal(formatResearchContextReference([115, 1]), null, 'surah above the Quran range must be rejected');
+assert.equal(formatResearchContextReference([1, 287]), null, 'ayah above the general Quran range must be rejected');
 
 const env = { DB: { binding: 'test' } };
 const record = {
@@ -45,6 +52,16 @@ const unsupported = await getResearchContext('সূরা নিসা আয়�
 assert.equal(unsupported.reference_detected, true);
 assert.equal(unsupported.used, false);
 assert.equal(unsupportedApiCalled, false, 'unmapped surah must fail closed without querying an invalid numeric reference');
+
+let invalidReferenceApiCalled = false;
+const invalidReference = await getResearchContext('সূরা 115:1', env, async () => {
+  invalidReferenceApiCalled = true;
+  return new Response(JSON.stringify(record), { status: 200 });
+});
+assert.equal(invalidReference.reference_detected, true);
+assert.equal(invalidReference.ref, null);
+assert.equal(invalidReference.used, false);
+assert.equal(invalidReferenceApiCalled, false, 'out-of-range numeric references must fail closed before API access');
 
 const missing = await getResearchContext('সূরা বাকারা আয়াত 255', env, async () => new Response('{"error":"AYAH_NOT_FOUND"}', { status: 404 }));
 assert.deepEqual(missing.ref, [2, 255]);
