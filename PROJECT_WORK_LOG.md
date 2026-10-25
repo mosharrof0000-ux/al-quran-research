@@ -306,3 +306,35 @@ Smart Face কাজ শুরুর আগে backup branch: backup/pre-mosharr
 
 ### Permanent safety rule
 Main Live URL পরিবর্তন শুধু ব্যবহারকারীর আলাদা স্পষ্ট অনুমোদনে করা যাবে। ব্যর্থ production change হলে সর্বশেষ নিরাপদ backup restore করতে হবে এবং ব্যর্থ সংস্করণ ইতিহাসে সংরক্ষণ করতে হবে।
+
+
+## WORK-2026-10-25-AYAH-CONTEXT-ROUTING-01
+
+**Status:** IMPLEMENTED ON ISOLATED BRANCH — PR / exact-head CI / production verification PENDING
+
+### Timestamp and safe point
+- Date/time: 2026-10-25 09:18 Asia/Dhaka
+- Base main SHA: \`7d10b8b30707fced4ff3a277cfa4c7b509629f3a\`
+- Feature branch: \`fix/research-context-ayah-routing-20261025-r1\`
+- No direct main write, merge, or deployment was performed.
+
+### Evidence-based diagnosis
+- The active Worker entry chain is \`backend/wrangler.jsonc\` → \`backend/cors-entry.js\` → \`backend/worker-entry.js\`.
+- In the main source, \`extractAyahReference\` used double-escaped digit patterns and ASCII word-boundaries around Bengali surah names. A local Node reproduction returned \`null\` for all five probes: “সূরা ফাতিহা আয়াত ১”, “আল-ফাতিহার ১ নম্বর আয়াত”, “সূরা 1:1”, “সূরা ২:২৫৫”, and “সূরা বাকারা আয়াত 255”.
+- \`getResearchContext(message)\` referenced \`env\` without receiving it. The surrounding catch swallowed that ReferenceError, so even a parsed ayah reference could not reliably load the Research API context.
+- The old caller only failed closed when \`research.ref\` existed. An explicit ayah request whose surah name was not mapped could therefore continue to Gemini without a verified record.
+
+### Changes on the isolated branch
+- Added \`backend/research-context.js\`: extracted parser/context helper, corrected Bengali/ASCII digit parsing, recognizes Fatiha/Baqarah name forms and numeric surah:ayah references, detects explicit but unmapped ayah requests, passes the Worker environment to the API handler, and returns provenance only when a record is received.
+- Updated \`backend/worker-entry.js\`: passes \`env\` at both call sites and fails closed whenever an explicit ayah reference was detected but verified context was unavailable.
+- Added \`scripts/test-research-context-routing.mjs\`: seven parser cases plus env propagation, provenance, missing-record and fail-closed assertions.
+
+### Verification
+- Local Node regression probe against the original parser: FAIL (all five supported-form probes returned null).
+- Local Node test against the proposed helper: PASS — 7 parser cases; env propagation, provenance, missing-record and fail-closed checks.
+- Exact-head GitHub Actions: PENDING at the time this entry was drafted.
+- Production Worker /health, production chat round-trip and Live Pages browser verification: NOT TESTED; available web/network path could not access the production endpoints.
+- No Quran text/data, database, secrets, deployment configuration, or production credentials were changed.
+
+### Next action
+Create/review the isolated PR, inspect all exact-head Worker-build and repository checks, and do not merge/deploy until required checks pass. Then verify the production Worker and Live Pages separately.
