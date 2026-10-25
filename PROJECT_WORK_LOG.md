@@ -338,3 +338,17 @@ Main Live URL পরিবর্তন শুধু ব্যবহারকা�
 
 ### Next action
 PR #170 is open as Draft. Keep it unmerged while production endpoints cannot be verified; after final-head checks are green, review the code and separately verify production Worker and Live Pages before promotion.
+
+
+## AQR-2026-10-25-AUTO02-RUN09-PRECHANGE
+
+- Timestamp: 2026-10-25 19:46 Asia/Dhaka
+- Scope: Al-Quran Research only; repository: https://github.com/mosharrof0000-ux/al-quran-research
+- Stage ledger before next change: DISCOVER=PASS; DIAGNOSE=PASS; PLAN=PASS; CHANGE=PENDING; FOCUSED_TEST=PENDING; FULL_REQUIRED_CHECKS=PENDING; ARTIFACT_REVIEW=PENDING; ACCEPTANCE_VERIFY=NOT TESTED.
+- Main SHA: `7d10b8b30707fced4ff3a277cfa4c7b509629f3a`. Working branch: `fix/research-context-ayah-routing-20261025-r1`. Existing PR: #170. Pre-change branch head: `1ebd28f6ecc93bc8a6c82639da0c62c3f617ebfb`.
+- Existing feature in PR #170: Bengali/ASCII ayah-reference parser, Research API env propagation, fail-closed handling, provenance, and null-reference formatting guard. Current exact-head check-runs: Worker build PASS, Project Agent build PASS, token-runtime PASS. The focused test `scripts/test-research-context-routing.mjs` is present but is not invoked by `.github/workflows/mosharrof-token-runtime.yml`.
+- Current autonomous loop blocker: run #40189569806 fails before contacting the agent because `MOSHARROF_AGENT_URL` and `AGENT_ACCESS_TOKEN` are empty in the job environment; run #40163115401 has the same failure signature. This is configuration/secret availability, not a transient runner issue; no unchanged retry planned.
+- D1 workflow run #40191164508 has zero jobs, so no D1 provision/migration/deploy step ran. Do not interpret this as a successful deployment.
+- `docs/WORK_RESUME_PROTOCOL.md` is absent from current main (contents lookup 404); followed the repository's actual continuity protocol `PROJECT_CONTINUITY_PROTOCOL.md` and reviewed `MASTER_PROJECT.md`, `PROJECT_STATE.md`, `PROJECT_WORK_LOG.md`, and `PROJECT_BACKUP_INDEX.md` instead.
+- Production Worker health/chat and Live Pages browser acceptance are NOT TESTED: the available browser path could not open the configured endpoints. No main write, merge, deployment, secret change, or research-data mutation was performed.
+- Next action: wire the existing focused routing regression script into the already-active read-only token-runtime PR check, then verify the resulting exact-head run.
