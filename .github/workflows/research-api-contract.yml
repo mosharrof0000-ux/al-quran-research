@@ -6,6 +6,7 @@ on:
       - 'backend/research-api.js'
       - 'scripts/test-research-api-contract.mjs'
       - '.github/workflows/research-api-contract.yml'
+      - 'docs/checkpoints/AQR-2026-10-26-AUTO02-RUN10-API-CONTRACT.md'
   push:
     branches:
       - main
@@ -13,6 +14,7 @@ on:
       - 'backend/research-api.js'
       - 'scripts/test-research-api-contract.mjs'
       - '.github/workflows/research-api-contract.yml'
+      - 'docs/checkpoints/AQR-2026-10-26-AUTO02-RUN10-API-CONTRACT.md'
 
 concurrency:
   group: research-api-contract-${{ github.event.pull_request.number || github.ref }}
