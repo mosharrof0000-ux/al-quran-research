@@ -22,3 +22,6 @@ jobs:
         run: |
           node scripts/mosharrof_token_runtime_test.mjs
           node scripts/mosharrof_permission_route_runtime_test.mjs
+          if [ -f scripts/test-research-context-routing.mjs ]; then
+            node scripts/test-research-context-routing.mjs
+          fi
