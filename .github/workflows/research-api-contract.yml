@@ -1,0 +1,38 @@
+name: Research API contract regression
+
+on:
+  pull_request:
+    paths:
+      - 'backend/research-api.js'
+      - 'scripts/test-research-api-contract.mjs'
+      - '.github/workflows/research-api-contract.yml'
+      - 'docs/checkpoints/AQR-2026-10-26-AUTO02-RUN10-API-CONTRACT.md'
+  push:
+    branches:
+      - main
+    paths:
+      - 'backend/research-api.js'
+      - 'scripts/test-research-api-contract.mjs'
+      - '.github/workflows/research-api-contract.yml'
+      - 'docs/checkpoints/AQR-2026-10-26-AUTO02-RUN10-API-CONTRACT.md'
+
+concurrency:
+  group: research-api-contract-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Run mocked Research API contract tests
+        run: node scripts/test-research-api-contract.mjs
