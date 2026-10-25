@@ -197,3 +197,17 @@ Status: VERIFIED BACKUP BRANCH CREATED
 - Restore branch: backup/pre-normal-quran-icons-2026-09-21-v1
 - Scope: pre-change main state before final manifest/reference-board storage.
 - Live Reader/database/backend behavior: unchanged by this icon-reference storage step.
+
+
+## SAFE-POINT-2026-10-25-AYAH-CONTEXT-ROUTING-01
+
+**Date:** 2026-10-25
+
+**Purpose:** Preserve the exact main baseline before correcting ayah-reference parsing and research-context loading.
+
+- Pre-change main commit: \`7d10b8b30707fced4ff3a277cfa4c7b509629f3a\`
+- Isolated working branch: \`fix/research-context-ayah-routing-20261025-r1\`
+- Scope: \`backend/worker-entry.js\`, new \`backend/research-context.js\`, and \`scripts/test-research-context-routing.mjs\`
+- Restore source: the pre-change main commit above; no main ref was moved.
+- Status: BASELINE IDENTIFIED AND PRESERVED BY BRANCH BASE — FEATURE PR / CI PENDING
+- Production behavior has not been changed by this branch; Live/Worker verification remains NOT TESTED.
