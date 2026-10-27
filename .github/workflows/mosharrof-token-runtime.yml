@@ -25,3 +25,9 @@ jobs:
           if [ -f scripts/test-research-context-routing.mjs ]; then
             node scripts/test-research-context-routing.mjs
           fi
+          if [ -f scripts/test-chat-provider-routing.mjs ]; then
+            node scripts/test-chat-provider-routing.mjs
+          fi
+          if [ -f scripts/test-d1-workflow-contract.mjs ]; then
+            node scripts/test-d1-workflow-contract.mjs
+          fi
