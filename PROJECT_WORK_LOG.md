@@ -551,3 +551,12 @@ PR #170 is open as Draft. Keep it unmerged while production endpoints cannot be 
 - Registry: AUTO-02 remains enabled but `next_run_time=null`; schedule health UNCONFIRMED. Do not infer healthy scheduling from enabled state.
 - Stage ledger before this log-only commit: DISCOVER=PASS; DIAGNOSE=PARTIAL (D1 anomaly and secret configuration unresolved); PLAN=PASS; CHANGE=PASS; FOCUSED_TEST=PASS on `eb671b64b47d31a36e5b89c2f37437ffddf11048`; FULL_REQUIRED_CHECKS=PARTIAL (Token Runtime PASS; no current-head Worker build result); ARTIFACT_REVIEW=PASS; ACCEPTANCE_VERIFY=PARTIAL; CHECKPOINT/REPORT=PENDING until the new log commit's exact-head CI is reconciled.
 - Safety: no merge, production deploy, D1 provisioning/migration, route enablement, or secret change. Keep PR #175 Draft.
+
+
+## AUTO-02 — Post-checkpoint D1 metadata addendum (AQR-2026-10-28-AUTO02-D1-ANOMALY-ADDENDUM)
+
+- Timestamp: 2026-10-28 14:26 Asia/Dhaka.
+- After the Run 14 checkpoint commit, GitHub recorded another D1 workflow run: #40656409366, URL https://github.com/mosharrof0000-ux/al-quran-research/actions/runs/40656409366.
+- Exact metadata: `event=push`, `head_branch=docs/auto02-run11-postmerge-checkpoint-20261027-r1`, `head_sha=def4abdcade34231041400ab08357fb274fa8b39`, conclusion=failure; jobs endpoint returns an empty array. This conflicts with `.github/workflows/d1-provision-deploy.yml` at main SHA `d49f17e190f64c689469373104b2bd1c18ecf758`, whose push filter is main-only and path-filtered.
+- The repeated zero-job record confirms the metadata/source inconsistency is recurring; it still does not reveal why GitHub created the run or why no jobs were instantiated. Root cause remains NOT PROVEN. Do not rerun or dispatch the D1 workflow.
+- Safety unchanged: no database provisioning, migration, deployment, route enablement, or secret modification. The current PR #175 remains Draft.
