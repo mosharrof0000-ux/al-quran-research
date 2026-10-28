@@ -537,3 +537,17 @@ PR #170 is open as Draft. Keep it unmerged while production endpoints cannot be 
 - Automation registry check: AUTO-02 `6ad51b8bbbe08191aa33e12da4b96841` is enabled, but `next_run_time=null`; latest run is recorded in_progress with no completion time in the snapshot. Scheduler health is UNCONFIRMED; enabled status alone is not proof of a healthy schedule.
 - Stage ledger: DISCOVER=PASS; DIAGNOSE=PARTIAL (D1 anomaly unexplained; agent secrets missing); PLAN=PASS; CHANGE=PASS on existing isolated PR #175; FOCUSED_TEST=PENDING (new test awaits CI); FULL_REQUIRED_CHECKS=PENDING for the new exact head; ARTIFACT_REVIEW=PASS for prior logs; ACCEPTANCE_VERIFY=PARTIAL (Cloudflare AI evidence exists; Gemini/UI/D1 NOT TESTED); CHECKPOINT/REPORT=PENDING until exact-head checks reconcile.
 - Safety/rollback: no merge, production deploy, D1 provisioning/migration, route enablement, or secret change. If the new check fails, fix only the isolated PR branch. Next: verify the new exact-head Token Runtime run; continue investigating D1 metadata only through read-only evidence; wait for repository admin to configure the two agent secrets before any agent request.
+
+
+## AUTO-02 — Run 14 final reconciliation (AQR-2026-10-28-AUTO02-RUN14-FINAL)
+
+- Timestamp: 2026-10-28 14:24 Asia/Dhaka.
+- PR #175 branch `docs/auto02-run11-postmerge-checkpoint-20261027-r1` exact tested head: `eb671b64b47d31a36e5b89c2f37437ffddf11048`; Token Runtime run #40656299145 / job #122708033111 **PASS**: https://github.com/mosharrof0000-ux/al-quran-research/actions/runs/40656299145/job/122708033111.
+- Job log confirms: 11 reference parsing/bounds cases PASS; mocked provider-provenance PASS; D1 workflow source-contract PASS; new autonomous-agent workflow contract PASS. New contract output: `PASS: autonomous-agent workflow maps the expected secrets, checks both values before HTTP, keeps a bounded timeout, and does not print credentials.`
+- The test result proves source wiring only; actual Actions secret presence remains blocked and live agent call remains NOT TESTED until the repository administrator configures `MOSHARROF_AGENT_URL` and `AGENT_ACCESS_TOKEN`.
+- D1 historical zero-job cause remains NOT PROVEN. Latest run #40532472765 (main SHA `d49f17e190f64c689469373104b2bd1c18ecf758`) is a failed push/main record with `total_count: 0` jobs; source and event metadata conflict. No retry or manual dispatch.
+- PR #145 and #148 remain open on stale base/head SHAs with exact-head current CI NOT VERIFIED. No dependency merge/rebase.
+- Runtime acceptance: prior live Cloudflare AI Bengali response is evidence for `provider=cloudflare-ai` only. Live Gemini generation, full Pages browser/UI chat, and production D1 remain NOT TESTED.
+- Registry: AUTO-02 remains enabled but `next_run_time=null`; schedule health UNCONFIRMED. Do not infer healthy scheduling from enabled state.
+- Stage ledger before this log-only commit: DISCOVER=PASS; DIAGNOSE=PARTIAL (D1 anomaly and secret configuration unresolved); PLAN=PASS; CHANGE=PASS; FOCUSED_TEST=PASS on `eb671b64b47d31a36e5b89c2f37437ffddf11048`; FULL_REQUIRED_CHECKS=PARTIAL (Token Runtime PASS; no current-head Worker build result); ARTIFACT_REVIEW=PASS; ACCEPTANCE_VERIFY=PARTIAL; CHECKPOINT/REPORT=PENDING until the new log commit's exact-head CI is reconciled.
+- Safety: no merge, production deploy, D1 provisioning/migration, route enablement, or secret change. Keep PR #175 Draft.
