@@ -26,5 +26,5 @@ assert.ok(jobLines.some((line) => /^    steps:\s*$/.test(line)), 'deploy job mus
 assert.ok(jobLines.some((line) => /^    timeout-minutes:\s*20\s*$/.test(line)), 'deploy job must keep a bounded timeout');
 
 console.log('PASS: D1 deploy is manual-only, guarded by ENABLE_D1_PROVISION_DEPLOY=true, attached to production environment, and bounded by a 20-minute timeout.');
-console.log('NOTE: repository administrators must configure the production environment's required reviewers and set the repository variable only when explicitly approved.');
+console.log("NOTE: repository administrators must configure the production environment's required reviewers and set the repository variable only when explicitly approved.");
 console.log('NOTE: this source-contract test cannot explain historical zero-job runs; their metadata/source inconsistency remains a separate investigation.');
