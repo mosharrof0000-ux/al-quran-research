@@ -501,3 +501,13 @@ PR #170 is open as Draft. Keep it unmerged while production endpoints cannot be 
 - Live Worker /health and Pages browser access attempts remain unavailable through the current read-only path. Live Gemini and full browser/UI acceptance remain NOT TESTED; prior live Cloudflare AI response does not prove Gemini.
 - New isolated branch: `safety/d1-manual-release-gate-20261027`, based on `d49f17e190f64c689469373104b2bd1c18ecf758`. Stage ledger: DISCOVER=PASS; DIAGNOSE=PARTIAL (historical D1 cause unresolved); PLAN=PASS; CHANGE=PENDING; FOCUSED_TEST=PENDING; FULL_REQUIRED_CHECKS=PENDING; ARTIFACT_REVIEW=PASS for existing log evidence; ACCEPTANCE_VERIFY=PARTIAL; CHECKPOINT/REPORT=PENDING.
 - Safety: no merge, deployment, D1 provisioning/migration, route activation, or secret change. Rollback is to discard this isolated branch if the new gate/test fails review.
+
+
+## AUTO-02 — Run 18 pre-change checkpoint (AQR-2026-10-30-AUTO02-RUN18-D1-PR174-TESTFIX-PRE)
+
+- Timestamp: 2026-10-30 17:56 Asia/Dhaka. Scope: Al-Quran Research only.
+- Fresh state: main SHA `d49f17e190f64c689469373104b2bd1c18ecf758`; PR #175 remains OPEN/DRAFT at head `1b6c7ecb80fde295c3429122e7fb0b94e0ddcfe7`; existing D1 safety PR #174 remains OPEN/DRAFT on `safety/d1-manual-release-gate-20261027`, head `f9c92ee9e5aae32e7eebe2dd5eb89df8110e8cb8`.
+- Evidence: Token Runtime run [#40531067899](https://github.com/mosharrof0000-ux/al-quran-research/actions/runs/40531067899), job [#122283683258](https://github.com/mosharrof0000-ux/al-quran-research/actions/runs/40531067899/job/122283683258) failed at `node scripts/test-d1-workflow-contract.mjs`. Exact log: `SyntaxError: missing ) after argument list` at line 29, caused by an unescaped apostrophe in a single-quoted JavaScript string (`environment's`). Earlier token/permission/provider-provenance cases passed before the parser error.
+- Planned minimal fix: change only that diagnostic `console.log` string to a double-quoted JavaScript string; retain the D1 manual-dispatch gate, `ENABLE_D1_PROVISION_DEPLOY` guard, production environment, and all tests. Add no secret changes and do not dispatch D1.
+- Historical zero-job D1 runs still have no job logs; their exact GitHub-side cause remains NOT PROVEN. This source-test syntax fix is separate from that historical anomaly.
+- Stage ledger before change: DISCOVER=PASS; DIAGNOSE=PASS for PR #174 test syntax failure / PARTIAL for historical zero-job cause; PLAN=PASS; CHANGE=PENDING; FOCUSED_TEST=PENDING; FULL_REQUIRED_CHECKS=PENDING; ARTIFACT_REVIEW=PASS; ACCEPTANCE_VERIFY=NOT TESTED; CHECKPOINT/REPORT=PENDING.
