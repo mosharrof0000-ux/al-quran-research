@@ -31,3 +31,6 @@ jobs:
           if [ -f scripts/test-d1-workflow-contract.mjs ]; then
             node scripts/test-d1-workflow-contract.mjs
           fi
+          if [ -f scripts/test-agent-workflow-contract.mjs ]; then
+            node scripts/test-agent-workflow-contract.mjs
+          fi
