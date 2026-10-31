@@ -630,3 +630,56 @@ PR #170 is open as Draft. Keep it unmerged while production endpoints cannot be 
 - Acceptance boundary: mocked provider routing is PASS; real Gemini/Cloudflare model generation, full Live Pages browser/UI round-trip, production D1 state, and authenticated agent endpoint remain NOT TESTED. Worker build PASS is not production runtime acceptance.
 - Stage ledger: DISCOVER=PASS; DIAGNOSE=PARTIAL (D1 zero-job cause unproven; agent secrets absent; dependencies stale); PLAN=PASS; CHANGE=PASS (this checkpoint-only commit on existing Draft PR #175); FOCUSED_TEST=PASS on pre-checkpoint head; FULL_REQUIRED_CHECKS=PENDING for new checkpoint head; ARTIFACT_REVIEW=PARTIAL; ACCEPTANCE_VERIFY=NOT TESTED; CHECKPOINT/REPORT=PENDING until exact new-head checks are reconciled.
 - Safety: no merge, production deployment, D1 dispatch/provision/migration, route enablement, secret change, or dependency PR mutation. Next: reconcile this checkpoint's exact-head checks; bring #174/#175 onto current main only through a reviewed safe branch update; request admin secret setup; seek authorized GitHub Actions metadata/support evidence for the zero-job anomaly.
+
+
+---
+
+## AUTO-02 RUN 21 — 2026-10-31 17:54 Asia/Dhaka
+
+**Project:** Al-Quran Research only  
+**Canonical repository:** https://github.com/mosharrof0000-ux/al-quran-research  
+**Current main SHA:** `0c3520305b43bda0b9dc862561c9081285ded310`  
+**Checkpoint branch / PR:** `docs/auto02-run11-postmerge-checkpoint-20261027-r1` / [PR #175](https://github.com/mosharrof0000-ux/al-quran-research/pull/175)  
+**PR #175 head:** `660f50e65e2c0e6ceee7067faa1c3da0279a044e`  
+**PR #175 relation to main:** 12 commits ahead, 2 behind; merge base `d49f17e190f64c689469373104b2bd1c18ecf758`.
+
+### Fresh exact-head checks — PR #175
+All three checks on `660f50e65e2c0e6ceee7067faa1c3da0279a044e` are **PASS**:
+- Token Runtime [run #41173995262 / job #124457647060](https://github.com/mosharrof0000-ux/al-quran-research/actions/runs/41173995262/job/124457647060).
+- Worker build [check #124457714988](https://github.com/mosharrof0000-ux/al-quran-research/runs/124457714988).
+- Project Agent build [check #124457802716](https://github.com/mosharrof0000-ux/al-quran-research/runs/124457802716).
+
+The Token Runtime log confirms 14/14 token tests, 12/12 permission-route tests, 11 Quran reference/bounds cases, provider provenance fixtures, D1 workflow contract, and autonomous-agent workflow contract. Provider tests explicitly use a mocked Gemini response and mocked Cloudflare AI response, while the verified-project-data route is tested without an external fetch. **No live provider/network call was made.**
+
+### D1 zero-job investigation — root cause still NOT PROVEN
+- Historical run [#40928677734](https://github.com/mosharrof0000-ux/al-quran-research/actions/runs/40928677734): event `push`, branch `docs/auto02-run11-postmerge-checkpoint-20261027-r1`, run head `1b6c7ecb80fde295c3429122e7fb0b94e0ddcfe7`, conclusion `failure`; latest-attempt jobs endpoint returned `[]`.
+- The triggering commit `1b6c7ec` changed only `PROJECT_WORK_LOG.md`.
+- The D1 workflow file at that exact commit declares `push.branches: [main]` plus path filters for backend/database/migrations/workflow changes, and its `deploy` job has no job-level `if` condition. The feature-branch push and changed-file list therefore do not satisfy the checked-in trigger filters, yet GitHub recorded a push run with zero jobs.
+- The metadata/source mismatch is reproducible as an observation but does not identify why GitHub created the run. No event payload or job record is available from the zero-job run. **Do not label a speculative cause as proven.**
+- Current main still contains the push-triggered workflow (blob `1773562c6370fe1de0df226764a9a3921cd71bb9`). Existing safety PR [#174](https://github.com/mosharrof0000-ux/al-quran-research/pull/174) changes it to manual-only `workflow_dispatch`, requires `ENABLE_D1_PROVISION_DEPLOY=true`, and attaches the job to the `production` environment. PR #174 head `c873a3dfecd39e01787cd010d006649f7b40ec98` has 3/3 checks PASS, but is 6 commits ahead / 2 behind main and remains Draft. This is forward-looking risk reduction, not a proven historical root-cause fix.
+- No rerun, manual dispatch, D1 provisioning, migration, Worker deploy, route enablement, or secret mutation was performed because the workflow has production side effects.
+
+### Autonomous agent blocker
+- Scheduled run [#40879065223](https://github.com/mosharrof0000-ux/al-quran-research/actions/runs/40879065223), job #123465392391, failed in “Start isolated Mosharrof agent cycle” before HTTP contact. Log showed both mapped environment values blank: `AGENT_URL` and `AGENT_ACCESS_TOKEN`.
+- Workflow source maps them to Actions secrets `MOSHARROF_AGENT_URL` and `AGENT_ACCESS_TOKEN`, and validates both before making a request. The contract test verifies mapping and safe logging, but cannot verify secret presence.
+- Required administrator action: configure the intended agent endpoint URL in repository Actions secret `MOSHARROF_AGENT_URL` and the authorized bearer token in `AGENT_ACCESS_TOKEN`. Do not print, expose, or change either value through this automation.
+
+### Dependency PRs #145 / #148
+- [PR #145](https://github.com/mosharrof0000-ux/al-quran-research/pull/145): OPEN, not merged, `mergeable=false`; head `8331c297734f9b402cf1b763ad0af8cfee1d7cbe`; 5 commits ahead / 152 behind current main. Worker build PASS; Project Agent build FAIL.
+- [PR #148](https://github.com/mosharrof0000-ux/al-quran-research/pull/148): OPEN, not merged, `mergeable=true`; head `c86289d239425b7bacf3b50a25422858dcce7a7a`; 9 commits ahead / 152 behind current main. Worker build PASS; Project Agent build FAIL.
+- Both use stale base SHA `7f106a48bd0c445ef1612c63689d63424c44b8e5`. No rebase, retarget, merge, or branch mutation attempted.
+
+### Acceptance boundaries
+- **PASS:** exact-head PR #175 CI/build checks; provider provenance mock tests; D1 manual-only safety contract on PR #174; agent secret-mapping contract.
+- **FAIL:** agent scheduled run #40879065223 due empty mapped secrets; Project Agent builds on PR #145 and #148.
+- **PENDING:** PR #174 and #175 base reconciliation/review; dependency PR disposition; administrator configuration of agent secrets.
+- **NOT PROVEN:** historical D1 zero-job root cause.
+- **NOT TESTED:** live Gemini generation, live Cloudflare AI generation, production Worker /health, Live Pages browser/chat round-trip, production D1, authenticated agent endpoint.
+
+### Next safe actions
+1. Repository administrator configures the two agent Actions secrets; then inspect a fresh run before any retry.
+2. Reconcile PR #174 and #175 against current main, preserve Draft, and rerun exact-head required checks after base changes.
+3. Investigate D1 event/check-suite metadata with GitHub administrative/event evidence if available; do not dispatch the production workflow merely to diagnose it.
+4. Resolve or close/rebuild PR #145/#148 only after reviewing their API code and failed Project Agent build logs.
+
+**Safety:** no merge, production deploy, D1 write, secret change, or dependency PR mutation in this run.
