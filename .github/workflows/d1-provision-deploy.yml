@@ -1,14 +1,7 @@
 name: Provision D1 and Deploy Worker
 
+# Production provisioning/deploy is manual-only; pushes must never deploy D1.
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'backend/**'
-      - 'database/**'
-      - 'migrations/**'
-      - '.github/workflows/d1-provision-deploy.yml'
   workflow_dispatch:
 
 concurrency:
@@ -23,6 +16,8 @@ env:
 
 jobs:
   deploy:
+    if: github.event_name == 'workflow_dispatch' && vars.ENABLE_D1_PROVISION_DEPLOY == 'true'
+    environment: production
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
