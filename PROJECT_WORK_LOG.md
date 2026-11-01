@@ -683,3 +683,48 @@ The Token Runtime log confirms 14/14 token tests, 12/12 permission-route tests, 
 4. Resolve or close/rebuild PR #145/#148 only after reviewing their API code and failed Project Agent build logs.
 
 **Safety:** no merge, production deploy, D1 write, secret change, or dependency PR mutation in this run.
+
+
+## AUTO-02 Run 21 checkpoint — 2026-11-01 18:18 Asia/Dhaka
+
+**Scope:** Al-Quran Research only. This is a resumable evidence checkpoint on the existing PR #175 branch; no new PR, merge, production D1 operation, secret mutation, or production configuration change.
+
+### Fresh repository / PR state
+- Canonical repository: `mosharrof0000-ux/al-quran-research`.
+- Current main SHA: `0c3520305b43bda0b9dc862561c9081285ded310`.
+- PR #175 remains OPEN/DRAFT at head `802bec81fa1397ddcf63f8c4e0a62f5f204dbdf1`, branch `docs/auto02-run11-postmerge-checkpoint-20261027-r1`; compare against current main: 13 commits ahead / 2 behind, merge base `d49f17e190f64c689469373104b2bd1c18ecf758`.
+- Exact current-head checks for PR #175 are **3/3 PASS**:
+  - Token Runtime [run #41199044748 / job #124531012847](https://github.com/mosharrof0000-ux/al-quran-research/actions/runs/41199044748/job/124531012847). Log: 14/14 token tests, 12/12 permission-route tests, 11 Quran reference/bounds cases, provider provenance fixtures, D1 workflow contract, and agent workflow contract PASS. Provider tests are mocked; no live provider call.
+  - Worker build [check #124531060437](https://github.com/mosharrof0000-ux/al-quran-research/runs/124531060437) PASS.
+  - Project Agent build [check #124531125410](https://github.com/mosharrof0000-ux/al-quran-research/runs/124531125410) PASS.
+- PR #170 is CLOSED/MERGED (merge commit `db847a6db993ebe8245a431ac58267f02505b10d`); do not treat its former draft state as current.
+- PR #174 remains OPEN/DRAFT at `c873a3dfecd39e01787cd010d006649f7b40ec98`; its observed Token Runtime, Worker build, and Project Agent build are 3/3 PASS. Its D1 workflow change is manual-only: `workflow_dispatch`, job guard `ENABLE_D1_PROVISION_DEPLOY == 'true'`, and `production` environment. It is not merged; current main still has the older push-enabled D1 workflow.
+
+### D1 zero-job anomaly — root cause still NOT PROVEN
+- Historical run [#40928677734](https://github.com/mosharrof0000-ux/al-quran-research/actions/runs/40928677734): GitHub metadata reports `event=push`, `head_branch=docs/auto02-run11-postmerge-checkpoint-20261027-r1`, run SHA `1b6c7ecb80fde295c3429122e7fb0b94e0ddcfe7`, conclusion `failure`; jobs endpoint returns an empty array.
+- The workflow file at that exact run SHA and current main both declare push only on `main` plus path filters, and a manual `workflow_dispatch`. The run metadata therefore conflicts with the workflow's declared push branch filter. The run's embedded PR association points to PR #175 and a later PR head SHA, adding another metadata mismatch.
+- No job logs exist because the jobs array is empty. This proves the anomaly, not its underlying GitHub event/check-suite cause. Do not rerun or dispatch this workflow: its steps can create D1, apply remote migrations, deploy Workers, and enable a route.
+- PR #174 is the forward-looking manual-only safety fix, not a proven historical root-cause repair. Keep it Draft pending review and exact-base reconciliation.
+
+### Autonomous agent blocker — confirmed recurring configuration failure
+- Latest main-head failure [run #41292281135 / job #124805795252](https://github.com/mosharrof0000-ux/al-quran-research/actions/runs/41292281135/job/124805795252): step `Start isolated Mosharrof agent cycle` failed at the non-empty checks; log showed both mapped values blank (`AGENT_URL` and `AGENT_ACCESS_TOKEN`); HTTP request and all later steps were skipped.
+- Same signature confirmed in [run #41264139940 / job #124723281062](https://github.com/mosharrof0000-ux/al-quran-research/actions/runs/41264139940/job/124723281062) and [run #41251102479 / job #124684599855](https://github.com/mosharrof0000-ux/al-quran-research/actions/runs/41251102479/job/124684599855). No retry was attempted because this is a persistent secret/configuration failure, not a transient runner failure.
+- Workflow maps `AGENT_URL` from Actions secret `MOSHARROF_AGENT_URL` and `AGENT_ACCESS_TOKEN` from Actions secret `AGENT_ACCESS_TOKEN`. The contract test passes for wiring only; it cannot inspect secret presence. Repository administrator must configure the intended endpoint URL and authorized bearer token under those exact secret names. Values were not read, exposed, or changed.
+
+### Dependency PRs and live acceptance
+- PR #145: OPEN, `mergeable=false`, 5 commits ahead / 152 behind current main; no rebase or mutation.
+- PR #148: OPEN, `mergeable=true`, 9 commits ahead / 152 behind current main; no rebase or mutation. Both have stale base SHA `7f106a48bd0c445ef1612c63689d63424c44b8e5`; their current required checks are not verified.
+- GitHub Pages deployment workflow [#41173317549](https://github.com/mosharrof0000-ux/al-quran-research/actions/runs/41173317549) completed successfully for main SHA `0c3520305b43bda0b9dc862561c9081285ded310`; this proves the Pages build/deploy job ran, not browser acceptance.
+- Direct browser access to the Worker `/health`, Research API status/ayah endpoints, and Live Pages URL was unavailable in this run. Production Worker health, live Gemini/Cloudflare AI generation, full Pages browser/chat round-trip, production D1, and authenticated agent endpoint remain **NOT TESTED**.
+
+### Stage checkpoint
+- DISCOVER: PASS — refreshed main, PRs, check-runs, and latest failure logs.
+- DIAGNOSE: PASS — confirmed repeated empty agent-secret values; D1 event/source mismatch remains unproven.
+- PLAN: PASS — continue on existing PR #175 branch; keep #174/#175 Draft; no unsafe dispatch/retry.
+- CHANGE: PENDING — append this checkpoint only.
+- FOCUSED_TEST / FULL_REQUIRED_CHECKS: PASS for the pre-checkpoint PR #175 head only; must rerun/reconcile after this log commit.
+- ARTIFACT_REVIEW: NOT TESTED — no new artifacts required for this documentation checkpoint.
+- ACCEPTANCE_VERIFY: NOT TESTED — live endpoints/provider/D1/agent not accessible or not authorized.
+- Next: verify checks on the new checkpoint head; ask repository admin to set the two Actions secrets; review/reconcile PR #174 and #175 against main without merging; keep production D1 workflow undispatched.
+
+**Safety:** no merge, deployment, D1 provisioning/migration, route activation, secret change, or dependency PR mutation was performed by this checkpoint.
