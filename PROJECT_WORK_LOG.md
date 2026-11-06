@@ -53,3 +53,21 @@ Next recommended human step: Set repository Actions secrets MOSHARROF_AGENT_URL 
 **Safety:** Documentation-only update on existing feature branch. No secrets accessed, no D1 dispatch/provision/migration, no production deploy, no force-push, no locked pages or research data changed.
 
 Next recommended human step: Configure repository Actions secrets MOSHARROF_AGENT_URL and AGENT_ACCESS_TOKEN (do not expose values). Then set production environment protections before considering PR #174 for Ready/review. Live verification of Gemini, Pages UI/chat, and agent endpoint remains pending.
+
+## ENGINE-4 STATUS 2026-11-06 20:07 Asia/Dhaka
+
+**Agent secrets status:** NOT configured. Latest autonomous-cycle run #42222811843 / job #127908744827 (2026-11-06 13:06 UTC / ~19:06 Asia/Dhaka) failed immediately at step 'Start isolated Mosharrof agent cycle'. Env shows AGENT_URL and AGENT_ACCESS_TOKEN empty; test -n fails. Autonomous agent cycle CANNOT start. Admin must set Actions secrets MOSHARROF_AGENT_URL and AGENT_ACCESS_TOKEN. No secret values were read or exposed.
+
+**PR #174 (D1 safety gate):** OPEN/DRAFT, head c873a3dfecd39e01787cd010d006649f7b40ec98, mergeable_state=clean, exact-head checks 3/3 SUCCESS. Recommend keep Draft; do not mark Ready or merge until production environment has required reviewers and ENABLE_D1_PROVISION_DEPLOY is controlled only after approval, plus remaining live acceptance. No production risk while Draft. Does not prove or fix historical zero-job root cause. Current main still has push-triggered D1 workflow.
+
+**PR #175 (AUTO-02 checkpoint):** OPEN/DRAFT, this update advances the head. Prior exact-head checks 3/3 SUCCESS (token-runtime run #42208078782, Worker builds). Remains behind main. Keep Draft.
+
+**Live verification status:** Gemini generation, production D1, Pages UI/chat, agent endpoint — all still NOT TESTED.
+
+**D1 zero-job anomaly:** No new evidence on root cause; remains NOT PROVEN. No D1 workflow dispatch performed.
+
+**Stale PRs #145 / #148:** Still open on stale base; rebase or close after separate review needed. No action taken.
+
+**Safety:** Documentation-only update on existing feature branch. No secrets accessed, no D1 dispatch/provision/migration, no production deploy, no force-push, no locked pages or research data changed.
+
+Next recommended human step: Configure repository Actions secrets MOSHARROF_AGENT_URL and AGENT_ACCESS_TOKEN. Then configure production environment protection before considering PR #174 for review/merge. Live verification remains pending.
