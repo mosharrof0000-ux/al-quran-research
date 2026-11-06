@@ -35,3 +35,21 @@ Next recommended human step: Configure the two agent secrets in repo Settings > 
 **Safety:** Only documentation update on feature branch. No secrets accessed, no D1 workflow dispatch, no production deploy, no force-push, no locked pages changed.
 
 Next recommended human step: Set repository Actions secrets MOSHARROF_AGENT_URL and AGENT_ACCESS_TOKEN, then review/mark Ready PR #174 after configuring production environment protection.
+
+## ENGINE-4 STATUS 2026-11-06 17:10 Asia/Dhaka
+
+**Agent secrets status:** NOT configured. Latest autonomous-cycle run #42167603248 / job #127727587329 (2026-11-06 05:18 UTC / 11:18 Asia/Dhaka) failed immediately at step 'Start isolated Mosharrof agent cycle'. Secrets MOSHARROF_AGENT_URL and AGENT_ACCESS_TOKEN remain empty. Autonomous agent cycle CANNOT start. Admin must configure the two Actions secrets. No values were read or exposed.
+
+**PR #174 (D1 safety gate):** OPEN/DRAFT, head c873a3dfecd39e01787cd010d006649f7b40ec98, mergeable_state=clean, prior exact-head checks 3/3 PASS. Recommend keep Draft; do not merge until production environment protection (required reviewers) is set and ENABLE_D1_PROVISION_DEPLOY variable is controlled, plus live acceptance. No production risk while Draft. Historical zero-job root cause not fixed by this PR.
+
+**PR #175 (AUTO-02 checkpoint):** OPEN/DRAFT, this update advances the head, mergeable_state=clean. Remains behind main. Keep Draft. CI on prior head was green.
+
+**Live verification status:** Gemini generation, production D1, Pages UI/chat, agent endpoint — all still NOT TESTED.
+
+**D1 zero-job anomaly:** No new evidence on root cause; remains NOT PROVEN. No D1 workflow dispatch performed.
+
+**Stale PRs #145 / #148:** Still open on stale base SHA 7f106a48... (far behind current main); rebase or close recommended after separate review. No action taken.
+
+**Safety:** Documentation-only update on existing feature branch. No secrets accessed, no D1 dispatch/provision/migration, no production deploy, no force-push, no locked pages or research data changed.
+
+Next recommended human step: Configure repository Actions secrets MOSHARROF_AGENT_URL and AGENT_ACCESS_TOKEN (do not expose values). Then set production environment protections before considering PR #174 for Ready/review. Live verification of Gemini, Pages UI/chat, and agent endpoint remains pending.
