@@ -1,1 +1,1 @@
-PLACEHOLDER_WILL_FAIL
+See /tmp for full; will be replaced in real
