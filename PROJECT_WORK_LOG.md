@@ -487,3 +487,35 @@ PR #170 is open as Draft. Keep it unmerged while production endpoints cannot be 
 - Runtime boundaries: live Worker run #40229925761 previously returned Bengali `২+২ = ৪।` via `cloudflare-ai`; this does not prove Gemini. Live Gemini generation, full browser/UI interaction, and production D1 remain NOT TESTED.
 - Stage ledger before this checkpoint commit: DISCOVER=PASS; DIAGNOSE=PARTIAL (historical D1 cause unproven; agent configuration blocked); PLAN=PASS; CHANGE=PASS (tests/checkpoint on isolated PR #173); FOCUSED_TEST=PASS; FULL_REQUIRED_CHECKS=PASS for pre-checkpoint head `160a7c4...`; ARTIFACT_REVIEW=PASS; ACCEPTANCE_VERIFY=PARTIAL; CHECKPOINT/REPORT=PENDING until this new head's CI is reconciled.
 - Safety: keep PR #173 Draft. Main/production unchanged. Next: verify this checkpoint commit's exact-head CI, then wait for administrator secret configuration and an authorized live Gemini/browser acceptance path. Do not dispatch the D1 deployment workflow to investigate empty-job metadata.
+
+## WORK-2026-11-08-ENGINE4-STATUS-CHECKPOINT-01
+
+**Status:** OBSERVED — autonomous cycle still blocked by missing secrets
+
+### Observation date
+2026-11-08 (Asia/Dhaka)
+
+### Agent secrets status
+MOSHARROF_AGENT_URL and AGENT_ACCESS_TOKEN are **not configured** (or empty). Latest scheduled autonomous-cycle runs (e.g. #151, #150 on 2026-11-08) fail in ~5 seconds at the first step (`test -n "$AGENT_URL"`). No secret values were read or exposed. The autonomous agent cycle **cannot start** until a repository administrator configures both Actions secrets.
+
+### Safety PRs
+- PR #174 (D1 safety gate): remains OPEN/DRAFT. Exact-head CI previously reported 3/3 PASS. Do not merge until live verification and admin gates are ready. No production risk if kept Draft.
+- PR #175 (AUTO-02 checkpoint): remains OPEN/DRAFT. Exact-head CI previously green. Recommend keep Draft; no force-merge.
+
+### Live verification status (still NOT TESTED)
+- Gemini generation
+- Production D1 acceptance
+- Pages UI/chat end-to-end
+- Authenticated agent endpoint
+
+### D1 zero-job anomaly
+No new evidence. Root cause remains NOT PROVEN. No D1 workflow dispatch performed.
+
+### Other
+Stale PRs #145 / #148 still open on old base; rebase/close review still needed but not performed. Gemini Custom Icon and Mode Icon Assets remain not live-verified / not integrated. Pilot data validation incomplete.
+
+### Safety
+Documentation-only append on isolated feature branch. No secrets, workflows, data, locked pages, or production changes.
+
+### Next recommended step
+Repository admin must set the two Actions secrets `MOSHARROF_AGENT_URL` and `AGENT_ACCESS_TOKEN`. Then re-check the autonomous cycle. Keep safety PRs Draft until acceptance tests pass.
