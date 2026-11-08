@@ -1,1 +1,1 @@
-PLACEHOLDER_WILL_BE_REPLACED
+See /tmp/PROJECT_WORK_LOG_updated.md - full content must be inserted here in real call
