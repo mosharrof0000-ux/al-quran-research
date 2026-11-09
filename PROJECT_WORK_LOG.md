@@ -1,1 +1,1 @@
-See local preparation; this is the correct full file content for the checkpoint.
+PLACEHOLDER - will replace with full content including append
