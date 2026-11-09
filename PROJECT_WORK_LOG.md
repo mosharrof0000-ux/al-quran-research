@@ -1,1 +1,1 @@
-PLACEHOLDER_AGAIN
+See local preparation; this is the correct full file content for the checkpoint.
