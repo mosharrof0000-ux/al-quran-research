@@ -1,1 +1,1 @@
-PLACEHOLDER_WILL_FAIL
+See /tmp/updated_work_log.md - will be replaced by system
