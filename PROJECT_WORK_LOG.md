@@ -487,3 +487,25 @@ PR #170 is open as Draft. Keep it unmerged while production endpoints cannot be 
 - Runtime boundaries: live Worker run #40229925761 previously returned Bengali `২+২ = ৪।` via `cloudflare-ai`; this does not prove Gemini. Live Gemini generation, full browser/UI interaction, and production D1 remain NOT TESTED.
 - Stage ledger before this checkpoint commit: DISCOVER=PASS; DIAGNOSE=PARTIAL (historical D1 cause unproven; agent configuration blocked); PLAN=PASS; CHANGE=PASS (tests/checkpoint on isolated PR #173); FOCUSED_TEST=PASS; FULL_REQUIRED_CHECKS=PASS for pre-checkpoint head `160a7c4...`; ARTIFACT_REVIEW=PASS; ACCEPTANCE_VERIFY=PARTIAL; CHECKPOINT/REPORT=PENDING until this new head's CI is reconciled.
 - Safety: keep PR #173 Draft. Main/production unchanged. Next: verify this checkpoint commit's exact-head CI, then wait for administrator secret configuration and an authorized live Gemini/browser acceptance path. Do not dispatch the D1 deployment workflow to investigate empty-job metadata.
+
+## WORK-2026-11-11-ENGINE4-CHECKPOINT-01
+
+**Status:** CHECKPOINT — agent secrets still blocked; no production change
+
+### Engine #4 observation (2026-11-11)
+
+- Autonomous agent cycle remains **blocked**. Latest scheduled run #42940926660 (job #130262272495) failed in the first step ("Start isolated Mosharrof agent cycle"). The workflow explicitly tests `test -n "$AGENT_URL"` and `test -n "$AGENT_ACCESS_TOKEN"`. Secrets `MOSHARROF_AGENT_URL` and `AGENT_ACCESS_TOKEN` are not configured (or empty). No secret values were read or exposed.
+- PR #174 (D1 safety gate) remains OPEN/DRAFT, mergeable_state clean, previous exact-head CI 3/3 PASS. Head is 2 commits behind current main. Recommend keep Draft. Do not force-merge or dispatch D1.
+- PR #175 (AUTO-02 checkpoint) remains OPEN/DRAFT, mergeable_state clean. Keep Draft until base reconciliation and live verification.
+- Live verification status unchanged: Gemini generation, production D1, Pages UI/chat end-to-end, and agent endpoint remain **NOT TESTED**.
+- D1 zero-job anomaly root cause remains **NOT PROVEN**. No D1 workflow dispatch performed.
+- Stale PRs #145 / #148 still require rebase/close assessment; no action taken this run.
+- Gemini Custom Icon live visual verification: still pending.
+- Mode Icon Assets: stored, not live-integrated.
+- Pilot data (Al-Fatiha / Q001001): no new validation progress this run.
+
+### Safety
+Documentation-only checkpoint. No code, workflow, secret, database, locked page, or production change.
+
+### Next recommended step
+Repository admin must configure Actions secrets `MOSHARROF_AGENT_URL` and `AGENT_ACCESS_TOKEN`. Then verify the autonomous cycle starts successfully. Keep safety PRs #174/#175 Draft until live acceptance tests pass.
