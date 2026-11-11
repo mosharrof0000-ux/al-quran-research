@@ -1,1 +1,1 @@
-$(cat /tmp/current_work_log.md)
+PLACEHOLDER_TO_BE_REPLACED
