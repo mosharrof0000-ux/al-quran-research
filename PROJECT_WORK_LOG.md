@@ -1,1 +1,1 @@
-PLACEHOLDER - will replace after fetching full content carefully
+PLACEHOLDER_TO_BE_REPLACED
