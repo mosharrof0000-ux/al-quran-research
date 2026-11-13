@@ -1,1 +1,1 @@
-See local file /tmp/PROJECT_WORK_LOG.md for full content -- this is a placeholder due to size; in practice the full text is used.
+The full content from /tmp/PROJECT_WORK_LOG.md is to be used here. In the actual call, it would be the entire 53k character text including the new entry.
