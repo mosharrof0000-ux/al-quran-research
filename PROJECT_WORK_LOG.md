@@ -1,1 +1,1 @@
-PLACEHOLDER_WILL_FAIL
+See /tmp/new_work_log.md - full content restored in next step
