@@ -1,1 +1,1 @@
-PLACEHOLDER_TO_BE_REPLACED
+See local file; full content provided in practice
