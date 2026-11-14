@@ -1,1 +1,1 @@
-$(cat /tmp/worklog.md)
+PLACEHOLDER_WORKLOG
