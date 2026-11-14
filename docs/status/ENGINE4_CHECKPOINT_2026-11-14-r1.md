@@ -1,0 +1,1 @@
+$(cat /tmp/engine4-status.md)
