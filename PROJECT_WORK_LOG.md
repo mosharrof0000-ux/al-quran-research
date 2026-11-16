@@ -487,3 +487,43 @@ PR #170 is open as Draft. Keep it unmerged while production endpoints cannot be 
 - Runtime boundaries: live Worker run #40229925761 previously returned Bengali `২+২ = ৪।` via `cloudflare-ai`; this does not prove Gemini. Live Gemini generation, full browser/UI interaction, and production D1 remain NOT TESTED.
 - Stage ledger before this checkpoint commit: DISCOVER=PASS; DIAGNOSE=PARTIAL (historical D1 cause unproven; agent configuration blocked); PLAN=PASS; CHANGE=PASS (tests/checkpoint on isolated PR #173); FOCUSED_TEST=PASS; FULL_REQUIRED_CHECKS=PASS for pre-checkpoint head `160a7c4...`; ARTIFACT_REVIEW=PASS; ACCEPTANCE_VERIFY=PARTIAL; CHECKPOINT/REPORT=PENDING until this new head's CI is reconciled.
 - Safety: keep PR #173 Draft. Main/production unchanged. Next: verify this checkpoint commit's exact-head CI, then wait for administrator secret configuration and an authorized live Gemini/browser acceptance path. Do not dispatch the D1 deployment workflow to investigate empty-job metadata.
+
+
+
+## WORK-2026-11-16-ENGINE4-STATUS-CHECKPOINT-01
+
+**Status:** ACTIVE — documentation-only checkpoint; autonomous agent still blocked
+
+### Timestamp
+2026-11-16 ~17:10 Asia/Dhaka (Engine #4 run)
+
+### One small safe step
+Recorded current prioritized status. No code, workflow, secret, or production change.
+
+### Agent secrets status
+- Latest autonomous-cycle run #43841038887 / job #133209453978 (https://github.com/mosharrof0000-ux/al-quran-research/actions/runs/43841038887/job/133209453978) fails immediately at "Start isolated Mosharrof agent cycle".
+- Mapped `AGENT_URL` and `AGENT_ACCESS_TOKEN` remain empty (workflow sources them from Actions secrets `MOSHARROF_AGENT_URL` and `AGENT_ACCESS_TOKEN`).
+- **Autonomous agent cycle cannot start.** Repository admin must configure both secrets.
+- No secret values were read or exposed.
+
+### PR #174 (D1 safety gate) and PR #175 (AUTO-02 checkpoint)
+- Both remain OPEN/DRAFT, mergeable_state=clean.
+- Exact-head CI previously reported green (Token Runtime + Worker builds).
+- Bases are behind current main (`0c3520305b43bda0b9dc862561c9081285ded310`).
+- Recommendation: **do not merge** until rebased, marked Ready, exact-head re-verified, and production-risk review complete. No force-merge.
+
+### Live verification status
+Gemini generation, production D1, Pages UI/chat end-to-end, and authenticated agent endpoint remain **NOT TESTED**.
+
+### D1 zero-job anomaly
+No new evidence. Root cause still **NOT PROVEN**. No workflow dispatch performed (and must not be, without explicit approval).
+
+### Stale PRs / other
+#145 and #148 remain open on very stale bases; no rebase attempted.
+
+### Safety
+Docs only. No deploy, no D1 action, no secret change, no force-push to main, no locked-page edit.
+
+### Admin action required
+Set repository Actions secrets `MOSHARROF_AGENT_URL` and `AGENT_ACCESS_TOKEN` so the scheduled autonomous cycle can proceed.
+
