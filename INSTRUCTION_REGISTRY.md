@@ -135,3 +135,11 @@ ACTIVE — v1.9 on main; safety-branch additions are DRAFT until review/promotio
 |---|---|---|
 | `scripts/test-deterministic-chat-routing.mjs.instruction.md` | Regression test for deterministic verified-data routing | ACTIVE ON GATE 2 BRANCH |
 | `scripts/test-deterministic-chat-routing.mjs` | Verifies Fatiha word-analysis precedence and zero outbound requests | ACTIVE ON GATE 2 BRANCH |
+
+
+## Release Gate 2 — Safe Baseline & Recovery
+
+| Record / Instruction | Purpose | Status |
+|---|---|---|
+| `docs/release-gates/GATE-02-SAFE-BASELINE-RECOVERY-2026-11-17.md` | Records Gate 2 baseline, routing fix, CI evidence, D1/schema findings and pending exit criteria | PARTIAL — isolated branch |
+| `docs/release-gates/GATE-02-SAFE-BASELINE-RECOVERY-2026-11-17.instruction.md` | Governs the Gate 2 evidence record and production-safety boundaries | ACTIVE ON GATE 2 BRANCH |
