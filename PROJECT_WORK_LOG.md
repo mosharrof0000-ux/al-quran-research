@@ -519,3 +519,15 @@ PR #170 is open as Draft. Keep it unmerged while production endpoints cannot be 
 - No D1 provision, migration, Worker deploy, or Project Agent deploy step is evidenced by the zero-job run. Exact trigger/metadata anomaly remains NOT PROVEN.
 - No rerun, workflow dispatch, D1 creation, migration, production deployment, or schema modification performed.
 - Next: produce table/column/query compatibility matrix; investigate GitHub Actions event metadata through available run/check-suite data; propose canonical schema and safe migration plan only.
+
+## WORK-2026-11-17-D1-SCHEMA-COMPATIBILITY-MATRIX
+
+**Status:** READ-ONLY MATRIX COMPLETED — NO SCHEMA CHANGES
+
+- Compared root `schema.sql`, `database/schema.sql`, migrations 001–003 and all current D1 API query table/column references.
+- Confirmed the D1 migration path is designed around `database/schema.sql`; migration 001 explicitly replays it, migration 002 adds workspace/versioning, and migration 003 adds dataset/API release tables.
+- Confirmed the API's expected D1 table family matches that chain.
+- Root `schema.sql` is a materially different broader/older schema; it contains entities/columns absent from the current D1 schema, including grammar_annotation, syntax_relation, meaning, concept relations and alternate token/root/translation structures.
+- Created `docs/release-gates/D1-SCHEMA-COMPATIBILITY-MATRIX-2026-11-17.md` and companion instruction.
+- Recommendation: preserve both definitions until an owner-approved canonical schema decision and a versioned mapping exist. Do not concatenate, overwrite, rename, or migrate blindly.
+- No SQL file, migration, D1 database, research data, secret, or production setting changed.
