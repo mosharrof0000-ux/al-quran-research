@@ -127,3 +127,11 @@ Instructions formerly stored under `docs/instructions/` were migrated by copy �
 
 ## Status
 ACTIVE — v1.9 on main; safety-branch additions are DRAFT until review/promotion. Canonical live connection map is registered on `main`. Universal startup governance remains in REVIEW on the safety branch and is not promoted to `main`.
+
+
+## Release Gate Audit Records
+
+| Record | Purpose | Status |
+|---|---|---|
+| `docs/release-gates/GATE-01-REPOSITORY-AUDIT-2026-11-17.md` | Evidence-backed repository, architecture, data, and CI audit for Release Gate 1 | AUDIT RECORDED — isolated branch; formal closure pending |
+| `docs/release-gates/GATE-01-REPOSITORY-AUDIT-2026-11-17.instruction.md` | Governs the dated Gate 1 audit artifact and evidence rules | ACTIVE ON AUDIT BRANCH |
