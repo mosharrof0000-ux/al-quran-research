@@ -1,9 +1,9 @@
-const CACHE_NAME='aqr-pwa-v4';
+const CACHE_NAME='aqr-pwa-v5';
 const BASE='/al-quran-research/';
 const APP_SHELL=[
   BASE,BASE+'index.html',BASE+'manifest.webmanifest',BASE+'favicon.svg',
   BASE+'pwa-icon-192.png',BASE+'pwa-icon-512.png',
-  BASE+'ui/home-v1/home-v1.html',BASE+'ui/home-v1/home-v1.css',BASE+'ui/home-v1/home-v1.js',
+  BASE+'ui/home-v1/home-v1.html',BASE+'ui/home-v1/home-v1.css',BASE+'ui/home-v1/home-v1.js',BASE+'ui/home-v1/home-v1-core.js',
   BASE+'ui/home-v1/gemini-icon-v1.css',BASE+'ui/auth/drawer-v1.css',BASE+'ui/auth/drawer-v1.js',
   BASE+'assets/icon-engine/aqr-icon-engine.js'
 ];
