@@ -135,3 +135,11 @@ ACTIVE — v1.9 on main; safety-branch additions are DRAFT until review/promotio
 |---|---|---|
 | `docs/release-gates/D1-SCHEMA-COMPATIBILITY-MATRIX-2026-11-17.md` | Compares root schema, D1 schema, migrations and Research API query contract | READ-ONLY MATRIX — OWNER DECISION PENDING |
 | `docs/release-gates/D1-SCHEMA-COMPATIBILITY-MATRIX-2026-11-17.instruction.md` | Governs schema comparison and migration-safety boundaries | ACTIVE |
+
+
+## Release Gate 1 Audit Records
+
+| Record | Purpose | Status |
+|---|---|---|
+| `docs/release-gates/GATE-01-REPOSITORY-AUDIT-2026-11-17.md` | Evidence-backed repository, architecture, data and CI audit | AUDIT RECORDED — OWNER REVIEW PENDING |
+| `docs/release-gates/GATE-01-REPOSITORY-AUDIT-2026-11-17.instruction.md` | Governs the dated Gate 1 audit artifact and evidence rules | ACTIVE ON AUDIT BRANCH |
