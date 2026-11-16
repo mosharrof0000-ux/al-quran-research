@@ -227,3 +227,16 @@ Status: VERIFIED BACKUP BRANCH CREATED
 - **Verification:** Token Runtime CI run #43982425542 / job #133701986695 SUCCESS; no outbound requests in deterministic-route test.
 - **Restore:** return to the pre-change commit above or revert the isolated branch/PR. Do not move main.
 - **Status:** BASELINE IDENTIFIED; isolated branch and regression CI PASS; production/live verification pending.
+
+
+## SAFE-POINT-2026-11-17-GATE-02-D1-SCHEMA-REVIEW
+
+**Date:** 2026-11-17
+
+- **Baseline:** `65d0b412c028569b4f9e5226d7528c40019ae20d` (PR #187 head).
+- **Working branch:** `fix/gate2-deterministic-chat-route-20261117`.
+- **Purpose:** preserve the state before D1/schema governance follow-up.
+- **Scope:** read-only comparison of `schema.sql`, `database/schema.sql`, migrations 001–003, Research API queries, Wrangler config and D1 workflow metadata.
+- **No database/schema/secret/deployment changes performed.**
+- **Restore:** return to baseline commit above or revert the isolated branch changes.
+- **Status:** BASELINE PRESERVED; schema canonicalization and workflow anomaly unresolved.
