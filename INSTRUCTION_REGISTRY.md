@@ -143,3 +143,11 @@ ACTIVE — v1.9 on main; safety-branch additions are DRAFT until review/promotio
 |---|---|---|
 | `docs/release-gates/GATE-02-SAFE-BASELINE-RECOVERY-2026-11-17.md` | Records Gate 2 baseline, routing fix, CI evidence, D1/schema findings and pending exit criteria | PARTIAL — isolated branch |
 | `docs/release-gates/GATE-02-SAFE-BASELINE-RECOVERY-2026-11-17.instruction.md` | Governs the Gate 2 evidence record and production-safety boundaries | ACTIVE ON GATE 2 BRANCH |
+
+
+## D1 Schema Compatibility Review
+
+| Record / Instruction | Purpose | Status |
+|---|---|---|
+| `docs/release-gates/D1-SCHEMA-COMPATIBILITY-MATRIX-2026-11-17.md` | Compares root schema, D1 schema, migrations and Research API query contract | READ-ONLY MATRIX — OWNER DECISION PENDING |
+| `docs/release-gates/D1-SCHEMA-COMPATIBILITY-MATRIX-2026-11-17.instruction.md` | Governs schema comparison and migration-safety boundaries | ACTIVE ON GATE 2 BRANCH |
