@@ -1,40 +1,34 @@
-# Engine #4 — Research Progress Checkpoint
-**Date:** 2026-11-16
-**Engine:** #4 (Research Progress)
-**Scope:** Al-Quran Research only. Documentation-only.
+# Engine #4 Status Checkpoint — 2026-11-16
+
+**Scope:** Al-Quran Research only. Read-only inspection. No secrets read or exposed. No D1 dispatch. No production change.
 
 ## Immediate Blockers
 
-### 1. Agent secrets status
-- Latest scheduled runs of `Mosharrof Autonomous Development Loop` (e.g. https://github.com/mosharrof0000-ux/al-quran-research/actions/runs/43575763937 and earlier #178 series) fail in 5–7 seconds.
-- Workflow source (`.github/workflows/mosharrof-autonomous-development.yml`) maps `AGENT_URL` from secret `MOSHARROF_AGENT_URL` and `AGENT_ACCESS_TOKEN` from secret `AGENT_ACCESS_TOKEN`, then immediately tests `test -n` on both.
-- **Conclusion:** Both secrets are NOT configured (or empty). Autonomous agent cycle **cannot start**.
-- No secret values were read or exposed.
+1. **Agent secrets status:** MOSHARROF_AGENT_URL and AGENT_ACCESS_TOKEN are **NOT configured** (or empty). Autonomous cycle cannot start.
+   - Evidence: Recent scheduled runs of `Mosharrof Autonomous Development Loop` fail in 5–8 seconds (e.g. runs around Nov 15–16). Workflow does `test -n "$AGENT_URL"` and `test -n "$AGENT_ACCESS_TOKEN"` immediately after mapping from secrets. Consistent with previous documented empty-secret failures.
+   - Required admin action: Configure the two Actions secrets. Do not share values.
 
-### 2. PR #174 (D1 safety gate) and PR #175 (AUTO-02 checkpoint)
-- Both remain OPEN / DRAFT.
-- Previously reported exact-head CI green (Token Runtime + builds).
-- Bases are behind current main (`0c3520305b43bda0b9dc862561c9081285ded310`).
-- **Recommendation:** Keep Draft. Do not merge until rebase, Ready-for-review, and explicit production-risk review. No force-merge.
+2. **PR #174 (D1 safety gate)** and **PR #175 (AUTO-02 checkpoint):**
+   - Both remain **OPEN / DRAFT**.
+   - Mergeable state: clean.
+   - Exact-head CI: 3/3 PASS (Token Runtime + two Worker builds) on their respective heads.
+   - They are behind current main. Recommendation: **Do not mark Ready or merge** until base is reconciled, reviewed, and live acceptance criteria are met. No production risk if left Draft. Do not force-merge.
 
-### 3. Live verification status
-- Gemini generation: NOT TESTED
-- Production D1: NOT TESTED
-- Pages UI/chat end-to-end: NOT TESTED
-- Agent endpoint: NOT TESTED (blocked by secrets)
+3. **Live verification status — still NOT TESTED:**
+   - Live Gemini generation
+   - Production D1 acceptance
+   - Full Pages UI / chat browser acceptance
+   - Authenticated agent endpoint runtime
 
-### 4. D1 zero-job anomaly
-- No new evidence. Root cause remains NOT PROVEN.
-- No workflow dispatch performed.
+4. **D1 zero-job anomaly:** No new evidence. Root cause remains **NOT PROVEN**. Historical runs show empty jobs array conflicting with source trigger. Do not dispatch the D1 workflow.
 
 ## Short-term notes
-- Stale PRs #145 / #148 still open on old bases; rebase or close when capacity allows.
-- Gemini Custom Icon: source integrated; live visual verification pending.
-- Mode Icon Assets: stored, not live-integrated.
-- Pilot (Al-Fatiha / Q001001): structure exists; full validation progress not advanced this run.
 
-## Safety
-Documentation only. No code, workflow, secret, database, locked-page, or production change. No D1 action.
+- Stale PRs #145 / #148: still open on very old base SHA `7f106a48…`, mergeable dirty/unstable. Rebase or close later after review; not acted on this run.
+- Gemini Custom Icon: source integrated; live visual verification still pending.
+- Mode Icon Assets: stored, not live-integrated.
+- Pilot data (Al-Fatiha / Q001001): no new validation progress this run.
 
 ## Next recommended human step
-**Admin action required:** Configure repository Actions secrets `MOSHARROF_AGENT_URL` and `AGENT_ACCESS_TOKEN` so the scheduled autonomous cycle can proceed past the empty-secret guard.
+
+Repository admin must set GitHub Actions secrets `MOSHARROF_AGENT_URL` and `AGENT_ACCESS_TOKEN` (authorized endpoint + bearer token). Until then the autonomous agent cycle remains blocked. After secrets are set, re-run the workflow manually once to confirm the cycle can start, then continue live acceptance verification when authorized.
