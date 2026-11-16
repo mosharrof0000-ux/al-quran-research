@@ -340,3 +340,19 @@ Live integration remains pending review and runtime mode-resolver implementation
 
 ## Normal Quran Icon Reference Finalized (2026-09-21)
 The 10-icon ordinary Quran Reader visual family is now stored under assets/icons/modes/normal-quran-v1/ with a manifest and reference board. The project records the mode separation contract: normal-quran uses this family; future sufi mode uses a separate family. These are stored reference/pilot assets and are not yet wired into the live Reader.
+
+
+## 28. Release Gate 1 — Repository Audit (2026-11-17)
+
+**Status:** AUDIT RECORDED ON ISOLATED BRANCH — FORMAL GATE CLOSURE PENDING
+
+- Audit report: `docs/release-gates/GATE-01-REPOSITORY-AUDIT-2026-11-17.md`
+- Working branch: `audit/gate-1-repository-baseline-20261117`
+- Baseline main commit: `0c3520305b43bda0b9dc862561c9081285ded310`
+- PR #187: OPEN / NOT MERGED at audit time.
+- PR #187 Live Runtime Smoke: Worker health, Research API status, Fatiha 1:1 and Pages HTTP 200 passed; Bengali chat round-trip failed after 3 bounded timeout attempts.
+- Confirmed architecture risks: multiple UI/chat paths, iframe integration not browser-proven, tool-handler coverage incomplete, shared presentation contract not established, D1 not confirmed as active source of truth, and schema files differ.
+- Pilot remains Al-Fatiha only; word analysis beyond ayah 1 remains pending.
+- No code, research data, secret, production setting, merge, or deployment was changed.
+
+The audit artifact and companion instruction have been created on an isolated documentation branch. Gate 1 remains formally pending until the work log, backup index, registry, and owner review are complete.
