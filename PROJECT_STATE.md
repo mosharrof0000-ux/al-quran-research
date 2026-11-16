@@ -373,3 +373,14 @@ The fix is not considered production-complete until the dependent PR sequence is
 - Production Worker deployment, live Bengali chat round-trip, and browser/device acceptance remain pending and approval-gated.
 
 Gate 2 is not formally complete until D1/schema and workflow anomalies are resolved and production verification is authorized and passed.
+
+## 31. D1 Schema Compatibility Matrix (2026-11-17)
+
+**Status:** READ-ONLY MATRIX CREATED — CANONICAL PROJECT-WIDE SCHEMA DECISION PENDING
+
+- Matrix: `docs/release-gates/D1-SCHEMA-COMPATIBILITY-MATRIX-2026-11-17.md`
+- Companion instruction: `docs/release-gates/D1-SCHEMA-COMPATIBILITY-MATRIX-2026-11-17.instruction.md`
+- Current D1 execution chain is aligned around `database/schema.sql` + migrations 001–003 + `backend/research-api.js`.
+- Root `schema.sql` is materially different and remains preserved; it is not declared obsolete.
+- No schema, migration, data, D1 resource, or production setting was changed.
+- A versioned entity/column mapping and owner decision are required before migration.
