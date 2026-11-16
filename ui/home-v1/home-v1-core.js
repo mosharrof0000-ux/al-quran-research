@@ -49,6 +49,12 @@ document.getElementById('openQuranHome').onclick=openQuranHome;
 document.getElementById('closeQuranHome').onclick=closeQuranHome;
 document.getElementById('menuBtn').onclick=()=>drawer.classList.add('open');
 document.getElementById('closeDrawer').onclick=()=>drawer.classList.remove('open');
+drawer.querySelectorAll('[data-drawer-tool]').forEach(button=>button.addEventListener('click',()=>{
+  const prompts={word:'শব্দ / Root গবেষণা নিয়ে প্রশ্ন লিখুন...',research:'কুরআন গবেষণার প্রশ্ন লিখুন...',translation:'কোন আয়াতের তুলনামূলক অনুবাদ চান? লিখুন...',math:'কুরআনের গাণিতিক গবেষণা নিয়ে প্রশ্ন লিখুন...'};
+  const prompt=document.getElementById('prompt');
+  if(prompt){prompt.placeholder=prompts[button.dataset.drawerTool]||'আপনার প্রশ্ন লিখুন...';prompt.focus();}
+  drawer.classList.remove('open');
+}));
 document.getElementById('themeBtn').onclick=()=>{const night=document.body.classList.toggle('night');document.body.classList.toggle('light',!night);toast(night?'রাতের ১৬ রঙ চালু হয়েছে':'দিনের ১৬ রঙ চালু হয়েছে')};
 document.getElementById('profileBtn').onclick=openDrawer;
 document.getElementById('searchBtn').onclick=()=>document.getElementById('prompt').focus();
@@ -56,7 +62,7 @@ const composerTools=document.getElementById('composerTools');
 const plusBtn=document.getElementById('plusBtn');
 function closeComposerTools(){composerTools.hidden=true;plusBtn.setAttribute('aria-expanded','false')}
 plusBtn.onclick=()=>{const open=composerTools.hidden;composerTools.hidden=!open;plusBtn.setAttribute('aria-expanded',String(open))};
-composerTools.querySelectorAll('[data-tool]').forEach(b=>b.onclick=()=>{const labels={ayah:'📖 আয়াত',research:'🔎 গবেষণা',word:'🔤 শব্দ / Root',file:'📎 ফাইল',math:'🧮 গণনা'};if(b.dataset.tool==='private-research'){closeComposerTools();openPrivateResearch();return}document.getElementById('prompt').placeholder=labels[b.dataset.tool]+' নিয়ে প্রশ্ন লিখুন...';document.getElementById('prompt').focus();closeComposerTools()});
+composerTools.querySelectorAll('[data-tool]').forEach(b=>b.onclick=()=>{const labels={ayah:'📖 আয়াত',research:'🔎 গবেষণা',word:'🔤 শব্দ / Root',math:'🧮 গণনা'};if(b.dataset.tool==='private-research'){closeComposerTools();openPrivateResearch();return}if(b.dataset.tool==='file'){toast('ফাইল সংযুক্তি সুবিধা এখনো চালু হয়নি');closeComposerTools();return}document.getElementById('prompt').placeholder=labels[b.dataset.tool]+' নিয়ে প্রশ্ন লিখুন...';document.getElementById('prompt').focus();closeComposerTools()});
 const privateDialog=document.getElementById('privateResearchDialog');
 const privateStatus=document.getElementById('privateResearchStatus');
 const privateSources=document.getElementById('privateResearchSources');
@@ -281,7 +287,7 @@ document.getElementById('nextSura').onclick=()=>showSura(Math.min(114,Number(sel
  const arFonts={default:'"Noto Naskh Arabic","Amiri",serif',alquds:'"Al Quds","Noto Naskh Arabic",serif'};
  function apply(){document.documentElement.style.setProperty('--aqr-chat-bn-font',bnFonts[bn.value]||bnFonts.system);document.documentElement.style.setProperty('--aqr-chat-ar-font',arFonts[ar.value]||arFonts.default);document.documentElement.style.setProperty('--aqr-chat-size',size.value+'px');document.documentElement.style.setProperty('--aqr-chat-line',line.value);sizeOut.textContent=size.value+'px';lineOut.textContent=line.value;localStorage.setItem('aqr-font-settings',JSON.stringify({bn:bn.value,ar:ar.value,size:size.value,line:line.value}));}
  function load(){try{const x=JSON.parse(localStorage.getItem('aqr-font-settings')||'{}');if(x.bn)bn.value=x.bn;if(x.ar)ar.value=x.ar;if(x.size)size.value=x.size;if(x.line)line.value=x.line}catch(e){}apply()}
- open.onclick=()=>{panel.hidden=!panel.hidden}; close.onclick=()=>panel.hidden=true;
+ open.onclick=()=>{panel.hidden=false;drawer.classList.remove('open')}; close.onclick=()=>panel.hidden=true;
  [bn,ar,size,line].forEach(x=>x.addEventListener('input',apply)); reset.onclick=()=>{bn.value='system';ar.value='default';size.value=15;line.value=1.7;apply()}; load();
 })();
 
