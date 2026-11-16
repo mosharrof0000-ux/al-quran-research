@@ -211,3 +211,19 @@ Status: VERIFIED BACKUP BRANCH CREATED
 - Restore source: the pre-change main commit above; no main ref was moved.
 - Status: BASELINE IDENTIFIED AND PRESERVED BY BRANCH BASE — FEATURE PR / CI PENDING
 - Production behavior has not been changed by this branch; Live/Worker verification remains NOT TESTED.
+
+
+## SAFE-POINT-2026-11-17-GATE-01-AUDIT
+
+**Date:** 2026-11-17
+
+**Purpose:** Preserve the exact main baseline before the Release Gate 1 audit documentation and subsequent isolated recovery work.
+
+- **Baseline branch:** `main`
+- **Baseline commit:** `0c3520305b43bda0b9dc862561c9081285ded310`
+- **Audit/working branch:** `audit/gate-1-repository-baseline-20261117`
+- **Audit report:** `docs/release-gates/GATE-01-REPOSITORY-AUDIT-2026-11-17.md`
+- **Scope:** Documentation and governance records only; no application, backend, research dataset, database, secret, or production configuration changes.
+- **Restore method:** return to the recorded baseline commit or compare/revert the isolated documentation branch; do not move main.
+- **Status:** BASELINE COMMIT IDENTIFIED; isolated audit branch created. Main remains unchanged.
+- **Promotion:** Not performed. Any merge or production publication requires separate owner approval.
