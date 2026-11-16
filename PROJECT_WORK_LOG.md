@@ -487,3 +487,24 @@ PR #170 is open as Draft. Keep it unmerged while production endpoints cannot be 
 - Runtime boundaries: live Worker run #40229925761 previously returned Bengali `২+২ = ৪।` via `cloudflare-ai`; this does not prove Gemini. Live Gemini generation, full browser/UI interaction, and production D1 remain NOT TESTED.
 - Stage ledger before this checkpoint commit: DISCOVER=PASS; DIAGNOSE=PARTIAL (historical D1 cause unproven; agent configuration blocked); PLAN=PASS; CHANGE=PASS (tests/checkpoint on isolated PR #173); FOCUSED_TEST=PASS; FULL_REQUIRED_CHECKS=PASS for pre-checkpoint head `160a7c4...`; ARTIFACT_REVIEW=PASS; ACCEPTANCE_VERIFY=PARTIAL; CHECKPOINT/REPORT=PENDING until this new head's CI is reconciled.
 - Safety: keep PR #173 Draft. Main/production unchanged. Next: verify this checkpoint commit's exact-head CI, then wait for administrator secret configuration and an authorized live Gemini/browser acceptance path. Do not dispatch the D1 deployment workflow to investigate empty-job metadata.
+
+
+## WORK-2026-11-17-RELEASE-GATE-01-REPOSITORY-AUDIT
+
+**Status:** AUDIT ARTIFACT CREATED — GOVERNANCE RECORDS SYNCHRONIZED ON ISOLATED BRANCH; FORMAL CLOSURE PENDING
+
+- **User decision:** Proceed step by step without unnecessary questions; do not merge or deploy without explicit approval.
+- **Objective:** Record evidence-based Release Gate 1 repository audit and establish a safe baseline for the next gate.
+- **Baseline:** `main` at `0c3520305b43bda0b9dc862561c9081285ded310`.
+- **Working branch:** `audit/gate-1-repository-baseline-20261117`.
+- **Report:** `docs/release-gates/GATE-01-REPOSITORY-AUDIT-2026-11-17.md`.
+- **Companion instruction:** `docs/release-gates/GATE-01-REPOSITORY-AUDIT-2026-11-17.instruction.md`.
+- **Evidence reviewed:** repository inventory; Project State; Master Project; continuity protocol; instruction registry; backup index; live connection map; PR #187 metadata and patch; PR-triggered workflow runs; failed Live Runtime Smoke job log.
+- **Key verified blocker:** PR #187 remains OPEN/not merged. Its Live Runtime Smoke passed Worker health, Research API status, Fatiha 1:1 and Pages HTTP 200, but failed the Bengali chat round-trip after three bounded timeout attempts. Token Runtime completed successfully; this does not override the failed smoke test.
+- **Architecture findings:** multiple UI/chat routes; iframe-to-chat runtime integration not browser-proven; tool registration does not prove real handler execution; shared presentation contract incomplete/unproven; D1 source-of-truth not confirmed (smoke output says `github-json-fallback`); schema files differ; live connection map is stale relative to current entrypoint.
+- **Data boundary:** Al-Fatiha pilot only (7 ayat); Arabic text source is marked verified; word analysis is verified only for ayah 1, with ayahs 2–7 pending.
+- **Changes made:** added dated audit report and companion instruction on isolated branch; prepared governance updates on the same branch.
+- **Changes intentionally not made:** no app/backend/data code edits; no secret changes; no production configuration changes; no PR merge; no deployment; no live database migration.
+- **Verification:** report fetched back from branch and checked for expected sections; PR state and failing CI log were independently re-read.
+- **Known limitations:** no browser/device end-to-end test; exact cause of Bengali chat timeout not yet proven; D1 workflow failure root cause not proven.
+- **Next:** finish exact branch governance updates and verify branch diff/checks; then proceed to Gate 2 diagnosis on an isolated branch. Gate 1 formal completion requires owner review; main promotion remains separately approval-gated.
