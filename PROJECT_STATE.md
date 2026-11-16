@@ -351,3 +351,16 @@ The 10-icon ordinary Quran Reader visual family is now stored under assets/icons
 - The matrix documents the difference between root `schema.sql` and `database/schema.sql`, the migration chain 001–003, and the current Research API query contract.
 - No SQL, migration, dataset, D1 resource, secret, or production setting was changed.
 - Canonical project-wide schema decision and any data migration remain pending.
+
+
+## 33. Release Gate 1 — Repository Audit (2026-11-17)
+
+**Status:** AUDIT DOCUMENTED ON ISOLATED BRANCH — OWNER REVIEW PENDING
+
+- Audit report: `docs/release-gates/GATE-01-REPOSITORY-AUDIT-2026-11-17.md`
+- Companion instruction: `docs/release-gates/GATE-01-REPOSITORY-AUDIT-2026-11-17.instruction.md`
+- Baseline: `main` commit `0c3520305b43bda0b9dc862561c9081285ded310`.
+- PR #187 remains open/not merged; Live Runtime Smoke failed the Bengali chat round-trip after 3 bounded timeout attempts.
+- Audit identifies multiple UI/chat routes, unproven iframe integration, incomplete real tool handler coverage, unconfirmed D1, divergent schemas, and missing shared presentation/provider adapter contracts.
+- No application code, research data, secrets, or production settings changed in this audit branch.
+- Formal Gate 1 closure and promotion remain pending review/approval.
