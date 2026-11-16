@@ -356,3 +356,20 @@ The 10-icon ordinary Quran Reader visual family is now stored under assets/icons
 - Live production Bengali chat round-trip remains pending because the repaired Worker code is not deployed. PR #187's earlier live smoke failure remains historical evidence until a separately authorized deployment and live test.
 
 The fix is not considered production-complete until the dependent PR sequence is reviewed/merged with approval, deployment is separately authorized, and the live smoke test passes.
+
+
+## 30. Gate 2 — Safe Baseline & Recovery Report (2026-11-17)
+
+**Status:** PARTIAL — IMPLEMENTATION AND REGRESSION CI PASS; DATA/DEPLOYMENT SAFETY ITEMS PENDING
+
+- Report: `docs/release-gates/GATE-02-SAFE-BASELINE-RECOVERY-2026-11-17.md`
+- Implementation PR: #189, stacked on PR #187.
+- Verified defect: deterministic Fatiha word-analysis routing in `worker.js` was preempted by `directGemini()` in `worker-entry.js`.
+- Repair: deterministic request now bypasses AI Brain/Gemini and reaches the existing verified-project-data handler.
+- Regression CI: run #43982569635 / job #133702482836 — SUCCESS, including the new no-outbound-fetch test.
+- D1 remains inactive/unconfirmed as live source of truth; API status reports `github-json-fallback`.
+- Root `schema.sql` and `database/schema.sql` are materially different. The API/migration chain aligns with `database/schema.sql` plus migrations 001–003; canonical schema governance remains pending.
+- D1 workflow push metadata showed feature-branch runs with empty job lists. No job steps or D1 deployment are evidenced; root cause remains NOT PROVEN.
+- Production Worker deployment, live Bengali chat round-trip, and browser/device acceptance remain pending and approval-gated.
+
+Gate 2 is not formally complete until D1/schema and workflow anomalies are resolved and production verification is authorized and passed.
