@@ -211,3 +211,43 @@ Status: VERIFIED BACKUP BRANCH CREATED
 - Restore source: the pre-change main commit above; no main ref was moved.
 - Status: BASELINE IDENTIFIED AND PRESERVED BY BRANCH BASE — FEATURE PR / CI PENDING
 - Production behavior has not been changed by this branch; Live/Worker verification remains NOT TESTED.
+
+
+## SAFE-POINT-2026-11-17-GATE-02-CHAT-ROUTING
+
+**Date:** 2026-11-17
+
+**Purpose:** Preserve the exact source baseline before the isolated deterministic chat-routing repair.
+
+- **Pre-change commit:** `65d0b412c028569b4f9e5226d7528c40019ae20d` (PR #187 head)
+- **Working branch:** `fix/gate2-deterministic-chat-route-20261117`
+- **PR:** #189 (stacked on PR #187)
+- **Protected scope:** backend Worker entry routing, research API, Gemini/Cloudflare fallback, existing verified research handler, research data, and production deployment.
+- **Change scope:** Worker entry dispatch predicate, regression test, test instruction, existing CI workflow, and instruction registry.
+- **Verification:** Token Runtime CI run #43982425542 / job #133701986695 SUCCESS; no outbound requests in deterministic-route test.
+- **Restore:** return to the pre-change commit above or revert the isolated branch/PR. Do not move main.
+- **Status:** BASELINE IDENTIFIED; isolated branch and regression CI PASS; production/live verification pending.
+
+
+## SAFE-POINT-2026-11-17-GATE-02-D1-SCHEMA-REVIEW
+
+**Date:** 2026-11-17
+
+- **Baseline:** `65d0b412c028569b4f9e5226d7528c40019ae20d` (PR #187 head).
+- **Working branch:** `fix/gate2-deterministic-chat-route-20261117`.
+- **Purpose:** preserve the state before D1/schema governance follow-up.
+- **Scope:** read-only comparison of `schema.sql`, `database/schema.sql`, migrations 001–003, Research API queries, Wrangler config and D1 workflow metadata.
+- **No database/schema/secret/deployment changes performed.**
+- **Restore:** return to baseline commit above or revert the isolated branch changes.
+- **Status:** BASELINE PRESERVED; schema canonicalization and workflow anomaly unresolved.
+
+
+## SAFE-POINT-2026-11-17-D1-SCHEMA-COMPATIBILITY
+
+- Baseline: `65d0b412c028569b4f9e5226d7528c40019ae20d` (PR #187 head).
+- Working branch: `fix/gate2-deterministic-chat-route-20261117`.
+- Scope: read-only schema and migration compatibility matrix.
+- Protected: root `schema.sql`, `database/schema.sql`, migrations 001–003, Research API, pilot data and any remote D1 database.
+- No SQL/database/data/deployment mutation performed.
+- Restore by returning to the baseline commit or reverting isolated branch documentation.
+- Status: matrix recorded; canonical decision and data mapping pending.

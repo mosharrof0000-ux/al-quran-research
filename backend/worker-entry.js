@@ -62,6 +62,21 @@ async function diagnostic(request,env){
  try{const model=env.GEMINI_MODEL||'gemini-2.5-flash';const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':env.GEMINI_API_KEY},body:JSON.stringify({contents:[{role:'user',parts:[{text:'Reply with exactly: OK'}]}],generationConfig:{maxOutputTokens:8,temperature:0}})});out.gemini_model=model;out.gemini_http_status=r.status;out.gemini_test=r.ok?'success':'failed';if(!r.ok){out.ok=false;out.gemini_error=(await r.text().catch(()=>'' )).slice(0,300);}}catch(e){out.ok=false;out.gemini_test='network-error';out.gemini_error=String(e?.message||e).slice(0,300);}return json(out,200,origin);
 }
 
+// Deterministic verified-data questions must reach worker.js before the AI Brain route.
+ // Keep these lexical checks aligned with isFatiha1() and wantsWordAnalysis() in worker.js.
+export function isVerifiedProjectDataRequest(message){
+ const text=String(message||'');
+ return /ফাতিহা/.test(text)
+   && /(?:১|1|এক)/.test(text)
+   && /আয়াত|আয়াত/.test(text)
+   && /মূল ধাতু|root|রুট|ব্যাকরণ|ব্যাকরণগত|শব্দের বাংলা উচ্চারণ|আক্ষরিক বাংলা অর্থ|প্রতিটি.*শব্দ/.test(text);
+}
+async function isVerifiedProjectDataHttpRequest(request){
+ if(request.method!=='POST')return false;
+ try{const body=await request.clone().json();return isVerifiedProjectDataRequest(body?.message);}
+ catch{return false;}
+}
+
 async function directGemini(request,env,origin){
  if(request.method!=='POST'||!env.GEMINI_API_KEY)return null;let body;try{body=await request.clone().json();}catch{return null;}
  const message=String(body?.message||'').trim();if(!message)return null;
@@ -83,4 +98,4 @@ async function directGemini(request,env,origin){
  return null;
 }
 
-export default {async fetch(request,env,ctx){const origin=request.headers.get('Origin')||'';const privateResearch=await handlePrivateResearch(request,env);if(privateResearch)return privateResearch;const rp=await readerProxy(request,env);if(rp)return rp;const d=await diagnostic(request,env);if(d)return d;if(request.method==='OPTIONS')return new Response(null,{status:204,headers:{'Access-Control-Allow-Origin':ALLOWED_ORIGINS.includes(origin)?origin:ALLOWED_ORIGINS[0],'Access-Control-Allow-Methods':'GET, POST, OPTIONS','Access-Control-Allow-Headers':'Content-Type','Content-Type':'application/json; charset=utf-8','Vary':'Origin'}});const research=await handleResearchApi(request,env);if(research)return research;const gemini=await directGemini(request,env,origin);if(gemini)return gemini;const response=await worker.fetch(request.clone(),env,ctx);if(response.status<500)return response;const recovery=await recoverChat(request.clone(),env);if(recovery)return recovery;return response;}};
+export default {async fetch(request,env,ctx){const origin=request.headers.get('Origin')||'';const privateResearch=await handlePrivateResearch(request,env);if(privateResearch)return privateResearch;const rp=await readerProxy(request,env);if(rp)return rp;const d=await diagnostic(request,env);if(d)return d;if(request.method==='OPTIONS')return new Response(null,{status:204,headers:{'Access-Control-Allow-Origin':ALLOWED_ORIGINS.includes(origin)?origin:ALLOWED_ORIGINS[0],'Access-Control-Allow-Methods':'GET, POST, OPTIONS','Access-Control-Allow-Headers':'Content-Type','Content-Type':'application/json; charset=utf-8','Vary':'Origin'}});const research=await handleResearchApi(request,env);if(research)return research;const deterministicProjectData=await isVerifiedProjectDataHttpRequest(request);const gemini=deterministicProjectData?null:await directGemini(request,env,origin);if(gemini)return gemini;const response=await worker.fetch(request.clone(),env,ctx);if(response.status<500)return response;const recovery=await recoverChat(request.clone(),env);if(recovery)return recovery;return response;}};

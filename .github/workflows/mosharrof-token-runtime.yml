@@ -17,7 +17,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
       - name: Run token runtime contract
         run: |
           node scripts/mosharrof_token_runtime_test.mjs
@@ -30,4 +30,7 @@ jobs:
           fi
           if [ -f scripts/test-d1-workflow-contract.mjs ]; then
             node scripts/test-d1-workflow-contract.mjs
+          fi
+          if [ -f scripts/test-deterministic-chat-routing.mjs ]; then
+            node scripts/test-deterministic-chat-routing.mjs
           fi

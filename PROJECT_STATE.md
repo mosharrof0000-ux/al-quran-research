@@ -340,3 +340,47 @@ Live integration remains pending review and runtime mode-resolver implementation
 
 ## Normal Quran Icon Reference Finalized (2026-09-21)
 The 10-icon ordinary Quran Reader visual family is now stored under assets/icons/modes/normal-quran-v1/ with a manifest and reference board. The project records the mode separation contract: normal-quran uses this family; future sufi mode uses a separate family. These are stored reference/pilot assets and are not yet wired into the live Reader.
+
+
+## 29. Gate 2 — Deterministic Chat Routing Repair (2026-11-17)
+
+**Status:** IMPLEMENTED ON ISOLATED BRANCH — REGRESSION CI PASS — LIVE WORKER VERIFICATION PENDING
+
+- Root cause: `backend/worker-entry.js` called `directGemini()` before the existing deterministic verified-data route in `backend/worker.js`. The Fatiha 1:1 word-analysis smoke prompt therefore entered the AI Brain/context/Gemini path first.
+- Repair branch: `fix/gate2-deterministic-chat-route-20261117`
+- PR: #189, stacked on PR #187.
+- Change: deterministic Fatiha word-analysis prompts now bypass `directGemini()` and proceed to the existing Worker handler. Unrelated prompts retain the AI Brain/Gemini route.
+- Regression: `scripts/test-deterministic-chat-routing.mjs` checks the exact prompt, provider, Bengali response fields, and zero outbound fetches even when a fake Gemini key is present.
+- CI: Token Runtime run #43982425542 / job #133701986695 — SUCCESS. The log confirms the new regression test passed.
+- No Worker deployment, PR merge, production data change, or secret change was performed.
+- Live production Bengali chat round-trip remains pending because the repaired Worker code is not deployed. PR #187's earlier live smoke failure remains historical evidence until a separately authorized deployment and live test.
+
+The fix is not considered production-complete until the dependent PR sequence is reviewed/merged with approval, deployment is separately authorized, and the live smoke test passes.
+
+
+## 30. Gate 2 — Safe Baseline & Recovery Report (2026-11-17)
+
+**Status:** PARTIAL — IMPLEMENTATION AND REGRESSION CI PASS; DATA/DEPLOYMENT SAFETY ITEMS PENDING
+
+- Report: `docs/release-gates/GATE-02-SAFE-BASELINE-RECOVERY-2026-11-17.md`
+- Implementation PR: #189, stacked on PR #187.
+- Verified defect: deterministic Fatiha word-analysis routing in `worker.js` was preempted by `directGemini()` in `worker-entry.js`.
+- Repair: deterministic request now bypasses AI Brain/Gemini and reaches the existing verified-project-data handler.
+- Regression CI: run #43982569635 / job #133702482836 — SUCCESS, including the new no-outbound-fetch test.
+- D1 remains inactive/unconfirmed as live source of truth; API status reports `github-json-fallback`.
+- Root `schema.sql` and `database/schema.sql` are materially different. The API/migration chain aligns with `database/schema.sql` plus migrations 001–003; canonical schema governance remains pending.
+- D1 workflow push metadata showed feature-branch runs with empty job lists. No job steps or D1 deployment are evidenced; root cause remains NOT PROVEN.
+- Production Worker deployment, live Bengali chat round-trip, and browser/device acceptance remain pending and approval-gated.
+
+Gate 2 is not formally complete until D1/schema and workflow anomalies are resolved and production verification is authorized and passed.
+
+## 31. D1 Schema Compatibility Matrix (2026-11-17)
+
+**Status:** READ-ONLY MATRIX CREATED — CANONICAL PROJECT-WIDE SCHEMA DECISION PENDING
+
+- Matrix: `docs/release-gates/D1-SCHEMA-COMPATIBILITY-MATRIX-2026-11-17.md`
+- Companion instruction: `docs/release-gates/D1-SCHEMA-COMPATIBILITY-MATRIX-2026-11-17.instruction.md`
+- Current D1 execution chain is aligned around `database/schema.sql` + migrations 001–003 + `backend/research-api.js`.
+- Root `schema.sql` is materially different and remains preserved; it is not declared obsolete.
+- No schema, migration, data, D1 resource, or production setting was changed.
+- A versioned entity/column mapping and owner decision are required before migration.

@@ -487,3 +487,47 @@ PR #170 is open as Draft. Keep it unmerged while production endpoints cannot be 
 - Runtime boundaries: live Worker run #40229925761 previously returned Bengali `২+২ = ৪।` via `cloudflare-ai`; this does not prove Gemini. Live Gemini generation, full browser/UI interaction, and production D1 remain NOT TESTED.
 - Stage ledger before this checkpoint commit: DISCOVER=PASS; DIAGNOSE=PARTIAL (historical D1 cause unproven; agent configuration blocked); PLAN=PASS; CHANGE=PASS (tests/checkpoint on isolated PR #173); FOCUSED_TEST=PASS; FULL_REQUIRED_CHECKS=PASS for pre-checkpoint head `160a7c4...`; ARTIFACT_REVIEW=PASS; ACCEPTANCE_VERIFY=PARTIAL; CHECKPOINT/REPORT=PENDING until this new head's CI is reconciled.
 - Safety: keep PR #173 Draft. Main/production unchanged. Next: verify this checkpoint commit's exact-head CI, then wait for administrator secret configuration and an authorized live Gemini/browser acceptance path. Do not dispatch the D1 deployment workflow to investigate empty-job metadata.
+
+
+## WORK-2026-11-17-GATE-02-DETERMINISTIC-CHAT-ROUTING
+
+**Status:** ROOT CAUSE IDENTIFIED — FIX IMPLEMENTED ON ISOLATED BRANCH — REGRESSION CI PASS — LIVE VERIFICATION PENDING
+
+- **Baseline:** PR #187 head `65d0b412c028569b4f9e5226d7528c40019ae20d`.
+- **Working branch:** `fix/gate2-deterministic-chat-route-20261117`.
+- **PR:** #189, stacked on PR #187; open and not merged.
+- **Root cause:** `backend/worker-entry.js` dispatched every eligible POST to `directGemini()` before `worker.js` could process its deterministic Fatiha 1:1 word-analysis branch. The smoke test expected `provider=verified-project-data`, but the request was first sent through research-context, project-context, memory and Gemini work.
+- **Repair:** added a narrowly scoped predicate for the existing deterministic Fatiha word-analysis request. Matching requests skip `directGemini()` and proceed to the existing Worker handler. Other prompts retain the previous AI Brain/Gemini path.
+- **Regression test:** added `scripts/test-deterministic-chat-routing.mjs` plus a colocated instruction. It uses a fake Gemini key and fails if any outbound fetch occurs; it also verifies the exact provider, Bengali language, verified Arabic fixture, and Bengali pronunciation fields.
+- **CI integration:** extended the existing pull-request Token Runtime workflow rather than adding a new workflow that would not be available from the PR base branch. Node runtime set to 22 for the test suite.
+- **CI evidence:** run #43982425542 / job #133701986695 SUCCESS on head `9cc7c7ce9f880039d93f234f4e7dc4bf36603b58`. Log confirms 14/14 token tests, 12/12 permission tests, research-context routing, provider-routing, D1 workflow contract, and all three new deterministic-routing assertions passed.
+- **Preserved:** no production Worker, research data, D1 database, secret, or live UI setting was changed.
+- **Not verified:** live production Worker still has not received this branch's code; no post-deployment Bengali chat round-trip or real browser/device test exists.
+- **Next:** finish branch checks and dependency review; wait for explicit approval before merge/deployment. After an authorized deployment, rerun the live runtime smoke and verify the Bengali chat round-trip.
+
+
+## WORK-2026-11-17-GATE-02-D1-SCHEMA-AND-WORKFLOW-FOLLOW-UP
+
+**Status:** READ-ONLY INVESTIGATION RECORDED — ROOT CAUSE OF ZERO-JOB RUNS NOT PROVEN
+
+- Compared root `schema.sql` (303 lines) with `database/schema.sql` (55 lines); they define materially different table sets.
+- Confirmed `migrations/001_core_schema.sql` says it replays `database/schema.sql`; migration 002 adds workspace/versioning; migration 003 adds `dataset_release` and `api_schema_version`.
+- Confirmed `backend/research-api.js` queries `surah`, `ayah`, `token`, `pronunciation`, `morphology`, `token_lexeme`, `lexeme`, `root`, `dataset_release`, and `api_schema_version`.
+- Confirmed `backend/wrangler.jsonc` has no active D1 binding; it remains commented pending a real database ID.
+- Latest live Research API status reports `storage=github-json-fallback`.
+- Rechecked D1 workflow runs #43982415632, #43982557537, #43982558903, and #43982564056. Their metadata says push on feature branch `fix/gate2-deterministic-chat-route-20261117`, despite the workflow's main-only push filter. Run #43982564056 jobs endpoint returned an empty array.
+- No D1 provision, migration, Worker deploy, or Project Agent deploy step is evidenced by the zero-job run. Exact trigger/metadata anomaly remains NOT PROVEN.
+- No rerun, workflow dispatch, D1 creation, migration, production deployment, or schema modification performed.
+- Next: produce table/column/query compatibility matrix; investigate GitHub Actions event metadata through available run/check-suite data; propose canonical schema and safe migration plan only.
+
+## WORK-2026-11-17-D1-SCHEMA-COMPATIBILITY-MATRIX
+
+**Status:** READ-ONLY MATRIX COMPLETED — NO SCHEMA CHANGES
+
+- Compared root `schema.sql`, `database/schema.sql`, migrations 001–003 and all current D1 API query table/column references.
+- Confirmed the D1 migration path is designed around `database/schema.sql`; migration 001 explicitly replays it, migration 002 adds workspace/versioning, and migration 003 adds dataset/API release tables.
+- Confirmed the API's expected D1 table family matches that chain.
+- Root `schema.sql` is a materially different broader/older schema; it contains entities/columns absent from the current D1 schema, including grammar_annotation, syntax_relation, meaning, concept relations and alternate token/root/translation structures.
+- Created `docs/release-gates/D1-SCHEMA-COMPATIBILITY-MATRIX-2026-11-17.md` and companion instruction.
+- Recommendation: preserve both definitions until an owner-approved canonical schema decision and a versioned mapping exist. Do not concatenate, overwrite, rename, or migrate blindly.
+- No SQL file, migration, D1 database, research data, secret, or production setting changed.
