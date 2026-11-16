@@ -487,3 +487,12 @@ PR #170 is open as Draft. Keep it unmerged while production endpoints cannot be 
 - Runtime boundaries: live Worker run #40229925761 previously returned Bengali `২+২ = ৪।` via `cloudflare-ai`; this does not prove Gemini. Live Gemini generation, full browser/UI interaction, and production D1 remain NOT TESTED.
 - Stage ledger before this checkpoint commit: DISCOVER=PASS; DIAGNOSE=PARTIAL (historical D1 cause unproven; agent configuration blocked); PLAN=PASS; CHANGE=PASS (tests/checkpoint on isolated PR #173); FOCUSED_TEST=PASS; FULL_REQUIRED_CHECKS=PASS for pre-checkpoint head `160a7c4...`; ARTIFACT_REVIEW=PASS; ACCEPTANCE_VERIFY=PARTIAL; CHECKPOINT/REPORT=PENDING until this new head's CI is reconciled.
 - Safety: keep PR #173 Draft. Main/production unchanged. Next: verify this checkpoint commit's exact-head CI, then wait for administrator secret configuration and an authorized live Gemini/browser acceptance path. Do not dispatch the D1 deployment workflow to investigate empty-job metadata.
+
+
+## WORK-2026-11-17-D1-SCHEMA-COMPATIBILITY-MATRIX — main documentation record
+
+- Added the read-only D1 schema compatibility matrix and its companion instruction.
+- Evidence: root `schema.sql` and `database/schema.sql` define different table/column models; migrations 001–003 and the current Research API align with the `database/schema.sql` D1 execution family.
+- The root schema is preserved and is not declared obsolete.
+- No schema/data/database/deployment mutation performed.
+- Next: owner decision on canonical project-wide schema and a versioned mapping before migration.
