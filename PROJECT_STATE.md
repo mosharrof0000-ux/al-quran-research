@@ -340,3 +340,14 @@ Live integration remains pending review and runtime mode-resolver implementation
 
 ## Normal Quran Icon Reference Finalized (2026-09-21)
 The 10-icon ordinary Quran Reader visual family is now stored under assets/icons/modes/normal-quran-v1/ with a manifest and reference board. The project records the mode separation contract: normal-quran uses this family; future sufi mode uses a separate family. These are stored reference/pilot assets and are not yet wired into the live Reader.
+
+
+## 32. D1 Schema Compatibility Matrix — documentation record (2026-11-17)
+
+**Status:** CREATED ON MAIN — READ-ONLY ANALYSIS ONLY
+
+- `docs/release-gates/D1-SCHEMA-COMPATIBILITY-MATRIX-2026-11-17.md`
+- `docs/release-gates/D1-SCHEMA-COMPATIBILITY-MATRIX-2026-11-17.instruction.md`
+- The matrix documents the difference between root `schema.sql` and `database/schema.sql`, the migration chain 001–003, and the current Research API query contract.
+- No SQL, migration, dataset, D1 resource, secret, or production setting was changed.
+- Canonical project-wide schema decision and any data migration remain pending.
