@@ -211,3 +211,13 @@ Status: VERIFIED BACKUP BRANCH CREATED
 - Restore source: the pre-change main commit above; no main ref was moved.
 - Status: BASELINE IDENTIFIED AND PRESERVED BY BRANCH BASE — FEATURE PR / CI PENDING
 - Production behavior has not been changed by this branch; Live/Worker verification remains NOT TESTED.
+
+
+## SAFE-POINT-2026-11-17-D1-SCHEMA-MATRIX-DOCS
+
+- Baseline before documentation: `0c3520305b43bda0b9dc862561c9081285ded310`.
+- Documentation commits on main: `b56ced924359e226cca1dd20dc76218a59c576dd`, `2df5c5883a4668f3769ac3db893d6f5e52610da3`.
+- Files added: D1 schema compatibility matrix and its companion instruction only.
+- No application/backend/data/SQL/secret/production configuration change.
+- Restore by reverting the two documentation commits only if the owner later requests it.
+- Status: DOCUMENTATION-ONLY CHANGE RECORDED.
