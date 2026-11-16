@@ -127,3 +127,11 @@ Instructions formerly stored under `docs/instructions/` were migrated by copy �
 
 ## Status
 ACTIVE — v1.9 on main; safety-branch additions are DRAFT until review/promotion. Canonical live connection map is registered on `main`. Universal startup governance remains in REVIEW on the safety branch and is not promoted to `main`.
+
+
+## D1 Schema Compatibility Review
+
+| Record / Instruction | Purpose | Status |
+|---|---|---|
+| `docs/release-gates/D1-SCHEMA-COMPATIBILITY-MATRIX-2026-11-17.md` | Compares root schema, D1 schema, migrations and Research API query contract | READ-ONLY MATRIX — OWNER DECISION PENDING |
+| `docs/release-gates/D1-SCHEMA-COMPATIBILITY-MATRIX-2026-11-17.instruction.md` | Governs schema comparison and migration-safety boundaries | ACTIVE |
