@@ -135,4 +135,3 @@ ACTIVE — v1.9 on main; safety-branch additions are DRAFT until review/promotio
 |---|---|---|
 | `scripts/test-deterministic-chat-routing.mjs.instruction.md` | Regression test for deterministic verified-data routing | ACTIVE ON GATE 2 BRANCH |
 | `scripts/test-deterministic-chat-routing.mjs` | Verifies Fatiha word-analysis precedence and zero outbound requests | ACTIVE ON GATE 2 BRANCH |
-| `.github/workflows/deterministic-chat-routing.yml` | Runs the isolated deterministic-routing regression on relevant PRs and main pushes | ACTIVE ON GATE 2 BRANCH; CI PENDING |
