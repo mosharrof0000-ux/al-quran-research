@@ -240,3 +240,14 @@ Status: VERIFIED BACKUP BRANCH CREATED
 - **No database/schema/secret/deployment changes performed.**
 - **Restore:** return to baseline commit above or revert the isolated branch changes.
 - **Status:** BASELINE PRESERVED; schema canonicalization and workflow anomaly unresolved.
+
+
+## SAFE-POINT-2026-11-17-D1-SCHEMA-COMPATIBILITY
+
+- Baseline: `65d0b412c028569b4f9e5226d7528c40019ae20d` (PR #187 head).
+- Working branch: `fix/gate2-deterministic-chat-route-20261117`.
+- Scope: read-only schema and migration compatibility matrix.
+- Protected: root `schema.sql`, `database/schema.sql`, migrations 001–003, Research API, pilot data and any remote D1 database.
+- No SQL/database/data/deployment mutation performed.
+- Restore by returning to the baseline commit or reverting isolated branch documentation.
+- Status: matrix recorded; canonical decision and data mapping pending.
