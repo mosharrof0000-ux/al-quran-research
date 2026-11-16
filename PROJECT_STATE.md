@@ -340,3 +340,19 @@ Live integration remains pending review and runtime mode-resolver implementation
 
 ## Normal Quran Icon Reference Finalized (2026-09-21)
 The 10-icon ordinary Quran Reader visual family is now stored under assets/icons/modes/normal-quran-v1/ with a manifest and reference board. The project records the mode separation contract: normal-quran uses this family; future sufi mode uses a separate family. These are stored reference/pilot assets and are not yet wired into the live Reader.
+
+
+## 29. Gate 2 — Deterministic Chat Routing Repair (2026-11-17)
+
+**Status:** IMPLEMENTED ON ISOLATED BRANCH — REGRESSION CI PASS — LIVE WORKER VERIFICATION PENDING
+
+- Root cause: `backend/worker-entry.js` called `directGemini()` before the existing deterministic verified-data route in `backend/worker.js`. The Fatiha 1:1 word-analysis smoke prompt therefore entered the AI Brain/context/Gemini path first.
+- Repair branch: `fix/gate2-deterministic-chat-route-20261117`
+- PR: #189, stacked on PR #187.
+- Change: deterministic Fatiha word-analysis prompts now bypass `directGemini()` and proceed to the existing Worker handler. Unrelated prompts retain the AI Brain/Gemini route.
+- Regression: `scripts/test-deterministic-chat-routing.mjs` checks the exact prompt, provider, Bengali response fields, and zero outbound fetches even when a fake Gemini key is present.
+- CI: Token Runtime run #43982425542 / job #133701986695 — SUCCESS. The log confirms the new regression test passed.
+- No Worker deployment, PR merge, production data change, or secret change was performed.
+- Live production Bengali chat round-trip remains pending because the repaired Worker code is not deployed. PR #187's earlier live smoke failure remains historical evidence until a separately authorized deployment and live test.
+
+The fix is not considered production-complete until the dependent PR sequence is reviewed/merged with approval, deployment is separately authorized, and the live smoke test passes.
