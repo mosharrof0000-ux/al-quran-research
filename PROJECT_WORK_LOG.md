@@ -504,3 +504,18 @@ PR #170 is open as Draft. Keep it unmerged while production endpoints cannot be 
 - **Preserved:** no production Worker, research data, D1 database, secret, or live UI setting was changed.
 - **Not verified:** live production Worker still has not received this branch's code; no post-deployment Bengali chat round-trip or real browser/device test exists.
 - **Next:** finish branch checks and dependency review; wait for explicit approval before merge/deployment. After an authorized deployment, rerun the live runtime smoke and verify the Bengali chat round-trip.
+
+
+## WORK-2026-11-17-GATE-02-D1-SCHEMA-AND-WORKFLOW-FOLLOW-UP
+
+**Status:** READ-ONLY INVESTIGATION RECORDED — ROOT CAUSE OF ZERO-JOB RUNS NOT PROVEN
+
+- Compared root `schema.sql` (303 lines) with `database/schema.sql` (55 lines); they define materially different table sets.
+- Confirmed `migrations/001_core_schema.sql` says it replays `database/schema.sql`; migration 002 adds workspace/versioning; migration 003 adds `dataset_release` and `api_schema_version`.
+- Confirmed `backend/research-api.js` queries `surah`, `ayah`, `token`, `pronunciation`, `morphology`, `token_lexeme`, `lexeme`, `root`, `dataset_release`, and `api_schema_version`.
+- Confirmed `backend/wrangler.jsonc` has no active D1 binding; it remains commented pending a real database ID.
+- Latest live Research API status reports `storage=github-json-fallback`.
+- Rechecked D1 workflow runs #43982415632, #43982557537, #43982558903, and #43982564056. Their metadata says push on feature branch `fix/gate2-deterministic-chat-route-20261117`, despite the workflow's main-only push filter. Run #43982564056 jobs endpoint returned an empty array.
+- No D1 provision, migration, Worker deploy, or Project Agent deploy step is evidenced by the zero-job run. Exact trigger/metadata anomaly remains NOT PROVEN.
+- No rerun, workflow dispatch, D1 creation, migration, production deployment, or schema modification performed.
+- Next: produce table/column/query compatibility matrix; investigate GitHub Actions event metadata through available run/check-suite data; propose canonical schema and safe migration plan only.
