@@ -1,0 +1,33 @@
+name: D1 Workflow Transition Guard
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/d1-workflow-transition-guard.yml'
+      - '.github/workflows/d1-provision-deploy.yml'
+
+permissions:
+  contents: read
+  actions: write
+
+concurrency:
+  group: d1-workflow-transition-guard
+  cancel-in-progress: false
+
+jobs:
+  reconcile:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Disable legacy D1 workflow when this guard is first installed
+        if: contains(join(github.event.commits.*.added, ','), '.github/workflows/d1-workflow-transition-guard.yml')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api --method PUT "repos/${GITHUB_REPOSITORY}/actions/workflows/365243636/disable"
+
+      - name: Re-enable D1 workflow after the manual-only safety gate replaces it
+        if: contains(join(github.event.commits.*.modified, ','), '.github/workflows/d1-provision-deploy.yml')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api --method PUT "repos/${GITHUB_REPOSITORY}/actions/workflows/365243636/enable"
