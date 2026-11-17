@@ -45,3 +45,17 @@ for item in [
 ]:
     assert item in workflow, f'missing approval/index invariant: {item}'
 print('PASS: research memory index and approval workflow invariants')
+
+# Approval workflow rejects unsafe or unverifiable source references and malformed findings.
+for required_guard in [
+    "every source_ref must match proposal ayah scope",
+    "source_file must be inside data/ or docs/",
+    "symlink source paths are not allowed",
+    "source record must already be VERIFIED",
+    "source record scope does not match proposal",
+    "every finding must contain non-empty text",
+    "proposed findings must be PENDING_REVIEW",
+    "finding['status']='VERIFIED'",
+]:
+    assert required_guard in workflow, f'missing approval safety guard: {required_guard}'
+print('PASS: approval workflow validates source scope, provenance status, safe paths, and finding content')
