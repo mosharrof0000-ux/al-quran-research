@@ -1,0 +1,29 @@
+name: Cloudflare Worker Bundle Contract
+
+on:
+  pull_request:
+    paths:
+      - 'backend/**'
+      - '.github/workflows/worker-bundle-contract.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'backend/**'
+      - '.github/workflows/worker-bundle-contract.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  worker-bundle:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Build Worker bundle without deployment
+        working-directory: backend
+        run: npx --yes wrangler@4 deploy --dry-run --outdir /tmp/al-quran-research-worker-build --config wrangler.jsonc
