@@ -100,13 +100,13 @@ jobs:
           proposal['approval_basis']='Manual GitHub Actions dispatch with explicit APPROVE input'
           proposal['approved_at']=datetime.datetime.now(datetime.timezone.utc).isoformat()
           proposal.pop('record_id_proposal',None)
-          out.write_text(json.dumps(proposal,ensure_ascii=False,indent=2)+'\\n',encoding='utf-8')
+          out.write_text(json.dumps(proposal,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
           entry={'file':out.name,'record_id':new_id,'version':next_version,'status':'VERIFIED','ayah_id':scope,'updated_at':datetime.datetime.now(datetime.timezone.utc).date().isoformat()}
           if any(x.get('file')==out.name for x in index['records'] if isinstance(x,dict)):
               raise SystemExit('REJECTED: index already contains target file')
           index['records'].append(entry)
           index['records'].sort(key=lambda x:(str(x.get('ayah_id','')),int(x.get('version',0))))
-          index_path.write_text(json.dumps(index,ensure_ascii=False,indent=2)+'\\n',encoding='utf-8')
+          index_path.write_text(json.dumps(index,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
           print(f"Created {out} version={next_version} supersedes={proposal['supersedes']}; index updated")
           PY
 
