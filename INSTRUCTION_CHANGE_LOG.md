@@ -324,3 +324,8 @@ Compare branch with `main`, run syntax/build checks, review UI behavior, then ob
 - Removed the false claim that Private Research context is already active in Chat; UI now states that Chat retrieval remains pending.
 - Aligned PIN input length with the backend's 128-character contract.
 - Added focused UI contract tests; no source text or session token is persisted.
+
+ 
+## 2026-11-17 — Private Research UI Browser Regression
+- Added a Playwright/Chromium test for uninstalled-source disabled state and session success messaging using synthetic fixtures.
+- The browser test does not use production PINs, tokens, or private source content and does not transmit content to Gemini.
