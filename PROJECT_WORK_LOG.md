@@ -532,3 +532,5 @@ PR #170 is open as Draft. Keep it unmerged while production endpoints cannot be 
 - The UI explicitly states that authenticated Chat retrieval is still pending; no private text is sent to Gemini.
 - Exact-head contract/token/runtime checks passed on source commit `f27de6f1a471bbf9f37d41bacb71d7deb7291fc3`; live smoke was read-only and 5/5. Browser/Android acceptance remains NOT TESTED.
 - This is a UI correctness checkpoint, not completion of Gate 3. Structured private-source retrieval and per-question external-AI consent remain pending.
+
+- Added a Playwright/Chromium browser test with synthetic API fixtures to verify the source-disabled state and that a valid synthetic session does not falsely claim Chat retrieval. This is browser acceptance of the UI state only; it does not test production source content or private AI transmission.
