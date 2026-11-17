@@ -22,3 +22,5 @@ Check mobile layout and existing Reader/chat controls after changes.
 - 2026-09-20 — Added for controlled extension.
 
 - 2026-09-23 — Profile Avatar System v2: dark modal overlay, circular preview, object-fit cover, overflow clipping, responsive controls.
+
+- 2026-11-17 — Keep `#privateResearchUnlock[hidden]` hidden; its flex layout rule must not override the HTML hidden state.
