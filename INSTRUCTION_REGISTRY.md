@@ -116,6 +116,11 @@ This registry is the dictionary/index of project instructions. It records which 
 | `.github/workflows/private-research-ui-browser.yml.instruction.md` | `.github/workflows/private-research-ui-browser.yml` | ACTIVE — Playwright/Chromium UI regression |
 | `scripts/test-private-research-ui-browser.mjs.instruction.md` | `scripts/test-private-research-ui-browser.mjs` | ACTIVE — browser UI acceptance test |
 
+## Private Research UI Test Fixtures
+| Instruction | Governed file | Status |
+|---|---|---|
+| `scripts/fixtures/private-research-ui-core.js.instruction.md` | `scripts/fixtures/private-research-ui-core.js` | ACTIVE — pinned synthetic browser fixture |
+
 ## Existing Project Documents
 
 The individual instructions above are now colocated with their governed target file or governing scope. Historical instruction content remains preserved in Git history; the old `docs/instructions/` directory is retired as a loose instruction container.
