@@ -512,3 +512,13 @@ PR #170 is open as Draft. Keep it unmerged while production endpoints cannot be 
 - D1 production push-trigger safety is isolated in Draft PR #192; Token Runtime contract check PASS, and feature-branch push events have no deploy jobs. Main still requires the safety PR to be reviewed/promoted before merging backend changes.
 - Source SRC-IFB-001 remains installed=false / PENDING_VERIFICATION. No book text, PIN, session secret, R2 binding, D1 migration, Worker deployment or production route change was made.
 - Gate 3 remains IN PROGRESS because the UI-to-Worker-to-private-retrieval-to-chat-context flow and real-device acceptance are not complete.
+
+ 
+## WORK-2026-11-17-D1-AUTO-DEPLOY-TRANSITION-COMPLETE
+
+- Legacy D1 workflow ID 365243636 was disabled by the transition guard after PR #196 merged; exact run #44053209969 completed successfully and logged `Legacy D1 workflow disabled.`.
+- PR #197 then replaced the legacy push-triggered workflow with `workflow_dispatch` only, an explicit `ENABLE_D1_PROVISION_DEPLOY == 'true'` job guard, and the `production` environment.
+- After PR #197 merged, transition guard run #44053477865 completed successfully and logged `Manual-only D1 workflow enabled after replacement.`.
+- Main now contains the manual-only D1 workflow. No dispatch was made; no D1 was provisioned, no migration applied, no Worker deployed, and no route activated.
+- D1 safety gate is now VERIFIED at source/workflow-contract level; production provisioning/deployment remains intentionally NOT TESTED.
+- PR #191's runtime changes have been ported onto this branch based on the current main after D1 safety promotion. This avoids merging a stale/diverged branch.
