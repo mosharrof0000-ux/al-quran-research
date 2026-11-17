@@ -284,3 +284,10 @@ Compare branch with `main`, run syntax/build checks, review UI behavior, then ob
 - Expanded the Private Research contract test to exercise the actual outer Worker preflight and verify a valid token still cannot access an uninstalled source.
 
 - Extended the Research API contract workflow push filters so the Private Research/CORS tests rerun when the backend access path changes on main.
+
+ 
+## 2026-11-17 — Private Source Registry and Installation Blockers
+- Added SRC-IFB-001 to the Research Source Registry as PENDING_VERIFICATION.
+- Recorded missing edition/version, rights/permission evidence, source-file provenance, integrity checksum, private storage and Chat context integration.
+- Updated the Private Research Library specification and its instruction to distinguish the implemented access-control contract from an active end-to-end library.
+- Source remains uninstalled; no text, secret, storage object or rights claim was fabricated.
