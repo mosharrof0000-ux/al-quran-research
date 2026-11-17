@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { webcrypto } from 'node:crypto';
 import { createPrivateResearchSessionToken, verifyPrivateResearchSessionToken, handlePrivateResearch } from '../backend/private-research.js';
+import app from '../backend/cors-entry.js';
 
 if (!globalThis.crypto) globalThis.crypto = webcrypto;
 const base = 'https://worker.test/private-research';
@@ -32,9 +33,15 @@ assert.equal(noToken.response.status,401);
 assert.equal(noToken.data.error,'PRIVATE_SESSION_REQUIRED');
 const invalidBearer=await call('/sources/SRC-IFB-001/content',{headers:{Authorization:'Bearer invalid'}});
 assert.equal(invalidBearer.response.status,401);
+const signedButUninstalled=await call('/sources/SRC-IFB-001/content',{headers:{Authorization:'Bearer '+validToken}});
+assert.equal(signedButUninstalled.response.status,409);
+assert.equal(signedButUninstalled.data.error,'SOURCE_NOT_INSTALLED');
+const browserPreflight=await app.fetch(new Request('https://worker.test/private-research/sources/SRC-IFB-001/content',{method:'OPTIONS',headers:{Origin:'https://mosharrof0000-ux.github.io','Access-Control-Request-Method':'GET','Access-Control-Request-Headers':'authorization'}}),{},{});
+assert.equal(browserPreflight.status,204);
+assert.match(browserPreflight.headers.get('Access-Control-Allow-Headers'),/Authorization/);
 const wrongMethod=await handlePrivateResearch(new Request(base+'/unlock',{method:'PUT'}),env);
 assert.equal(wrongMethod.status,404);
 const cors=await handlePrivateResearch(new Request(base+'/sources',{method:'OPTIONS'}),env);
 assert.equal(cors.status,204);
 assert.match(cors.headers.get('Access-Control-Allow-Headers'),/Authorization/);
-console.log('PASS: metadata, fail-closed config, PIN, signed token validity/tampering/source binding, bearer gate, method and CORS checks.');
+console.log('PASS: metadata, fail-closed config, PIN, signed token validity/tampering/source binding, installed-source gate, bearer gate, outer Worker CORS preflight, method and CORS checks.');
