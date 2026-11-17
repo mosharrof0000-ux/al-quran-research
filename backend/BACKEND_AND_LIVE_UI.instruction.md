@@ -37,6 +37,9 @@ If the UI cannot execute a supplied Research ID, status is `NOT VERIFIED` until 
 ## Protected live path
 `https://mosharrof0000-ux.github.io/al-quran-research/`
 
+## Private Research CORS contract
+The active outer CORS wrapper must allow the `Authorization` request header for authenticated Private Research content requests. Test preflight through `backend/cors-entry.js`, not only the inner route handler.
+
 ## Verification
 Check intended file changes, dependency integrity, public paths, API contracts, Research-ID execution path, canonical dataset linkage, and absence of unrelated critical changes. After any Live UI change, verify the protected entry path and test representative canonical IDs before promotion.
 
