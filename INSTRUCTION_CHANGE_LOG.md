@@ -256,3 +256,23 @@ Documentation-only governance change. No research dataset, backend entrypoint, R
 ### Next verification
 Compare branch with `main`, run syntax/build checks, review UI behavior, then obtain explicit user approval before promotion.
 - 2026-09-23 — Added isolated User Profile Avatar Form v1 in Home v1 safety branch: image upload, automatic circular clipping, centered focal point, no manual crop, no aspect-ratio distortion. Main/live not promoted.
+
+ 
+## 2026-11-17 — Private Research Session Hardening (Safety Branch)
+
+### Safe point
+- Backup branch: `backup/pre-private-session-hardening-2026-11-17`
+- Base commit: `e95792e6ee570ed6e6b4061afe64729b6d0848b2`
+- Work branch: `fix/private-research-session-hardening-2026-11-17`
+
+### Changed
+- `backend/private-research.js`: added HMAC-SHA-256 signed 15-minute bearer sessions, Authorization CORS support, and an authenticated content route that fails closed when source installation/storage is absent.
+- `backend/private-research.js.instruction.md`: documented secrets, bindings, access contract, and release requirements.
+- `scripts/test-private-research-access.mjs` and its sibling instruction: added isolated access-control contract tests.
+- `INSTRUCTION_REGISTRY.md`: registered the test and updated Private Research instruction status.
+
+### Safety result
+- SRC-IFB-001 remains `installed:false` / `PENDING_VERIFICATION`.
+- No private source text, PIN, signing secret, or production binding was added.
+- No D1/R2 resource was provisioned and no deployment was performed.
+- Tests require execution in a Node 20 environment.
