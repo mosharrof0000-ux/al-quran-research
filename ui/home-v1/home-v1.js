@@ -12,7 +12,7 @@
     );
 
     code = code.replace(
-      /const b=document\.createElement\('button'\);b\.type='button';b\.textContent='খুলুন';\s*b\.onclick=\(\)=>\{selectedPrivateSource=s\.source_id;privateUnlock\.hidden=false;privatePin\.focus\(\);privateStatus\.textContent='এই Source-এর server-side PIN দিন।';\};/,
+      /const b=document\.createElement\('button'\);b\.type='button';b\.textContent='খুলুন';\s*b\.onclick=\(\)=>\{selectedPrivateSource=s\.source_id;privateUnlock\.hidden=false;privatePin\.focus\(\);privateStatus\.textContent='এই Source-এর server-side PIN দিন।'\};/,
       "const b=document.createElement('button');b.type='button';b.textContent=s.installed?'খুলুন':'ইনস্টল বাকি';b.disabled=!s.installed;b.onclick=()=>{if(!s.installed){privateStatus.textContent='এই Private Source এখনো ইনস্টল হয়নি; অনুমতি ও উৎস যাচাই বাকি।';return}selectedPrivateSource=s.source_id;privateUnlock.hidden=false;privatePin.focus();privateStatus.textContent='এই Source-এর server-side PIN দিন।'};"
     );
     code = code.replace(
