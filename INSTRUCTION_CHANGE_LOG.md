@@ -282,3 +282,5 @@ Compare branch with `main`, run syntax/build checks, review UI behavior, then ob
 - Found that the outer production CORS wrapper intercepted OPTIONS before the Private Research handler and omitted Authorization from allowed request headers.
 - Updated both `backend/cors-entry.js` and `backend/worker-entry.js` to allow Authorization.
 - Expanded the Private Research contract test to exercise the actual outer Worker preflight and verify a valid token still cannot access an uninstalled source.
+
+- Extended the Research API contract workflow push filters so the Private Research/CORS tests rerun when the backend access path changes on main.
