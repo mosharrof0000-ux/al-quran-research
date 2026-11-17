@@ -8,7 +8,7 @@ const patchMatch = loader.match(/function patch\(code\) \{([\s\S]*?)\n  \}/);
 assert.ok(patchMatch, 'loader must expose its core patch function');
 const patch = new Function('code', patchMatch[1] + '\nreturn code;');
 
-const coreFixture = [
+const unlockFixture = [
   "const b=document.createElement('button');b.type='button';b.textContent='খুলুন';",
   "b.onclick=()=>{selectedPrivateSource=s.source_id;privateUnlock.hidden=false;privatePin.focus();privateStatus.textContent='এই Source-এর server-side PIN দিন।'};",
   "toast('Private Source খোলা হয়েছে');",
@@ -16,8 +16,9 @@ const coreFixture = [
   "privateUnlock.hidden=true;privatePin.value='';"
 ].join('\n');
 
-const patched = patch(coreFixture);
-assert.doesNotThrow(() => new Function(patched), 'patched pinned home core must remain syntactically valid');
+const patchedCore = patch(coreFixture);
+assert.doesNotThrow(() => new Function(patchedCore), 'patched pinned home core must remain syntactically valid');
+const patched = patch(unlockFixture);
 assert.match(patched, /b\.textContent=s\.installed\?'খুলুন':'ইনস্টল বাকি'/);
 assert.match(patched, /b\.disabled=!s\.installed/);
 assert.match(patched, /এই Private Source এখনো ইনস্টল হয়নি/);
