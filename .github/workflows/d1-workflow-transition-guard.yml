@@ -20,14 +20,23 @@ jobs:
   reconcile:
     runs-on: ubuntu-latest
     steps:
-      - name: Disable legacy D1 workflow when this guard is first installed
-        if: contains(toJSON(github.event.commits), '.github/workflows/d1-workflow-transition-guard.yml')
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: gh api --method PUT "repos/${GITHUB_REPOSITORY}/actions/workflows/365243636/disable"
+      - name: Checkout commit and parent for exact changed-path detection
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
 
-      - name: Re-enable D1 workflow after the manual-only safety gate replaces it
-        if: contains(toJSON(github.event.commits), '.github/workflows/d1-provision-deploy.yml')
+      - name: Disable legacy D1 workflow when this guard is first installed
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh api --method PUT "repos/${GITHUB_REPOSITORY}/actions/workflows/365243636/enable"
+        shell: bash
+        run: |
+          set -euo pipefail
+          CHANGED="$(git diff --name-only HEAD^ HEAD)"
+          if printf '%s\n' "$CHANGED" | grep -Fxq '.github/workflows/d1-workflow-transition-guard.yml'; then
+            gh api --method PUT "repos/${GITHUB_REPOSITORY}/actions/workflows/365243636/disable"
+            echo "Legacy D1 workflow disabled."
+          fi
+          if printf '%s\n' "$CHANGED" | grep -Fxq '.github/workflows/d1-provision-deploy.yml'; then
+            gh api --method PUT "repos/${GITHUB_REPOSITORY}/actions/workflows/365243636/enable"
+            echo "Manual-only D1 workflow enabled after replacement."
+          fi
