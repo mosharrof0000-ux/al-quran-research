@@ -11,6 +11,9 @@
 - বাহ্যিক evidence এবং প্রকল্পের নিজস্ব verified data আলাদা থাকবে।
 - অনুপস্থিত তথ্য পূরণ করতে অনুমান করা যাবে না; `প্রকল্পের ডেটায় নেই` বলা হবে।
 
+## Index manifest
+index.json হলো Worker-এর read-only discovery index। মানব-অনুমোদিত save workflow নতুন immutable record তৈরি করার একই commit-এ manifest-এ entry যোগ করে। পুরোনো version entry মুছে ফেলা যাবে না। index.instruction.md-এ schema ও update rule আছে।
+
 ## রেকর্ড কাঠামো
 প্রস্তাবিত ক্ষেত্র: `record_id`, `version`, `status`, `question`, `objective`, `scope`, `source_refs`, `evidence_refs`, `findings`, `uncertainties`, `created_at`, `supersedes`, `notes`।
 
