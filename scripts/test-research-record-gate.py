@@ -41,6 +41,7 @@ for item in [
     "concurrency:",
     "approval_basis",
     "canonical scope.ayah_id required",
+    "source record_id does not exist",
 ]:
     assert item in workflow, f'missing approval/index invariant: {item}'
 print('PASS: research memory index and approval workflow invariants')
