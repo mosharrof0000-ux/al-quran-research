@@ -1,0 +1,31 @@
+name: Private Research UI Contract
+
+on:
+  pull_request:
+    paths:
+      - 'ui/home-v1/home-v1.js'
+      - 'ui/home-v1/home-v1.html'
+      - 'scripts/test-private-research-ui-contract.mjs'
+      - '.github/workflows/private-research-ui-contract.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'ui/home-v1/home-v1.js'
+      - 'ui/home-v1/home-v1.html'
+      - 'scripts/test-private-research-ui-contract.mjs'
+      - '.github/workflows/private-research-ui-contract.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  private-research-ui:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Verify Private Research UI access-state contract
+        run: node scripts/test-private-research-ui-contract.mjs
