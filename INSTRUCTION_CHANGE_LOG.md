@@ -340,3 +340,8 @@ Compare branch with `main`, run syntax/build checks, review UI behavior, then ob
 - Added manifest SHA-256 pinning, VERIFIED rights-status gate, per-chunk content checksums, source-prefixed R2 path validation, and bounded object sizes.
 - Added synthetic-only access tests and a retrieval contract document.
 - SRC-IFB-001 remains uninstalled/PENDING_VERIFICATION; no real content was ingested.
+
+ 
+## 2026-11-17 — Worker Bundle Dry-Run CI
+- Added a Wrangler v4 `deploy --dry-run` build workflow for backend changes.
+- The workflow uses read-only repository permissions and no Cloudflare API token; it validates bundling only and cannot deploy.
