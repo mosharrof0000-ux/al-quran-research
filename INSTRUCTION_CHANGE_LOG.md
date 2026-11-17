@@ -309,3 +309,10 @@ Compare branch with `main`, run syntax/build checks, review UI behavior, then ob
 - Human approval now promotes the reviewed findings together with the new immutable record.
 - Extended the record-gate contract test and documented the new validation boundaries.
 - Exact-head Research Record Gate test passed on `bfaf9c1623464a86b39e4fde0fe9d461ea989aeb`.
+
+ 
+## 2026-11-17 — D1 Production Workflow Transition Guard
+- Added a transition guard that temporarily disables the legacy D1 auto-deploy workflow before replacing it, then re-enables the manual-only workflow after replacement.
+- First event-payload path detection failed to match; the guard was corrected to use exact `git diff --name-only HEAD^ HEAD` path detection.
+- Verified successful disable (run #44053209969) and successful re-enable after PR #197 (run #44053477865).
+- D1 workflow now requires manual dispatch, `ENABLE_D1_PROVISION_DEPLOY=true`, and the production environment. No production deployment was run.
