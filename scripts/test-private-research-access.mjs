@@ -57,6 +57,9 @@ async function scopedContent(path,sourceList=installedSources,storage=bucket){
  const response=await handlePrivateResearch(request,{...env,PRIVATE_RESEARCH_BUCKET:storage},sourceList);
  return {response,data:await response.json()};
 }
+const pendingPermission=await scopedContent('/sources/SRC-IFB-TEST/content?ayah_id=S001-A001',[{...installedSources[0],permission_status:'PENDING_VERIFICATION'}]);
+assert.equal(pendingPermission.response.status,409);
+assert.equal(pendingPermission.data.error,'SOURCE_NOT_INSTALLED');
 const scoped=await scopedContent('/sources/SRC-IFB-TEST/content?ayah_id=S001-A001');
 assert.equal(scoped.response.status,200);
 assert.equal(scoped.data.chunks.length,1);
