@@ -63,7 +63,7 @@ This registry is the dictionary/index of project instructions. It records which 
 | `docs/PROJECT_COMMENTS.instruction.md` | `docs/PROJECT_COMMENTS.md` | ACTIVE |
 | `docs/RESEARCH_SOURCE_REGISTRY.instruction.md` | `docs/RESEARCH_SOURCE_REGISTRY.md` | ACTIVE |
 | `docs/RESEARCH_INTELLIGENCE_ARCHITECTURE.instruction.md` | `docs/RESEARCH_INTELLIGENCE_ARCHITECTURE.md` | DRAFT — safety branch |
-| `docs/PRIVATE_RESEARCH_LIBRARY.instruction.md` | `docs/PRIVATE_RESEARCH_LIBRARY.md` | DRAFT — safety branch |
+| `docs/PRIVATE_RESEARCH_LIBRARY.instruction.md` | `docs/PRIVATE_RESEARCH_LIBRARY.md` | IN PROGRESS — source and rights verification pending |
 | `README.instruction.md` | `README.md` | ACTIVE |
 | `ui/home-v1/home-v1.html.instruction.md` | `ui/home-v1/home-v1.html` | DRAFT — safety branch |
 | `ui/home-v1/home-v1.js.instruction.md` | `ui/home-v1/home-v1.js` | DRAFT — safety branch |
