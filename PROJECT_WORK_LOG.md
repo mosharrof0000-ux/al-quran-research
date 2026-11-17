@@ -522,3 +522,13 @@ PR #170 is open as Draft. Keep it unmerged while production endpoints cannot be 
 - Main now contains the manual-only D1 workflow. No dispatch was made; no D1 was provisioned, no migration applied, no Worker deployed, and no route activated.
 - D1 safety gate is now VERIFIED at source/workflow-contract level; production provisioning/deployment remains intentionally NOT TESTED.
 - PR #191's runtime changes have been ported onto this branch based on the current main after D1 safety promotion. This avoids merging a stale/diverged branch.
+
+ 
+## WORK-2026-11-17-PRIVATE-RESEARCH-UI-STATE-TRUTH
+
+- UI follow-up branch `fix/private-research-ui-source-state-after-gate3-20261117` ports the previously tested source-state fix onto current main after backend security hardening was merged.
+- Sources with `installed=false` are not unlockable from the UI; the user sees the pending installation/rights state.
+- UI accepts unlock success only when a 15-minute Bearer token is present and no longer claims that Chat retrieval is active.
+- The UI explicitly states that authenticated Chat retrieval is still pending; no private text is sent to Gemini.
+- Exact-head contract/token/runtime checks passed on source commit `f27de6f1a471bbf9f37d41bacb71d7deb7291fc3`; live smoke was read-only and 5/5. Browser/Android acceptance remains NOT TESTED.
+- This is a UI correctness checkpoint, not completion of Gate 3. Structured private-source retrieval and per-question external-AI consent remain pending.
