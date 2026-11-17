@@ -300,3 +300,5 @@ Compare branch with `main`, run syntax/build checks, review UI behavior, then ob
 - Added mocked retrieval tests and extended the existing record-gate contract test.
 - Updated Research Memory specification, record folder README, Registry and Change Log.
 - Existing record statuses are preserved; the current Fatiha record remains PENDING_REVIEW.
+
+- External rights review: official Islamic Foundation publication information and Bangladesh Copyright Act section 72(1)(i) were checked. Private-study/research fair-use wording does not conclusively authorize whole-book digitization, server storage, or external AI transmission; SRC-IFB-001 remains PENDING_VERIFICATION. Official publication contacts recorded in the Private Research specification.
