@@ -25,3 +25,7 @@ Run with Node.js 20+: node scripts/test-private-research-access.mjs
 
 ## Change history
 - 2026-11-17 — Created with Private Research session hardening.
+
+- 2026-11-17 — Added synthetic R2 manifest/chunk tests for canonical ayah scope, manifest integrity, VERIFIED rights state, chunk integrity and path-traversal rejection. Tests must use synthetic text only.
+
+- Include a negative test where the source is marked installed but permission_status remains PENDING_VERIFICATION; access must still fail closed.

@@ -57,3 +57,9 @@ PRIVATE → PERMISSION_GRANTED → PUBLIC, only after permission evidence and co
 ## Change history
 - 2026-09-20 — Initial implementation.
 - 2026-11-17 — Updated status and recorded concrete source, rights, storage and Chat integration blockers.
+
+ 
+## Scoped private-source retrieval
+Private-source content is stored as bounded ayah chunks in R2, not returned as one full-book object. The configured source `storage_key` points to a manifest and `manifest_sha256` pins its exact bytes. The manifest must declare `rights_status: VERIFIED`; each chunk must match the source, edition, canonical ayah scope and SHA-256 content checksum. Retrieval requires a valid short-lived Bearer session and a canonical `ayah_id` query parameter. Full-book retrieval is rejected. The source remains `installed=false / PENDING_VERIFICATION` until edition, provenance, rights, checksum and approved storage installation are independently verified.
+ 
+See `docs/PRIVATE_RESEARCH_RETRIEVAL_CONTRACT_V1.md` for the exact schema and limits.

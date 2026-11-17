@@ -44,3 +44,13 @@ Provide fail-closed server-side access control for private research sources usin
 ## Change history
 - 2026-09-20 — Initial access-control contract.
 - 2026-11-17 — Added HMAC-signed 15-minute sessions and authenticated content route; source installation remains blocked pending permission verification.
+
+## Scoped R2 Retrieval
+- The configured `storage_key` is a manifest key, not a whole-book object key.
+- Content requests require a canonical `ayah_id` (`S###-A###`) and a valid Bearer session.
+- Return only matching chunk records from a rights-verified manifest; never return a full-book object.
+- Require `manifest_sha256` and verify both manifest and chunk content hashes.
+- Enforce safe source-prefixed R2 keys, bounded manifest/chunk sizes, and `rights_status=VERIFIED`.
+- Do not send retrieved text to Gemini unless a separate per-question consent path is implemented and tested.
+
+- Require both `installed=true` and `permission_status=VERIFIED` before issuing a session or retrieving a private chunk.

@@ -333,3 +333,15 @@ Compare branch with `main`, run syntax/build checks, review UI behavior, then ob
 - Browser test uses a pinned synthetic fixture from the currently referenced core commit so the interaction test does not depend on jsDelivr availability or accidentally execute a different upstream core.
 
 - Playwright discovered and fixed the CSS specificity defect that made the PIN panel visible despite `hidden`; added a CSS hidden-state regression assertion.
+
+ 
+## 2026-11-17 — Ayah-Scoped Private Source Retrieval
+- Replaced whole-object private content response with a canonical ayah-scoped retrieval contract.
+- Added manifest SHA-256 pinning, VERIFIED rights-status gate, per-chunk content checksums, source-prefixed R2 path validation, and bounded object sizes.
+- Added synthetic-only access tests and a retrieval contract document.
+- SRC-IFB-001 remains uninstalled/PENDING_VERIFICATION; no real content was ingested.
+
+ 
+## 2026-11-17 — Worker Bundle Dry-Run CI
+- Added a Wrangler v4 `deploy --dry-run` build workflow for backend changes.
+- The workflow uses read-only repository permissions and no Cloudflare API token; it validates bundling only and cannot deploy.
