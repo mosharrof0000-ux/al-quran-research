@@ -329,3 +329,5 @@ Compare branch with `main`, run syntax/build checks, review UI behavior, then ob
 ## 2026-11-17 — Private Research UI Browser Regression
 - Added a Playwright/Chromium test for uninstalled-source disabled state and session success messaging using synthetic fixtures.
 - The browser test does not use production PINs, tokens, or private source content and does not transmit content to Gemini.
+
+- Browser test uses a pinned synthetic fixture from the currently referenced core commit so the interaction test does not depend on jsDelivr availability or accidentally execute a different upstream core.
