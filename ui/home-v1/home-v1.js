@@ -12,11 +12,11 @@
     );
 
     code = code.replace(
-      /const b=document\\.createElement\\('button'\\);b\\.type='button';b\\.textContent='খুলুন';\\s*b\\.onclick=\\(\\)=>\\{selectedPrivateSource=s\\.source_id;privateUnlock\\.hidden=false;privatePin\\.focus\\(\\);privateStatus\\.textContent='এই Source-এর server-side PIN দিন।';\\};/,
+      /const b=document\.createElement\('button'\);b\.type='button';b\.textContent='খুলুন';\s*b\.onclick=\(\)=>\{selectedPrivateSource=s\.source_id;privateUnlock\.hidden=false;privatePin\.focus\(\);privateStatus\.textContent='এই Source-এর server-side PIN দিন।';\};/,
       "const b=document.createElement('button');b.type='button';b.textContent=s.installed?'খুলুন':'ইনস্টল বাকি';b.disabled=!s.installed;b.onclick=()=>{if(!s.installed){privateStatus.textContent='এই Private Source এখনো ইনস্টল হয়নি; অনুমতি ও উৎস যাচাই বাকি।';return}selectedPrivateSource=s.source_id;privateUnlock.hidden=false;privatePin.focus();privateStatus.textContent='এই Source-এর server-side PIN দিন।'};"
     );
     code = code.replace(
-      /toast\\('Private Source খোলা হয়েছে'\\);\\s*privateStatus\\.textContent='Access granted — গবেষণা context সক্রিয়।';\\s*privateUnlock\\.hidden=true;privatePin\\.value='';/,
+      /toast\('Private Source খোলা হয়েছে'\);\s*privateStatus\.textContent='Access granted — গবেষণা context সক্রিয়।';\s*privateUnlock\.hidden=true;privatePin\.value='';/,
       "if(!data.access_token||data.token_type!=='Bearer'||Number(data.expires_in_seconds)!==900){toast('Private Research session যাচাই হয়নি।');privateStatus.textContent='Session তৈরি হয়নি; Chat context নিষ্ক্রিয়।';return}toast('Private Research session তৈরি হয়েছে');privateStatus.textContent='Session চালু; Private Source-এর Chat retrieval এখনো সংযুক্ত নয়।';privateUnlock.hidden=true;privatePin.value='';"
     );
     return code;
