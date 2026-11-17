@@ -5,6 +5,7 @@ import { resolve, extname, sep } from 'node:path';
 import { chromium } from 'playwright';
 
 const root = resolve(process.cwd());
+const coreFixture = await readFile(new URL('./fixtures/private-research-ui-core.js', import.meta.url), 'utf8');
 const mime = {
   '.html': 'text/html; charset=utf-8',
   '.js': 'text/javascript; charset=utf-8',
@@ -34,6 +35,11 @@ await new Promise((resolveListen) => server.listen(4173, '127.0.0.1', resolveLis
 const browser = await chromium.launch({ headless: true });
 try {
   const page = await browser.newPage();
+  const pageErrors = [];
+  page.on('pageerror', (error) => pageErrors.push(String(error?.message || error)));
+  await page.route('https://cdn.jsdelivr.net/gh/mosharrof0000-ux/al-quran-research@272a7d0d285d5942ca83ccd0a1751bc7a2921d7e/ui/home-v1/home-v1.js', async (route) => {
+    await route.fulfill({ status: 200, contentType: 'text/javascript', body: coreFixture });
+  });
   let installed = false;
   await page.route('**/private-research/sources', async (route) => {
     await route.fulfill({
@@ -85,9 +91,19 @@ try {
   await page.goto('http://127.0.0.1:4173/', { waitUntil: 'domcontentloaded' });
   const frame = page.frameLocator('#homeApp');
   await frame.locator('#plusBtn').waitFor({ timeout: 30000 });
+  await frame.locator('#plusBtn').evaluate((el) => new Promise((resolveReady) => {
+    const start = Date.now();
+    const check = () => {
+      if (typeof el.onclick === 'function') return resolveReady(true);
+      if (Date.now() - start > 10000) return resolveReady(false);
+      setTimeout(check, 50);
+    };
+    check();
+  })).then((ready) => assert.equal(ready, true, 'pinned home core must initialize composer controls'));
 
   // Uninstalled source: no PIN prompt and no unlock action.
   await frame.locator('#plusBtn').click();
+  await frame.locator('#composerTools:not([hidden])').waitFor();
   await frame.locator('[data-tool="private-research"]').click();
   await frame.locator('#privateResearchDialog').waitFor({ state: 'visible' });
   const unavailableButton = frame.locator('#privateResearchSources button').first();
@@ -100,6 +116,7 @@ try {
   // Installed synthetic fixture: a valid token may create a session, but UI must not claim Chat retrieval.
   installed = true;
   await frame.locator('#plusBtn').click();
+  await frame.locator('#composerTools:not([hidden])').waitFor();
   await frame.locator('[data-tool="private-research"]').click();
   await frame.locator('#privateResearchDialog').waitFor({ state: 'visible' });
   await frame.locator('#privateResearchSources button').first().click();
@@ -110,6 +127,7 @@ try {
   const status = await frame.locator('#privateResearchStatus').textContent();
   assert.match(status, /Chat retrieval এখনো সংযুক্ত নয়/);
   assert.doesNotMatch(status, /Access granted|context সক্রিয়/);
+  assert.deepEqual(pageErrors, [], 'browser page must not raise uncaught JavaScript errors');
 
   console.log('PASS: uninstalled source is disabled and cannot open a PIN prompt');
   console.log('PASS: valid synthetic session does not falsely claim Private Research Chat retrieval');
