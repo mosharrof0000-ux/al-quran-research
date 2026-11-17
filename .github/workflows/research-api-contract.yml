@@ -4,6 +4,12 @@ on:
   pull_request:
     paths:
       - 'backend/research-api.js'
+      - 'backend/research-memory.js'
+      - 'scripts/test-research-memory.mjs'
+      - 'data/research-records/index.json'
+      - 'backend/private-research.js'
+      - 'backend/private-research.js.instruction.md'
+      - 'scripts/test-private-research-access.mjs'
       - 'scripts/test-research-api-contract.mjs'
       - '.github/workflows/research-api-contract.yml'
       - 'docs/checkpoints/AQR-2026-10-26-AUTO02-RUN10-API-CONTRACT.md'
@@ -12,6 +18,13 @@ on:
       - main
     paths:
       - 'backend/research-api.js'
+      - 'backend/research-memory.js'
+      - 'scripts/test-research-memory.mjs'
+      - 'data/research-records/index.json'
+      - 'backend/private-research.js'
+      - 'backend/cors-entry.js'
+      - 'backend/worker-entry.js'
+      - 'scripts/test-private-research-access.mjs'
       - 'scripts/test-research-api-contract.mjs'
       - '.github/workflows/research-api-contract.yml'
       - 'docs/checkpoints/AQR-2026-10-26-AUTO02-RUN10-API-CONTRACT.md'
@@ -36,3 +49,7 @@ jobs:
           node-version: 22
       - name: Run mocked Research API contract tests
         run: node scripts/test-research-api-contract.mjs
+      - name: Run Private Research access-control tests
+        run: node scripts/test-private-research-access.mjs
+      - name: Run versioned Research Memory retrieval tests
+        run: node scripts/test-research-memory.mjs

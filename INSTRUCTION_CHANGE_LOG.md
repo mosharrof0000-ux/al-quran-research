@@ -256,3 +256,63 @@ Documentation-only governance change. No research dataset, backend entrypoint, R
 ### Next verification
 Compare branch with `main`, run syntax/build checks, review UI behavior, then obtain explicit user approval before promotion.
 - 2026-09-23 — Added isolated User Profile Avatar Form v1 in Home v1 safety branch: image upload, automatic circular clipping, centered focal point, no manual crop, no aspect-ratio distortion. Main/live not promoted.
+
+ 
+## 2026-11-17 — Private Research Session Hardening (Safety Branch)
+
+### Safe point
+- Backup branch: `backup/pre-private-session-hardening-2026-11-17`
+- Base commit: `e95792e6ee570ed6e6b4061afe64729b6d0848b2`
+- Work branch: `fix/private-research-session-hardening-2026-11-17`
+
+### Changed
+- `backend/private-research.js`: added HMAC-SHA-256 signed 15-minute bearer sessions, Authorization CORS support, and an authenticated content route that fails closed when source installation/storage is absent.
+- `backend/private-research.js.instruction.md`: documented secrets, bindings, access contract, and release requirements.
+- `scripts/test-private-research-access.mjs` and its sibling instruction: added isolated access-control contract tests.
+- `INSTRUCTION_REGISTRY.md`: registered the test and updated Private Research instruction status.
+
+### Safety result
+- SRC-IFB-001 remains `installed:false` / `PENDING_VERIFICATION`.
+- No private source text, PIN, signing secret, or production binding was added.
+- No D1/R2 resource was provisioned and no deployment was performed.
+- Tests require execution in a Node 20 environment.
+
+ 
+### CORS integration follow-up — 2026-11-17
+- Found that the outer production CORS wrapper intercepted OPTIONS before the Private Research handler and omitted Authorization from allowed request headers.
+- Updated both `backend/cors-entry.js` and `backend/worker-entry.js` to allow Authorization.
+- Expanded the Private Research contract test to exercise the actual outer Worker preflight and verify a valid token still cannot access an uninstalled source.
+
+- Extended the Research API contract workflow push filters so the Private Research/CORS tests rerun when the backend access path changes on main.
+
+ 
+## 2026-11-17 — Private Source Registry and Installation Blockers
+- Added SRC-IFB-001 to the Research Source Registry as PENDING_VERIFICATION.
+- Recorded missing edition/version, rights/permission evidence, source-file provenance, integrity checksum, private storage and Chat context integration.
+- Updated the Private Research Library specification and its instruction to distinguish the implemented access-control contract from an active end-to-end library.
+- Source remains uninstalled; no text, secret, storage object or rights claim was fabricated.
+
+ 
+## 2026-11-17 — Versioned Research Memory Discovery
+- Replaced the hard-coded one-record retrieval list with a read-only manifest-based lookup.
+- Added data/research-records/index.json and its sibling instruction.
+- Updated the manual approval workflow to validate canonical ayah scope and source references, serialize writes, create immutable records, and update the index in the same commit.
+- Added mocked retrieval tests and extended the existing record-gate contract test.
+- Updated Research Memory specification, record folder README, Registry and Change Log.
+- Existing record statuses are preserved; the current Fatiha record remains PENDING_REVIEW.
+
+- External rights review: official Islamic Foundation publication information and Bangladesh Copyright Act section 72(1)(i) were checked. Private-study/research fair-use wording does not conclusively authorize whole-book digitization, server storage, or external AI transmission; SRC-IFB-001 remains PENDING_VERIFICATION. Official publication contacts recorded in the Private Research specification.
+
+ 
+## 2026-11-17 — Research Record Approval Validation Hardening
+- Tightened manual approval workflow source-reference validation: canonical ayah scope must match, repository source paths are limited to data/ and docs/ and reject traversal/symlinks, prior research records must already be VERIFIED and same-scope, and findings must be non-empty PENDING_REVIEW entries.
+- Human approval now promotes the reviewed findings together with the new immutable record.
+- Extended the record-gate contract test and documented the new validation boundaries.
+- Exact-head Research Record Gate test passed on `bfaf9c1623464a86b39e4fde0fe9d461ea989aeb`.
+
+ 
+## 2026-11-17 — D1 Production Workflow Transition Guard
+- Added a transition guard that temporarily disables the legacy D1 auto-deploy workflow before replacing it, then re-enables the manual-only workflow after replacement.
+- First event-payload path detection failed to match; the guard was corrected to use exact `git diff --name-only HEAD^ HEAD` path detection.
+- Verified successful disable (run #44053209969) and successful re-enable after PR #197 (run #44053477865).
+- D1 workflow now requires manual dispatch, `ENABLE_D1_PROVISION_DEPLOY=true`, and the production environment. No production deployment was run.

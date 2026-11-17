@@ -15,7 +15,7 @@ import { classifyResearchQuery } from './research-intelligence-router.js';
 import { formatResearchContextReference, getResearchContext } from './research-context.js';
 
 const ALLOWED_ORIGINS=['https://mosharrof0000-ux.github.io'];
-function corsHeaders(origin){return {'Access-Control-Allow-Origin':ALLOWED_ORIGINS.includes(origin)?origin:ALLOWED_ORIGINS[0],'Access-Control-Allow-Methods':'GET, POST, OPTIONS','Access-Control-Allow-Headers':'Content-Type','Content-Type':'application/json; charset=utf-8','Vary':'Origin'};}
+function corsHeaders(origin){return {'Access-Control-Allow-Origin':ALLOWED_ORIGINS.includes(origin)?origin:ALLOWED_ORIGINS[0],'Access-Control-Allow-Methods':'GET, POST, OPTIONS','Access-Control-Allow-Headers':'Content-Type, Authorization','Content-Type':'application/json; charset=utf-8','Vary':'Origin'};}
 function json(data,status,origin){return new Response(JSON.stringify(data),{status,headers:corsHeaders(origin)});}
 
 async function readerProxy(request,env){

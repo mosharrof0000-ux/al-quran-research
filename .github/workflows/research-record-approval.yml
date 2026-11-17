@@ -13,12 +13,18 @@ on:
         type: string
 
 permissions:
-  contents: write
+  contents: read
+
+concurrency:
+  group: research-record-approval-main
+  cancel-in-progress: false
 
 jobs:
   approve-and-save:
     if: ${{ inputs.approval == 'APPROVE' }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout main
         uses: actions/checkout@v4
@@ -29,23 +35,96 @@ jobs:
       - name: Validate proposal and create next immutable version
         env:
           PROPOSAL_JSON: ${{ inputs.proposal_json }}
+          APPROVED_BY: ${{ github.actor }}
         run: |
           python3 - <<'PY'
-          import json, os, pathlib, sys
+          import datetime, json, os, pathlib, re
           proposal=json.loads(os.environ['PROPOSAL_JSON'])
           if proposal.get('status') != 'PENDING_REVIEW':
               raise SystemExit('REJECTED: proposal status must be PENDING_REVIEW')
-          if not proposal.get('source_refs'):
-              raise SystemExit('REJECTED: source_refs required')
           if proposal.get('save_policy') != 'APPROVAL_REQUIRED_NO_MASTER_OVERWRITE':
               raise SystemExit('REJECTED: invalid save policy')
-          if any(f.startswith('data/fatiha-master-v1.json') for f in ['data/fatiha-master-v1.json']):
-              pass
+          if not isinstance(proposal.get('question'), str) or not proposal['question'].strip():
+              raise SystemExit('REJECTED: question is required')
+          scope_obj=proposal.get('scope')
+          scope=scope_obj.get('ayah_id') if isinstance(scope_obj,dict) else None
+          if not isinstance(scope,str) or not re.fullmatch(r'S\d{3}-A\d{3}',scope):
+              raise SystemExit('REJECTED: canonical scope.ayah_id required')
+          refs=proposal.get('source_refs')
+          if not isinstance(refs,list) or not refs:
+              raise SystemExit('REJECTED: source_refs required')
+          for ref in refs:
+              if not isinstance(ref,dict):
+                  raise SystemExit('REJECTED: source_refs entries must be objects')
+              if ref.get('ayah_id') != scope:
+                  raise SystemExit('REJECTED: every source_ref must match proposal ayah scope')
+              source_file=ref.get('source_file')
+              record_id=ref.get('record_id')
+              if source_file:
+                  if not isinstance(source_file,str):
+                      raise SystemExit('REJECTED: source_file must be a string')
+                  p=pathlib.Path(source_file)
+                  if p.is_absolute() or '..' in p.parts or p.parts[0] not in ('data','docs'):
+                      raise SystemExit('REJECTED: source_file must be inside data/ or docs/')
+                  cursor=pathlib.Path('.')
+                  for part in p.parts:
+                      cursor=cursor/part
+                      if cursor.is_symlink():
+                          raise SystemExit('REJECTED: symlink source paths are not allowed')
+                  resolved=p.resolve()
+                  try:
+                      resolved.relative_to(pathlib.Path.cwd().resolve())
+                  except ValueError:
+                      raise SystemExit('REJECTED: source_file escapes repository root')
+                  if not resolved.is_file():
+                      raise SystemExit('REJECTED: source_file must be an existing repository file')
+              elif record_id:
+                  if not isinstance(record_id,str) or not re.fullmatch(r'[A-Za-z0-9_-]+',record_id):
+                      raise SystemExit('REJECTED: invalid source record_id')
+                  found=None
+                  for candidate in pathlib.Path('data/research-records').glob('*.json'):
+                      if candidate.name == 'index.json' or candidate.name.endswith('.schema.json'):
+                          continue
+                      try:
+                          source_record=json.loads(candidate.read_text(encoding='utf-8'))
+                          if source_record.get('record_id') == record_id:
+                              found=source_record
+                              break
+                      except Exception:
+                          continue
+                  if not found:
+                      raise SystemExit('REJECTED: source record_id does not exist')
+                  if found.get('status') != 'VERIFIED':
+                      raise SystemExit('REJECTED: source record must already be VERIFIED')
+                  if found.get('scope',{}).get('ayah_id') != scope:
+                      raise SystemExit('REJECTED: source record scope does not match proposal')
+              else:
+                  raise SystemExit('REJECTED: each source_ref needs source_file or record_id')
+          if not isinstance(proposal.get('findings'),list) or not proposal['findings']:
+              raise SystemExit('REJECTED: at least one finding is required')
+          for finding in proposal['findings']:
+              if not isinstance(finding,dict) or not isinstance(finding.get('text'),str) or not finding['text'].strip():
+                  raise SystemExit('REJECTED: every finding must contain non-empty text')
+              if finding.get('status','PENDING_REVIEW') != 'PENDING_REVIEW':
+                  raise SystemExit('REJECTED: proposed findings must be PENDING_REVIEW')
           root=pathlib.Path('data/research-records')
-          root.mkdir(parents=True, exist_ok=True)
-          scope=proposal.get('scope',{}).get('ayah_id') or 'UNSCOPED'
+          index_path=root/'index.json'
+          if not index_path.is_file():
+              raise SystemExit('REJECTED: research record index missing')
+          index=json.loads(index_path.read_text(encoding='utf-8'))
+          if index.get('schema_version') != 1 or not isinstance(index.get('records'),list):
+              raise SystemExit('REJECTED: research record index invalid')
+          for item in index['records']:
+              if not isinstance(item,dict) or not isinstance(item.get('file'),str) or not re.fullmatch(r'[A-Za-z0-9_-]+\.json',item['file']):
+                  raise SystemExit('REJECTED: research record index entry invalid')
+              if not isinstance(item.get('record_id'),str) or not isinstance(item.get('version'),int) or item['version']<1:
+                  raise SystemExit('REJECTED: research record index metadata invalid')
+              if item['file'] == 'index.json' or item['file'].endswith('.schema.json'):
+                  raise SystemExit('REJECTED: reserved file in research record index')
           candidates=[]
           for p in root.glob('*.json'):
+              if p.name == 'index.json' or p.name.endswith('.schema.json'):
+                  continue
               try:
                   d=json.loads(p.read_text(encoding='utf-8'))
                   if d.get('scope',{}).get('ayah_id')==scope:
@@ -55,27 +134,34 @@ jobs:
           previous=max(candidates,key=lambda x:x[0]) if candidates else None
           next_version=(previous[0]+1) if previous else 1
           new_id=f"RR-{scope.replace('-','')}-V{next_version}"
-          proposal['record_id']=new_id
-          proposal['version']=next_version
-          proposal['status']='VERIFIED'
-          proposal['supersedes']=previous[2].get('record_id') if previous else None
-          proposal['approved_by']='human_workflow_approval'
-          proposal['approval_basis']='Manual GitHub Actions approval (APPROVE)'
-          proposal['created_at']=proposal.get('created_at')
           out=root/(new_id+'.json')
           if out.exists():
               raise SystemExit('REJECTED: target version already exists')
-          # Never modify the master dataset in this workflow.
+          proposal['record_id']=new_id
+          proposal['version']=next_version
+          proposal['status']='VERIFIED'
+          for finding in proposal['findings']:
+              finding['status']='VERIFIED'
+          proposal['supersedes']=previous[2].get('record_id') if previous else None
+          proposal['approved_by']=os.environ.get('APPROVED_BY','unknown')
+          proposal['approval_basis']='Manual GitHub Actions dispatch with explicit APPROVE input'
+          proposal['approved_at']=datetime.datetime.now(datetime.timezone.utc).isoformat()
           proposal.pop('record_id_proposal',None)
           out.write_text(json.dumps(proposal,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
-          print(f'Created {out} version={next_version} supersedes={proposal["supersedes"]}')
+          entry={'file':out.name,'record_id':new_id,'version':next_version,'status':'VERIFIED','ayah_id':scope,'updated_at':datetime.datetime.now(datetime.timezone.utc).date().isoformat()}
+          if any(x.get('file')==out.name for x in index['records'] if isinstance(x,dict)):
+              raise SystemExit('REJECTED: index already contains target file')
+          index['records'].append(entry)
+          index['records'].sort(key=lambda x:(str(x.get('ayah_id','')),int(x.get('version',0))))
+          index_path.write_text(json.dumps(index,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+          print(f"Created {out} version={next_version} supersedes={proposal['supersedes']}; index updated")
           PY
 
       - name: Verify master dataset unchanged
         run: |
           git diff --exit-code -- data/fatiha-master-v1.json
 
-      - name: Commit approved research record
+      - name: Commit approved research record and index
         run: |
           git config user.name 'al-quran-research approval bot'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'

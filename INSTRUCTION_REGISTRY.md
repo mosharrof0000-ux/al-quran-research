@@ -43,11 +43,15 @@ This registry is the dictionary/index of project instructions. It records which 
 | `docs/RESEARCH_MEMORY_V1.instruction.md` | `docs/RESEARCH_MEMORY_V1.md` | ACTIVE |
 | `docs/RESEARCH_RECORD_APPROVAL_HANDOFF_V1.instruction.md` | `docs/RESEARCH_RECORD_APPROVAL_HANDOFF_V1.md` | ACTIVE |
 | `data/fatiha.json.instruction.md` | `data/fatiha.json` | ACTIVE |
+| `data/research-records/index.instruction.md` | `data/research-records/index.json` | ACTIVE — versioned memory manifest |
 | `docs/BACKUP_POLICY.instruction.md` | `docs/BACKUP_POLICY.md` | ACTIVE |
 | `backend/BACKEND_AND_LIVE_UI.instruction.md` | Active backend and live website/core UI assets | ACTIVE |
-| `backend/worker-entry.js.instruction.md` | `backend/worker-entry.js` | DRAFT — private research integration |
+| `backend/worker-entry.js.instruction.md` | `backend/worker-entry.js` | IN PROGRESS — Private Research session integration |
 | `backend/research-intelligence-router.js.instruction.md` | `backend/research-intelligence-router.js` | DRAFT — safety branch |
-| `backend/private-research.js.instruction.md` | `backend/private-research.js` | DRAFT — safety branch |
+| `backend/private-research.js.instruction.md` | `backend/private-research.js` | IN PROGRESS — session hardening; source installation pending |
+| `scripts/test-private-research-access.instruction.md` | `scripts/test-private-research-access.mjs` | ACTIVE — fail-closed access contract tests |
+| `scripts/test-research-memory.instruction.md` | `scripts/test-research-memory.mjs` | ACTIVE — versioned memory retrieval tests |
+| `scripts/test-research-record-gate.py.instruction.md` | `scripts/test-research-record-gate.py` | ACTIVE — save/approval and manifest contract tests |
 | `.github/workflows/GITHUB_ACTIONS_AND_AUTOMATION.instruction.md` | `.github/workflows/*.yml`, `.github/workflows/*.yaml` | ACTIVE |
 
 ## Individual Important Instructions
@@ -62,7 +66,7 @@ This registry is the dictionary/index of project instructions. It records which 
 | `docs/PROJECT_COMMENTS.instruction.md` | `docs/PROJECT_COMMENTS.md` | ACTIVE |
 | `docs/RESEARCH_SOURCE_REGISTRY.instruction.md` | `docs/RESEARCH_SOURCE_REGISTRY.md` | ACTIVE |
 | `docs/RESEARCH_INTELLIGENCE_ARCHITECTURE.instruction.md` | `docs/RESEARCH_INTELLIGENCE_ARCHITECTURE.md` | DRAFT — safety branch |
-| `docs/PRIVATE_RESEARCH_LIBRARY.instruction.md` | `docs/PRIVATE_RESEARCH_LIBRARY.md` | DRAFT — safety branch |
+| `docs/PRIVATE_RESEARCH_LIBRARY.instruction.md` | `docs/PRIVATE_RESEARCH_LIBRARY.md` | IN PROGRESS — source and rights verification pending |
 | `README.instruction.md` | `README.md` | ACTIVE |
 | `ui/home-v1/home-v1.html.instruction.md` | `ui/home-v1/home-v1.html` | DRAFT — safety branch |
 | `ui/home-v1/home-v1.js.instruction.md` | `ui/home-v1/home-v1.js` | DRAFT — safety branch |
@@ -91,6 +95,14 @@ This registry is the dictionary/index of project instructions. It records which 
 | `.github/workflows/connect-tafsir-library-now.yml` | Historical/manual notice; no repository write | LEGACY |
 | `.github/workflows/set-site-favicon.yml` | Historical/manual notice; no repository write | LEGACY |
 | `.github/workflows/install-chat-system.yml` | Historical/manual notice; no repository write | LEGACY |
+
+## Production Workflow Governance
+| Instruction | Governed file | Status |
+|---|---|---|
+| `.github/workflows/d1-provision-deploy.yml.instruction.md` | `.github/workflows/d1-provision-deploy.yml` | ACTIVE — manual-only production deployment gate |
+| `.github/workflows/d1-workflow-transition-guard.yml.instruction.md` | `.github/workflows/d1-workflow-transition-guard.yml` | ACTIVE — controlled disable/re-enable transition |
+| `.github/workflows/d1-workflow-transition-guard-contract.yml.instruction.md` | `.github/workflows/d1-workflow-transition-guard-contract.yml` | ACTIVE — source contract CI |
+| `scripts/test-d1-workflow-transition-guard.mjs.instruction.md` | `scripts/test-d1-workflow-transition-guard.mjs` | ACTIVE — transition guard contract test |
 
 ## Existing Project Documents
 

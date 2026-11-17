@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "records": [
+    {
+      "file": "RR-Q001001-V1.json",
+      "record_id": "RR-Q001001",
+      "version": 1,
+      "status": "PENDING_REVIEW",
+      "ayah_id": "S001-A001",
+      "updated_at": "2026-09-08"
+    }
+  ]
+}

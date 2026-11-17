@@ -496,3 +496,29 @@ PR #170 is open as Draft. Keep it unmerged while production endpoints cannot be 
 - The root schema is preserved and is not declared obsolete.
 - No schema/data/database/deployment mutation performed.
 - Next: owner decision on canonical project-wide schema and a versioned mapping before migration.
+
+ 
+## WORK-2026-11-17-PRIVATE-RESEARCH-GATE3-HARDENING
+
+- Gate: 3 — Private Research Audit; status remains IN PROGRESS.
+- PR #191 branch `fix/private-research-session-hardening-2026-11-17`, latest verified head before this checkpoint: `bfaf9c1623464a86b39e4fde0fe9d461ea989aeb`.
+- Implemented server-side HMAC-SHA-256 15-minute bearer sessions, authenticated private-source retrieval, fail-closed behavior for missing configuration/uninstalled source, and Authorization CORS support through the outer Worker wrapper.
+- Replaced the fixed Research Memory list with read-only index-driven versioned retrieval. Existing Fatiha record remains PENDING_REVIEW.
+- Hardened human approval: source references must match the canonical ayah scope; source files are restricted to regular repository files under data/ or docs/ without traversal or symlinks; referenced research records must already be VERIFIED and same-scope; findings must be non-empty PENDING_REVIEW entries before human approval.
+- Exact-head automated checks on `bfaf9c1623464a86b39e4fde0fe9d461ea989aeb`: 3/3 PASS — Research API/Private Research/Memory, Research Record Gate, and Mosharrof Token Runtime.
+- Cloudflare Worker and Project Agent preview builds: PASS on `4fe8a98e8a209fc0d3c60413a25f9ab6ec71c659`, after Worker code changes were present. Subsequent changes were approval workflow/docs/tests only.
+- Read-only live runtime smoke on UI branch #193 head `f27de6f1a471bbf9f37d41bacb71d7deb7291fc3`: 5/5 PASS for Worker health, Research API status, Fatiha 1:1, Pages HTTP 200, and deterministic Bengali chat route. This is not real browser UI acceptance or live Gemini proof.
+- UI truthfulness follow-up is isolated in Draft PR #193; its UI contract and token runtime checks PASS, while browser/Android acceptance remains NOT TESTED.
+- D1 production push-trigger safety is isolated in Draft PR #192; Token Runtime contract check PASS, and feature-branch push events have no deploy jobs. Main still requires the safety PR to be reviewed/promoted before merging backend changes.
+- Source SRC-IFB-001 remains installed=false / PENDING_VERIFICATION. No book text, PIN, session secret, R2 binding, D1 migration, Worker deployment or production route change was made.
+- Gate 3 remains IN PROGRESS because the UI-to-Worker-to-private-retrieval-to-chat-context flow and real-device acceptance are not complete.
+
+ 
+## WORK-2026-11-17-D1-AUTO-DEPLOY-TRANSITION-COMPLETE
+
+- Legacy D1 workflow ID 365243636 was disabled by the transition guard after PR #196 merged; exact run #44053209969 completed successfully and logged `Legacy D1 workflow disabled.`.
+- PR #197 then replaced the legacy push-triggered workflow with `workflow_dispatch` only, an explicit `ENABLE_D1_PROVISION_DEPLOY == 'true'` job guard, and the `production` environment.
+- After PR #197 merged, transition guard run #44053477865 completed successfully and logged `Manual-only D1 workflow enabled after replacement.`.
+- Main now contains the manual-only D1 workflow. No dispatch was made; no D1 was provisioned, no migration applied, no Worker deployed, and no route activated.
+- D1 safety gate is now VERIFIED at source/workflow-contract level; production provisioning/deployment remains intentionally NOT TESTED.
+- PR #191's runtime changes have been ported onto this branch based on the current main after D1 safety promotion. This avoids merging a stale/diverged branch.
