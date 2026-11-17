@@ -302,3 +302,10 @@ Compare branch with `main`, run syntax/build checks, review UI behavior, then ob
 - Existing record statuses are preserved; the current Fatiha record remains PENDING_REVIEW.
 
 - External rights review: official Islamic Foundation publication information and Bangladesh Copyright Act section 72(1)(i) were checked. Private-study/research fair-use wording does not conclusively authorize whole-book digitization, server storage, or external AI transmission; SRC-IFB-001 remains PENDING_VERIFICATION. Official publication contacts recorded in the Private Research specification.
+
+ 
+## 2026-11-17 — Research Record Approval Validation Hardening
+- Tightened manual approval workflow source-reference validation: canonical ayah scope must match, repository source paths are limited to data/ and docs/ and reject traversal/symlinks, prior research records must already be VERIFIED and same-scope, and findings must be non-empty PENDING_REVIEW entries.
+- Human approval now promotes the reviewed findings together with the new immutable record.
+- Extended the record-gate contract test and documented the new validation boundaries.
+- Exact-head Research Record Gate test passed on `bfaf9c1623464a86b39e4fde0fe9d461ea989aeb`.
