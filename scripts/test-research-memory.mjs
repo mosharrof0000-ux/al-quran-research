@@ -12,7 +12,8 @@ const fixture={
 const index={schema_version:1,records:[
   {file:'RR-Q001001-V1.json',record_id:'RR-Q001001',version:1,status:'PENDING_REVIEW',ayah_id:'S001-A001',updated_at:'2026-09-08'},
   {file:'../outside.json',record_id:'bad',version:99,ayah_id:'S001-A001'},
-  {file:'RR-Q001001-V2.json',record_id:'RR-Q001001-V2',version:2,ayah_id:'S001-A001'}
+  {file:'RR-Q001001-V2.json',record_id:'RR-Q001001-V2',version:2,status:'PENDING_REVIEW',ayah_id:'S001-A001'},
+  {file:'RR-Q001001-V3.json',record_id:'RR-Q001001-V3',version:3,status:'VERIFIED',ayah_id:'S001-A001'}
 ]};
 let calls=[];
 globalThis.fetch=async url=>{
@@ -20,6 +21,7 @@ globalThis.fetch=async url=>{
   if(target===indexUrl)return new Response(JSON.stringify(index),{status:200});
   if(target===recordUrl)return new Response(JSON.stringify(fixture),{status:200});
   if(target.endsWith('/RR-Q001001-V2.json'))return new Response(JSON.stringify({...fixture,record_id:'RR-Q001001-V2',version:2}),{status:200});
+  if(target.endsWith('/RR-Q001001-V3.json'))return new Response(JSON.stringify({...fixture,record_id:'RR-Q001001-V3',version:3,status:'PENDING_REVIEW'}),{status:200});
   throw new Error('unexpected URL');
 };
 try{
@@ -28,7 +30,7 @@ try{
   assert.equal(calls.length,0,'ordinary chat must not fetch research memory');
   const result=await loadResearchMemory('আগের গবেষণা সূরা ফাতিহা');
   assert.equal(result.used,true);
-  assert.equal(result.records.length,2);
+  assert.equal(result.records.length,2,'index status must match the immutable record status');
   assert.equal(result.records[0].version,2);
   assert.equal(result.records[1].status,'PENDING_REVIEW');
   assert.match(result.context,/READ_ONLY_VERSIONED_RESEARCH_MEMORY/);
