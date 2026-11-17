@@ -18,6 +18,9 @@ on:
       - main
     paths:
       - 'backend/research-api.js'
+      - 'backend/research-memory.js'
+      - 'scripts/test-research-memory.mjs'
+      - 'data/research-records/index.json'
       - 'backend/private-research.js'
       - 'backend/cors-entry.js'
       - 'backend/worker-entry.js'
