@@ -235,3 +235,6 @@ body.night .chat-message.ai{background:transparent;border:0;color:#f1f5f3}
 /* Scroll fix: bidirectional chat scroll — up/down both work after tag/AI response */
 .messages.has-messages{margin-top:auto}
 .chat .messages{touch-action:pan-y}
+
+/* Respect the hidden state despite the flex layout rule above. */
+#privateResearchUnlock[hidden]{display:none}
