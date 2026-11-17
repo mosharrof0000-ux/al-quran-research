@@ -1,0 +1,40 @@
+import assert from 'node:assert/strict';
+import { webcrypto } from 'node:crypto';
+import { createPrivateResearchSessionToken, verifyPrivateResearchSessionToken, handlePrivateResearch } from '../backend/private-research.js';
+
+if (!globalThis.crypto) globalThis.crypto = webcrypto;
+const base = 'https://worker.test/private-research';
+const secret = 'test-only-session-secret-at-least-32-characters';
+const env = { PRIVATE_RESEARCH_PIN: '2468', PRIVATE_RESEARCH_SESSION_SECRET: secret };
+async function call(path, { method='GET', body, headers={} }={}) {
+  const request = new Request(base+path,{method,headers:{...(body?{'Content-Type':'application/json'}:{}),...headers},body:body?JSON.stringify(body):undefined});
+  const response = await handlePrivateResearch(request,env);
+  return {response,data:await response.json()};
+}
+const list=await call('/sources');
+assert.equal(list.response.status,200);
+assert.equal(list.data.sources[0].installed,false);
+const missingSecrets=await handlePrivateResearch(new Request(base+'/unlock',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({source_id:'SRC-IFB-001',pin:'2468'})}),{PRIVATE_RESEARCH_PIN:'2468'});
+assert.equal(missingSecrets.status,503);
+const badPin=await call('/unlock',{method:'POST',body:{source_id:'SRC-IFB-001',pin:'0000'}});
+assert.equal(badPin.response.status,401);
+assert.equal(badPin.data.error,'INVALID_PIN');
+const notInstalled=await call('/unlock',{method:'POST',body:{source_id:'SRC-IFB-001',pin:'2468'}});
+assert.equal(notInstalled.response.status,409);
+assert.equal(notInstalled.data.error,'SOURCE_NOT_INSTALLED');
+const validToken=await createPrivateResearchSessionToken('SRC-IFB-001',secret);
+assert.equal(await verifyPrivateResearchSessionToken(validToken,'SRC-IFB-001',secret),true);
+assert.equal(await verifyPrivateResearchSessionToken(validToken,'SRC-IFB-002',secret),false);
+assert.equal(await verifyPrivateResearchSessionToken(validToken+'x','SRC-IFB-001',secret),false);
+assert.equal(await verifyPrivateResearchSessionToken(validToken,'SRC-IFB-001','a-different-session-secret-with-at-least-32-chars'),false);
+const noToken=await call('/sources/SRC-IFB-001/content');
+assert.equal(noToken.response.status,401);
+assert.equal(noToken.data.error,'PRIVATE_SESSION_REQUIRED');
+const invalidBearer=await call('/sources/SRC-IFB-001/content',{headers:{Authorization:'Bearer invalid'}});
+assert.equal(invalidBearer.response.status,401);
+const wrongMethod=await handlePrivateResearch(new Request(base+'/unlock',{method:'PUT'}),env);
+assert.equal(wrongMethod.status,404);
+const cors=await handlePrivateResearch(new Request(base+'/sources',{method:'OPTIONS'}),env);
+assert.equal(cors.status,204);
+assert.match(cors.headers.get('Access-Control-Allow-Headers'),/Authorization/);
+console.log('PASS: metadata, fail-closed config, PIN, signed token validity/tampering/source binding, bearer gate, method and CORS checks.');
