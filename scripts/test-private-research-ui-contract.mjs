@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 
 const loader = readFileSync(new URL('../ui/home-v1/home-v1.js', import.meta.url), 'utf8');
 const html = readFileSync(new URL('../ui/home-v1/home-v1.html', import.meta.url), 'utf8');
+const coreFixture = readFileSync(new URL('./fixtures/private-research-ui-core.js', import.meta.url), 'utf8');
 const patchMatch = loader.match(/function patch\(code\) \{([\s\S]*?)\n  \}/);
 assert.ok(patchMatch, 'loader must expose its core patch function');
 const patch = new Function('code', patchMatch[1] + '\nreturn code;');
@@ -16,6 +17,7 @@ const coreFixture = [
 ].join('\n');
 
 const patched = patch(coreFixture);
+assert.doesNotThrow(() => new Function(patched), 'patched pinned home core must remain syntactically valid');
 assert.match(patched, /b\.textContent=s\.installed\?'খুলুন':'ইনস্টল বাকি'/);
 assert.match(patched, /b\.disabled=!s\.installed/);
 assert.match(patched, /এই Private Source এখনো ইনস্টল হয়নি/);
