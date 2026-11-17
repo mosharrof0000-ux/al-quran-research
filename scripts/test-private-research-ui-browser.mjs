@@ -36,8 +36,12 @@ const browser = await chromium.launch({ headless: true });
 try {
   const page = await browser.newPage();
   const pageErrors = [];
+  const failedRequests = [];
+  let coreServed = false;
   page.on('pageerror', (error) => pageErrors.push(String(error?.message || error)));
-  await page.route('https://cdn.jsdelivr.net/gh/mosharrof0000-ux/al-quran-research@272a7d0d285d5942ca83ccd0a1751bc7a2921d7e/ui/home-v1/home-v1.js', async (route) => {
+  page.on('requestfailed', (request) => failedRequests.push(request.url() + ': ' + (request.failure()?.errorText || 'failed')));
+  await page.route('**/al-quran-research@272a7d0d285d5942ca83ccd0a1751bc7a2921d7e/ui/home-v1/home-v1.js*', async (route) => {
+    coreServed = true;
     await route.fulfill({ status: 200, contentType: 'text/javascript', body: coreFixture });
   });
   let installed = false;
@@ -99,7 +103,7 @@ try {
       setTimeout(check, 50);
     };
     check();
-  })).then((ready) => assert.equal(ready, true, 'pinned home core must initialize composer controls'));
+  })).then((ready) => assert.equal(ready, true, 'pinned home core must initialize composer controls; coreServed=' + coreServed + '; pageErrors=' + JSON.stringify(pageErrors) + '; failedRequests=' + JSON.stringify(failedRequests)));
 
   // Uninstalled source: no PIN prompt and no unlock action.
   await frame.locator('#plusBtn').click();
