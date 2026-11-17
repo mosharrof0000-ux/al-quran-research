@@ -25,3 +25,6 @@ Test existing chat, Reader, composer and new Private Research flow.
 
 ## Change history
 - 2026-09-20 — Added for controlled extension.
+
+- 2026-11-17 — Private Research source rows disable unlock while `installed=false`; successful PIN responses are accepted only when a 15-minute bearer token is present, and the UI explicitly reports that Chat retrieval is still pending rather than claiming context activation.
+- 2026-11-17 — PIN input limit aligned with the Worker contract (128 characters).
