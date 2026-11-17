@@ -15,8 +15,11 @@ Govern reusable research memory without mixing versions or silently converting p
 5. Preserve uncertainty, disputes, and supersession status explicitly.
 6. Never treat AI-generated memory as automatically verified.
 
+## Retrieval manifest
+The canonical discovery manifest is data/research-records/index.json. New approved records must be added to it in the same commit as the immutable record file. Never hard-code a fixed record filename list in the Worker.
+
 ## Verification
-Check record identity, version, status, scope, source/evidence, and approval state before reuse.
+Check manifest schema, safe file-name allow-list, record identity, version, status, scope, source/evidence, and approval state before reuse.
 
 ## Update triggers
 Update when research-memory schema, statuses, save/approval flow, or retrieval behavior changes.
