@@ -27,6 +27,8 @@ assert.match(patched, /data\.access_token/);
 assert.match(patched, /data\.token_type!=='Bearer'/);
 assert.match(patched, /Chat retrieval এখনো সংযুক্ত নয়/);
 assert.match(html, /maxlength="128" aria-label="Private Research PIN"/);
+const css = readFileSync(new URL('../ui/home-v1/home-v1.css', import.meta.url), 'utf8');
+assert.match(css, /#privateResearchUnlock\\[hidden\\]\\{display:none\\}/);
 
 console.log('PASS: uninstalled private sources cannot be unlocked in UI');
 console.log('PASS: UI does not claim Chat context activation without a valid bearer session');
