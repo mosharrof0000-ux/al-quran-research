@@ -90,7 +90,7 @@ export async function handlePrivateResearch(request,env,sources=SOURCES){
     if(!await verifyPrivateResearchSessionToken(token,sourceId,String(env.PRIVATE_RESEARCH_SESSION_SECRET)))return json({ok:false,error:'PRIVATE_SESSION_REQUIRED'},401,origin);
     if(!source.installed||!source.storage_key||!source.manifest_sha256)return json({ok:false,error:'SOURCE_NOT_INSTALLED',permission_status:source.permission_status},409,origin);
     const ayahId=url.searchParams.get('ayah_id')||'';
-    if(!/^S\\d{3}-A\\d{3}$/.test(ayahId))return json({ok:false,error:'CANONICAL_AYAH_SCOPE_REQUIRED'},400,origin);
+    if(!/^S\d{3}-A\d{3}$/.test(ayahId))return json({ok:false,error:'CANONICAL_AYAH_SCOPE_REQUIRED'},400,origin);
     const retrieved=await retrievePrivateResearchContext({bucket:env.PRIVATE_RESEARCH_BUCKET,sourceId,manifestKey:source.storage_key,manifestSha256:source.manifest_sha256,ayahId});
     if(!retrieved.ok)return json({ok:false,error:retrieved.error},retrieved.status||503,origin);
     return json({ok:true,source_id:retrieved.source_id,edition_id:retrieved.edition_id,ayah_id:retrieved.ayah_id,chunks:retrieved.chunks},200,origin);
