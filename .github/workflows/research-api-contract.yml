@@ -15,6 +15,10 @@ on:
       - main
     paths:
       - 'backend/research-api.js'
+      - 'backend/private-research.js'
+      - 'backend/cors-entry.js'
+      - 'backend/worker-entry.js'
+      - 'scripts/test-private-research-access.mjs'
       - 'scripts/test-research-api-contract.mjs'
       - '.github/workflows/research-api-contract.yml'
       - 'docs/checkpoints/AQR-2026-10-26-AUTO02-RUN10-API-CONTRACT.md'
