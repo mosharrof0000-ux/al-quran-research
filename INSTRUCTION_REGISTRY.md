@@ -104,6 +104,12 @@ This registry is the dictionary/index of project instructions. It records which 
 | `.github/workflows/d1-workflow-transition-guard-contract.yml.instruction.md` | `.github/workflows/d1-workflow-transition-guard-contract.yml` | ACTIVE — source contract CI |
 | `scripts/test-d1-workflow-transition-guard.mjs.instruction.md` | `scripts/test-d1-workflow-transition-guard.mjs` | ACTIVE — transition guard contract test |
 
+## Private Research UI Contract
+| Instruction | Governed file | Status |
+|---|---|---|
+| `.github/workflows/private-research-ui-contract.yml.instruction.md` | `.github/workflows/private-research-ui-contract.yml` | ACTIVE — UI source-state contract CI |
+| `scripts/test-private-research-ui-contract.mjs.instruction.md` | `scripts/test-private-research-ui-contract.mjs` | ACTIVE — UI access-state regression test |
+
 ## Existing Project Documents
 
 The individual instructions above are now colocated with their governed target file or governing scope. Historical instruction content remains preserved in Git history; the old `docs/instructions/` directory is retired as a loose instruction container.
