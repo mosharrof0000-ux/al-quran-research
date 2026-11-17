@@ -96,6 +96,11 @@ This registry is the dictionary/index of project instructions. It records which 
 | `.github/workflows/set-site-favicon.yml` | Historical/manual notice; no repository write | LEGACY |
 | `.github/workflows/install-chat-system.yml` | Historical/manual notice; no repository write | LEGACY |
 
+## Cloudflare Worker Build Validation
+| Instruction | Governed file | Status |
+|---|---|---|
+| `.github/workflows/worker-bundle-contract.yml.instruction.md` | `.github/workflows/worker-bundle-contract.yml` | ACTIVE — Wrangler dry-run bundle validation |
+
 ## Private Research Retrieval
 | Instruction | Governed file | Status |
 |---|---|---|
