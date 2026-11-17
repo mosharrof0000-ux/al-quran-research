@@ -14,7 +14,7 @@ export async function sha256Hex(value){
 }
 
 function safeKey(key,sourceId){
-  if(typeof key!=='string'||!key.startsWith(`private-sources/${sourceId}/'))return false;
+  if(typeof key!=='string'||!key.startsWith(`private-sources/${sourceId}/`))return false;
   const parts=key.split('/');
   return parts.length>=3&&parts.every(part=>part&&part!=='.'&&part!=='..'&&!part.includes('\\'));
 }
