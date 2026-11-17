@@ -536,3 +536,13 @@ PR #170 is open as Draft. Keep it unmerged while production endpoints cannot be 
 - Added a Playwright/Chromium browser test with synthetic API fixtures to verify the source-disabled state and that a valid synthetic session does not falsely claim Chat retrieval. This is browser acceptance of the UI state only; it does not test production source content or private AI transmission.
 
 - Playwright initially exposed a real UI defect: `#privateResearchUnlock` used `display:flex`, overriding the HTML `hidden` state. Added `#privateResearchUnlock[hidden]{display:none}`; the browser regression now asserts the PIN panel remains concealed for uninstalled sources.
+
+ 
+## WORK-2026-11-17-PRIVATE-RESEARCH-CHUNK-RETRIEVAL
+
+- Added `backend/private-research-retrieval.js` for R2 manifest/chunk retrieval scoped to a canonical ayah.
+- Private content endpoint no longer returns a full-book object; it requires a valid source-bound Bearer session, `ayah_id`, installed source, pinned manifest SHA-256, VERIFIED rights status and matching chunk checksum.
+- Enforced source-prefixed R2 keys and limits: 2 MB manifest, 64 KB chunk object, 16,000 content characters, max 3 chunks.
+- Added synthetic fixture tests for valid retrieval, no full-book access, manifest hash mismatch, pending rights and path traversal.
+- Source SRC-IFB-001 remains uninstalled/PENDING_VERIFICATION. No real book content is present.
+- Chat prompt integration and per-question consent remain pending; no retrieved text is sent to Gemini.
