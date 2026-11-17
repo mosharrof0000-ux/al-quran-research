@@ -48,7 +48,7 @@ jobs:
               raise SystemExit('REJECTED: question is required')
           scope_obj=proposal.get('scope')
           scope=scope_obj.get('ayah_id') if isinstance(scope_obj,dict) else None
-          if not isinstance(scope,str) or not re.fullmatch(r'S\\d{3}-A\\d{3}',scope):
+          if not isinstance(scope,str) or not re.fullmatch(r'S\d{3}-A\d{3}',scope):
               raise SystemExit('REJECTED: canonical scope.ayah_id required')
           refs=proposal.get('source_refs')
           if not isinstance(refs,list) or not refs:
