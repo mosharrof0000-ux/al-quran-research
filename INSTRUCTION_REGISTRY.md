@@ -96,6 +96,14 @@ This registry is the dictionary/index of project instructions. It records which 
 | `.github/workflows/set-site-favicon.yml` | Historical/manual notice; no repository write | LEGACY |
 | `.github/workflows/install-chat-system.yml` | Historical/manual notice; no repository write | LEGACY |
 
+## Production Workflow Governance
+| Instruction | Governed file | Status |
+|---|---|---|
+| `.github/workflows/d1-provision-deploy.yml.instruction.md` | `.github/workflows/d1-provision-deploy.yml` | ACTIVE — manual-only production deployment gate |
+| `.github/workflows/d1-workflow-transition-guard.yml.instruction.md` | `.github/workflows/d1-workflow-transition-guard.yml` | ACTIVE — controlled disable/re-enable transition |
+| `.github/workflows/d1-workflow-transition-guard-contract.yml.instruction.md` | `.github/workflows/d1-workflow-transition-guard-contract.yml` | ACTIVE — source contract CI |
+| `scripts/test-d1-workflow-transition-guard.mjs.instruction.md` | `scripts/test-d1-workflow-transition-guard.mjs` | ACTIVE — transition guard contract test |
+
 ## Existing Project Documents
 
 The individual instructions above are now colocated with their governed target file or governing scope. Historical instruction content remains preserved in Git history; the old `docs/instructions/` directory is retired as a loose instruction container.
