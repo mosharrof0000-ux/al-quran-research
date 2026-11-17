@@ -4,7 +4,7 @@
   function patch(code) {
     code = code.replace(
       /if\(type\.includes\('user'\)\)\{\s*const targetTop=Math\.max\(0,el\.offsetTop-78\);\s*box\.scrollTop=targetTop;\s*\}else\{\s*box\.scrollTop=box\.scrollHeight;\s*\}\s*return el\s*\}/,
-      "if(box){box.classList.add('has-messages');var nearBottom=box.scrollHeight-box.scrollTop-box.clientHeight<120;if(type.includes('user')||nearBottom||type.includes('pending')){requestAnimationFrame(function(){box.scrollTop=box.scrollHeight;});}return el}"
+      "if(box){box.classList.add('has-messages');var nearBottom=box.scrollHeight-box.scrollTop-box.clientHeight<120;if(type.includes('user')||nearBottom||type.includes('pending')){requestAnimationFrame(function(){box.scrollTop=box.scrollHeight;});}return el}}"
     );
     code = code.replace(
       /function boxScrollForStreaming\(body\)\{const box=document\.getElementById\('messages'\);if\(box\)box\.scrollTop=box\.scrollHeight\}/,
