@@ -56,31 +56,57 @@ jobs:
           for ref in refs:
               if not isinstance(ref,dict):
                   raise SystemExit('REJECTED: source_refs entries must be objects')
+              if ref.get('ayah_id') != scope:
+                  raise SystemExit('REJECTED: every source_ref must match proposal ayah scope')
               source_file=ref.get('source_file')
               record_id=ref.get('record_id')
               if source_file:
-                  p=pathlib.PurePosixPath(str(source_file))
-                  if p.is_absolute() or '..' in p.parts or not pathlib.Path(str(source_file)).is_file():
+                  if not isinstance(source_file,str):
+                      raise SystemExit('REJECTED: source_file must be a string')
+                  p=pathlib.Path(source_file)
+                  if p.is_absolute() or '..' in p.parts or p.parts[0] not in ('data','docs'):
+                      raise SystemExit('REJECTED: source_file must be inside data/ or docs/')
+                  cursor=pathlib.Path('.')
+                  for part in p.parts:
+                      cursor=cursor/part
+                      if cursor.is_symlink():
+                          raise SystemExit('REJECTED: symlink source paths are not allowed')
+                  resolved=p.resolve()
+                  try:
+                      resolved.relative_to(pathlib.Path.cwd().resolve())
+                  except ValueError:
+                      raise SystemExit('REJECTED: source_file escapes repository root')
+                  if not resolved.is_file():
                       raise SystemExit('REJECTED: source_file must be an existing repository file')
               elif record_id:
-                  if not re.fullmatch(r'[A-Za-z0-9_-]+',str(record_id)):
+                  if not isinstance(record_id,str) or not re.fullmatch(r'[A-Za-z0-9_-]+',record_id):
                       raise SystemExit('REJECTED: invalid source record_id')
-                  found=False
+                  found=None
                   for candidate in pathlib.Path('data/research-records').glob('*.json'):
                       if candidate.name == 'index.json' or candidate.name.endswith('.schema.json'):
                           continue
                       try:
-                          if json.loads(candidate.read_text(encoding='utf-8')).get('record_id') == record_id:
-                              found=True
+                          source_record=json.loads(candidate.read_text(encoding='utf-8'))
+                          if source_record.get('record_id') == record_id:
+                              found=source_record
                               break
                       except Exception:
                           continue
                   if not found:
                       raise SystemExit('REJECTED: source record_id does not exist')
+                  if found.get('status') != 'VERIFIED':
+                      raise SystemExit('REJECTED: source record must already be VERIFIED')
+                  if found.get('scope',{}).get('ayah_id') != scope:
+                      raise SystemExit('REJECTED: source record scope does not match proposal')
               else:
                   raise SystemExit('REJECTED: each source_ref needs source_file or record_id')
           if not isinstance(proposal.get('findings'),list) or not proposal['findings']:
               raise SystemExit('REJECTED: at least one finding is required')
+          for finding in proposal['findings']:
+              if not isinstance(finding,dict) or not isinstance(finding.get('text'),str) or not finding['text'].strip():
+                  raise SystemExit('REJECTED: every finding must contain non-empty text')
+              if finding.get('status','PENDING_REVIEW') != 'PENDING_REVIEW':
+                  raise SystemExit('REJECTED: proposed findings must be PENDING_REVIEW')
           root=pathlib.Path('data/research-records')
           index_path=root/'index.json'
           if not index_path.is_file():
@@ -88,6 +114,13 @@ jobs:
           index=json.loads(index_path.read_text(encoding='utf-8'))
           if index.get('schema_version') != 1 or not isinstance(index.get('records'),list):
               raise SystemExit('REJECTED: research record index invalid')
+          for item in index['records']:
+              if not isinstance(item,dict) or not isinstance(item.get('file'),str) or not re.fullmatch(r'[A-Za-z0-9_-]+\\.json',item['file']):
+                  raise SystemExit('REJECTED: research record index entry invalid')
+              if not isinstance(item.get('record_id'),str) or not isinstance(item.get('version'),int) or item['version']<1:
+                  raise SystemExit('REJECTED: research record index metadata invalid')
+              if item['file'] == 'index.json' or item['file'].endswith('.schema.json'):
+                  raise SystemExit('REJECTED: reserved file in research record index')
           candidates=[]
           for p in root.glob('*.json'):
               if p.name == 'index.json' or p.name.endswith('.schema.json'):
@@ -107,6 +140,8 @@ jobs:
           proposal['record_id']=new_id
           proposal['version']=next_version
           proposal['status']='VERIFIED'
+          for finding in proposal['findings']:
+              finding['status']='VERIFIED'
           proposal['supersedes']=previous[2].get('record_id') if previous else None
           proposal['approved_by']=os.environ.get('APPROVED_BY','unknown')
           proposal['approval_basis']='Manual GitHub Actions dispatch with explicit APPROVE input'
