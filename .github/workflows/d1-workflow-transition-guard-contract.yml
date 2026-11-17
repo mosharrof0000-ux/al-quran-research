@@ -1,0 +1,28 @@
+name: D1 Workflow Transition Guard Contract
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/d1-workflow-transition-guard.yml'
+      - 'scripts/test-d1-workflow-transition-guard.mjs'
+      - '.github/workflows/d1-workflow-transition-guard-contract.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/d1-workflow-transition-guard.yml'
+      - 'scripts/test-d1-workflow-transition-guard.mjs'
+      - '.github/workflows/d1-workflow-transition-guard-contract.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node scripts/test-d1-workflow-transition-guard.mjs
