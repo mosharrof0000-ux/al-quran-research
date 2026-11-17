@@ -74,7 +74,7 @@ export async function handlePrivateResearch(request,env,sources=SOURCES){
     if(!source)return json({ok:false,error:'UNKNOWN_PRIVATE_SOURCE'},404,origin);
     if(source.status!=='PRIVATE')return json({ok:false,error:'SOURCE_NOT_PRIVATE'},403,origin);
     if(!timingSafeEqual(pin,String(env.PRIVATE_RESEARCH_PIN)))return json({ok:false,error:'INVALID_PIN'},401,origin);
-    if(!source.installed||!source.storage_key||!source.manifest_sha256)return json({ok:false,error:'SOURCE_NOT_INSTALLED',source_id:source.source_id,permission_status:source.permission_status},409,origin);
+    if(!source.installed||source.permission_status!=='VERIFIED'||!source.storage_key||!source.manifest_sha256)return json({ok:false,error:'SOURCE_NOT_INSTALLED',source_id:source.source_id,permission_status:source.permission_status},409,origin);
     try{
       const accessToken=await createPrivateResearchSessionToken(source.source_id,String(env.PRIVATE_RESEARCH_SESSION_SECRET));
       return json({ok:true,source_id:source.source_id,access:'GRANTED',access_token:accessToken,token_type:'Bearer',expires_in_seconds:SESSION_TTL_SECONDS},200,origin);
@@ -88,7 +88,7 @@ export async function handlePrivateResearch(request,env,sources=SOURCES){
     const authorization=request.headers.get('Authorization')||'';
     const token=authorization.startsWith('Bearer ')?authorization.slice(7):'';
     if(!await verifyPrivateResearchSessionToken(token,sourceId,String(env.PRIVATE_RESEARCH_SESSION_SECRET)))return json({ok:false,error:'PRIVATE_SESSION_REQUIRED'},401,origin);
-    if(!source.installed||!source.storage_key||!source.manifest_sha256)return json({ok:false,error:'SOURCE_NOT_INSTALLED',permission_status:source.permission_status},409,origin);
+    if(!source.installed||source.permission_status!=='VERIFIED'||!source.storage_key||!source.manifest_sha256)return json({ok:false,error:'SOURCE_NOT_INSTALLED',permission_status:source.permission_status},409,origin);
     const ayahId=url.searchParams.get('ayah_id')||'';
     if(!/^S\d{3}-A\d{3}$/.test(ayahId))return json({ok:false,error:'CANONICAL_AYAH_SCOPE_REQUIRED'},400,origin);
     const retrieved=await retrievePrivateResearchContext({bucket:env.PRIVATE_RESEARCH_BUCKET,sourceId,manifestKey:source.storage_key,manifestSha256:source.manifest_sha256,ayahId});
