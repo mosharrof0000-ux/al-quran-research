@@ -291,3 +291,12 @@ Compare branch with `main`, run syntax/build checks, review UI behavior, then ob
 - Recorded missing edition/version, rights/permission evidence, source-file provenance, integrity checksum, private storage and Chat context integration.
 - Updated the Private Research Library specification and its instruction to distinguish the implemented access-control contract from an active end-to-end library.
 - Source remains uninstalled; no text, secret, storage object or rights claim was fabricated.
+
+ 
+## 2026-11-17 — Versioned Research Memory Discovery
+- Replaced the hard-coded one-record retrieval list with a read-only manifest-based lookup.
+- Added data/research-records/index.json and its sibling instruction.
+- Updated the manual approval workflow to validate canonical ayah scope and source references, serialize writes, create immutable records, and update the index in the same commit.
+- Added mocked retrieval tests and extended the existing record-gate contract test.
+- Updated Research Memory specification, record folder README, Registry and Change Log.
+- Existing record statuses are preserved; the current Fatiha record remains PENDING_REVIEW.
