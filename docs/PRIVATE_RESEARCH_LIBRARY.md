@@ -44,6 +44,13 @@ Do not set installed=true until the exact edition, source provenance, permitted 
 
 Live secret/binding configuration has not been verified. No production secret or bucket was created by this change.
 
+## Rights and publisher verification note
+- The official Islamic Foundation Publications Department describes the Foundation as publisher of the Bengali Quran translation and notes repeated editions/reprints. This corroborates the publisher identity, but does not grant a digital reproduction or AI-processing license: https://islamicfoundation.gov.bd/pages/static-pages/6922dd78933eb65569e15274
+- The official Bangladesh Copyright Act 2000 text lists fair use for private study/private use including research in section 72(1)(i): https://bdlaws.minlaw.gov.bd/upload/act/2021-11-17-10-44-05-32.-The-Copyright-Act-2000.pdf
+- That general provision does not by itself settle whole-book digitization, server-side storage, multi-device access, or sending full source text to an external AI provider. Do not treat it as an automatic permission grant.
+- The Foundation's official officers page lists the Director, Publications contact (dir.publication@islamicfoundation.gov.bd) and Assistant Director contact (ad.publication@islamicfoundation.gov.bd): https://islamicfoundation.gov.bd/pages/officers
+- Obtain and record written permission or a documented legal basis covering the exact intended technical use before installing the full source. This note is a project risk record, not legal advice.
+
 ## Future public promotion
 PRIVATE → PERMISSION_GRANTED → PUBLIC, only after permission evidence and controlled promotion. Public promotion is separate from private research access.
 
