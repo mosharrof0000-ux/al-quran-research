@@ -45,7 +45,7 @@ This registry is the dictionary/index of project instructions. It records which 
 | `data/fatiha.json.instruction.md` | `data/fatiha.json` | ACTIVE |
 | `docs/BACKUP_POLICY.instruction.md` | `docs/BACKUP_POLICY.md` | ACTIVE |
 | `backend/BACKEND_AND_LIVE_UI.instruction.md` | Active backend and live website/core UI assets | ACTIVE |
-| `backend/worker-entry.js.instruction.md` | `backend/worker-entry.js` | DRAFT — private research integration |
+| `backend/worker-entry.js.instruction.md` | `backend/worker-entry.js` | IN PROGRESS — Private Research session integration |
 | `backend/research-intelligence-router.js.instruction.md` | `backend/research-intelligence-router.js` | DRAFT — safety branch |
 | `backend/private-research.js.instruction.md` | `backend/private-research.js` | IN PROGRESS — session hardening; source installation pending |
 | `scripts/test-private-research-access.instruction.md` | `scripts/test-private-research-access.mjs` | ACTIVE — fail-closed access contract tests |
