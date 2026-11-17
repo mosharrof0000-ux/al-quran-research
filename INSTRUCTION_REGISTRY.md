@@ -47,7 +47,8 @@ This registry is the dictionary/index of project instructions. It records which 
 | `backend/BACKEND_AND_LIVE_UI.instruction.md` | Active backend and live website/core UI assets | ACTIVE |
 | `backend/worker-entry.js.instruction.md` | `backend/worker-entry.js` | DRAFT — private research integration |
 | `backend/research-intelligence-router.js.instruction.md` | `backend/research-intelligence-router.js` | DRAFT — safety branch |
-| `backend/private-research.js.instruction.md` | `backend/private-research.js` | DRAFT — safety branch |
+| `backend/private-research.js.instruction.md` | `backend/private-research.js` | IN PROGRESS — session hardening; source installation pending |
+| `scripts/test-private-research-access.instruction.md` | `scripts/test-private-research-access.mjs` | ACTIVE — fail-closed access contract tests |
 | `.github/workflows/GITHUB_ACTIONS_AND_AUTOMATION.instruction.md` | `.github/workflows/*.yml`, `.github/workflows/*.yaml` | ACTIVE |
 
 ## Individual Important Instructions
