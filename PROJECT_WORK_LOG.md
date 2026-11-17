@@ -534,3 +534,5 @@ PR #170 is open as Draft. Keep it unmerged while production endpoints cannot be 
 - This is a UI correctness checkpoint, not completion of Gate 3. Structured private-source retrieval and per-question external-AI consent remain pending.
 
 - Added a Playwright/Chromium browser test with synthetic API fixtures to verify the source-disabled state and that a valid synthetic session does not falsely claim Chat retrieval. This is browser acceptance of the UI state only; it does not test production source content or private AI transmission.
+
+- Playwright initially exposed a real UI defect: `#privateResearchUnlock` used `display:flex`, overriding the HTML `hidden` state. Added `#privateResearchUnlock[hidden]{display:none}`; the browser regression now asserts the PIN panel remains concealed for uninstalled sources.
