@@ -56,6 +56,17 @@ try {
     });
   });
   await page.route('**/private-research/unlock', async (route) => {
+    if (route.request().method() === 'OPTIONS') {
+      await route.fulfill({
+        status: 204,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+        }
+      });
+      return;
+    }
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
