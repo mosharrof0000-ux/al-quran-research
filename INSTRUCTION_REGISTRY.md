@@ -51,6 +51,7 @@ This registry is the dictionary/index of project instructions. It records which 
 | `backend/private-research.js.instruction.md` | `backend/private-research.js` | IN PROGRESS — session hardening; source installation pending |
 | `scripts/test-private-research-access.instruction.md` | `scripts/test-private-research-access.mjs` | ACTIVE — fail-closed access contract tests |
 | `scripts/test-research-memory.instruction.md` | `scripts/test-research-memory.mjs` | ACTIVE — versioned memory retrieval tests |
+| `scripts/test-research-record-gate.py.instruction.md` | `scripts/test-research-record-gate.py` | ACTIVE — save/approval and manifest contract tests |
 | `.github/workflows/GITHUB_ACTIONS_AND_AUTOMATION.instruction.md` | `.github/workflows/*.yml`, `.github/workflows/*.yaml` | ACTIVE |
 
 ## Individual Important Instructions
