@@ -82,7 +82,7 @@ export async function handlePrivateResearch(request,env,sources=SOURCES){
   }
   const contentMatch=url.pathname.match(/^\/private-research\/sources\/([A-Za-z0-9_-]+)\/content$/);
   if(request.method==='GET'&&contentMatch){
-    const sourceId=contentMatch[1];const source=SOURCES.find(s=>s.source_id===sourceId);
+    const sourceId=contentMatch[1];const source=sources.find(s=>s.source_id===sourceId);
     if(!source)return json({ok:false,error:'UNKNOWN_PRIVATE_SOURCE'},404,origin);
     if(!env.PRIVATE_RESEARCH_SESSION_SECRET||String(env.PRIVATE_RESEARCH_SESSION_SECRET).length<32)return json({ok:false,error:'PRIVATE_LIBRARY_NOT_CONFIGURED'},503,origin);
     const authorization=request.headers.get('Authorization')||'';
