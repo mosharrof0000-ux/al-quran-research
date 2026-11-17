@@ -4,6 +4,9 @@ on:
   pull_request:
     paths:
       - 'backend/research-api.js'
+      - 'backend/research-memory.js'
+      - 'scripts/test-research-memory.mjs'
+      - 'data/research-records/index.json'
       - 'backend/private-research.js'
       - 'backend/private-research.js.instruction.md'
       - 'scripts/test-private-research-access.mjs'
@@ -45,3 +48,5 @@ jobs:
         run: node scripts/test-research-api-contract.mjs
       - name: Run Private Research access-control tests
         run: node scripts/test-private-research-access.mjs
+      - name: Run versioned Research Memory retrieval tests
+        run: node scripts/test-research-memory.mjs
