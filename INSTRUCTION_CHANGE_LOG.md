@@ -316,3 +316,20 @@ Compare branch with `main`, run syntax/build checks, review UI behavior, then ob
 - First event-payload path detection failed to match; the guard was corrected to use exact `git diff --name-only HEAD^ HEAD` path detection.
 - Verified successful disable (run #44053209969) and successful re-enable after PR #197 (run #44053477865).
 - D1 workflow now requires manual dispatch, `ENABLE_D1_PROVISION_DEPLOY=true`, and the production environment. No production deployment was run.
+
+ 
+## 2026-11-17 — Private Research UI Access-State Truth
+- Disabled unlock for source entries with `installed:false`.
+- Require a valid 15-minute Bearer token before showing session creation success.
+- Removed the false claim that Private Research context is already active in Chat; UI now states that Chat retrieval remains pending.
+- Aligned PIN input length with the backend's 128-character contract.
+- Added focused UI contract tests; no source text or session token is persisted.
+
+ 
+## 2026-11-17 — Private Research UI Browser Regression
+- Added a Playwright/Chromium test for uninstalled-source disabled state and session success messaging using synthetic fixtures.
+- The browser test does not use production PINs, tokens, or private source content and does not transmit content to Gemini.
+
+- Browser test uses a pinned synthetic fixture from the currently referenced core commit so the interaction test does not depend on jsDelivr availability or accidentally execute a different upstream core.
+
+- Playwright discovered and fixed the CSS specificity defect that made the PIN panel visible despite `hidden`; added a CSS hidden-state regression assertion.

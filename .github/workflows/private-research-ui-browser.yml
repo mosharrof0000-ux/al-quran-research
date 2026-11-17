@@ -1,0 +1,34 @@
+name: Private Research UI Browser Test
+
+on:
+  pull_request:
+    paths:
+      - 'ui/home-v1/**'
+      - 'scripts/test-private-research-ui-browser.mjs'
+      - '.github/workflows/private-research-ui-browser.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'ui/home-v1/**'
+      - 'scripts/test-private-research-ui-browser.mjs'
+      - '.github/workflows/private-research-ui-browser.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install Playwright
+        run: npm install --no-save playwright
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Verify Private Research UI in a real browser
+        run: node scripts/test-private-research-ui-browser.mjs
