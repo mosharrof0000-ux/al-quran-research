@@ -331,3 +331,5 @@ Compare branch with `main`, run syntax/build checks, review UI behavior, then ob
 - The browser test does not use production PINs, tokens, or private source content and does not transmit content to Gemini.
 
 - Browser test uses a pinned synthetic fixture from the currently referenced core commit so the interaction test does not depend on jsDelivr availability or accidentally execute a different upstream core.
+
+- Playwright discovered and fixed the CSS specificity defect that made the PIN panel visible despite `hidden`; added a CSS hidden-state regression assertion.
