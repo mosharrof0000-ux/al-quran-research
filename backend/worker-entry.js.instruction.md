@@ -2,7 +2,7 @@
 
 ## Identity
 Path: backend/worker-entry.js
-Status: DRAFT — private research integration
+Status: IN PROGRESS — Private Research session integration
 
 ## Purpose
 Govern the production Worker entry routing, research API, AI routing and private research access.
