@@ -52,3 +52,5 @@ Provide fail-closed server-side access control for private research sources usin
 - Require `manifest_sha256` and verify both manifest and chunk content hashes.
 - Enforce safe source-prefixed R2 keys, bounded manifest/chunk sizes, and `rights_status=VERIFIED`.
 - Do not send retrieved text to Gemini unless a separate per-question consent path is implemented and tested.
+
+- Require both `installed=true` and `permission_status=VERIFIED` before issuing a session or retrieving a private chunk.
