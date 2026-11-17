@@ -1,10 +1,25 @@
 name: Research Record Gate Test
 
 on:
-  push:
+  pull_request:
     paths:
       - 'backend/research-record-gate.js'
+      - 'backend/research-memory.js'
       - 'scripts/test-research-record-gate.py'
+      - 'scripts/test-research-memory.mjs'
+      - 'data/research-records/**'
+      - '.github/workflows/research-record-approval.yml'
+      - '.github/workflows/test-research-record-gate.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'backend/research-record-gate.js'
+      - 'backend/research-memory.js'
+      - 'scripts/test-research-record-gate.py'
+      - 'scripts/test-research-memory.mjs'
+      - 'data/research-records/**'
+      - '.github/workflows/research-record-approval.yml'
       - '.github/workflows/test-research-record-gate.yml'
   workflow_dispatch:
 
@@ -16,5 +31,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Run save-gate contract test
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - name: Run save-gate and index contract test
         run: python3 scripts/test-research-record-gate.py
