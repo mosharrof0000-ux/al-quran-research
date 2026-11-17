@@ -96,6 +96,12 @@ This registry is the dictionary/index of project instructions. It records which 
 | `.github/workflows/set-site-favicon.yml` | Historical/manual notice; no repository write | LEGACY |
 | `.github/workflows/install-chat-system.yml` | Historical/manual notice; no repository write | LEGACY |
 
+## Private Research Retrieval
+| Instruction | Governed file | Status |
+|---|---|---|
+| `backend/private-research-retrieval.js.instruction.md` | `backend/private-research-retrieval.js` | ACTIVE — scoped R2 chunk retrieval |
+| `docs/PRIVATE_RESEARCH_RETRIEVAL_CONTRACT_V1.md.instruction.md` | `docs/PRIVATE_RESEARCH_RETRIEVAL_CONTRACT_V1.md` | ACTIVE — retrieval schema and privacy contract |
+
 ## Production Workflow Governance
 | Instruction | Governed file | Status |
 |---|---|---|
