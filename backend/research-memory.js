@@ -6,6 +6,7 @@ const INDEX_URL='https://raw.githubusercontent.com/mosharrof0000-ux/al-quran-res
 const RECORDS_BASE='https://raw.githubusercontent.com/mosharrof0000-ux/al-quran-research/main/data/research-records/';
 const MAX_RECORDS=8;
 const FILE_PATTERN=/^[A-Za-z0-9_-]+\.json$/;
+const RECORD_STATUSES=new Set(['DRAFT','PENDING_REVIEW','VERIFIED','DISPUTED','SUPERSEDED']);
 function isResearchQuery(text){
  return /গবেষণা|আগের গবেষণা|পূর্ববর্তী গবেষণা|source|উৎস|প্রমাণ|রেকর্ড|record|Q\d{6}|S\d{3}-A\d{3}|ফাতিহা|fatiha/i.test(text);
 }
@@ -35,6 +36,7 @@ export async function loadResearchMemory(message=''){
     const data=await response.json();
     if(!data||typeof data.record_id!=='string'||!Number.isInteger(data.version)||data.version<1)continue;
     if(data.record_id!==entry.record_id||data.version!==Number(entry.version))continue;
+    if(!RECORD_STATUSES.has(data.status)||data.status!==entry.status)continue;
     if(entry.ayah_id&&data.scope?.ayah_id!==entry.ayah_id)continue;
     records.push(data);
    }catch{}
