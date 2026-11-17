@@ -115,7 +115,7 @@ jobs:
           if index.get('schema_version') != 1 or not isinstance(index.get('records'),list):
               raise SystemExit('REJECTED: research record index invalid')
           for item in index['records']:
-              if not isinstance(item,dict) or not isinstance(item.get('file'),str) or not re.fullmatch(r'[A-Za-z0-9_-]+\\.json',item['file']):
+              if not isinstance(item,dict) or not isinstance(item.get('file'),str) or not re.fullmatch(r'[A-Za-z0-9_-]+\.json',item['file']):
                   raise SystemExit('REJECTED: research record index entry invalid')
               if not isinstance(item.get('record_id'),str) or not isinstance(item.get('version'),int) or item['version']<1:
                   raise SystemExit('REJECTED: research record index metadata invalid')
