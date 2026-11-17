@@ -65,6 +65,18 @@ jobs:
               elif record_id:
                   if not re.fullmatch(r'[A-Za-z0-9_-]+',str(record_id)):
                       raise SystemExit('REJECTED: invalid source record_id')
+                  found=False
+                  for candidate in pathlib.Path('data/research-records').glob('*.json'):
+                      if candidate.name == 'index.json' or candidate.name.endswith('.schema.json'):
+                          continue
+                      try:
+                          if json.loads(candidate.read_text(encoding='utf-8')).get('record_id') == record_id:
+                              found=True
+                              break
+                      except Exception:
+                          continue
+                  if not found:
+                      raise SystemExit('REJECTED: source record_id does not exist')
               else:
                   raise SystemExit('REJECTED: each source_ref needs source_file or record_id')
           if not isinstance(proposal.get('findings'),list) or not proposal['findings']:
