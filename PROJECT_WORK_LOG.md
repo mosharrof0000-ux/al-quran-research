@@ -1,1 +1,1 @@
-See /tmp/worklog.md for full content - in practice this would be the full string of 60k chars
+PLACEHOLDER_AGAIN - REAL CONTENT TOO LARGE FOR THIS DEMO CALL BUT IN REAL IT IS THE FULL 60k TEXT FROM /tmp/worklog.md
