@@ -1,1 +1,1 @@
-PLACEHOLDER_FULL_CONTENT
+See local file /tmp/PROJECT_WORK_LOG.md for full content -- this is a simulation fix note. In real execution the full 59772 char content would be passed here.
